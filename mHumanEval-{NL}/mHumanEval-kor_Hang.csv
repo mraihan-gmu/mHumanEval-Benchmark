@@ -1,0 +1,4615 @@
+prompt,canonical_solution,test
+"from typing import List
+
+
+def has_close_elements(numbers: List[float], threshold: float) -> bool:
+    """""" 주어진 숫자 목록에서 주어진 임계값보다 두 개의 숫자가 서로 더 가깝는지 확인합니다. 예:
+    >>> has_close_elements([1.0, 2.0, 3.0], 0.5)
+    False
+    >>> has_close_elements([1.0, 2.8, 3.0, 4.0, 5.0, 2.0], 0.3)
+    True
+    """"""
+","for idx, elem in enumerate(numbers):
+    for idx2, elem2 in enumerate(numbers):
+        if idx != idx2:
+            distance = abs(elem - elem2)
+            if distance < threshold:
+                return True
+return False
+","def check(candidate):
+    assert candidate([1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.3) == True
+    assert candidate([1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.05) == False
+    assert candidate([1.0, 2.0, 5.9, 4.0, 5.0], 0.95) == True
+    assert candidate([1.0, 2.0, 5.9, 4.0, 5.0], 0.8) == False
+    assert candidate([1.0, 2.0, 3.0, 4.0, 5.0, 2.0], 0.1) == True
+    assert candidate([1.1, 2.2, 3.1, 4.1, 5.1], 1.0) == True
+    assert candidate([1.1, 2.2, 3.1, 4.1, 5.1], 0.5) == False
+
+"
+"from typing import List
+
+
+def separate_paren_groups(paren_string: str) -> List[str]:
+    """""" 이 함수의 입력은 둥글게 된 괄호의 여러 그룹을 포함하는 문자열입니다. 목표는 그 그룹을 별도의 문자열로 분리하고 그 목록을 반환하는 것입니다. 별도의 그룹은 균형 잡힌 (각 오픈 브레이크가 적절히 닫힌) 이며 서로 둥글지 않습니다. 입력 문자열의 공백을 무시합니다. 예:
+    >>> separate_paren_groups('( ) (( )) (( )( ))')
+    ['()', '(())', '(()())']
+    """"""
+","    result = []
+    current_string = []
+    current_depth = 0
+
+    for c in paren_string:
+        if c == '(':
+            current_depth += 1
+            current_string.append(c)
+        elif c == ')':
+            current_depth -= 1
+            current_string.append(c)
+
+            if current_depth == 0:
+                result.append(''.join(current_string))
+                current_string.clear()
+
+    return result
+","def check(candidate):
+    assert candidate('(()()) ((())) () ((())()())') == [
+        '(()())', '((()))', '()', '((())()())'
+    ]
+    assert candidate('() (()) ((())) (((())))') == [
+        '()', '(())', '((()))', '(((())))'
+    ]
+    assert candidate('(()(())((())))') == [
+        '(()(())((())))'
+    ]
+    assert candidate('( ) (( )) (( )( ))') == ['()', '(())', '(()())']
+"
+"
+
+def truncate_number(number: float) -> float:
+    """""" 양수 부동소수점 숫자를 주어, 그것은 정수 부분 (주기된 숫자보다 작은 최대 정수) 과 소수점 (항상 1보다 작은 나머지 부분) 으로 분해 될 수 있습니다. 숫자의 소수점을 반환합니다. 예:
+    >>> truncate_number(3.5)
+    0.5
+    """"""
+","    return number % 1.0
+","def check(candidate):
+    assert candidate(3.5) == 0.5
+    assert abs(candidate(1.33) - 0.33) < 1e-6
+    assert abs(candidate(123.456) - 0.456) < 1e-6
+"
+"from typing import List
+
+
+def below_zero(operations: List[int]) -> bool:
+    """""" 0 잔액으로 시작하는 은행 계좌의 입금 및 인출 작업 목록이 주어집니다. 귀하의 임무는 어떤 지점에서 계좌 잔액이 0 이하로 떨어지는지 감지하는 것입니다. 그리고 그 지점에서 함수는 True를 반환해야 합니다. 그렇지 않으면 False를 반환해야 합니다. 예:
+    >>> below_zero([1, 2, 3])
+    False
+    >>> below_zero([1, 2, -4, 5])
+    True
+    """"""
+","    balance = 0
+
+    for op in operations:
+        balance += op
+        if balance < 0:
+            return True
+
+    return False
+","def check(candidate):
+    assert candidate([]) == False
+    assert candidate([1, 2, -3, 1, 2, -3]) == False
+    assert candidate([1, 2, -4, 5, 6]) == True
+    assert candidate([1, -1, 2, -2, 5, -5, 4, -4]) == False
+    assert candidate([1, -1, 2, -2, 5, -5, 4, -5]) == True
+    assert candidate([1, -2, 2, -2, 5, -5, 4, -4]) == True
+"
+"from typing import List
+
+
+def mean_absolute_deviation(numbers: List[float]) -> float:
+    """""" 입력 숫자의 주어진 목록에 대해, 이 데이터 세트의 평균을 중심으로 평균 절대 오차를 계산한다. 평균 절대 오차는 각 요소와 중심점 (이 경우의 평균) 사이의 평균 절대 차이이다: MAD = 평균. x - x_mean. 예:
+    >>> mean_absolute_deviation([1.0, 2.0, 3.0, 4.0])
+    1.0
+    """"""
+","    mean = sum(numbers) / len(numbers)
+    return sum(abs(x - mean) for x in numbers) / len(numbers)
+","def check(candidate):
+    assert abs(candidate([1.0, 2.0, 3.0]) - 2.0/3.0) < 1e-6
+    assert abs(candidate([1.0, 2.0, 3.0, 4.0]) - 1.0) < 1e-6
+    assert abs(candidate([1.0, 2.0, 3.0, 4.0, 5.0]) - 6.0/5.0) < 1e-6
+
+"
+"from typing import List
+
+
+def intersperse(numbers: List[int], delimeter: int) -> List[int]:
+    """""" 입력 목록의 2개의 연속적인 요소들 사이에 '분계' 숫자를 삽입합니다.
+    >>> intersperse([], 4)
+    []
+    >>> intersperse([1, 2, 3], 4)
+    [1, 4, 2, 4, 3]
+    """"""
+","    if not numbers:
+        return []
+
+    result = []
+
+    for n in numbers[:-1]:
+        result.append(n)
+        result.append(delimeter)
+
+    result.append(numbers[-1])
+
+    return result
+","def check(candidate):
+    assert candidate([], 7) == []
+    assert candidate([5, 6, 3, 2], 8) == [5, 8, 6, 8, 3, 8, 2]
+    assert candidate([2, 2, 2], 2) == [2, 2, 2, 2, 2]
+"
+"from typing import List
+
+
+def parse_nested_parens(paren_string: str) -> List[int]:
+    """""" 이 함수의 입력은 공간으로 분리된 둥근 괄호를 위한 여러 그룹을 나타내는 문자열입니다. 각 그룹에 대해, 둥근 괄호의 가장 깊은 둥근 수준을 출력합니다. 예를 들어 (() (()) 는 최대 두 개의 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 둥근 
+
+    >>> parse_nested_parens('(()()) ((())) () ((())()())')
+    [2, 3, 1, 3]
+    """"""
+","    def parse_paren_group(s):
+        depth = 0
+        max_depth = 0
+        for c in s:
+            if c == '(':
+                depth += 1
+                max_depth = max(depth, max_depth)
+            else:
+                depth -= 1
+
+        return max_depth
+
+    return [parse_paren_group(x) for x in paren_string.split(' ') if x]
+","def check(candidate):
+    assert candidate('(()()) ((())) () ((())()())') == [2, 3, 1, 3]
+    assert candidate('() (()) ((())) (((())))') == [1, 2, 3, 4]
+    assert candidate('(()(())((())))') == [4]
+"
+"from typing import List
+
+
+def filter_by_substring(strings: List[str], substring: str) -> List[str]:
+    """""" 입력된 문자열 목록에서 주어진 하위 문자열을 포함하고 있는 문자열을 필터링합니다.
+    >>> filter_by_substring([], 'a')
+    []
+    >>> filter_by_substring(['abc', 'bacd', 'cde', 'array'], 'a')
+    ['abc', 'bacd', 'array']
+    """"""
+","    return [x for x in strings if substring in x]
+","def check(candidate):
+    assert candidate([], 'john') == []
+    assert candidate(['xxx', 'asd', 'xxy', 'john doe', 'xxxAAA', 'xxx'], 'xxx') == ['xxx', 'xxxAAA', 'xxx']
+    assert candidate(['xxx', 'asd', 'aaaxxy', 'john doe', 'xxxAAA', 'xxx'], 'xx') == ['xxx', 'aaaxxy', 'xxxAAA', 'xxx']
+    assert candidate(['grunt', 'trumpet', 'prune', 'gruesome'], 'run') == ['grunt', 'prune']
+"
+"from typing import List, Tuple
+
+
+def sum_product(numbers: List[int]) -> Tuple[int, int]:
+    """""" 주어진 정수 목록에 대해, 목록의 모든 정수의 합과 곱으로 구성된 튜플을 반환합니다. 빈 합은 0과 빈 곱은 1이어야 합니다.
+    >>> sum_product([])
+    (0, 1)
+    >>> sum_product([1, 2, 3, 4])
+    (10, 24)
+    """"""
+","    sum_value = 0
+    prod_value = 1
+
+    for n in numbers:
+        sum_value += n
+        prod_value *= n
+    return sum_value, prod_value
+","def check(candidate):
+    assert candidate([]) == (0, 1)
+    assert candidate([1, 1, 1]) == (3, 1)
+    assert candidate([100, 0]) == (100, 0)
+    assert candidate([3, 5, 7]) == (3 + 5 + 7, 3 * 5 * 7)
+    assert candidate([10]) == (10, 10)
+"
+"from typing import List, Tuple
+
+
+def rolling_max(numbers: List[int]) -> List[int]:
+    """""" 주어진 정수 목록에서, 순서에서 주어진 순간까지 발견된 굴러가는 최대 요소의 목록을 생성합니다.
+    >>> rolling_max([1, 2, 3, 2, 3, 4, 2])
+    [1, 2, 3, 3, 3, 4, 4]
+    """"""
+","    running_max = None
+    result = []
+
+    for n in numbers:
+        if running_max is None:
+            running_max = n
+        else:
+            running_max = max(running_max, n)
+
+        result.append(running_max)
+
+    return result
+","def check(candidate):
+    assert candidate([]) == []
+    assert candidate([1, 2, 3, 4]) == [1, 2, 3, 4]
+    assert candidate([4, 3, 2, 1]) == [4, 4, 4, 4]
+    assert candidate([3, 2, 3, 100, 3]) == [3, 3, 3, 100, 100]
+"
+"
+
+def is_palindrome(string: str) -> bool:
+    """""" 주어진 문자열이 팔린드로임인지 테스트 """"""
+    return string == string[::-1]
+
+
+def make_palindrome(string: str) -> str:
+    """""" Find the shortest palindrome that begins with a supplied string.
+    Algorithm idea is simple:
+    - Find the longest postfix of supplied string that is a palindrome.
+    - Append to the end of the string reverse of a string prefix that comes before the palindromic suffix.
+    >>> make_palindrome('')
+    ''
+    >>> make_palindrome('cat')
+    'catac'
+    >>> make_palindrome('cata')
+    'catac'
+    """"""
+","    if not string:
+        return ''
+
+    beginning_of_suffix = 0
+
+    while not is_palindrome(string[beginning_of_suffix:]):
+        beginning_of_suffix += 1
+
+    return string + string[:beginning_of_suffix][::-1]
+","def check(candidate):
+    assert candidate('') == ''
+    assert candidate('x') == 'x'
+    assert candidate('xyz') == 'xyzyx'
+    assert candidate('xyx') == 'xyx'
+    assert candidate('jerry') == 'jerryrrej'
+"
+"from typing import List
+
+
+def string_xor(a: str, b: str) -> str:
+    """""" 입력값은 1과 0으로만 구성된 두 개의 문자열 a와 b입니다. 이 입력값에 대해 바이너리 XOR을 수행하고 결과를 문자열로 반환합니다.
+    >>> string_xor('010', '110')
+    '100'
+    """"""
+","    def xor(i, j):
+        if i == j:
+            return '0'
+        else:
+            return '1'
+
+    return ''.join(xor(x, y) for x, y in zip(a, b))
+","def check(candidate):
+    assert candidate('111000', '101010') == '010010'
+    assert candidate('1', '1') == '0'
+    assert candidate('0101', '0000') == '0101'
+"
+"from typing import List, Optional
+
+
+def longest(strings: List[str]) -> Optional[str]:
+    """""" 문자열 목록에서 가장 긴 문자열을 반환합니다. 같은 길이의 여러 개의 문자열이 있는 경우 첫 번째 문자열을 반환합니다. 입력 목록이 비어 있는 경우 None를 반환합니다.
+    >>> longest([])
+
+    >>> longest(['a', 'b', 'c'])
+    'a'
+    >>> longest(['a', 'bb', 'ccc'])
+    'ccc'
+    """"""
+","    if not strings:
+        return None
+
+    maxlen = max(len(x) for x in strings)
+    for s in strings:
+        if len(s) == maxlen:
+            return s
+","def check(candidate):
+    assert candidate([]) == None
+    assert candidate(['x', 'y', 'z']) == 'x'
+    assert candidate(['x', 'yyy', 'zzzz', 'www', 'kkkk', 'abc']) == 'zzzz'
+"
+"
+
+def greatest_common_divisor(a: int, b: int) -> int:
+    """""" 두 정수 a와 b의 최대공분수를 반환합니다.
+    >>> greatest_common_divisor(3, 5)
+    1
+    >>> greatest_common_divisor(25, 15)
+    5
+    """"""
+","    while b:
+        a, b = b, a % b
+    return a
+","def check(candidate):
+    assert candidate(3, 7) == 1
+    assert candidate(10, 15) == 5
+    assert candidate(49, 14) == 7
+    assert candidate(144, 60) == 12
+"
+"from typing import List
+
+
+def all_prefixes(string: str) -> List[str]:
+    """""" 입력 문자열의 가장 짧은에서 가장 긴 모든 접두어들의 반환 목록
+    >>> all_prefixes('abc')
+    ['a', 'ab', 'abc']
+    """"""
+","    result = []
+
+    for i in range(len(string)):
+        result.append(string[:i+1])
+    return result
+","def check(candidate):
+    assert candidate('') == []
+    assert candidate('asdfgh') == ['a', 'as', 'asd', 'asdf', 'asdfg', 'asdfgh']
+    assert candidate('WWW') == ['W', 'WW', 'WWW']
+"
+"
+
+def string_sequence(n: int) -> str:
+    """""" 0부터 n까지의 공간으로 정의된 숫자를 포함하는 문자열을 반환합니다.
+    >>> string_sequence(0)
+    '0'
+    >>> string_sequence(5)
+    '0 1 2 3 4 5'
+    """"""
+","    return ' '.join([str(x) for x in range(n + 1)])
+","def check(candidate):
+    assert candidate(0) == '0'
+    assert candidate(3) == '0 1 2 3'
+    assert candidate(10) == '0 1 2 3 4 5 6 7 8 9 10'
+"
+"
+
+def count_distinct_characters(string: str) -> int:
+    """""" 문자열을 주어, 얼마나 많은 구별된 문자 (대문자와는 상관없이) 로 구성되어 있는지 알아보십시오.
+    >>> count_distinct_characters('xyzXYZ')
+    3
+    >>> count_distinct_characters('Jerry')
+    4
+    """"""
+","    return len(set(string.lower()))
+","def check(candidate):
+    assert candidate('') == 0
+    assert candidate('abcde') == 5
+    assert candidate('abcde' + 'cade' + 'CADE') == 5
+    assert candidate('aaaaAAAAaaaa') == 1
+    assert candidate('Jerry jERRY JeRRRY') == 5
+"
+"from typing import List
+
+
+def parse_music(music_string: str) -> List[int]:
+    """""" 이 함수 에 입력 하는 것 은 특별한 ASCII 형식 으로 음악 음을 나타내는 문자열 이다. 당신의 임무 는 이 문자열 을 분석 하고 각각 얼마나 많은 박동 을 지속 하지 않는 에 대응 하는 정수 의 목록 을 반환 하는 것 이다. 여기 는 전설 이다: 'o' - 전체 음, 4 박동 을 지속 'o"" - 반 음, 2 박동 을 지속 '"" - 4 박동, 1 박동 을 지속
+
+    >>> parse_music('o o| .| o| o| .| .| .| .| o o')
+    [4, 2, 1, 2, 2, 1, 1, 1, 1, 4, 4]
+    """"""
+","    note_map = {'o': 4, 'o|': 2, '.|': 1}
+    return [note_map[x] for x in music_string.split(' ') if x]
+","def check(candidate):
+    assert candidate('') == []
+    assert candidate('o o o o') == [4, 4, 4, 4]
+    assert candidate('.| .| .| .|') == [1, 1, 1, 1]
+    assert candidate('o| o| .| .| o o o o') == [2, 2, 1, 1, 4, 4, 4, 4]
+    assert candidate('o| .| o| .| o o| o o|') == [2, 1, 2, 1, 4, 2, 4, 2]
+"
+"
+
+def how_many_times(string: str, substring: str) -> int:
+    """""" 원래 문자열에서 주어진 하위 문자열이 몇 번 찾을 수 있는지 알아봅니다. 중복되는 경우를 계산합니다.
+    >>> how_many_times('', 'a')
+    0
+    >>> how_many_times('aaa', 'a')
+    3
+    >>> how_many_times('aaaa', 'aa')
+    3
+    """"""
+","    times = 0
+
+    for i in range(len(string) - len(substring) + 1):
+        if string[i:i+len(substring)] == substring:
+            times += 1
+
+    return times
+","def check(candidate):
+    assert candidate('', 'x') == 0
+    assert candidate('xyxyxyx', 'x') == 4
+    assert candidate('cacacacac', 'cac') == 4
+    assert candidate('john doe', 'john') == 1
+"
+"from typing import List
+
+
+def sort_numbers(numbers: str) -> str:
+    """""" 입력값은 '0'에서 '9'까지의 숫자들로 이루어진 공간으로 구분된 문자열입니다. 유효한 선택은 '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'입니다. 숫자가 가장 작은 것에서 가장 큰 것까지 정렬된 문자열을 반환합니다.
+    >>> sort_numbers('three one five')
+    'one three five'
+    """"""
+","    value_map = {
+        'zero': 0,
+        'one': 1,
+        'two': 2,
+        'three': 3,
+        'four': 4,
+        'five': 5,
+        'six': 6,
+        'seven': 7,
+        'eight': 8,
+        'nine': 9
+    }
+    return ' '.join(sorted([x for x in numbers.split(' ') if x], key=lambda x: value_map[x]))
+","def check(candidate):
+    assert candidate('') == ''
+    assert candidate('three') == 'three'
+    assert candidate('three five nine') == 'three five nine'
+    assert candidate('five zero four seven nine eight') == 'zero four five seven eight nine'
+    assert candidate('six five four three two one zero') == 'zero one two three four five six'
+"
+"from typing import List, Tuple
+
+
+def find_closest_elements(numbers: List[float]) -> Tuple[float, float]:
+    """""" 제공된 숫자 목록에서 (최소 두 개) 서로 가장 가까운 두 개를 선택하고 순서대로 반환합니다.
+    >>> find_closest_elements([1.0, 2.0, 3.0, 4.0, 5.0, 2.2])
+    (2.0, 2.2)
+    >>> find_closest_elements([1.0, 2.0, 3.0, 4.0, 5.0, 2.0])
+    (2.0, 2.0)
+    """"""
+","    closest_pair = None
+    distance = None
+
+    for idx, elem in enumerate(numbers):
+        for idx2, elem2 in enumerate(numbers):
+            if idx != idx2:
+                if distance is None:
+                    distance = abs(elem - elem2)
+                    closest_pair = tuple(sorted([elem, elem2]))
+                else:
+                    new_distance = abs(elem - elem2)
+                    if new_distance < distance:
+                        distance = new_distance
+                        closest_pair = tuple(sorted([elem, elem2]))
+
+    return closest_pair
+","def check(candidate):
+    assert candidate([1.0, 2.0, 3.9, 4.0, 5.0, 2.2]) == (3.9, 4.0)
+    assert candidate([1.0, 2.0, 5.9, 4.0, 5.0]) == (5.0, 5.9)
+    assert candidate([1.0, 2.0, 3.0, 4.0, 5.0, 2.2]) == (2.0, 2.2)
+    assert candidate([1.0, 2.0, 3.0, 4.0, 5.0, 2.0]) == (2.0, 2.0)
+    assert candidate([1.1, 2.2, 3.1, 4.1, 5.1]) == (2.2, 3.1)
+
+"
+"from typing import List
+
+
+def rescale_to_unit(numbers: List[float]) -> List[float]:
+    """""" 숫자 목록 (최소 두 개의 요소) 을 주어, 가장 작은 숫자가 0이 되고 가장 큰 숫자가 1이 되는 식으로, 그 목록에 선형 변환을 적용합니다.
+    >>> rescale_to_unit([1.0, 2.0, 3.0, 4.0, 5.0])
+    [0.0, 0.25, 0.5, 0.75, 1.0]
+    """"""
+","    min_number = min(numbers)
+    max_number = max(numbers)
+    return [(x - min_number) / (max_number - min_number) for x in numbers]
+","def check(candidate):
+    assert candidate([2.0, 49.9]) == [0.0, 1.0]
+    assert candidate([100.0, 49.9]) == [1.0, 0.0]
+    assert candidate([1.0, 2.0, 3.0, 4.0, 5.0]) == [0.0, 0.25, 0.5, 0.75, 1.0]
+    assert candidate([2.0, 1.0, 5.0, 3.0, 4.0]) == [0.25, 0.0, 1.0, 0.5, 0.75]
+    assert candidate([12.0, 11.0, 15.0, 13.0, 14.0]) == [0.25, 0.0, 1.0, 0.5, 0.75]
+"
+"from typing import List, Any
+
+
+def filter_integers(values: List[Any]) -> List[int]:
+    """""" 정수만을 위한 파이썬 값의 주어진 목록을 필터링합니다.
+    >>> filter_integers(['a', 3.14, 5])
+    [5]
+    >>> filter_integers([1, 2, 3, 'abc', {}, []])
+    [1, 2, 3]
+    """"""
+","    return [x for x in values if isinstance(x, int)]
+","def check(candidate):
+    assert candidate([]) == []
+    assert candidate([4, {}, [], 23.2, 9, 'adasd']) == [4, 9]
+    assert candidate([3, 'c', 3, 3, 'a', 'b']) == [3, 3, 3]
+"
+"
+
+def strlen(string: str) -> int:
+    """""" 주어진 문자열의 반환 길이
+    >>> strlen('')
+    0
+    >>> strlen('abc')
+    3
+    """"""
+","    return len(string)
+","def check(candidate):
+    assert candidate('') == 0
+    assert candidate('x') == 1
+    assert candidate('asdasnakj') == 9
+"
+"
+
+def largest_divisor(n: int) -> int:
+    """""" 주어진 숫자 n에 대해 n보다 작은, n을 균등하게 나누는 가장 큰 숫자를 찾아봅시다
+    >>> largest_divisor(15)
+    5
+    """"""
+","    for i in reversed(range(n)):
+        if n % i == 0:
+            return i
+","def check(candidate):
+    assert candidate(3) == 1
+    assert candidate(7) == 1
+    assert candidate(10) == 5
+    assert candidate(100) == 50
+    assert candidate(49) == 7
+"
+"from typing import List
+
+
+def factorize(n: int) -> List[int]:
+    """""" 주어진 정수의 소인수들의 리스트를 가장 작은 순서에서 가장 큰 순서로 반환한다. 각 인수는 인수분해에서 나타나는 수에 대응하는 수만큼 나열되어야 한다. 입력 번호는 모든 인수의 곱과 같아야 한다.
+    >>> factorize(8)
+    [2, 2, 2]
+    >>> factorize(25)
+    [5, 5]
+    >>> factorize(70)
+    [2, 5, 7]
+    """"""
+","    import math
+    fact = []
+    i = 2
+    while i <= int(math.sqrt(n) + 1):
+        if n % i == 0:
+            fact.append(i)
+            n //= i
+        else:
+            i += 1
+
+    if n > 1:
+        fact.append(n)
+    return fact
+","def check(candidate):
+    assert candidate(2) == [2]
+    assert candidate(4) == [2, 2]
+    assert candidate(8) == [2, 2, 2]
+    assert candidate(3 * 19) == [3, 19]
+    assert candidate(3 * 19 * 3 * 19) == [3, 3, 19, 19]
+    assert candidate(3 * 19 * 3 * 19 * 3 * 19) == [3, 3, 3, 19, 19, 19]
+    assert candidate(3 * 19 * 19 * 19) == [3, 19, 19, 19]
+    assert candidate(3 * 2 * 3) == [2, 3, 3]
+"
+"from typing import List
+
+
+def remove_duplicates(numbers: List[int]) -> List[int]:
+    """""" 정수 목록에서 한 번 이상 나타나는 모든 요소를 제거합니다. 입력과 같은 순서로 요소를 남겨 두십시오.
+    >>> remove_duplicates([1, 2, 3, 2, 4])
+    [1, 3, 4]
+    """"""
+","    import collections
+    c = collections.Counter(numbers)
+    return [n for n in numbers if c[n] <= 1]
+","def check(candidate):
+    assert candidate([]) == []
+    assert candidate([1, 2, 3, 4]) == [1, 2, 3, 4]
+    assert candidate([1, 2, 3, 2, 4, 3, 5]) == [1, 4, 5]
+"
+"
+
+def flip_case(string: str) -> str:
+    """""" 주어진 문자열에 대해 소문자를 대문자로, 대문자를 소문자로 바꿔주세요.
+    >>> flip_case('Hello')
+    'hELLO'
+    """"""
+","    return string.swapcase()
+","def check(candidate):
+    assert candidate('') == ''
+    assert candidate('Hello!') == 'hELLO!'
+    assert candidate('These violent delights have violent ends') == 'tHESE VIOLENT DELIGHTS HAVE VIOLENT ENDS'
+"
+"from typing import List
+
+
+def concatenate(strings: List[str]) -> str:
+    """""" 문자열 목록을 하나의 문자열로 연결합니다.
+    >>> concatenate([])
+    ''
+    >>> concatenate(['a', 'b', 'c'])
+    'abc'
+    """"""
+","    return ''.join(strings)
+","def check(candidate):
+    assert candidate([]) == ''
+    assert candidate(['x', 'y', 'z']) == 'xyz'
+    assert candidate(['x', 'y', 'z', 'w', 'k']) == 'xyzwk'
+"
+"from typing import List
+
+
+def filter_by_prefix(strings: List[str], prefix: str) -> List[str]:
+    """""" 입력된 문자열 목록에서 주어진 접두사로 시작하는 문자열을 필터링합니다.
+    >>> filter_by_prefix([], 'a')
+    []
+    >>> filter_by_prefix(['abc', 'bcd', 'cde', 'array'], 'a')
+    ['abc', 'array']
+    """"""
+","    return [x for x in strings if x.startswith(prefix)]
+","def check(candidate):
+    assert candidate([], 'john') == []
+    assert candidate(['xxx', 'asd', 'xxy', 'john doe', 'xxxAAA', 'xxx'], 'xxx') == ['xxx', 'xxxAAA', 'xxx']
+"
+"
+
+def get_positive(l: list):
+    """"""리스트의 양수만 반환합니다.
+    >>> get_positive([-1, 2, -4, 5, 6])
+    [2, 5, 6]
+    >>> get_positive([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])
+    [5, 3, 2, 3, 9, 123, 1]
+    """"""
+","    return [e for e in l if e > 0]
+","def check(candidate):
+    assert candidate([-1, -2, 4, 5, 6]) == [4, 5, 6]
+    assert candidate([5, 3, -5, 2, 3, 3, 9, 0, 123, 1, -10]) == [5, 3, 2, 3, 3, 9, 123, 1]
+    assert candidate([-1, -2]) == []
+    assert candidate([]) == []
+
+"
+"
+
+def is_prime(n):
+    """"""주어진 숫자가 소수라면 true를 반환하고, 그렇지 않으면 false를 반환합니다.
+    >>> is_prime(6)
+    False
+    >>> is_prime(101)
+    True
+    >>> is_prime(11)
+    True
+    >>> is_prime(13441)
+    True
+    >>> is_prime(61)
+    True
+    >>> is_prime(4)
+    False
+    >>> is_prime(1)
+    False
+    """"""
+","    if n < 2:
+        return False
+    for k in range(2, n - 1):
+        if n % k == 0:
+            return False
+    return True
+","def check(candidate):
+    assert candidate(6) == False
+    assert candidate(101) == True
+    assert candidate(11) == True
+    assert candidate(13441) == True
+    assert candidate(61) == True
+    assert candidate(4) == False
+    assert candidate(1) == False
+    assert candidate(5) == True
+    assert candidate(11) == True
+    assert candidate(17) == True
+    assert candidate(5 * 17) == False
+    assert candidate(11 * 7) == False
+    assert candidate(13441 * 19) == False
+
+"
+"import math
+
+
+def poly(xs: list, x: float):
+    """"""
+    x의 계수 xs를 가진 다항식을 평가합니다. xs[0] + xs[1] * x + xs[1] * x^2 +.... xs[n] * x^n
+    """"""
+    return sum([coeff * math.pow(x, i) for i, coeff in enumerate(xs)])
+
+
+def find_zero(xs: list):
+    """""" xs are coefficients of a polynomial.
+    find_zero find x such that poly(x) = 0.
+    find_zero returns only only zero point, even if there are many.
+    Moreover, find_zero only takes list xs having even number of coefficients
+    and largest non zero coefficient as it guarantees
+    a solution.
+    >>> round(find_zero([1, 2]), 2) # f(x) = 1 + 2x
+    -0.5
+    >>> round(find_zero([-6, 11, -6, 1]), 2) # (x - 1) * (x - 2) * (x - 3) = -6 + 11x - 6x^2 + x^3
+    1.0
+    """"""
+","    begin, end = -1., 1.
+    while poly(xs, begin) * poly(xs, end) > 0:
+        begin *= 2.0
+        end *= 2.0
+    while end - begin > 1e-10:
+        center = (begin + end) / 2.0
+        if poly(xs, center) * poly(xs, begin) > 0:
+            begin = center
+        else:
+            end = center
+    return begin
+","def check(candidate):
+    import math
+    import random
+    rng = random.Random(42)
+    import copy
+    for _ in range(100):
+        ncoeff = 2 * rng.randint(1, 4)
+        coeffs = []
+        for _ in range(ncoeff):
+            coeff = rng.randint(-10, 10)
+            if coeff == 0:
+                coeff = 1
+            coeffs.append(coeff)
+        solution = candidate(copy.deepcopy(coeffs))
+        assert math.fabs(poly(coeffs, solution)) < 1e-4
+
+"
+"
+
+def sort_third(l: list):
+    """"""이 함수는 리스트 l를 가져다가 리스트 l'를 반환합니다. 즉, l'는 3으로 나눌 수 없는 지수에서 l와 동일하며, 3으로 나눌 수 있는 지수에서의 값은 l의 대응 지수들의 값과 같지만 정렬됩니다.
+    >>> sort_third([1, 2, 3])
+    [1, 2, 3]
+    >>> sort_third([5, 6, 3, 4, 8, 9, 2])
+    [2, 6, 3, 4, 8, 9, 5]
+    """"""
+","    l = list(l)
+    l[::3] = sorted(l[::3])
+    return l
+","def check(candidate):
+    assert tuple(candidate([1, 2, 3])) == tuple(sort_third([1, 2, 3]))
+    assert tuple(candidate([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])) == tuple(sort_third([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10]))
+    assert tuple(candidate([5, 8, -12, 4, 23, 2, 3, 11, 12, -10])) == tuple(sort_third([5, 8, -12, 4, 23, 2, 3, 11, 12, -10]))
+    assert tuple(candidate([5, 6, 3, 4, 8, 9, 2])) == tuple([2, 6, 3, 4, 8, 9, 5])
+    assert tuple(candidate([5, 8, 3, 4, 6, 9, 2])) == tuple([2, 8, 3, 4, 6, 9, 5])
+    assert tuple(candidate([5, 6, 9, 4, 8, 3, 2])) == tuple([2, 6, 9, 4, 8, 3, 5])
+    assert tuple(candidate([5, 6, 3, 4, 8, 9, 2, 1])) == tuple([2, 6, 3, 4, 8, 9, 5, 1])
+
+"
+"
+
+def unique(l: list):
+    """"""목록에서 정렬된 고유 요소를 반환합니다.
+    >>> unique([5, 3, 5, 2, 3, 3, 9, 0, 123])
+    [0, 2, 3, 5, 9, 123]
+    """"""
+","    return sorted(list(set(l)))
+","def check(candidate):
+    assert candidate([5, 3, 5, 2, 3, 3, 9, 0, 123]) == [0, 2, 3, 5, 9, 123]
+
+"
+"
+
+def max_element(l: list):
+    """"""리스트에서 최대 요소를 반환합니다.
+    >>> max_element([1, 2, 3])
+    3
+    >>> max_element([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])
+    123
+    """"""
+","    m = l[0]
+    for e in l:
+        if e > m:
+            m = e
+    return m
+","def check(candidate):
+    assert candidate([1, 2, 3]) == 3
+    assert candidate([5, 3, -5, 2, -3, 3, 9, 0, 124, 1, -10]) == 124
+"
+"
+
+def fizz_buzz(n: int):
+    """"""11 또는 13로 나누어지는 n보다 작은 정수에서 7이라는 숫자가 나타나는 횟수를 반환합니다.
+    >>> fizz_buzz(50)
+    0
+    >>> fizz_buzz(78)
+    2
+    >>> fizz_buzz(79)
+    3
+    """"""
+","    ns = []
+    for i in range(n):
+        if i % 11 == 0 or i % 13 == 0:
+            ns.append(i)
+    s = ''.join(list(map(str, ns)))
+    ans = 0
+    for c in s:
+        ans += (c == '7')
+    return ans
+","def check(candidate):
+    assert candidate(50) == 0
+    assert candidate(78) == 2
+    assert candidate(79) == 3
+    assert candidate(100) == 3
+    assert candidate(200) == 6
+    assert candidate(4000) == 192
+    assert candidate(10000) == 639
+    assert candidate(100000) == 8026
+
+"
+"
+
+def sort_even(l: list):
+    """"""이 함수는 리스트 l를 가져다가 리스트 l'를 반환합니다. 즉, l'는 홀수 지수에서 l와 동일하며, 짝수 지수에서의 값은 l의 짝수 지수 값과 같지만 정렬됩니다.
+    >>> sort_even([1, 2, 3])
+    [1, 2, 3]
+    >>> sort_even([5, 6, 3, 4])
+    [3, 6, 5, 4]
+    """"""
+","    evens = l[::2]
+    odds = l[1::2]
+    evens.sort()
+    ans = []
+    for e, o in zip(evens, odds):
+        ans.extend([e, o])
+    if len(evens) > len(odds):
+        ans.append(evens[-1])
+    return ans
+","def check(candidate):
+    assert tuple(candidate([1, 2, 3])) == tuple([1, 2, 3])
+    assert tuple(candidate([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])) == tuple([-10, 3, -5, 2, -3, 3, 5, 0, 9, 1, 123])
+    assert tuple(candidate([5, 8, -12, 4, 23, 2, 3, 11, 12, -10])) == tuple([-12, 8, 3, 4, 5, 2, 12, 11, 23, -10])
+
+"
+"
+
+def encode_cyclic(s: str):
+    """"""
+    3개의 문자들로 이루어진 사이클링 그룹으로 코딩된 문자열을 반환합니다.
+    """"""
+    # split string to groups. Each of length 3.
+    groups = [s[(3 * i):min((3 * i + 3), len(s))] for i in range((len(s) + 2) // 3)]
+    # cycle elements in each group. Unless group has fewer elements than 3.
+    groups = [(group[1:] + group[0]) if len(group) == 3 else group for group in groups]
+    return """".join(groups)
+
+
+def decode_cyclic(s: str):
+    """"""
+    takes as input string encoded with encode_cyclic function. Returns decoded string.
+    """"""
+","    return encode_cyclic(encode_cyclic(s))
+","def check(candidate):
+    from random import randint, choice
+    import string
+
+    letters = string.ascii_lowercase
+    for _ in range(100):
+        str = ''.join(choice(letters) for i in range(randint(10, 20)))
+        encoded_str = encode_cyclic(str)
+        assert candidate(encoded_str) == str
+
+"
+"
+
+def prime_fib(n: int):
+    """"""
+    prime_fib는 n번째 숫자를 반환합니다. 이는 피보나치 수이고 또한 소수입니다.
+    >>> prime_fib(1)
+    2
+    >>> prime_fib(2)
+    3
+    >>> prime_fib(3)
+    5
+    >>> prime_fib(4)
+    13
+    >>> prime_fib(5)
+    89
+    """"""
+","    import math
+
+    def is_prime(p):
+        if p < 2:
+            return False
+        for k in range(2, min(int(math.sqrt(p)) + 1, p - 1)):
+            if p % k == 0:
+                return False
+        return True
+    f = [0, 1]
+    while True:
+        f.append(f[-1] + f[-2])
+        if is_prime(f[-1]):
+            n -= 1
+        if n == 0:
+            return f[-1]
+","def check(candidate):
+    assert candidate(1) == 2
+    assert candidate(2) == 3
+    assert candidate(3) == 5
+    assert candidate(4) == 13
+    assert candidate(5) == 89
+    assert candidate(6) == 233
+    assert candidate(7) == 1597
+    assert candidate(8) == 28657
+    assert candidate(9) == 514229
+    assert candidate(10) == 433494437
+
+"
+"
+
+def triples_sum_to_zero(l: list):
+    """"""
+    triples_sum_to_zero는 정수의 목록을 입력으로 가져갑니다. 목록에 정수 합이 0인 세 개의 다른 요소가 있으면 True를 반환하고, 그렇지 않으면 False를 반환합니다.
+
+    >>> triples_sum_to_zero([1, 3, 5, 0])
+    False
+    >>> triples_sum_to_zero([1, 3, -2, 1])
+    True
+    >>> triples_sum_to_zero([1, 2, 3, 7])
+    False
+    >>> triples_sum_to_zero([2, 4, -5, 3, 9, 7])
+    True
+    >>> triples_sum_to_zero([1])
+    False
+    """"""
+","    for i in range(len(l)):
+        for j in range(i + 1, len(l)):
+            for k in range(j + 1, len(l)):
+                if l[i] + l[j] + l[k] == 0:
+                    return True
+    return False
+","def check(candidate):
+    assert candidate([1, 3, 5, 0]) == False
+    assert candidate([1, 3, 5, -1]) == False
+    assert candidate([1, 3, -2, 1]) == True
+    assert candidate([1, 2, 3, 7]) == False
+    assert candidate([1, 2, 5, 7]) == False
+    assert candidate([2, 4, -5, 3, 9, 7]) == True
+    assert candidate([1]) == False
+    assert candidate([1, 3, 5, -100]) == False
+    assert candidate([100, 3, 5, -100]) == False
+
+"
+"
+
+def car_race_collision(n: int):
+    """"""
+    무한히 긴 선으로 완벽하게 직선으로 이루어진 도로를 상상해 보세요. n개의 차가 왼쪽에서 오른쪽으로 운전하고 있고, 동시에 다른 세트의 n개의 차가 오른쪽에서 왼쪽으로 운전하고 있습니다. 두 세트의 차가 서로 매우 멀리 떨어져서 시작됩니다. 모든 차가 같은 속도로 움직입니다. 왼쪽에서 오른쪽으로 움직이는 차가 오른쪽에서 왼쪽으로 움직이는 차를 부딪히면 두 차가 충돌한다고 합니다. 그러나, 자동차는 무한히 견고하고 강합니다. 결과적으로, 그들은 충돌하지 않은 것처럼 궤도를 계속 움직입니다. 이 함수는 그러한 충돌의 수를 출력합니다.
+    """"""
+","    return n**2
+","def check(candidate):
+    assert candidate(2) == 4
+    assert candidate(3) == 9
+    assert candidate(4) == 16
+    assert candidate(8) == 64
+    assert candidate(10) == 100
+
+"
+"
+
+def incr_list(l: list):
+    """"""1으로 증가된 요소를 가진 반환 목록
+    >>> incr_list([1, 2, 3])
+    [2, 3, 4]
+    >>> incr_list([5, 3, 5, 2, 3, 3, 9, 0, 123])
+    [6, 4, 6, 3, 4, 4, 10, 1, 124]
+    """"""
+","    return [(e + 1) for e in l]
+","def check(candidate):
+    assert candidate([]) == []
+    assert candidate([3, 2, 1]) == [4, 3, 2]
+    assert candidate([5, 2, 5, 2, 3, 3, 9, 0, 123]) == [6, 3, 6, 3, 4, 4, 10, 1, 124]
+
+"
+"
+
+def pairs_sum_to_zero(l):
+    """"""
+    pairs_sum_to_zero는 정수의 목록을 입력으로 가져갑니다. 목록에 정수 합이 0인 두 개의 다른 요소가 있으면 True를 반환하고, 그렇지 않으면 False를 반환합니다.
+    >>> pairs_sum_to_zero([1, 3, 5, 0])
+    False
+    >>> pairs_sum_to_zero([1, 3, -2, 1])
+    False
+    >>> pairs_sum_to_zero([1, 2, 3, 7])
+    False
+    >>> pairs_sum_to_zero([2, 4, -5, 3, 5, 7])
+    True
+    >>> pairs_sum_to_zero([1])
+    False
+    """"""
+","    for i, l1 in enumerate(l):
+        for j in range(i + 1, len(l)):
+            if l1 + l[j] == 0:
+                return True
+    return False
+","def check(candidate):
+    assert candidate([1, 3, 5, 0]) == False
+    assert candidate([1, 3, -2, 1]) == False
+    assert candidate([1, 2, 3, 7]) == False
+    assert candidate([2, 4, -5, 3, 5, 7]) == True
+    assert candidate([1]) == False
+
+    assert candidate([-3, 9, -1, 3, 2, 30]) == True
+    assert candidate([-3, 9, -1, 3, 2, 31]) == True
+    assert candidate([-3, 9, -1, 4, 2, 30]) == False
+    assert candidate([-3, 9, -1, 4, 2, 31]) == False
+
+"
+"
+
+def change_base(x: int, base: int):
+    """"""입력 번호 x의 숫자 기반을 기본으로 변경합니다. 변환 후 문자열 표현을 반환합니다. 기본 번호는 10 미만입니다.
+    >>> change_base(8, 3)
+    '22'
+    >>> change_base(8, 2)
+    '1000'
+    >>> change_base(7, 2)
+    '111'
+    """"""
+","    ret = """"
+    while x > 0:
+        ret = str(x % base) + ret
+        x //= base
+    return ret
+","def check(candidate):
+    assert candidate(8, 3) == ""22""
+    assert candidate(9, 3) == ""100""
+    assert candidate(234, 2) == ""11101010""
+    assert candidate(16, 2) == ""10000""
+    assert candidate(8, 2) == ""1000""
+    assert candidate(7, 2) == ""111""
+    for x in range(2, 8):
+        assert candidate(x, x + 1) == str(x)
+
+"
+"
+
+def triangle_area(a, h):
+    """"""삼각형의 변의 길이를 보고, 높은 반환 영역을 보고
+    >>> triangle_area(5, 3)
+    7.5
+    """"""
+","    return a * h / 2.0
+","def check(candidate):
+    assert candidate(5, 3) == 7.5
+    assert candidate(2, 2) == 2.0
+    assert candidate(10, 8) == 40.0
+
+"
+"
+
+def fib4(n: int):
+    """"""Fib4 수열은 다음과 같이 정의되는 Fibbonacci 수열과 유사한 수열입니다. fib4(0) -> 0 fib4(1) -> 0 fib4(2) -> 2 fib4(3) -> 0 fib4(n) -> fib4(n-1) + fib4(n-2) + fib4(n-3) + fib4(n-4). fib4 수열의 n번째 요소를 효율적으로 계산하는 함수를 작성하십시오. 재귀를 사용하지 마십시오.
+    >>> fib4(5)
+    4
+    >>> fib4(6)
+    8
+    >>> fib4(7)
+    14
+    """"""
+","    results = [0, 0, 2, 0]
+    if n < 4:
+        return results[n]
+
+    for _ in range(4, n + 1):
+        results.append(results[-1] + results[-2] + results[-3] + results[-4])
+        results.pop(0)
+
+    return results[-1]
+","def check(candidate):
+    assert candidate(5) == 4
+    assert candidate(8) == 28
+    assert candidate(10) == 104
+    assert candidate(12) == 386
+
+"
+"
+
+def median(l: list):
+    """"""리스트 l의 원소들의 중간값을 반환한다.
+    >>> median([3, 1, 2, 4, 5])
+    3
+    >>> median([-10, 4, 6, 1000, 10, 20])
+    15.0
+    """"""
+","    l = sorted(l)
+    if len(l) % 2 == 1:
+        return l[len(l) // 2]
+    else:
+        return (l[len(l) // 2 - 1] + l[len(l) // 2]) / 2.0
+","def check(candidate):
+    assert candidate([3, 1, 2, 4, 5]) == 3
+    assert candidate([-10, 4, 6, 1000, 10, 20]) == 8.0
+    assert candidate([5]) == 5
+    assert candidate([6, 5]) == 5.5
+    assert candidate([8, 1, 3, 9, 9, 2, 7]) == 7 
+
+"
+"
+
+def is_palindrome(text: str):
+    """"""
+    주어진 문자열이 팔린드로임인지 확인한다.
+    >>> is_palindrome('')
+    True
+    >>> is_palindrome('aba')
+    True
+    >>> is_palindrome('aaaaa')
+    True
+    >>> is_palindrome('zbcd')
+    False
+    """"""
+","    for i in range(len(text)):
+        if text[i] != text[len(text) - 1 - i]:
+            return False
+    return True
+","def check(candidate):
+    assert candidate('') == True
+    assert candidate('aba') == True
+    assert candidate('aaaaa') == True
+    assert candidate('zbcd') == False
+    assert candidate('xywyx') == True
+    assert candidate('xywyz') == False
+    assert candidate('xywzx') == False
+
+"
+"
+
+def modp(n: int, p: int):
+    """"""2^n modulo p를 반환한다 (수적값을 알아두어라).
+    >>> modp(3, 5)
+    3
+    >>> modp(1101, 101)
+    2
+    >>> modp(0, 101)
+    1
+    >>> modp(3, 11)
+    8
+    >>> modp(100, 101)
+    1
+    """"""
+","    ret = 1
+    for i in range(n):
+        ret = (2 * ret) % p
+    return ret
+","def check(candidate):
+    assert candidate(3, 5) == 3
+    assert candidate(1101, 101) == 2
+    assert candidate(0, 101) == 1
+    assert candidate(3, 11) == 8
+    assert candidate(100, 101) == 1
+    assert candidate(30, 5) == 4
+    assert candidate(31, 5) == 3
+
+"
+"
+
+def encode_shift(s: str):
+    """"""
+    모든 문자 5로 이동하여 코딩된 문자열을 반환합니다.
+    """"""
+    return """".join([chr(((ord(ch) + 5 - ord(""a"")) % 26) + ord(""a"")) for ch in s])
+
+
+def decode_shift(s: str):
+    """"""
+    takes as input string encoded with encode_shift function. Returns decoded string.
+    """"""
+","    return """".join([chr(((ord(ch) - 5 - ord(""a"")) % 26) + ord(""a"")) for ch in s])
+","def check(candidate):
+    from random import randint, choice
+    import copy
+    import string
+
+    letters = string.ascii_lowercase
+    for _ in range(100):
+        str = ''.join(choice(letters) for i in range(randint(10, 20)))
+        encoded_str = encode_shift(str)
+        assert candidate(copy.deepcopy(encoded_str)) == str
+
+"
+"
+
+def remove_vowels(text):
+    """"""
+    remove_vowels는 문자열을 가져다가 자음 없이 문자열을 반환하는 함수입니다.
+    >>> remove_vowels('')
+    ''
+    >>> remove_vowels(""abcdef\nghijklm"")
+    'bcdf\nghjklm'
+    >>> remove_vowels('abcdef')
+    'bcdf'
+    >>> remove_vowels('aaaaa')
+    ''
+    >>> remove_vowels('aaBAA')
+    'B'
+    >>> remove_vowels('zbcd')
+    'zbcd'
+    """"""
+","    return """".join([s for s in text if s.lower() not in [""a"", ""e"", ""i"", ""o"", ""u""]])
+","def check(candidate):
+    assert candidate('') == ''
+    assert candidate(""abcdef\nghijklm"") == 'bcdf\nghjklm'
+    assert candidate('fedcba') == 'fdcb'
+    assert candidate('eeeee') == ''
+    assert candidate('acBAA') == 'cB'
+    assert candidate('EcBOO') == 'cB'
+    assert candidate('ybcd') == 'ybcd'
+
+"
+"
+
+def below_threshold(l: list, t: int):
+    """"""리스트 l의 모든 숫자가 임계 t 이하인 경우 True를 반환합니다.
+    >>> below_threshold([1, 2, 4, 10], 100)
+    True
+    >>> below_threshold([1, 20, 4, 10], 5)
+    False
+    """"""
+","    for e in l:
+        if e >= t:
+            return False
+    return True
+","def check(candidate):
+    assert candidate([1, 2, 4, 10], 100)
+    assert not candidate([1, 20, 4, 10], 5)
+    assert candidate([1, 20, 4, 10], 21)
+    assert candidate([1, 20, 4, 10], 22)
+    assert candidate([1, 8, 4, 10], 11)
+    assert not candidate([1, 8, 4, 10], 10)
+
+"
+"
+
+def add(x: int, y: int):
+    """"""두 개의 숫자를 더해 x와 y
+    >>> add(2, 3)
+    5
+    >>> add(5, 7)
+    12
+    """"""
+","    return x + y
+","def check(candidate):
+    import random
+
+    assert candidate(0, 1) == 1
+    assert candidate(1, 0) == 1
+    assert candidate(2, 3) == 5
+    assert candidate(5, 7) == 12
+    assert candidate(7, 5) == 12
+
+    for i in range(100):
+        x, y = random.randint(0, 1000), random.randint(0, 1000)
+        assert candidate(x, y) == x + y
+
+"
+"
+
+def same_chars(s0: str, s1: str):
+    """"""
+    두 단어의 문자들이 같는지 확인해 보세요.
+    >>> same_chars('eabcdzzzz', 'dddzzzzzzzddeddabc')
+    True
+    >>> same_chars('abcd', 'dddddddabc')
+    True
+    >>> same_chars('dddddddabc', 'abcd')
+    True
+    >>> same_chars('eabcd', 'dddddddabc')
+    False
+    >>> same_chars('abcd', 'dddddddabce')
+    False
+    >>> same_chars('eabcdzzzz', 'dddzzzzzzzddddabc')
+    False
+    """"""
+","    return set(s0) == set(s1)
+","def check(candidate):
+    assert candidate('eabcdzzzz', 'dddzzzzzzzddeddabc') == True
+    assert candidate('abcd', 'dddddddabc') == True
+    assert candidate('dddddddabc', 'abcd') == True
+    assert candidate('eabcd', 'dddddddabc') == False
+    assert candidate('abcd', 'dddddddabcf') == False
+    assert candidate('eabcdzzzz', 'dddzzzzzzzddddabc') == False
+    assert candidate('aabb', 'aaccc') == False
+
+"
+"
+
+def fib(n: int):
+    """"""n번째 피보나치 수를 반환합니다.
+    >>> fib(10)
+    55
+    >>> fib(1)
+    1
+    >>> fib(8)
+    21
+    """"""
+","    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+    return fib(n - 1) + fib(n - 2)
+","def check(candidate):
+    assert candidate(10) == 55
+    assert candidate(1) == 1
+    assert candidate(8) == 21
+    assert candidate(11) == 89
+    assert candidate(12) == 144
+
+"
+"
+
+def correct_bracketing(brackets: str):
+    """""" brackets는 ""<""와 "">""의 문자열입니다. 모든 개시 브래킷이 해당하는 닫기 브래킷을 가지고 있다면 True를 반환합니다.
+
+    >>> correct_bracketing(""<"")
+    False
+    >>> correct_bracketing(""<>"")
+    True
+    >>> correct_bracketing(""<<><>>"")
+    True
+    >>> correct_bracketing(""><<>"")
+    False
+    """"""
+","    depth = 0
+    for b in brackets:
+        if b == ""<"":
+            depth += 1
+        else:
+            depth -= 1
+        if depth < 0:
+            return False
+    return depth == 0
+","def check(candidate):
+    assert candidate(""<>"")
+    assert candidate(""<<><>>"")
+    assert candidate(""<><><<><>><>"")
+    assert candidate(""<><><<<><><>><>><<><><<>>>"")
+    assert not candidate(""<<<><>>>>"")
+    assert not candidate(""><<>"")
+    assert not candidate(""<"")
+    assert not candidate(""<<<<"")
+    assert not candidate("">"")
+    assert not candidate(""<<>"")
+    assert not candidate(""<><><<><>><>><<>"")
+    assert not candidate(""<><><<><>><>>><>"")
+
+"
+"
+
+def monotonic(l: list):
+    """"""리턴 트루는 리스트 요소가 단조롭게 증가하거나 감소하는 것입니다.
+    >>> monotonic([1, 2, 4, 20])
+    True
+    >>> monotonic([1, 20, 4, 10])
+    False
+    >>> monotonic([4, 1, 0, -10])
+    True
+    """"""
+","    if l == sorted(l) or l == sorted(l, reverse=True):
+        return True
+    return False
+","def check(candidate):
+    assert candidate([1, 2, 4, 10]) == True
+    assert candidate([1, 2, 4, 20]) == True
+    assert candidate([1, 20, 4, 10]) == False
+    assert candidate([4, 1, 0, -10]) == True
+    assert candidate([4, 1, 1, 0]) == True
+    assert candidate([1, 2, 3, 2, 5, 60]) == False
+    assert candidate([1, 2, 3, 4, 5, 60]) == True
+    assert candidate([9, 9, 9, 9]) == True
+
+"
+"
+
+def common(l1: list, l2: list):
+    """"""두 개의 리스트에 대해 정렬된 고유한 공통 요소를 반환합니다.
+    >>> common([1, 4, 3, 34, 653, 2, 5], [5, 7, 1, 5, 9, 653, 121])
+    [1, 5, 653]
+    >>> common([5, 3, 2, 8], [3, 2])
+    [2, 3]
+
+    """"""
+","    ret = set()
+    for e1 in l1:
+        for e2 in l2:
+            if e1 == e2:
+                ret.add(e1)
+    return sorted(list(ret))
+","def check(candidate):
+    assert candidate([1, 4, 3, 34, 653, 2, 5], [5, 7, 1, 5, 9, 653, 121]) == [1, 5, 653]
+    assert candidate([5, 3, 2, 8], [3, 2]) == [2, 3]
+    assert candidate([4, 3, 2, 8], [3, 2, 4]) == [2, 3, 4]
+    assert candidate([4, 3, 2, 8], []) == []
+
+"
+"
+
+def largest_prime_factor(n: int):
+    """"""n의 최대 소인수를 반환합니다. n > 1이 소수가 아니라고 가정합니다.
+    >>> largest_prime_factor(13195)
+    29
+    >>> largest_prime_factor(2048)
+    2
+    """"""
+","    def is_prime(k):
+        if k < 2:
+            return False
+        for i in range(2, k - 1):
+            if k % i == 0:
+                return False
+        return True
+    largest = 1
+    for j in range(2, n + 1):
+        if n % j == 0 and is_prime(j):
+            largest = max(largest, j)
+    return largest
+","def check(candidate):
+    assert candidate(15) == 5
+    assert candidate(27) == 3
+    assert candidate(63) == 7
+    assert candidate(330) == 11
+    assert candidate(13195) == 29
+
+"
+"
+
+def sum_to_n(n: int):
+    """"""sum_to_n는 1에서 n까지의 숫자를 합하는 함수입니다.
+    >>> sum_to_n(30)
+    465
+    >>> sum_to_n(100)
+    5050
+    >>> sum_to_n(5)
+    15
+    >>> sum_to_n(10)
+    55
+    >>> sum_to_n(1)
+    1
+    """"""
+","    return sum(range(n + 1))
+","def check(candidate):
+    assert candidate(1) == 1
+    assert candidate(6) == 21
+    assert candidate(11) == 66
+    assert candidate(30) == 465
+    assert candidate(100) == 5050
+
+"
+"
+
+def correct_bracketing(brackets: str):
+    """""" brackets는 ""(""와 """") 의 문자열입니다. 모든 개시 브래킷이 해당하는 닫기 브래킷을 가지고 있다면 True를 반환합니다.
+
+    >>> correct_bracketing(""("")
+    False
+    >>> correct_bracketing(""()"")
+    True
+    >>> correct_bracketing(""(()())"")
+    True
+    >>> correct_bracketing("")(()"")
+    False
+    """"""
+","    depth = 0
+    for b in brackets:
+        if b == ""("":
+            depth += 1
+        else:
+            depth -= 1
+        if depth < 0:
+            return False
+    return depth == 0
+","def check(candidate):
+    assert candidate(""()"")
+    assert candidate(""(()())"")
+    assert candidate(""()()(()())()"")
+    assert candidate(""()()((()()())())(()()(()))"")
+    assert not candidate(""((()())))"")
+    assert not candidate("")(()"")
+    assert not candidate(""("")
+    assert not candidate(""(((("")
+    assert not candidate("")"")
+    assert not candidate(""(()"")
+    assert not candidate(""()()(()())())(()"")
+    assert not candidate(""()()(()())()))()"")
+
+"
+"
+
+def derivative(xs: list):
+    """""" xs는 다항식의 계수를 나타냅니다. xs[0] + xs[1] * x + xs[2] * x^2 +.... 이 다항식의 계수를 같은 형태로 반환합니다.
+    >>> derivative([3, 1, 2, 4, 5])
+    [1, 4, 12, 20]
+    >>> derivative([1, 2, 3])
+    [2, 6]
+    """"""
+","    return [(i * x) for i, x in enumerate(xs)][1:]
+","def check(candidate):
+    assert candidate([3, 1, 2, 4, 5]) == [1, 4, 12, 20]
+    assert candidate([1, 2, 3]) == [2, 6]
+    assert candidate([3, 2, 1]) == [2, 2]
+    assert candidate([3, 2, 1, 0, 4]) == [2, 2, 0, 16]
+    assert candidate([1]) == []
+
+"
+"
+
+def fibfib(n: int):
+    """"""피브피브 수열은 피브보나치 수열과 유사한 수열이며 다음과 같이 정의됩니다. 피브피브 (fibfib) == 0 피브피브 (fibfib) == 0 피브피브 (fib) == 0 피브피브 (fib) == 0 피브피브 (fib) == 1 피브피브 (fib) == 1 피브피브 (fib) == 1 피브피브 (fib) == 1 피브피브 (fib) == 1 피브피브 (fib) == 1 피브피브 (fib) == 1 피브피 (fib) == 1 피브피 (fib) == 1 피브피 (fib) == 1 피브피 (fib) == 1 피브피 (fib) == 1 피브피 (fib) == 1 피브피 (fib) == 1 피브피 (fib) == 1 피브피 (fib) == 2 피브
+    >>> fibfib(1)
+    0
+    >>> fibfib(5)
+    4
+    >>> fibfib(8)
+    24
+    """"""
+","    if n == 0:
+        return 0
+    if n == 1:
+        return 0
+    if n == 2:
+        return 1
+    return fibfib(n - 1) + fibfib(n - 2) + fibfib(n - 3)
+","def check(candidate):
+    assert candidate(2) == 1
+    assert candidate(1) == 0
+    assert candidate(5) == 4
+    assert candidate(8) == 24
+    assert candidate(10) == 81
+    assert candidate(12) == 274
+    assert candidate(14) == 927
+
+"
+"
+FIX = """"""
+더 많은 테스트 사례를 추가합니다.
+""""""
+
+def vowels_count(s):
+    """"""Write a function vowels_count which takes a string representing
+    a word as input and returns the number of vowels in the string.
+    Vowels in this case are 'a', 'e', 'i', 'o', 'u'. Here, 'y' is also a
+    vowel, but only when it is at the end of the given word.
+
+    Example:
+    >>> vowels_count(""abcde"")
+    2
+    >>> vowels_count(""ACEDY"")
+    3
+    """"""
+","    vowels = ""aeiouAEIOU""
+    n_vowels = sum(c in vowels for c in s)
+    if s[-1] == 'y' or s[-1] == 'Y':
+        n_vowels += 1
+    return n_vowels
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""abcde"") == 2, ""Test 1""
+    assert candidate(""Alone"") == 3, ""Test 2""
+    assert candidate(""key"") == 2, ""Test 3""
+    assert candidate(""bye"") == 1, ""Test 4""
+    assert candidate(""keY"") == 2, ""Test 5""
+    assert candidate(""bYe"") == 1, ""Test 6""
+    assert candidate(""ACEDY"") == 3, ""Test 7""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def circular_shift(x, shift):
+    """"""원형으로 정수 x의 자릿수를 이동시켜, 자릿수를 이동하여 오른쪽으로 이동하고 결과를 문자열로 반환합니다. shift > 자릿수 수라면, 거꾸로 자릿수를 반환합니다.
+    >>> circular_shift(12, 1)
+    ""21""
+    >>> circular_shift(12, 2)
+    ""12""
+    """"""
+","    s = str(x)
+    if shift > len(s):
+        return s[::-1]
+    else:
+        return s[len(s) - shift:] + s[:len(s) - shift]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(100, 2) == ""001""
+    assert candidate(12, 2) == ""12""
+    assert candidate(97, 8) == ""79""
+    assert candidate(12, 1) == ""21"", ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(11, 101) == ""11"", ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def digitSum(s):
+    """"""작업 입력으로 문자열을 받아 상위 문자만 합한 값을 반환하는 함수를 작성합니다. 예: digitSum ((("""") => 0 digitSum (((""abAB"") => 131 digitSum (((""abcCd"") => 67 digitSum (((""helloE"") => 69 digitSum (((""woArBld"") => 131 digitSum (((""aAaaaXa"") => 153
+    """"""
+","    if s == """": return 0
+    return sum(ord(char) if char.isupper() else 0 for char in s)
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate("""") == 0, ""Error""
+    assert candidate(""abAB"") == 131, ""Error""
+    assert candidate(""abcCd"") == 67, ""Error""
+    assert candidate(""helloE"") == 69, ""Error""
+    assert candidate(""woArBld"") == 131, ""Error""
+    assert candidate(""aAaaaXa"") == 153, ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate("" How are yOu?"") == 151, ""Error""
+    assert candidate(""You arE Very Smart"") == 327, ""Error""
+
+"
+"
+def fruit_distribution(s,n):
+    """"""
+    이 작업에서, 당신은 사과와 오렌지 수를 나타내는 문자열을 제공 될 것입니다 과일 바구니에 분배 된 과일 이 바구니에는 사과, 오렌지, 그리고 망고 과일이 포함되어 있습니다. 오렌지와 사과의 총 수를 나타내는 문자열과 바구니의 과일의 총 수를 나타내는 정수를 제공 바구니에 있는 망고 과일의 수를 반환합니다. 예를 들어: fruit_distribution""5( 사과와 6 오렌지"", 19) -> 19 - 5 - 6 = 8 fruit_distribution""0 사과와 1 오렌지"",3) -> 3 - 0 - 1 = 2 fruit_distribution""2 사과와 3 오렌지"", 100) -> 100 - 2 - 3 = 95 fruit_distribution""100 사과와 1 오렌지"",1 -> 120 - 100 - 1 = 19
+    """"""
+","    lis = list()
+    for i in s.split(' '):
+        if i.isdigit():
+            lis.append(int(i))
+    return n - sum(lis)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""5 apples and 6 oranges"",19) == 8
+    assert candidate(""5 apples and 6 oranges"",21) == 10
+    assert candidate(""0 apples and 1 oranges"",3) == 2
+    assert candidate(""1 apples and 0 oranges"",3) == 2
+    assert candidate(""2 apples and 3 oranges"",100) == 95
+    assert candidate(""2 apples and 3 oranges"",5) == 0
+    assert candidate(""1 apples and 100 oranges"",120) == 19
+"
+"
+def pluck(arr):
+    """"""
+    ""무익 정수 노드를 가진 나무의 지점을 나타내는 배열을 주어, 노드 중 하나를 뽑아서 반환하는 작업입니다. 뽑은 노드는 가장 작은 짝값을 가진 노드여야 합니다. 동일한 가장 작은 짝값을 가진 여러 노드가 발견되면 가장 작은 인덱스를 가진 노드를 반환합니다. 뽑은 노드는 목록에서 반환되어야 합니다, [smallest_value, its index], 짝값이 없거나 주어진 배열이 비어있는 경우, 반환 []. 예 1: 입력: [4,2,3] 출력: [2, 1] 설명: 2가 가장 작은 짝값을 가지고 있고 2가 가장 작은 인덱스를 가지고 있습니다. 예 2: 입력: [1,2,3] 출력: [2, 1] 설명: 2가 가장 작은 값과 2가 가장 작은 인덱스를 가지고 있습니다. 예 3: 입력: [] 출력: [] 입력: [4: 5,
+    """"""
+","    if(len(arr) == 0): return []
+    evens = list(filter(lambda x: x%2 == 0, arr))
+    if(evens == []): return []
+    return [min(evens), arr.index(min(evens))]
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([4,2,3]) == [2, 1], ""Error""
+    assert candidate([1,2,3]) == [2, 1], ""Error""
+    assert candidate([]) == [], ""Error""
+    assert candidate([5, 0, 3, 0, 4, 2]) == [0, 1], ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([1, 2, 3, 0, 5, 3]) == [0, 3], ""Error""
+    assert candidate([5, 4, 8, 4 ,8]) == [4, 1], ""Error""
+    assert candidate([7, 6, 7, 1]) == [6, 1], ""Error""
+    assert candidate([7, 9, 7, 1]) == [], ""Error""
+
+"
+"
+def search(lst):
+    '''
+    You are given a non-empty list of positive integers. Return the greatest integer that is greater than 
+    zero, and has a frequency greater than or equal to the value of the integer itself. 
+    The frequency of an integer is the number of times it appears in the list.
+    If no such a value exist, return -1.
+    Examples:
+        search([4, 1, 2, 2, 3, 1]) == 2
+        search([1, 2, 2, 3, 3, 3, 4, 4, 4]) == 3
+        search([5, 5, 4, 4, 4]) == -1
+    '''
+","    frq = [0] * (max(lst) + 1)
+    for i in lst:
+        frq[i] += 1;
+
+    ans = -1
+    for i in range(1, len(frq)):
+        if frq[i] >= i:
+            ans = i
+    
+    return ans
+","def check(candidate):
+
+    # manually generated tests
+    assert candidate([5, 5, 5, 5, 1]) == 1
+    assert candidate([4, 1, 4, 1, 4, 4]) == 4
+    assert candidate([3, 3]) == -1
+    assert candidate([8, 8, 8, 8, 8, 8, 8, 8]) == 8
+    assert candidate([2, 3, 3, 2, 2]) == 2
+
+    # automatically generated tests
+    assert candidate([2, 7, 8, 8, 4, 8, 7, 3, 9, 6, 5, 10, 4, 3, 6, 7, 1, 7, 4, 10, 8, 1]) == 1
+    assert candidate([3, 2, 8, 2]) == 2
+    assert candidate([6, 7, 1, 8, 8, 10, 5, 8, 5, 3, 10]) == 1
+    assert candidate([8, 8, 3, 6, 5, 6, 4]) == -1
+    assert candidate([6, 9, 6, 7, 1, 4, 7, 1, 8, 8, 9, 8, 10, 10, 8, 4, 10, 4, 10, 1, 2, 9, 5, 7, 9]) == 1
+    assert candidate([1, 9, 10, 1, 3]) == 1
+    assert candidate([6, 9, 7, 5, 8, 7, 5, 3, 7, 5, 10, 10, 3, 6, 10, 2, 8, 6, 5, 4, 9, 5, 3, 10]) == 5
+    assert candidate([1]) == 1
+    assert candidate([8, 8, 10, 6, 4, 3, 5, 8, 2, 4, 2, 8, 4, 6, 10, 4, 2, 1, 10, 2, 1, 1, 5]) == 4
+    assert candidate([2, 10, 4, 8, 2, 10, 5, 1, 2, 9, 5, 5, 6, 3, 8, 6, 4, 10]) == 2
+    assert candidate([1, 6, 10, 1, 6, 9, 10, 8, 6, 8, 7, 3]) == 1
+    assert candidate([9, 2, 4, 1, 5, 1, 5, 2, 5, 7, 7, 7, 3, 10, 1, 5, 4, 2, 8, 4, 1, 9, 10, 7, 10, 2, 8, 10, 9, 4]) == 4
+    assert candidate([2, 6, 4, 2, 8, 7, 5, 6, 4, 10, 4, 6, 3, 7, 8, 8, 3, 1, 4, 2, 2, 10, 7]) == 4
+    assert candidate([9, 8, 6, 10, 2, 6, 10, 2, 7, 8, 10, 3, 8, 2, 6, 2, 3, 1]) == 2
+    assert candidate([5, 5, 3, 9, 5, 6, 3, 2, 8, 5, 6, 10, 10, 6, 8, 4, 10, 7, 7, 10, 8]) == -1
+    assert candidate([10]) == -1
+    assert candidate([9, 7, 7, 2, 4, 7, 2, 10, 9, 7, 5, 7, 2]) == 2
+    assert candidate([5, 4, 10, 2, 1, 1, 10, 3, 6, 1, 8]) == 1
+    assert candidate([7, 9, 9, 9, 3, 4, 1, 5, 9, 1, 2, 1, 1, 10, 7, 5, 6, 7, 6, 7, 7, 6]) == 1
+    assert candidate([3, 10, 10, 9, 2]) == -1
+
+"
+"
+def strange_sort_list(lst):
+    '''
+    Given list of integers, return list in strange order.
+    Strange sorting, is when you start with the minimum value,
+    then maximum of the remaining integers, then minimum and so on.
+
+    Examples:
+    strange_sort_list([1, 2, 3, 4]) == [1, 4, 2, 3]
+    strange_sort_list([5, 5, 5, 5]) == [5, 5, 5, 5]
+    strange_sort_list([]) == []
+    '''
+","    res, switch = [], True
+    while lst:
+        res.append(min(lst) if switch else max(lst))
+        lst.remove(res[-1])
+        switch = not switch
+    return res
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1, 2, 3, 4]) == [1, 4, 2, 3]
+    assert candidate([5, 6, 7, 8, 9]) == [5, 9, 6, 8, 7]
+    assert candidate([1, 2, 3, 4, 5]) == [1, 5, 2, 4, 3]
+    assert candidate([5, 6, 7, 8, 9, 1]) == [1, 9, 5, 8, 6, 7]
+    assert candidate([5, 5, 5, 5]) == [5, 5, 5, 5]
+    assert candidate([]) == []
+    assert candidate([1,2,3,4,5,6,7,8]) == [1, 8, 2, 7, 3, 6, 4, 5]
+    assert candidate([0,2,2,2,5,5,-5,-5]) == [-5, 5, -5, 5, 0, 2, 2, 2]
+    assert candidate([111111]) == [111111]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def triangle_area(a, b, c):
+    '''
+    Given the lengths of the three sides of a triangle. Return the area of
+    the triangle rounded to 2 decimal points if the three sides form a valid triangle. 
+    Otherwise return -1
+    Three sides make a valid triangle when the sum of any two sides is greater 
+    than the third side.
+    Example:
+    triangle_area(3, 4, 5) == 6.00
+    triangle_area(1, 2, 10) == -1
+    '''
+","    if a + b <= c or a + c <= b or b + c <= a:
+        return -1 
+    s = (a + b + c)/2    
+    area = (s * (s - a) * (s - b) * (s - c)) ** 0.5
+    area = round(area, 2)
+    return area
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(3, 4, 5) == 6.00, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(1, 2, 10) == -1
+    assert candidate(4, 8, 5) == 8.18
+    assert candidate(2, 2, 2) == 1.73
+    assert candidate(1, 2, 3) == -1
+    assert candidate(10, 5, 7) == 16.25
+    assert candidate(2, 6, 3) == -1
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1, 1, 1) == 0.43, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(2, 2, 10) == -1
+
+"
+"
+def will_it_fly(q,w):
+    '''
+    Write a function that returns True if the object q will fly, and False otherwise.
+    The object q will fly if it's balanced (it is a palindromic list) and the sum of its elements is less than or equal the maximum possible weight w.
+
+    Example:
+    will_it_fly([1, 2], 5) â -> False 
+    # 1+2 is less than the maximum possible weight, but it's unbalanced.
+
+    will_it_fly([3, 2, 3], 1) â -> False
+    # it's balanced, but 3+2+3 is more than the maximum possible weight.
+
+    will_it_fly([3, 2, 3], 9) â -> True
+    # 3+2+3 is less than the maximum possible weight, and it's balanced.
+
+    will_it_fly([3], 5) â -> True
+    # 3 is less than the maximum possible weight, and it's balanced.
+    '''
+","    if sum(q) > w:
+        return False
+
+    i, j = 0, len(q)-1
+    while i<j:
+        if q[i] != q[j]:
+            return False
+        i+=1
+        j-=1
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([3, 2, 3], 9) is True
+    assert candidate([1, 2], 5) is False
+    assert candidate([3], 5) is True
+    assert candidate([3, 2, 3], 1) is False
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1, 2, 3], 6) is False
+    assert candidate([5], 5) is True
+
+"
+"
+def smallest_change(arr):
+    """"""
+    정수들의 배열 arr을 주어 배열을 팔린드로믹하게 만들기 위해 변경해야 하는 최소 요소 수를 찾아라. 팔린드로믹 배열은 앞뒤로 똑같이 읽히는 배열이다. 한 번의 변경에서, 당신은 하나의 요소를 다른 요소로 변경할 수 있다. 예를 들어: smallest_change (([1,2,3,5,4,7,9,6]) == 4 smallest_change (([1, 2, 3, 4, 3, 2, 2]) == 1 smallest_change (([1, 2, 3, 2, 1]) == 0
+    """"""
+","    ans = 0
+    for i in range(len(arr) // 2):
+        if arr[i] != arr[len(arr) - i - 1]:
+            ans += 1
+    return ans
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,2,3,5,4,7,9,6]) == 4
+    assert candidate([1, 2, 3, 4, 3, 2, 2]) == 1
+    assert candidate([1, 4, 2]) == 1
+    assert candidate([1, 4, 4, 2]) == 1
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1, 2, 3, 2, 1]) == 0
+    assert candidate([3, 1, 1, 3]) == 0
+    assert candidate([1]) == 0
+    assert candidate([0, 1]) == 1
+
+"
+"
+def total_match(lst1, lst2):
+    '''
+    Write a function that accepts two lists of strings and returns the list that has 
+    total number of chars in the all strings of the list less than the other list.
+
+    if the two lists have the same number of chars, return the first list.
+
+    Examples
+    total_match([], []) â -> []
+    total_match(['hi', 'admin'], ['hI', 'Hi']) â -> ['hI', 'Hi']
+    total_match(['hi', 'admin'], ['hi', 'hi', 'admin', 'project']) â -> ['hi', 'admin']
+    total_match(['hi', 'admin'], ['hI', 'hi', 'hi']) â -> ['hI', 'hi', 'hi']
+    total_match(['4'], ['1', '2', '3', '4', '5']) â -> ['4']
+    '''
+","    l1 = 0
+    for st in lst1:
+        l1 += len(st)
+    
+    l2 = 0
+    for st in lst2:
+        l2 += len(st)
+    
+    if l1 <= l2:
+        return lst1
+    else:
+        return lst2
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([], []) == []
+    assert candidate(['hi', 'admin'], ['hi', 'hi']) == ['hi', 'hi']
+    assert candidate(['hi', 'admin'], ['hi', 'hi', 'admin', 'project']) == ['hi', 'admin']
+    assert candidate(['4'], ['1', '2', '3', '4', '5']) == ['4']
+    assert candidate(['hi', 'admin'], ['hI', 'Hi']) == ['hI', 'Hi']
+    assert candidate(['hi', 'admin'], ['hI', 'hi', 'hi']) == ['hI', 'hi', 'hi']
+    assert candidate(['hi', 'admin'], ['hI', 'hi', 'hii']) == ['hi', 'admin']
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([], ['this']) == []
+    assert candidate(['this'], []) == []
+
+"
+"
+def is_multiply_prime(a):
+    """"""주어진 숫자가 3개의 소수들의 곱이고, 그렇지 않으면 거짓인 경우를 참으로 반환하는 함수를 작성한다. (a) 가 100보다 작다는 것을 알고 있다. 예: is_multiply_prime(30) == True 30 = 2 * 3 * 5
+    """"""
+","    def is_prime(n):
+        for j in range(2,n):
+            if n%j == 0:
+                return False
+        return True
+
+    for i in range(2,101):
+        if not is_prime(i): continue
+        for j in range(2,101):
+            if not is_prime(j): continue
+            for k in range(2,101):
+                if not is_prime(k): continue
+                if i*j*k == a: return True
+    return False
+","def check(candidate):
+
+    assert candidate(5) == False
+    assert candidate(30) == True
+    assert candidate(8) == True
+    assert candidate(10) == False
+    assert candidate(125) == True
+    assert candidate(3 * 5 * 7) == True
+    assert candidate(3 * 6 * 7) == False
+    assert candidate(9 * 9 * 9) == False
+    assert candidate(11 * 9 * 9) == False
+    assert candidate(11 * 13 * 7) == True
+
+"
+"
+def is_simple_power(x, n):
+    """"""여러분의 임무는 x가 n의 단순한 제곱이고 다른 경우에는 거짓이라면 true를 반환하는 함수를 작성하는 것입니다. x는 n의 간단한 제곱입니다. 예를 들어: is_simple_power (_simple_power)
+    """"""
+","    if (n == 1): 
+        return (x == 1) 
+    power = 1
+    while (power < x): 
+        power = power * n 
+    return (power == x) 
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(16, 2)== True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(143214, 16)== False, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(4, 2)==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(9, 3)==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(16, 4)==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(24, 2)==False, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(128, 4)==False, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(12, 6)==False, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1, 1)==True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(1, 12)==True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def iscube(a):
+    '''
+    Write a function that takes an integer a and returns True 
+    if this ingeger is a cube of some integer number.
+    Note: you may assume the input is always valid.
+    Examples:
+    iscube(1) ==> True
+    iscube(2) ==> False
+    iscube(-1) ==> True
+    iscube(64) ==> True
+    iscube(0) ==> True
+    iscube(180) ==> False
+    '''
+","    a = abs(a)
+    return int(round(a ** (1. / 3))) ** 3 == a
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(1) == True, ""First test error: "" + str(candidate(1))
+    assert candidate(2) == False, ""Second test error: "" + str(candidate(2))
+    assert candidate(-1) == True, ""Third test error: "" + str(candidate(-1))
+    assert candidate(64) == True, ""Fourth test error: "" + str(candidate(64))
+    assert candidate(180) == False, ""Fifth test error: "" + str(candidate(180))
+    assert candidate(1000) == True, ""Sixth test error: "" + str(candidate(1000))
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(0) == True, ""1st edge test error: "" + str(candidate(0))
+    assert candidate(1729) == False, ""2nd edge test error: "" + str(candidate(1728))
+
+"
+"
+def hex_key(num):
+    """"""수 십진수를 문자열로 받아 수 십진수의 소수인 수를 세는 함수를 작성하는 작업을 수행했습니다. 수 십진수는 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F입니다. 소수 수는 2, 3, 5, 7, 11, 13, 17,...입니다. 따라서 다음 숫자의 수를 결정해야합니다. 2, 3, 5, 7, 11, 13, 17,... D (= 십진수 13). 참고: 입력값은 항상 정확하거나 빈 문자열이며, A, B, C, D, E, F는 항상 대문자로 표시됩니다. 예: num = ""AB""의 출력은 num = 1. num = 1077E의 출력은 num = 2. num = ""AB33""의 출력은 num = 1. num = 4. ""ABC""의 출력은 num = 6.0891236. ""AEFD""의 출력은 num = 2.045 ""2020""의 출력은 num = 2.012
+    """"""
+","    primes = ('2', '3', '5', '7', 'B', 'D')
+    total = 0
+    for i in range(0, len(num)):
+        if num[i] in primes:
+            total += 1
+    return total
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""AB"") == 1, ""First test error: "" + str(candidate(""AB""))      
+    assert candidate(""1077E"") == 2, ""Second test error: "" + str(candidate(""1077E""))  
+    assert candidate(""ABED1A33"") == 4, ""Third test error: "" + str(candidate(""ABED1A33""))      
+    assert candidate(""2020"") == 2, ""Fourth test error: "" + str(candidate(""2020""))  
+    assert candidate(""123456789ABCDEF0"") == 6, ""Fifth test error: "" + str(candidate(""123456789ABCDEF0""))      
+    assert candidate(""112233445566778899AABBCCDDEEFF00"") == 12, ""Sixth test error: "" + str(candidate(""112233445566778899AABBCCDDEEFF00""))  
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([]) == 0
+
+"
+"
+def decimal_to_binary(decimal):
+    """"""당신은 십진수 형식의 숫자를 주어지고 당신의 임무는 이진 형식으로 변환하는 것입니다. 함수는 각 문자가 이진수를 나타내는 문자열을 반환해야합니다. 문자열의 각 문자는 '0' 또는 '1'이 될 것입니다. 문자열의 시작과 끝에 'db'라는 추가 문자 쌍이있을 것입니다. 추가 문자는 형식을 돕기 위해 있습니다. 예: decimal_to_binary ((15) # 반환 ""db1111db"" decimal_to_binary32) # 반환 ""db100000db""
+    """"""
+","    return ""db"" + bin(decimal)[2:] + ""db""
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(0) == ""db0db""
+    assert candidate(32) == ""db100000db""
+    assert candidate(103) == ""db1100111db""
+    assert candidate(15) == ""db1111db"", ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def is_happy(s):
+    """"""string s를 주어집니다. string이 happy인지 아닌지를 확인하는 것이 작업입니다. string은 길이가 최소 3개이고 3개의 연속 문자마다 다른 경우 happy입니다. 예를 들어: is_happy (a) => False is_happy (a) => False is_happy (a) => True is_happy (a) => False is_happy (b) => False is_happy (c) => False is_happy (d) => False is_happy (a) => False is_happy (b) => True is_happy (c) => False
+    """"""
+","    if len(s) < 3:
+      return False
+
+    for i in range(len(s) - 2):
+      
+      if s[i] == s[i+1] or s[i+1] == s[i+2] or s[i] == s[i+2]:
+        return False
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""a"") == False , ""a""
+    assert candidate(""aa"") == False , ""aa""
+    assert candidate(""abcd"") == True , ""abcd""
+    assert candidate(""aabb"") == False , ""aabb""
+    assert candidate(""adb"") == True , ""adb""
+    assert candidate(""xyy"") == False , ""xyy""
+    assert candidate(""iopaxpoi"") == True , ""iopaxpoi""
+    assert candidate(""iopaxioi"") == False , ""iopaxioi""
+"
+"
+def numerical_letter_grade(grades):
+    """"""학기 마지막 주입니다. 그리고 교사는 학생들에게 점수를 주어야 합니다. 교사는 점수를 매기는 알고리즘을 스스로 만들고 있습니다. 유일한 문제는 그녀가 점수를 매기는 코드를 잃어버렸다는 것입니다. 그녀는 당신에게 몇몇 학생들의 GPA 목록을 제공했고 당신은 다음과 같은 표를 사용하여 글자 점수 목록을 출력할 수 있는 함수를 작성해야 합니다. GPA : 글자 점수 4.0 A+ > 3.7 A > 3.3 A- > 3.0 B+ > 2.7 B- > 2.3 B- > 2.0 C+ > 1.7 C > 1.3 C- > 1.0 D+ > 0.7 D > 0.0 D- 0.0 E: grade_equation (([4.0, 3, 1.7, 2, 3.5]) ==> ['A+', 'B', 'C-', 'C', 'A-']
+    """"""
+","
+   
+    letter_grade = []
+    for gpa in grades:
+        if gpa == 4.0:
+            letter_grade.append(""A+"")
+        elif gpa > 3.7:
+            letter_grade.append(""A"")
+        elif gpa > 3.3:
+            letter_grade.append(""A-"")
+        elif gpa > 3.0:
+            letter_grade.append(""B+"")
+        elif gpa > 2.7:
+            letter_grade.append(""B"")
+        elif gpa > 2.3:
+            letter_grade.append(""B-"")
+        elif gpa > 2.0:
+            letter_grade.append(""C+"")
+        elif gpa > 1.7:
+            letter_grade.append(""C"")
+        elif gpa > 1.3:
+            letter_grade.append(""C-"")
+        elif gpa > 1.0:
+            letter_grade.append(""D+"")
+        elif gpa > 0.7:
+            letter_grade.append(""D"")
+        elif gpa > 0.0:
+            letter_grade.append(""D-"")
+        else:
+            letter_grade.append(""E"")
+    return letter_grade
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([4.0, 3, 1.7, 2, 3.5]) == ['A+', 'B', 'C-', 'C', 'A-']
+    assert candidate([1.2]) == ['D+']
+    assert candidate([0.5]) == ['D-']
+    assert candidate([0.0]) == ['E']
+    assert candidate([1, 0.3, 1.5, 2.8, 3.3]) == ['D', 'D-', 'C-', 'B', 'B+']
+    assert candidate([0, 0.7]) == ['E', 'D-']
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def prime_length(string):
+    """"""문자열을 가져다가 문자열 길이가 소수라면 True 또는 False를 반환하는 함수를 작성합니다. 예 prime_length ({'Hello') == True prime_length ({'abcdcba') == True prime_length ({'kittens') == True prime_length ({'orange') == False
+    """"""
+","    l = len(string)
+    if l == 0 or l == 1:
+        return False
+    for i in range(2, l):
+        if l % i == 0:
+            return False
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('Hello') == True
+    assert candidate('abcdcba') == True
+    assert candidate('kittens') == True
+    assert candidate('orange') == False
+    assert candidate('wow') == True
+    assert candidate('world') == True
+    assert candidate('MadaM') == True
+    assert candidate('Wow') == True
+    assert candidate('') == False
+    assert candidate('HI') == True
+    assert candidate('go') == True
+    assert candidate('gogo') == False
+    assert candidate('aaaaaaaaaaaaaaa') == False
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('Madam') == True
+    assert candidate('M') == False
+    assert candidate('0') == False
+
+"
+"
+def starts_one_ends(n):
+    """"""
+    양수 n을 주어 1으로 시작하거나 끝나는 n자리 양수들의 수를 반환합니다.
+    """"""
+","    if n == 1: return 1
+    return 18 * (10 ** (n - 2))
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(1) == 1
+    assert candidate(2) == 18
+    assert candidate(3) == 180
+    assert candidate(4) == 1800
+    assert candidate(5) == 18000
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def solve(N):
+    """"""양수 정수 N 를 주어, 이진수에서 그것의 자수의 총합을 반환합니다. 예 N = 1000 에 대해, 자수의 합은 1 이어야 출력은 ""1""이어야 합니다. N = 150 에 대해, 자수의 합은 6 이어야 출력은 ""110""이어야 합니다. N = 147 에 대해, 자수의 합은 12 이어야 출력은 ""1100""이어야 합니다. 변수: @N 정수 제한: 0 â‰¤ N â‰¤ 10000. 출력: 이진수의 문자열
+    """"""
+","    return bin(sum(int(i) for i in str(N)))[2:]
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(1000) == ""1"", ""Error""
+    assert candidate(150) == ""110"", ""Error""
+    assert candidate(147) == ""1100"", ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(333) == ""1001"", ""Error""
+    assert candidate(963) == ""10010"", ""Error""
+
+"
+"
+def add(lst):
+    """"""비공백이 아닌 정수 목록에서 lst를 주어 홀수 인덱스에 있는 짝수 요소를 더한다. 예: add (([4, 2, 6, 7]) ==> 2 
+    """"""
+","    return sum([lst[i] for i in range(1, len(lst), 2) if lst[i]%2 == 0])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([4, 88]) == 88
+    assert candidate([4, 5, 6, 7, 2, 122]) == 122
+    assert candidate([4, 0, 6, 7]) == 0
+    assert candidate([4, 4, 6, 8]) == 12
+
+    # Check some edge cases that are easy to work out by hand.
+    
+"
+"
+def anti_shuffle(s):
+    """"""
+    문자열을 가져다가 순서대로 반환하는 함수를 작성합니다. 문자열의 순서대로 된 버전은 모든 단어 (공간으로 분리된) 가 ascii 값에 따라 상승 순서로 배열된 새로운 단어로 대체되는 문자열입니다. 참고: 문장 내의 단어와 빈 공간의 순서를 유지해야합니다. 예를 들어: anti_shuffle ((('Hi') 는 'Hi' anti_shuffle ((('hello') 를 반환합니다. 'ehllo' anti_shuffle (('Hello World!!!') 는 'Hello!!!Wdlor'를 반환합니다.
+    """"""
+","    return ' '.join([''.join(sorted(list(i))) for i in s.split(' ')])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('Hi') == 'Hi'
+    assert candidate('hello') == 'ehllo'
+    assert candidate('number') == 'bemnru'
+    assert candidate('abcd') == 'abcd'
+    assert candidate('Hello World!!!') == 'Hello !!!Wdlor'
+    assert candidate('') == ''
+    assert candidate('Hi. My name is Mister Robot. How are you?') == '.Hi My aemn is Meirst .Rboot How aer ?ouy'
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def get_row(lst, x):
+    """"""
+    매트릭스와 비슷하지만 매트릭스와는 달리 각 행에는 다른 수의 열이 있을 수 있습니다. lst와 정수 x를 주어 목록에서 정수 x를 찾아, 튜플의 목록을 반환합니다. [(x1, y1), (x2, y2)...] 각 튜플은 좌표 - (줄, 열) 입니다. 0으로 시작됩니다. 좌표를 처음에 행에 따라 상승 순서로 정렬하십시오. 또한 행의 좌표를 열에 따라 감소 순서로 정렬하십시오. 예: get_row [1,2,3,4,5,6], [1,2,3,4,1,6], [1,2,3,4,5,1], 1) == [0,0, 0, 0, 1, 4], 0 (2, 5), (2, 0), get_(1), [] == == 행 [1], [1, 2, 3, 2], [2, 3] == 행 1, 3] == 행 2, 3 ]
+    """"""
+","    coords = [(i, j) for i in range(len(lst)) for j in range(len(lst[i])) if lst[i][j] == x]
+    return sorted(sorted(coords, key=lambda x: x[1], reverse=True), key=lambda x: x[0])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([
+        [1,2,3,4,5,6],
+        [1,2,3,4,1,6],
+        [1,2,3,4,5,1]
+    ], 1) == [(0, 0), (1, 4), (1, 0), (2, 5), (2, 0)]
+    assert candidate([
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6]
+    ], 2) == [(0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (5, 1)]
+    assert candidate([
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,1,3,4,5,6],
+        [1,2,1,4,5,6],
+        [1,2,3,1,5,6],
+        [1,2,3,4,1,6],
+        [1,2,3,4,5,1]
+    ], 1) == [(0, 0), (1, 0), (2, 1), (2, 0), (3, 2), (3, 0), (4, 3), (4, 0), (5, 4), (5, 0), (6, 5), (6, 0)]
+    assert candidate([], 1) == []
+    assert candidate([[1]], 2) == []
+    assert candidate([[], [1], [1, 2, 3]], 3) == [(2, 2)]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def sort_array(array):
+    """"""
+    음이 아닌 정수들의 배열을 주어, 정렬 후 주어진 배열의 복사본을 반환합니다. 주어진 배열을 정렬하면 수 (첫 번째 인덱스 값, 마지막 인덱스 값) 이 홀수인 경우 상승 순서로 정렬하거나, 수 (첫 번째 인덱스 값, 마지막 인덱스 값) 이 짝수인 경우 하강 순서로 정렬합니다. 참고: * 주어진 배열을 변경하지 마십시오. 예: * sort_array[(]) => [] * sort_array[[5]) => [5] * sort_array[2, 4, 3, 0, 1, 5]) => [0, 1, 2, 3, 4, 5] * sort_array[2, 4, 3, 0, 1, 5, 6]) => [6, 5, 4, 3, 2, 1, 5, 0]
+    """"""
+","    return [] if len(array) == 0 else sorted(array, reverse= (array[0]+array[-1]) % 2 == 0) 
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([]) == [], ""Error""
+    assert candidate([5]) == [5], ""Error""
+    assert candidate([2, 4, 3, 0, 1, 5]) == [0, 1, 2, 3, 4, 5], ""Error""
+    assert candidate([2, 4, 3, 0, 1, 5, 6]) == [6, 5, 4, 3, 2, 1, 0], ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([2, 1]) == [1, 2], ""Error""
+    assert candidate([15, 42, 87, 32 ,11, 0]) == [0, 11, 15, 32, 42, 87], ""Error""
+    assert candidate([21, 14, 23, 11]) == [23, 21, 14, 11], ""Error""
+
+"
+"
+def encrypt(s):
+    """"""문자열을 인수로 받아서 알파벳을 회전시켜서 암호화된 문자열을 반환하는 함수를 encrypt 만들라. 알파벳은 두 자리로 곱한 두 자리로 아래로 이동하는 방식으로 회전되어야 한다. 예를 들어: encrypt (('hi') 는 'lm' encrypt (('asdfghjkl') 는 'ewhjklnop' encrypt (('gf') 는 'kj' encrypt (('et') 는 'ix'를 반환한다.
+    """"""
+","    d = 'abcdefghijklmnopqrstuvwxyz'
+    out = ''
+    for c in s:
+        if c in d:
+            out += d[(d.index(c)+2*2) % 26]
+        else:
+            out += c
+    return out
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('hi') == 'lm', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('asdfghjkl') == 'ewhjklnop', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('gf') == 'kj', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('et') == 'ix', ""This prints if this assert fails 1 (good for debugging!)""
+
+    assert candidate('faewfawefaewg')=='jeiajeaijeiak', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('hellomyfriend')=='lippsqcjvmirh', ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate('dxzdlmnilfuhmilufhlihufnmlimnufhlimnufhfucufh')=='hbdhpqrmpjylqmpyjlpmlyjrqpmqryjlpmqryjljygyjl', ""This prints if this assert fails 3 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('a')=='e', ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def next_smallest(lst):
+    """"""
+    정수 목록이 주어져 있습니다. 목록의 2번째 가장 작은 요소를 반환하는 next_smallest () 함수를 작성합니다. 그런 요소가 없으면 None를 반환합니다. next_smallest () [1, 2, 3, 4, 5]) == 2 next_smallest () [5, 1, 4, 3, 2]) == 2 next_smallest () == None next_smallest () [1, 1]) == None
+    """"""
+","    lst = sorted(set(lst))
+    return None if len(lst) < 2 else lst[1]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1, 2, 3, 4, 5]) == 2
+    assert candidate([5, 1, 4, 3, 2]) == 2
+    assert candidate([]) == None
+    assert candidate([1, 1]) == None
+    assert candidate([1,1,1,1,0]) == 1
+    assert candidate([1, 0**0]) == None
+    assert candidate([-35, 34, 12, -45]) == -35
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def is_bored(S):
+    """"""
+    ""I""로 시작하는 문장입니다. 문장은 '.', '?' 또는 '!'로 구분됩니다. 예를 들어:
+    >>> is_bored(""Hello world"")
+    0
+    >>> is_bored(""The sky is blue. The sun is shining. I love this weather"")
+    1
+    """"""
+","    import re
+    sentences = re.split(r'[.?!]\s*', S)
+    return sum(sentence[0:2] == 'I ' for sentence in sentences)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""Hello world"") == 0, ""Test 1""
+    assert candidate(""Is the sky blue?"") == 0, ""Test 2""
+    assert candidate(""I love It !"") == 1, ""Test 3""
+    assert candidate(""bIt"") == 0, ""Test 4""
+    assert candidate(""I feel good today. I will be productive. will kill It"") == 2, ""Test 5""
+    assert candidate(""You and I are going for a walk"") == 0, ""Test 6""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def any_int(x, y, z):
+    '''
+    Create a function that takes 3 numbers.
+    Returns true if one of the numbers is equal to the sum of the other two, and all numbers are integers.
+    Returns false in any other cases.
+    
+    Examples
+    any_int(5, 2, 7) â -> True
+    
+    any_int(3, 2, 2) â -> False
+
+    any_int(3, -2, 1) â -> True
+    
+    any_int(3.6, -2.2, 2) â -> False
+  
+
+    
+    '''
+","    
+    if isinstance(x,int) and isinstance(y,int) and isinstance(z,int):
+        if (x+y==z) or (x+z==y) or (y+z==x):
+            return True
+        return False
+    return False
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(2, 3, 1)==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(2.5, 2, 3)==False, ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate(1.5, 5, 3.5)==False, ""This prints if this assert fails 3 (good for debugging!)""
+    assert candidate(2, 6, 2)==False, ""This prints if this assert fails 4 (good for debugging!)""
+    assert candidate(4, 2, 2)==True, ""This prints if this assert fails 5 (good for debugging!)""
+    assert candidate(2.2, 2.2, 2.2)==False, ""This prints if this assert fails 6 (good for debugging!)""
+    assert candidate(-4, 6, 2)==True, ""This prints if this assert fails 7 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(2,1,1)==True, ""This prints if this assert fails 8 (also good for debugging!)""
+    assert candidate(3,4,7)==True, ""This prints if this assert fails 9 (also good for debugging!)""
+    assert candidate(3.0,4,7)==False, ""This prints if this assert fails 10 (also good for debugging!)""
+
+"
+"
+def encode(message):
+    """"""
+    메시지를 받아서 모든 글자의 대문자를 교환하고, 메시지 내의 모든 모음을 영어 알파벳에서 그 모음보다 2 자리 앞쪽에 나타나는 글자로 대체하는 방식으로 인코딩하는 함수를 작성하십시오. 문자만 가정하십시오. 예:
+    >>> encode('test')
+    'TGST'
+    >>> encode('This is a message')
+    'tHKS KS C MGSSCGG'
+    """"""
+","    vowels = ""aeiouAEIOU""
+    vowels_replace = dict([(i, chr(ord(i) + 2)) for i in vowels])
+    message = message.swapcase()
+    return ''.join([vowels_replace[i] if i in vowels else i for i in message])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('TEST') == 'tgst', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('Mudasir') == 'mWDCSKR', ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate('YES') == 'ygs', ""This prints if this assert fails 3 (good for debugging!)""
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('This is a message') == 'tHKS KS C MGSSCGG', ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(""I DoNt KnOw WhAt tO WrItE"") == 'k dQnT kNqW wHcT Tq wRkTg', ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+
+def skjkasdkd(lst):
+    """"""정수 목록이 주어집니다. 가장 큰 소수 값을 찾아서 그 숫자의 합을 반환해야 합니다. 예: lst = [0,3,2,1,3,5,7,4,5,5,5,2,181,32,4,32,3,2,32,324,4,3] 출력은 10 lst = [1,0,1,8,2,4597,2,1,3,40,1,2,1,2,4,2,5,1] 출력은 25 lst = [1,3,1,32,5107,34,83278,109,163,23,2323,32,30,1,9,3] 출력은 13 lst = [0,724,32,71,99,32,6,0,5,91,83,0,5,6] 출력은 11 lst = [0,81,12,31,21] 출력은 3 lst = [0,8,1,2,1,7] 출력은 7
+    """"""
+","    def isPrime(n):
+        for i in range(2,int(n**0.5)+1):
+            if n%i==0:
+                return False
+
+        return True
+    maxx = 0
+    i = 0
+    while i < len(lst):
+        if(lst[i] > maxx and isPrime(lst[i])):
+            maxx = lst[i]
+        i+=1
+    result = sum(int(digit) for digit in str(maxx))
+    return result
+
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([0,3,2,1,3,5,7,4,5,5,5,2,181,32,4,32,3,2,32,324,4,3]) == 10, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1,0,1,8,2,4597,2,1,3,40,1,2,1,2,4,2,5,1]) == 25, ""This prints if this assert fails 2 (also good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1,3,1,32,5107,34,83278,109,163,23,2323,32,30,1,9,3]) == 13, ""This prints if this assert fails 3 (also good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([0,724,32,71,99,32,6,0,5,91,83,0,5,6]) == 11, ""This prints if this assert fails 4 (also good for debugging!)""
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([0,81,12,3,1,21]) == 3, ""This prints if this assert fails 5 (also good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([0,8,1,2,1,7]) == 7, ""This prints if this assert fails 6 (also good for debugging!)""
+
+    assert candidate([8191]) == 19, ""This prints if this assert fails 7 (also good for debugging!)""
+    assert candidate([8191, 123456, 127, 7]) == 19, ""This prints if this assert fails 8 (also good for debugging!)""
+    assert candidate([127, 97, 8192]) == 10, ""This prints if this assert fails 9 (also good for debugging!)""
+"
+"
+def check_dict_case(dict):
+    """"""
+    사전이 주어지면 모든 키가 소문자로 쓰여진 문자열이거나 모든 키가 대문자로 쓰여진 문자열이면 True를 반환한다. 그렇지 않으면 False를 반환한다. 함수는 False를 반환해야 한다. 주어진 사전은 비어 있다. 예: check_dict_case (check_dict_case) {""a"":""apple"", ""b"":""banana""}) 는 True를 반환해야 한다. check_dict_case (check_dict_case) {""a"":""apple"", ""A"":""banana"", ""B"":""banana""}) 는 False를 반환해야 한다. check_dict_case (check_dict_case) {""a"":""apple"", 8:""banana"", ""a"":""apple""}) 는 False를 반환해야 한다. check_dict_case (check_di
+    """"""
+","    if len(dict.keys()) == 0:
+        return False
+    else:
+        state = ""start""
+        for key in dict.keys():
+
+            if isinstance(key, str) == False:
+                state = ""mixed""
+                break
+            if state == ""start"":
+                if key.isupper():
+                    state = ""upper""
+                elif key.islower():
+                    state = ""lower""
+                else:
+                    break
+            elif (state == ""upper"" and not key.isupper()) or (state == ""lower"" and not key.islower()):
+                    state = ""mixed""
+                    break
+            else:
+                break
+        return state == ""upper"" or state == ""lower"" 
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate({""p"":""pineapple"", ""b"":""banana""}) == True, ""First test error: "" + str(candidate({""p"":""pineapple"", ""b"":""banana""}))
+    assert candidate({""p"":""pineapple"", ""A"":""banana"", ""B"":""banana""}) == False, ""Second test error: "" + str(candidate({""p"":""pineapple"", ""A"":""banana"", ""B"":""banana""}))
+    assert candidate({""p"":""pineapple"", 5:""banana"", ""a"":""apple""}) == False, ""Third test error: "" + str(candidate({""p"":""pineapple"", 5:""banana"", ""a"":""apple""}))
+    assert candidate({""Name"":""John"", ""Age"":""36"", ""City"":""Houston""}) == False, ""Fourth test error: "" + str(candidate({""Name"":""John"", ""Age"":""36"", ""City"":""Houston""}))
+    assert candidate({""STATE"":""NC"", ""ZIP"":""12345"" }) == True, ""Fifth test error: "" + str(candidate({""STATE"":""NC"", ""ZIP"":""12345"" }))      
+    assert candidate({""fruit"":""Orange"", ""taste"":""Sweet"" }) == True, ""Fourth test error: "" + str(candidate({""fruit"":""Orange"", ""taste"":""Sweet"" }))      
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate({}) == False, ""1st edge test error: "" + str(candidate({}))
+
+"
+"
+def count_up_to(n):
+    """"""비 음의 정수를 가져다가 n보다 작은 소수인 첫 번째 n 정수의 배열을 반환하는 함수를 구현합니다. 예를 들어: count_up_to(5) => [2,3] count_up_to(11) => [2,3,5,7] count_up_to(0) => [] count_up_to(20) => [2,3,5,7,11,13,17,19] count_up_to(1) => [] count_up_to(18) => [2,3,5,7,11,13,17]
+    """"""
+","    primes = []
+    for i in range(2, n):
+        is_prime = True
+        for j in range(2, i):
+            if i % j == 0:
+                is_prime = False
+                break
+        if is_prime:
+            primes.append(i)
+    return primes
+
+","def check(candidate):
+
+    assert candidate(5) == [2,3]
+    assert candidate(6) == [2,3,5]
+    assert candidate(7) == [2,3,5]
+    assert candidate(10) == [2,3,5,7]
+    assert candidate(0) == []
+    assert candidate(22) == [2,3,5,7,11,13,17,19]
+    assert candidate(1) == []
+    assert candidate(18) == [2,3,5,7,11,13,17]
+    assert candidate(47) == [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43]
+    assert candidate(101) == [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]
+
+"
+"
+def multiply(a, b):
+    """"""두 개의 정수를 가져다가 그 단위 숫자의 곱을 반환하는 함수를 완성합니다. 입력값이 항상 유효하다고 가정합니다. 예: 곱하기 148, 412) 는 16을 반환해야 합니다. 곱하기 19 28, 28는 72을 반환해야 합니다. 곱하기 2020, 1851은 0을 반환해야 합니다. 곱하기 14, 15는 20을 반환해야 합니다.
+    """"""
+","    return abs(a % 10) * abs(b % 10)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(148, 412) == 16, ""First test error: "" + str(candidate(148, 412))                    
+    assert candidate(19, 28) == 72, ""Second test error: "" + str(candidate(19, 28))           
+    assert candidate(2020, 1851) == 0, ""Third test error: "" + str(candidate(2020, 1851))
+    assert candidate(14,-15) == 20, ""Fourth test error: "" + str(candidate(14,-15))      
+    assert candidate(76, 67) == 42, ""Fifth test error: "" + str(candidate(76, 67))      
+    assert candidate(17, 27) == 49, ""Sixth test error: "" + str(candidate(17, 27))      
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(0, 1) == 0, ""1st edge test error: "" + str(candidate(0, 1))
+    assert candidate(0, 0) == 0, ""2nd edge test error: "" + str(candidate(0, 0))
+
+"
+"
+def count_upper(s):
+    """"""
+    문자열 s를 주어, 대문자 모음의 수를 짝수 인덱스에서 계산합니다. 예를 들어: count_upper (('aBCdEf') 는 1 count_upper (('abcdefg') 는 0 count_upper (('dBBE') 는 0을 반환합니다.
+    """"""
+","    count = 0
+    for i in range(0,len(s),2):
+        if s[i] in ""AEIOU"":
+            count += 1
+    return count
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('aBCdEf')  == 1
+    assert candidate('abcdefg') == 0
+    assert candidate('dBBE') == 0
+    assert candidate('B')  == 0
+    assert candidate('U')  == 1
+    assert candidate('') == 0
+    assert candidate('EEEE') == 2
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def closest_integer(value):
+    '''
+    Create a function that takes a value (string) representing a number
+    and returns the closest integer to it. If the number is equidistant
+    from two integers, round it away from zero.
+
+    Examples
+    >>> closest_integer(""10"")
+    10
+    >>> closest_integer(""15.3"")
+    15
+
+    Note:
+    Rounding away from zero means that if the given number is equidistant
+    from two integers, the one you should return is the one that is the
+    farthest from zero. For Exampleclosest_integer(""14.5"") should
+    return 15 and closest_integer(""-14.5"") should return -15.
+    '''
+","    from math import floor, ceil
+
+    if value.count('.') == 1:
+        # remove trailing zeros
+        while (value[-1] == '0'):
+            value = value[:-1]
+
+    num = float(value)
+    if value[-2:] == '.5':
+        if num > 0:
+            res = ceil(num)
+        else:
+            res = floor(num)
+    elif len(value) > 0:
+        res = int(round(num))
+    else:
+        res = 0
+
+    return res
+
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""10"") == 10, ""Test 1""
+    assert candidate(""14.5"") == 15, ""Test 2""
+    assert candidate(""-15.5"") == -16, ""Test 3""
+    assert candidate(""15.3"") == 15, ""Test 3""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""0"") == 0, ""Test 0""
+
+"
+"
+def make_a_pile(n):
+    """"""
+    양수 n 를 주어, n 레벨의 돌을 쌓아야 합니다. 첫 번째 레벨에는 n 개의 돌이 있습니다. 다음 레벨의 돌 수는 다음과 같습니다: - n이 홀수라면 다음 홀수 - n이 짝수라면 다음 짝수. 목록에서 각 레벨의 돌 수를 반환합니다. 여기서 인덱스 i의 요소는 레벨 (i+1) 의 돌 수를 나타냅니다. 예:
+    >>> make_a_pile(3)
+    [3, 5, 7]
+    """"""
+","    return [n + 2*i for i in range(n)]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(3) == [3, 5, 7], ""Test 3""
+    assert candidate(4) == [4,6,8,10], ""Test 4""
+    assert candidate(5) == [5, 7, 9, 11, 13]
+    assert candidate(6) == [6, 8, 10, 12, 14, 16]
+    assert candidate(8) == [8, 10, 12, 14, 16, 18, 20, 22]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def words_string(s):
+    """"""
+    당신은 코마 또는 공백으로 분리 된 단어의 문자열을 제공 될 것입니다. 당신의 임무는 단어로 문자열을 분할하고 단어의 배열을 반환하는 것입니다. 예를 들어: words_string ((""Hi, my name is John"") == [""Hi"", ""my"", ""name"", ""is"", ""John""] words_string ((""One, two, three, four, five, six"") == [""One"", ""two"", ""three"", ""four"", ""five"", ""six""]
+    """"""
+","    if not s:
+        return []
+
+    s_list = []
+
+    for letter in s:
+        if letter == ',':
+            s_list.append(' ')
+        else:
+            s_list.append(letter)
+
+    s_list = """".join(s_list)
+    return s_list.split()
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(""Hi, my name is John"") == [""Hi"", ""my"", ""name"", ""is"", ""John""]
+    assert candidate(""One, two, three, four, five, six"") == [""One"", ""two"", ""three"", ""four"", ""five"", ""six""]
+    assert candidate(""Hi, my name"") == [""Hi"", ""my"", ""name""]
+    assert candidate(""One,, two, three, four, five, six,"") == [""One"", ""two"", ""three"", ""four"", ""five"", ""six""]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate("""") == []
+    assert candidate(""ahmed     , gamal"") == [""ahmed"", ""gamal""]
+
+"
+"
+def choose_num(x, y):
+    """"""이 함수는 양수 x와 y를 가지고 [x, y] 범위 내의 가장 큰 정수 수를 반환합니다. 만약 그런 숫자가 없다면, 함수는 -1을 반환합니다. 예를 들어: choose_num ({12}, {15) = 14 choose_num ({13,}) = -1
+    """"""
+","    if x > y:
+        return -1
+    if y % 2 == 0:
+        return y
+    if x == y:
+        return -1
+    return y - 1
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(12, 15) == 14
+    assert candidate(13, 12) == -1
+    assert candidate(33, 12354) == 12354
+    assert candidate(5234, 5233) == -1
+    assert candidate(6, 29) == 28
+    assert candidate(27, 10) == -1
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(7, 7) == -1
+    assert candidate(546, 546) == 546
+
+"
+"
+def rounded_avg(n, m):
+    """"""양수 n과 m를 주어, n에서 m까지의 정수의 평균을 계산하는 것이 당신의 임무입니다. n을 가장 가까운 정수로 합쳐서 이진수로 변환합니다. n이 m보다 크면 -1을 반환합니다. 예: rounded_avg(1, 5) => ""0b11"" rounded_avg(7, 5) => -1 rounded_avg(10, 20) => ""0b11"" rounded_avg(20, 33) ""0b11010""
+    """"""
+","    if m < n:
+        return -1
+    summation = 0
+    for i in range(n, m+1):
+        summation += i
+    return bin(round(summation/(m - n + 1)))
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(1, 5) == ""0b11""
+    assert candidate(7, 13) == ""0b1010""
+    assert candidate(964,977) == ""0b1111001010""
+    assert candidate(996,997) == ""0b1111100100""
+    assert candidate(560,851) == ""0b1011000010""
+    assert candidate(185,546) == ""0b101101110""
+    assert candidate(362,496) == ""0b110101101""
+    assert candidate(350,902) == ""0b1001110010""
+    assert candidate(197,233) == ""0b11010111""
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(7, 5) == -1
+    assert candidate(5, 1) == -1
+    assert candidate(5, 5) == ""0b101""
+
+"
+"
+def unique_digits(x):
+    """"""양수 정수 x의 리스트를 주어, 어떤 짝수 숫자가 없는 모든 요소의 정렬된 리스트를 반환한다. 참고: 반환된 리스트는 증가 순서로 정렬되어야 한다. 예를 들어:
+    >>> unique_digits([15, 33, 1422, 1])
+    [1, 15, 33]
+    >>> unique_digits([152, 323, 1422, 10])
+    []
+    """"""
+","    odd_digit_elements = []
+    for i in x:
+        if all (int(c) % 2 == 1 for c in str(i)):
+            odd_digit_elements.append(i)
+    return sorted(odd_digit_elements)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([15, 33, 1422, 1]) == [1, 15, 33]
+    assert candidate([152, 323, 1422, 10]) == []
+    assert candidate([12345, 2033, 111, 151]) == [111, 151]
+    assert candidate([135, 103, 31]) == [31, 135]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def by_length(arr):
+    """"""
+    정수 배열을 주어 1과 9 사이의 정수를 정렬하고, 결과 배열을 역으로 바꾸고, 각 숫자를 ""하나"", ""두"", ""세"", ""네"", ""다섯"", ""여덟"", ""일곱"", ""일곱"", ""일곱"", ""아홉""에서 해당 이름으로 대체합니다. 예를 들어: arr = [2, 1, 1, 4, 5, 8, 2, 3] -> 정렬 arr -> [1, 1, 2, 2, 3, 4, 5, 8] -> 역 arr -> [8, 5, 4, 3, 2, 2, 1, 1] return [""Eight"", ""Five"", ""Three"", ""Two"", ""Two"", ""One"", ""One""] 배열이 비어 있다면, 빈 배열을 반환합니다: arr = [] return [] 배열에 이상한 숫자가 있으면 무시합니다: arr = [1, -1, 55] -> arr -> [1, 55] -> reverse arr = [55,1] return - '
+    """"""
+","    dic = {
+        1: ""One"",
+        2: ""Two"",
+        3: ""Three"",
+        4: ""Four"",
+        5: ""Five"",
+        6: ""Six"",
+        7: ""Seven"",
+        8: ""Eight"",
+        9: ""Nine"",
+    }
+    sorted_arr = sorted(arr, reverse=True)
+    new_arr = []
+    for var in sorted_arr:
+        try:
+            new_arr.append(dic[var])
+        except:
+            pass
+    return new_arr
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([2, 1, 1, 4, 5, 8, 2, 3]) == [""Eight"", ""Five"", ""Four"", ""Three"", ""Two"", ""Two"", ""One"", ""One""], ""Error""
+    assert candidate([]) == [], ""Error""
+    assert candidate([1, -1 , 55]) == ['One'], ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([1, -1, 3, 2]) == [""Three"", ""Two"", ""One""]
+    assert candidate([9, 4, 8]) == [""Nine"", ""Eight"", ""Four""]
+
+"
+"
+def f(n):
+    """""" n을 파라미터로 가져다가, i의 인덱스 i의 값이 1에서 i까지의 숫자의 합이 될 수 있도록, n 크기의 리스트를 반환하는 함수 f를 구현한다. i는 1에서 시작된다. i의 인수수는 1에서 i까지의 숫자의 곱이다 (1 * 2 *... * i). 예: f ((5) == [1, 2, 6, 24, 15]
+    """"""
+","    ret = []
+    for i in range(1,n+1):
+        if i%2 == 0:
+            x = 1
+            for j in range(1,i+1): x *= j
+            ret += [x]
+        else:
+            x = 0
+            for j in range(1,i+1): x += j
+            ret += [x]
+    return ret
+","def check(candidate):
+
+    assert candidate(5) == [1, 2, 6, 24, 15]
+    assert candidate(7) == [1, 2, 6, 24, 15, 720, 28]
+    assert candidate(1) == [1]
+    assert candidate(3) == [1, 2, 6]
+"
+"
+def even_odd_palindrome(n):
+    """"""
+    양수 n을 주어, 범위에 포함된 홀수 팔린드로마의 수를 가진 튜플을 반환한다. 예1: 입력: 3 출력: (1, 2) 설명: 홀수 팔린드로마는 1, 2, 3. 그 중 하나는 짝수이고, 두 개는 홀수이다. 예2: 입력: 12 출력: (4, 6) 설명: 홀수 팔린드로마는 1, 2, 3, 4, 5, 6, 7, 8, 9, 11. 그 중 네 개는 짝수이고, 6 개는 홀수이다. 참고: 1. 1 <= n <= 10^3 2. 튜플은 각각 짝수 팔린드로마와 홀수 팔린드로마의 수를 반환했다.
+    """"""
+","    def is_palindrome(n):
+        return str(n) == str(n)[::-1]
+
+    even_palindrome_count = 0
+    odd_palindrome_count = 0
+
+    for i in range(1, n+1):
+        if i%2 == 1 and is_palindrome(i):
+                odd_palindrome_count += 1
+        elif i%2 == 0 and is_palindrome(i):
+            even_palindrome_count += 1
+    return (even_palindrome_count, odd_palindrome_count)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(123) == (8, 13)
+    assert candidate(12) == (4, 6)
+    assert candidate(3) == (1, 2)
+    assert candidate(63) == (6, 8)
+    assert candidate(25) == (5, 6)
+    assert candidate(19) == (4, 6)
+    assert candidate(9) == (4, 5), ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1) == (0, 1), ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def count_nums(arr):
+    """"""
+    함수 count_nums를 작성하여 정수의 배열을 받아 0 이상의 숫자의 합이 있는 요소의 수를 반환합니다. 숫자가 음수라면 첫 번째 기호된 숫자는 음수입니다. 예를 들어 -123은 -1, 2, 3의 기호를 가지고 있습니다.
+    >>> count_nums([]) == 0
+    >>> count_nums([-1, 11, -11]) == 1
+    >>> count_nums([1, 1, 2]) == 3
+    """"""
+","    def digits_sum(n):
+        neg = 1
+        if n < 0: n, neg = -1 * n, -1 
+        n = [int(i) for i in str(n)]
+        n[0] = n[0] * neg
+        return sum(n)
+    return len(list(filter(lambda x: x > 0, [digits_sum(i) for i in arr])))
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([]) == 0
+    assert candidate([-1, -2, 0]) == 0
+    assert candidate([1, 1, 2, -2, 3, 4, 5]) == 6
+    assert candidate([1, 6, 9, -6, 0, 1, 5]) == 5
+    assert candidate([1, 100, 98, -7, 1, -1]) == 4
+    assert candidate([12, 23, 34, -45, -56, 0]) == 5
+    assert candidate([-0, 1**0]) == 1
+    assert candidate([1]) == 1
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def move_one_ball(arr):
+    """"""우리는 N개의 정수 arr[1], arr[2],..., arr[N]의 배열 'arr'을 가지고 있다. 배열의 숫자는 무작위로 순서로 나열된다. 당신의 임무는 주어진 배열에 다음과 같은 작업을 수행하여 배열을 감소하지 않는 순서로 정렬하는 것이 가능한지 결정하는 것이다. 당신은 수없이 많은 시간을 오른쪽 이동 작업을 수행 할 수 있다. 한 오른쪽 이동 작업은 배열의 모든 요소를 오른쪽 방향으로 한 위치로 이동시키는 것을 의미한다. 배열의 마지막 요소는 배열의 시작 위치 즉 0th 인덱스로 이동될 것이다. 위의 작업을 수행하여 정렬 된 배열을 얻을 수 있다면 True를 반환하면 다른 경우 False를 반환한다. 주어진 배열이 비어 있다면 True를 반환한다. 참고: 주어진 목록에는 고유한 요소가 보장된다. 예를 들어: move_one_(ball_[3,4,5,== 1, 2>True 설명: 2번
+                
+    """"""
+","    if len(arr)==0:
+      return True
+    sorted_array=sorted(arr)
+    my_arr=[]
+    
+    min_value=min(arr)
+    min_index=arr.index(min_value)
+    my_arr=arr[min_index:]+arr[0:min_index]
+    for i in range(len(arr)):
+      if my_arr[i]!=sorted_array[i]:
+        return False
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([3, 4, 5, 1, 2])==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([3, 5, 10, 1, 2])==True
+    assert candidate([4, 3, 1, 2])==False
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([3, 5, 4, 1, 2])==False, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([])==True
+"
+"
+def exchange(lst1, lst2):
+    """"""이 문제에서, 당신은 두 개의 숫자 목록을 가져다가, lst1을 짝수 목록으로 만들기 위해 그들 사이에 요소를 교환하는 것이 가능한지 여부를 결정하는 함수를 구현할 것입니다. lst1과 lst2 사이의 교환된 요소의 수에 제한이 없습니다. lst1의 모든 요소를 짝수로 만들기 위해 lst1과 lst2 사이의 요소를 교환하는 것이 가능하다면 ""YES""를 반환합니다. 그렇지 않으면 ""NO""를 반환합니다. 예를 들어: 교환[(1, 2, 3, 4], [1, 2, 3, 4]) => ""YES"" 교환[(1, 2, 3, 4], [1, 5, 3, 4]) => ""NO"" 입력 목록이 비어 있지 않을 것으로 가정됩니다.
+    """"""
+","    odd = 0
+    even = 0
+    for i in lst1:
+        if i%2 == 1:
+            odd += 1
+    for i in lst2:
+        if i%2 == 0:
+            even += 1
+    if even >= odd:
+        return ""YES""
+    return ""NO""
+            
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1, 2, 3, 4], [1, 2, 3, 4]) == ""YES""
+    assert candidate([1, 2, 3, 4], [1, 5, 3, 4]) == ""NO""
+    assert candidate([1, 2, 3, 4], [2, 1, 4, 3]) == ""YES"" 
+    assert candidate([5, 7, 3], [2, 6, 4]) == ""YES""
+    assert candidate([5, 7, 3], [2, 6, 3]) == ""NO"" 
+    assert candidate([3, 2, 6, 1, 8, 9], [3, 5, 5, 1, 1, 1]) == ""NO""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([100, 200], [200, 200]) == ""YES""
+
+"
+"
+def histogram(test):
+    """"""공간으로 분리된 소문자를 나타내는 문자열을 주어, 가장 많이 반복되는 글자를 포함하고 해당 수를 포함하는 사전을 반환합니다. 여러 글자가 동일한 출현을 가지고 있다면, 모두 반환합니다. 예: 히스토그램 (('a b c') == {'a': 1, 'b': 1, 'c': 1} 히스토그램 (('a b b a') == {'a': 2, 'b': 2} 히스토그램 (('a b c a b') == {'a': 2, 'b': 2} 히스토그램 (('b b a') == {'b 4}: 히스토그램 (('a') == {'b'}
+
+    """"""
+","    dict1={}
+    list1=test.split("" "")
+    t=0
+
+    for i in list1:
+        if(list1.count(i)>t) and i!='':
+            t=list1.count(i)
+    if t>0:
+        for i in list1:
+            if(list1.count(i)==t):
+                
+                dict1[i]=t
+    return dict1
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('a b b a') == {'a':2,'b': 2}, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('a b c a b') == {'a': 2, 'b': 2}, ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate('a b c d g') == {'a': 1, 'b': 1, 'c': 1, 'd': 1, 'g': 1}, ""This prints if this assert fails 3 (good for debugging!)""
+    assert candidate('r t g') == {'r': 1,'t': 1,'g': 1}, ""This prints if this assert fails 4 (good for debugging!)""
+    assert candidate('b b b b a') == {'b': 4}, ""This prints if this assert fails 5 (good for debugging!)""
+    assert candidate('r t g') == {'r': 1,'t': 1,'g': 1}, ""This prints if this assert fails 6 (good for debugging!)""
+    
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('') == {}, ""This prints if this assert fails 7 (also good for debugging!)""
+    assert candidate('a') == {'a': 1}, ""This prints if this assert fails 8 (also good for debugging!)""
+
+"
+"
+def reverse_delete(s,c):
+    """"""작업 우리는 두 개의 문자열 s와 c를 주어, 당신은 s에서 모든 문자열을 삭제해야 c의 모든 문자열과 같으며 그 결과 문자열이 팔린드로마인지 확인해야 합니다. 문자열은 앞과 뒤쪽으로 같은 내용을 읽으면 팔린드로마라고합니다. 당신은 결과 문자열과 True/False를 포함하는 튜플을 반환해야 합니다. 예를 들어, s = ""abcde"", c = ""ae""는 결과값이 ('bcd', False) 이어야 합니다. s = ""abcdef"", c = ""b""는 결과값이 ('acdef', False) 이어야 합니다. s = ""abcdedcba"", c = ""ab"", 결과는 ('cdedc', True) 이어야 합니다.
+    """"""
+","    s = ''.join([char for char in s if char not in c])
+    return (s,s[::-1] == s)
+","def check(candidate):
+
+    assert candidate(""abcde"",""ae"") == ('bcd',False)
+    assert candidate(""abcdef"", ""b"") == ('acdef',False)
+    assert candidate(""abcdedcba"",""ab"") == ('cdedc',True)
+    assert candidate(""dwik"",""w"") == ('dik',False)
+    assert candidate(""a"",""a"") == ('',True)
+    assert candidate(""abcdedcba"","""") == ('abcdedcba',True)
+    assert candidate(""abcdedcba"",""v"") == ('abcdedcba',True)
+    assert candidate(""vabba"",""v"") == ('abba',True)
+    assert candidate(""mamma"", ""mia"") == ("""", True)
+"
+"
+def odd_count(lst):
+    """"""각 문자열이 단지 숫자로만 구성된 문자열 목록이 주어지면 리스트를 반환한다. 출력의 각 요소 i는 ""입자의 문자열 i의 홀수 요소의 수""가 되어야 한다. 여기서 모든 i는 입력의 i'th 문자열의 홀수 숫자로 대체되어야 한다.
+
+    >>> odd_count(['1234567'])
+    [""the number of odd elements 4n the str4ng 4 of the 4nput.""]
+    >>> odd_count(['3',""11111111""])
+    [""the number of odd elements 1n the str1ng 1 of the 1nput."",
+     ""the number of odd elements 8n the str8ng 8 of the 8nput.""]
+    """"""
+","    res = []
+    for arr in lst:
+        n = sum(int(d)%2==1 for d in arr)
+        res.append(""the number of odd elements "" + str(n) + ""n the str""+ str(n) +""ng ""+ str(n) +"" of the ""+ str(n) +""nput."")
+    return res
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(['1234567']) == [""the number of odd elements 4n the str4ng 4 of the 4nput.""], ""Test 1""
+    assert candidate(['3',""11111111""]) == [""the number of odd elements 1n the str1ng 1 of the 1nput."", ""the number of odd elements 8n the str8ng 8 of the 8nput.""], ""Test 2""
+    assert candidate(['271', '137', '314']) == [
+        'the number of odd elements 2n the str2ng 2 of the 2nput.',
+        'the number of odd elements 3n the str3ng 3 of the 3nput.',
+        'the number of odd elements 2n the str2ng 2 of the 2nput.'
+    ]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def minSubArraySum(nums):
+    """"""
+    정수 n의 배열을 주어, n의 비공백 하위 배열의 최소 합을 구한다. 예: minSubArraySum (([2, 3, 4, 1, 2, 4]) == 1 minSubArraySum (([-1, -2, -3]) == -6
+    """"""
+","    max_sum = 0
+    s = 0
+    for num in nums:
+        s += -num
+        if (s < 0):
+            s = 0
+        max_sum = max(s, max_sum)
+    if max_sum == 0:
+        max_sum = max(-i for i in nums)
+    min_sum = -max_sum
+    return min_sum
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([2, 3, 4, 1, 2, 4]) == 1, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([-1, -2, -3]) == -6
+    assert candidate([-1, -2, -3, 2, -10]) == -14
+    assert candidate([-9999999999999999]) == -9999999999999999
+    assert candidate([0, 10, 20, 1000000]) == 0
+    assert candidate([-1, -2, -3, 10, -5]) == -6
+    assert candidate([100, -1, -2, -3, 10, -5]) == -6
+    assert candidate([10, 11, 13, 8, 3, 4]) == 3
+    assert candidate([100, -33, 32, -1, 0, -2]) == -33
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([-10]) == -10, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([7]) == 7
+    assert candidate([1, -1]) == -1
+"
+"
+def max_fill(grid, capacity):
+    import math
+    """"""
+    우물들의 직사각형 격자 (그리드) 를 주어집니다. 각 행은 하나의 우물을 나타내고, 각 행의 1은 하나의 물 단위를 나타냅니다. 각 우물은 그것으로부터 물을 추출하는 데 사용할 수 있는 대응 버킷을 가지고 있으며, 모든 버킷은 동일한 용량을 가지고 있습니다. 당신의 임무는 버킷을 사용하여 우물을 비우는 것입니다. 버킷을 낮추기 위해 필요한 횟수를 출력하십시오. 예 1: 입력: grid: [[0,0,1,0], [0,1,0,0], [1,1,1,1]] bucket_capacity: 1 출력: 6 예 2: 입력: grid: [[0,0,1,1], [0,0,0,0], [1,1,1], [0,1,1]] bucket_capacity: 2 출력: 5 예 3: 입력: [[:0,0,0], [0,0,0]] bucket_capacity: 5 출력
+    """"""
+","    return sum([math.ceil(sum(arr)/capacity) for arr in grid])
+","def check(candidate):
+
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([[0,0,1,0], [0,1,0,0], [1,1,1,1]], 1) == 6, ""Error""
+    assert candidate([[0,0,1,1], [0,0,0,0], [1,1,1,1], [0,1,1,1]], 2) == 5, ""Error""
+    assert candidate([[0,0,0], [0,0,0]], 5) == 0, ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([[1,1,1,1], [1,1,1,1]], 2) == 4, ""Error""
+    assert candidate([[1,1,1,1], [1,1,1,1]], 9) == 2, ""Error""
+
+"
+"
+def sort_array(arr):
+    """"""
+    이 카타에서, 당신은 비 ऋण적인 정수들의 배열을 그들의 이진 표현에서 1의 수에 따라 상승 순서로 정렬해야 합니다. 비슷한 수의 1의 경우, 소수값에 기초하여 정렬하십시오. 그것은 다음과 같이 구현되어야 합니다:
+    >>> sort_array([1, 5, 2, 3, 4]) == [1, 2, 3, 4, 5]
+    >>> sort_array([-2, -3, -4, -5, -6]) == [-6, -5, -4, -3, -2]
+    >>> sort_array([1, 0, 2, 3, 4]) [0, 1, 2, 3, 4]
+    """"""
+","    return sorted(sorted(arr), key=lambda x: bin(x)[2:].count('1'))
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1,5,2,3,4]) == [1, 2, 4, 3, 5]
+    assert candidate([-2,-3,-4,-5,-6]) == [-4, -2, -6, -5, -3]
+    assert candidate([1,0,2,3,4]) == [0, 1, 2, 4, 3]
+    assert candidate([]) == []
+    assert candidate([2,5,77,4,5,3,5,7,2,3,4]) == [2, 2, 4, 4, 3, 3, 5, 5, 5, 7, 77]
+    assert candidate([3,6,44,12,32,5]) == [32, 3, 5, 6, 12, 44]
+    assert candidate([2,4,8,16,32]) == [2, 4, 8, 16, 32]
+    assert candidate([2,4,8,16,32]) == [2, 4, 8, 16, 32]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def select_words(s, n):
+    """"""문자열 s와 자연수 n를 주어, 문자열 s에서 정확히 n개의 자음자를 포함하는 모든 단어의 목록을 반환하는 함수를 구현하도록 명령받았습니다. 만약 문자열 s가 빈다면 함수는 빈 목록을 반환해야 합니다. 참고: 입력 문자열에는 문자와 빈칸만 포함된다고 가정할 수 있습니다. 예: select_words (마리에게 작은 양떼가 있었다)
+    """"""
+","    result = []
+    for word in s.split():
+        n_consonants = 0
+        for i in range(0, len(word)):
+            if word[i].lower() not in [""a"",""e"",""i"",""o"",""u""]:
+                n_consonants += 1 
+        if n_consonants == n:
+            result.append(word)
+    return result
+
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""Mary had a little lamb"", 4) == [""little""], ""First test error: "" + str(candidate(""Mary had a little lamb"", 4))      
+    assert candidate(""Mary had a little lamb"", 3) == [""Mary"", ""lamb""], ""Second test error: "" + str(candidate(""Mary had a little lamb"", 3))  
+    assert candidate(""simple white space"", 2) == [], ""Third test error: "" + str(candidate(""simple white space"", 2))      
+    assert candidate(""Hello world"", 4) == [""world""], ""Fourth test error: "" + str(candidate(""Hello world"", 4))  
+    assert candidate(""Uncle sam"", 3) == [""Uncle""], ""Fifth test error: "" + str(candidate(""Uncle sam"", 3))
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate("""", 4) == [], ""1st edge test error: "" + str(candidate("""", 4))
+    assert candidate(""a b c d e f"", 1) == [""b"", ""c"", ""d"", ""f""], ""2nd edge test error: "" + str(candidate(""a b c d e f"", 1))
+
+"
+"
+def get_closest_vowel(word):
+    """"""단어의 오른쪽에서 두 자음 사이에 있는 가장 가까운 모음을 찾아내야 합니다. 시작과 끝의 모음은 계산되지 않습니다. 위의 조건을 충족하는 모음이 없으면 빈 문자열을 반환합니다. 주어진 문자열에는 영어 문자만 포함되어 있다고 가정 할 수 있습니다. 예: get_closest_vowel ((""yogurt"") ==> ""u"" get_closest_vowel ((""F"") ==> ""U"" get_closest_vowel ((""quick"") ==> """" get_closest_vowel"" ((ab"") ==> """"
+    """"""
+","    if len(word) < 3:
+        return """"
+
+    vowels = {""a"", ""e"", ""i"", ""o"", ""u"", ""A"", ""E"", 'O', 'U', 'I'}
+    for i in range(len(word)-2, 0, -1):
+        if word[i] in vowels:
+            if (word[i+1] not in vowels) and (word[i-1] not in vowels):
+                return word[i]
+    return """"
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""yogurt"") == ""u""
+    assert candidate(""full"") == ""u""
+    assert candidate(""easy"") == """"
+    assert candidate(""eAsy"") == """"
+    assert candidate(""ali"") == """"
+    assert candidate(""bad"") == ""a""
+    assert candidate(""most"") == ""o""
+    assert candidate(""ab"") == """"
+    assert candidate(""ba"") == """"
+    assert candidate(""quick"") == """"
+    assert candidate(""anime"") == ""i""
+    assert candidate(""Asia"") == """"
+    assert candidate(""Above"") == ""o""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def match_parens(lst):
+    '''
+    You are given a list of two strings, both strings consist of open
+    parentheses '(' or close parentheses ')' only.
+    Your job is to check if it is possible to concatenate the two strings in
+    some order, that the resulting string will be good.
+    A string S is considered to be good if and only if all parentheses in S
+    are balanced. For example: the string '(())()' is good, while the string
+    '())' is not.
+    Return 'Yes' if there's a way to make a good string, and return 'No' otherwise.
+
+    Examples:
+    match_parens(['()(', ')']) == 'Yes'
+    match_parens([')', ')']) == 'No'
+    '''
+","    def check(s):
+        val = 0
+        for i in s:
+            if i == '(':
+                val = val + 1
+            else:
+                val = val - 1
+            if val < 0:
+                return False
+        return True if val == 0 else False
+
+    S1 = lst[0] + lst[1]
+    S2 = lst[1] + lst[0]
+    return 'Yes' if check(S1) or check(S2) else 'No'
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(['()(', ')']) == 'Yes'
+    assert candidate([')', ')']) == 'No'
+    assert candidate(['(()(())', '())())']) == 'No'
+    assert candidate([')())', '(()()(']) == 'Yes'
+    assert candidate(['(())))', '(()())((']) == 'Yes'
+    assert candidate(['()', '())']) == 'No'
+    assert candidate(['(()(', '()))()']) == 'Yes'
+    assert candidate(['((((', '((())']) == 'No'
+    assert candidate([')(()', '(()(']) == 'No'
+    assert candidate([')(', ')(']) == 'No'
+    
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(['(', ')']) == 'Yes'
+    assert candidate([')', '(']) == 'Yes' 
+
+"
+"
+def maximum(arr, k):
+    """"""
+    정수 arr과 양수 k의 배열을 주어, 최대 k개의 숫자를 가진 길이 k의 정렬된 목록을 반환한다. 예1: 입력: arr = [-3, -4, 5], k = 3 출력: [-4, -3, 5] 예2: 입력: arr = [4, -4, 4], k = 2 출력: [4, 4] 예3: 입력: arr = [-3, 2, 1, 2, -1, -2, 1], k = 1 출력: [2] 참고: 1. 배열의 길이는 [1, 1000]의 범위에서 될 것이다. 2. 배열의 요소는 [-1000, 1000]의 범위에서 될 것이다. 3. 0 <= k <= len ((arr)
+    """"""
+","    if k == 0:
+        return []
+    arr.sort()
+    ans = arr[-k:]
+    return ans
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([-3, -4, 5], 3) == [-4, -3, 5]
+    assert candidate([4, -4, 4], 2) == [4, 4]
+    assert candidate([-3, 2, 1, 2, -1, -2, 1], 1) == [2]
+    assert candidate([123, -123, 20, 0 , 1, 2, -3], 3) == [2, 20, 123]
+    assert candidate([-123, 20, 0 , 1, 2, -3], 4) == [0, 1, 2, 20]
+    assert candidate([5, 15, 0, 3, -13, -8, 0], 7) == [-13, -8, 0, 0, 3, 5, 15]
+    assert candidate([-1, 0, 2, 5, 3, -10], 2) == [3, 5]
+    assert candidate([1, 0, 5, -7], 1) == [5]
+    assert candidate([4, -4], 2) == [-4, 4]
+    assert candidate([-10, 10], 2) == [-10, 10]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1, 2, 3, -23, 243, -400, 0], 0) == []
+
+"
+"
+def solution(lst):
+    """"""비공백이 아닌 정수 목록이 주어지면, 짝수 위치에 있는 모든 홀수 요소의 합을 반환합니다. 예제 해법 (([5, 8, 7, 1]) ==> 12 해법 (([3, 3, 3, 3, 3]) ==> 9 해법 (([30, 13, 24, 321]) ==>0
+    """"""
+","    return sum([x for idx, x in enumerate(lst) if idx%2==0 and x%2==1])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([5, 8, 7, 1])    == 12
+    assert candidate([3, 3, 3, 3, 3]) == 9
+    assert candidate([30, 13, 24, 321]) == 0
+    assert candidate([5, 9]) == 5
+    assert candidate([2, 4, 8]) == 0
+    assert candidate([30, 13, 23, 32]) == 23
+    assert candidate([3, 13, 2, 9]) == 3
+
+    # Check some edge cases that are easy to work out by hand.
+
+"
+"
+def add_elements(arr, k):
+    """"""
+    실수 arr 및 실수 k의 비공백 배열을 주어, arr의 첫 번째 k 요소에서 최대 두 자릿수를 가진 요소의 합을 반환합니다. 예: 입력: arr = [111,21,3,4000,5,6,7,8,9], k = 4 출력: 24 # sum of 21 + 3 제약: 1. 1 <= lenarr) <= 100 2. 1 <= k <= lenarr)
+    """"""
+","    return sum(elem for elem in arr[:k] if len(str(elem)) <= 2)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,-2,-3,41,57,76,87,88,99], 3) == -4
+    assert candidate([111,121,3,4000,5,6], 2) == 0
+    assert candidate([11,21,3,90,5,6,7,8,9], 4) == 125
+    assert candidate([111,21,3,4000,5,6,7,8,9], 4) == 24, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1], 1) == 1, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def get_odd_collatz(n):
+    """"""
+    양수 n을 주어, 홀수들을 콜라츠 순서대로 정렬한 목록을 반환한다. 콜라츠 추측은 수학에서 다음과 같이 정의된 순서에 관한 추측이다. 어떤 양수 n으로 시작한다. 다음 각 항은 다음과 같이 이전 항에서 얻어진다: 이전 항이 짝이면 다음 항은 이전 항의 절반이다. 이전 항이 홀수라면 다음 항은 이전 항의 3배 더하기 1이다. 추측은 n의 값이 무엇이든 순서는 항상 1에 도달한다는 것이다. 참고: 1. 콜라츠 (n) 는 [1] 이다. 2. 반환된 목록은 증가 순서로 정렬된다. 예를 들어: get_odd_collatz (n) 는 [1, 5] 을 반환한다. 5의 콜라츠 순서는 [5, 8, 16, 4, 2, 1] 이므로 홀수들은 1과 5 밖에 없다.
+    """"""
+","    if n%2==0:
+        odd_collatz = [] 
+    else:
+        odd_collatz = [n]
+    while n > 1:
+        if n % 2 == 0:
+            n = n/2
+        else:
+            n = n*3 + 1
+            
+        if n%2 == 1:
+            odd_collatz.append(int(n))
+
+    return sorted(odd_collatz)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(14) == [1, 5, 7, 11, 13, 17]
+    assert candidate(5) == [1, 5]
+    assert candidate(12) == [1, 3, 5], ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1) == [1], ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def valid_date(date):
+    """"""주어진 날짜 문자열을 검증하고 날짜가 유효한 경우 True를 반환하는 함수를 작성해야 합니다. 그렇지 않으면 False입니다. 날짜는 다음 규칙이 모두 만족하는 경우 유효합니다: 1. 날짜 문자열은 비어 있지 않습니다. 2. 날짜의 수는 1,3,5,7,8,10,12 개월에 대해 1 일 미만 또는 31 일 이상입니다. 그리고 날짜의 수는 4,6,9,11 개월에 대해 1 일 미만 또는 30 일 이상입니다. 그리고, 날짜의 수는 2 월에 대해 1 일 미만 또는 29 일 이상입니다. 3. 달은 1 일 미만 또는 12 일 이상으로 되어서는 안됩니다. 4. 날짜는 다음과 같은 형식으로 되어 있어야 합니다: valid_date (정확일)
+    """"""
+","    try:
+        date = date.strip()
+        month, day, year = date.split('-')
+        month, day, year = int(month), int(day), int(year)
+        if month < 1 or month > 12:
+            return False
+        if month in [1,3,5,7,8,10,12] and day < 1 or day > 31:
+            return False
+        if month in [4,6,9,11] and day < 1 or day > 30:
+            return False
+        if month == 2 and day < 1 or day > 29:
+            return False
+    except:
+        return False
+
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('03-11-2000') == True
+
+    assert candidate('15-01-2012') == False
+
+    assert candidate('04-0-2040') == False
+
+    assert candidate('06-04-2020') == True
+
+    assert candidate('01-01-2007') == True
+
+    assert candidate('03-32-2011') == False
+
+    assert candidate('') == False
+
+    assert candidate('04-31-3000') == False
+
+    assert candidate('06-06-2005') == True
+
+    assert candidate('21-31-2000') == False
+
+    assert candidate('04-12-2003') == True
+
+    assert candidate('04122003') == False
+
+    assert candidate('20030412') == False
+
+    assert candidate('2003-04') == False
+
+    assert candidate('2003-04-12') == False
+
+    assert candidate('04-2003') == False
+"
+"
+def split_words(txt):
+    '''
+    Given a string of words, return a list of words split on whitespace, if no whitespaces exists in the text you
+    should split on commas ',' if no commas exists you should return the number of lower-case letters with odd order in the
+    alphabet, ord('a') = 0, ord('b') = 1, ... ord('z') = 25
+    Examples
+    split_words(""Hello world!"") â -> [""Hello"", ""world!""]
+    split_words(""Hello,world!"") â -> [""Hello"", ""world!""]
+    split_words(""abcdef"") == 3 
+    '''
+","    if "" "" in txt:
+        return txt.split()
+    elif "","" in txt:
+        return txt.replace(',',' ').split()
+    else:
+        return len([i for i in txt if i.islower() and ord(i)%2 == 0])
+","def check(candidate):
+
+    assert candidate(""Hello world!"") == [""Hello"",""world!""]
+    assert candidate(""Hello,world!"") == [""Hello"",""world!""]
+    assert candidate(""Hello world,!"") == [""Hello"",""world,!""]
+    assert candidate(""Hello,Hello,world !"") == [""Hello,Hello,world"",""!""]
+    assert candidate(""abcdef"") == 3
+    assert candidate(""aaabb"") == 2
+    assert candidate(""aaaBb"") == 1
+    assert candidate("""") == 0
+"
+"
+def is_sorted(lst):
+    '''
+    Given a list of numbers, return whether or not they are sorted
+    in ascending order. If list has more than 1 duplicate of the same
+    number, return False. Assume no negative numbers and only integers.
+
+    Examples
+    is_sorted([5]) â -> True
+    is_sorted([1, 2, 3, 4, 5]) â -> True
+    is_sorted([1, 3, 2, 4, 5]) â -> False
+    is_sorted([1, 2, 3, 4, 5, 6]) â -> True
+    is_sorted([1, 2, 3, 4, 5, 6, 7]) â -> True
+    is_sorted([1, 3, 2, 4, 5, 6, 7]) â -> False
+    is_sorted([1, 2, 2, 3, 3, 4]) â -> True
+    is_sorted([1, 2, 2, 2, 3, 4]) â -> False
+    '''
+","    count_digit = dict([(i, 0) for i in lst])
+    for i in lst:
+        count_digit[i]+=1 
+    if any(count_digit[i] > 2 for i in lst):
+        return False
+    if all(lst[i-1] <= lst[i] for i in range(1, len(lst))):
+        return True
+    else:
+        return False
+    
+    
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([5]) == True
+    assert candidate([1, 2, 3, 4, 5]) == True
+    assert candidate([1, 3, 2, 4, 5]) == False
+    assert candidate([1, 2, 3, 4, 5, 6]) == True
+    assert candidate([1, 2, 3, 4, 5, 6, 7]) == True
+    assert candidate([1, 3, 2, 4, 5, 6, 7]) == False, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([]) == True, ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate([1]) == True, ""This prints if this assert fails 3 (good for debugging!)""
+    assert candidate([3, 2, 1]) == False, ""This prints if this assert fails 4 (good for debugging!)""
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1, 2, 2, 2, 3, 4]) == False, ""This prints if this assert fails 5 (good for debugging!)""
+    assert candidate([1, 2, 3, 3, 3, 4]) == False, ""This prints if this assert fails 6 (good for debugging!)""
+    assert candidate([1, 2, 2, 3, 3, 4]) == True, ""This prints if this assert fails 7 (good for debugging!)""
+    assert candidate([1, 2, 3, 4]) == True, ""This prints if this assert fails 8 (good for debugging!)""
+
+"
+"
+def intersection(interval1, interval2):
+    """"""2개의 간격이 주어져 있는데, 각 간격은 정수 쌍이다. 예를 들어, 간격 = (시작, 끝) = (1, 2). 주어진 간격은 닫혀있으며 이는 간격 (시작, 끝) 은 시작과 끝을 모두 포함하고 있음을 의미한다. 주어진 각 간격에 대해, 그것의 시작은 그 끝보다 작거나 같다고 가정한다. 당신의 임무는 이 두 간격의 교차 길이가 소수인지 여부를 결정하는 것이다. 예를 들어, 간격의 교차 길이가 1인 간격 (1, 3), (2, 4) 의 교차 길이가 (2, 3) 이며, 그 길이는 소수 아닌 1이다. 교차 길이가 소수라면 ""YES""를 반환하고, 그렇지 않으면 ""NO""를 반환한다. 두 간격이 교차하지 않으면 ""NO""를 반환한다. [input/output] 샘플: 교차 (((1, 2), (2,
+    """"""
+","    def is_prime(num):
+        if num == 1 or num == 0:
+            return False
+        if num == 2:
+            return True
+        for i in range(2, num):
+            if num%i == 0:
+                return False
+        return True
+
+    l = max(interval1[0], interval2[0])
+    r = min(interval1[1], interval2[1])
+    length = r - l
+    if length > 0 and is_prime(length):
+        return ""YES""
+    return ""NO""
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate((1, 2), (2, 3)) == ""NO""
+    assert candidate((-1, 1), (0, 4)) == ""NO""
+    assert candidate((-3, -1), (-5, 5)) == ""YES""
+    assert candidate((-2, 2), (-4, 0)) == ""YES""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate((-11, 2), (-1, -1)) == ""NO""
+    assert candidate((1, 2), (3, 5)) == ""NO""
+    assert candidate((1, 2), (1, 2)) == ""NO""
+    assert candidate((-2, -2), (-3, -2)) == ""NO""
+
+"
+"
+def prod_signs(arr):
+    """"""
+    정수들의 배열을 주어 1, -1 또는 0으로 표현된 배열의 각 숫자의 모든 기호의 곱으로 곱한 정수들의 크기의 합을 반환해야 합니다. 참고: 빈 arr에 대해 반환하지 않습니다. 예:
+    >>> prod_signs([1, 2, 2, -4]) == -9
+    >>> prod_signs([0, 1]) == 0
+    >>> prod_signs([]) == None
+    """"""
+","    if not arr: return None
+    prod = 0 if 0 in arr else (-1) ** len(list(filter(lambda x: x < 0, arr)))
+    return prod * sum([abs(i) for i in arr])
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1, 2, 2, -4]) == -9
+    assert candidate([0, 1]) == 0
+    assert candidate([1, 1, 1, 2, 3, -1, 1]) == -10
+    assert candidate([]) == None
+    assert candidate([2, 4,1, 2, -1, -1, 9]) == 20
+    assert candidate([-1, 1, -1, 1]) == 4
+    assert candidate([-1, 1, 1, 1]) == -4
+    assert candidate([-1, 1, 1, 0]) == 0
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def minPath(grid, k):
+    """"""
+    N 행과 N 열 (N >= 2) 과 k 양수인 k를 가진 그리드에서, 그리드의 각 셀은 값을 포함합니다. [1, N * N] 범위의 모든 정수는 그리드의 셀에 정확히 한 번 나타납니다. 그리드에서 길이 k의 최소 경로를 찾아야 합니다. 어떤 셀에서 시작하여, 각 단계에서 이웃 셀 중 어느 하나로 이동할 수 있습니다. 다른 말로 하면, 현재 셀과 가장자리를 공유하는 셀로 이동할 수 있습니다. k 길이의 경로는 정확히 k 개의 셀 (필요한이 다르지 않은) 을 방문하는 것을 의미합니다. 그리드에서 벗어날 수 없습니다. A 길이 (k 길이) 는 A와 B를 통과하는 값의 순서로운 목록을 작성한 후 (A와 B를 통과하는 값의 순서로운 목록을 작성한 후 (A와 B를 호출하고 l_st_A 및 l_st_B), l_st_A는 사전적으로 l
+    """"""
+","    n = len(grid)
+    val = n * n + 1
+    for i in range(n):
+        for j in range(n):
+            if grid[i][j] == 1:
+                temp = []
+                if i != 0:
+                    temp.append(grid[i - 1][j])
+
+                if j != 0:
+                    temp.append(grid[i][j - 1])
+
+                if i != n - 1:
+                    temp.append(grid[i + 1][j])
+
+                if j != n - 1:
+                    temp.append(grid[i][j + 1])
+
+                val = min(temp)
+
+    ans = []
+    for i in range(k):
+        if i % 2 == 0:
+            ans.append(1)
+        else:
+            ans.append(val)
+    return ans
+","def check(candidate):
+
+    # Check some simple cases
+    print
+    assert candidate([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 3) == [1, 2, 1]
+    assert candidate([[5, 9, 3], [4, 1, 6], [7, 8, 2]], 1) == [1]
+    assert candidate([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]], 4) == [1, 2, 1, 2]
+    assert candidate([[6, 4, 13, 10], [5, 7, 12, 1], [3, 16, 11, 15], [8, 14, 9, 2]], 7) == [1, 10, 1, 10, 1, 10, 1]
+    assert candidate([[8, 14, 9, 2], [6, 4, 13, 15], [5, 7, 1, 12], [3, 10, 11, 16]], 5) == [1, 7, 1, 7, 1]
+    assert candidate([[11, 8, 7, 2], [5, 16, 14, 4], [9, 3, 15, 6], [12, 13, 10, 1]], 9) == [1, 6, 1, 6, 1, 6, 1, 6, 1]
+    assert candidate([[12, 13, 10, 1], [9, 3, 15, 6], [5, 16, 14, 4], [11, 8, 7, 2]], 12) == [1, 6, 1, 6, 1, 6, 1, 6, 1, 6, 1, 6]
+    assert candidate([[2, 7, 4], [3, 1, 5], [6, 8, 9]], 8) == [1, 3, 1, 3, 1, 3, 1, 3]
+    assert candidate([[6, 1, 5], [3, 8, 9], [2, 7, 4]], 8) == [1, 5, 1, 5, 1, 5, 1, 5]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([[1, 2], [3, 4]], 10) == [1, 2, 1, 2, 1, 2, 1, 2, 1, 2]
+    assert candidate([[1, 3], [3, 2]], 10) == [1, 3, 1, 3, 1, 3, 1, 3, 1, 3]
+
+"
+"
+def tri(n):
+    """"""모든 사람들은 피보나치 수열을 알고 있으며, 지난 몇 세기 동안 수학자들이 깊이 연구했습니다. 그러나 사람들이 모르는 것은 트리보나치 수열입니다. 트리보나치 수열은 반복으로 정의됩니다: tri(1) = 3 tri(n) = 1 + n / 2, n가 짝이면. tri(n) = tri(n - 1) + tri(n - 2) + tri(n + 1), n가 홀이면. 예를 들어: tri(2) = 1 + (2 / 2) = 2 tri(4) = 3 tri(3) = tri(2) + tri(1) + tri(4) = 2 + 3 + 3 = 8 당신은 비 음수 인 정수 n을 주어, 트리보나치 수열의 첫 번째 n + 1 숫자의 목록을 반환해야합니다. 예: tri(3) = [1, 3, 2, 8]
+    """"""
+","    if n == 0:
+        return [1]
+    my_tri = [1, 3]
+    for i in range(2, n + 1):
+        if i % 2 == 0:
+            my_tri.append(i / 2 + 1)
+        else:
+            my_tri.append(my_tri[i - 1] + my_tri[i - 2] + (i + 3) / 2)
+    return my_tri
+","def check(candidate):
+
+    # Check some simple cases
+    
+    assert candidate(3) == [1, 3, 2.0, 8.0]
+    assert candidate(4) == [1, 3, 2.0, 8.0, 3.0]
+    assert candidate(5) == [1, 3, 2.0, 8.0, 3.0, 15.0]
+    assert candidate(6) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0]
+    assert candidate(7) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0, 24.0]
+    assert candidate(8) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0, 24.0, 5.0]
+    assert candidate(9) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0, 24.0, 5.0, 35.0]
+    assert candidate(20) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0, 24.0, 5.0, 35.0, 6.0, 48.0, 7.0, 63.0, 8.0, 80.0, 9.0, 99.0, 10.0, 120.0, 11.0]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(0) == [1]
+    assert candidate(1) == [1, 3]
+"
+"
+def digits(n):
+    """"""양수 n을 주어 홀수 숫자의 곱을 반환한다. 모든 숫자가 짝수인 경우 0을 반환한다. 예를 들어: 숫자 ((1) == 1 숫자 ((4) == 0 숫자 ((235) == 15
+    """"""
+","    product = 1
+    odd_count = 0
+    for digit in str(n):
+        int_digit = int(digit)
+        if int_digit%2 == 1:
+            product= product*int_digit
+            odd_count+=1
+    if odd_count ==0:
+        return 0
+    else:
+        return product
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(5) == 5
+    assert candidate(54) == 5
+    assert candidate(120) ==1
+    assert candidate(5014) == 5
+    assert candidate(98765) == 315
+    assert candidate(5576543) == 2625
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(2468) == 0
+
+"
+"
+def is_nested(string):
+    '''
+    Create a function that takes a string as input which contains only square brackets.
+    The function should return True if and only if there is a valid subsequence of brackets 
+    where at least one bracket in the subsequence is nested.
+
+    is_nested('[[]]') â -> True
+    is_nested('[]]]]]]][[[[[]') â -> False
+    is_nested('[][]') â -> False
+    is_nested('[]') â -> False
+    is_nested('[[][]]') â -> True
+    is_nested('[[]][[') â -> True
+    '''
+","    opening_bracket_index = []
+    closing_bracket_index = []
+    for i in range(len(string)):
+        if string[i] == '[':
+            opening_bracket_index.append(i)
+        else:
+            closing_bracket_index.append(i)
+    closing_bracket_index.reverse()
+    cnt = 0
+    i = 0
+    l = len(closing_bracket_index)
+    for idx in opening_bracket_index:
+        if i < l and idx < closing_bracket_index[i]:
+            cnt += 1
+            i += 1
+    return cnt >= 2
+
+    
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('[[]]') == True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('[]]]]]]][[[[[]') == False
+    assert candidate('[][]') == False
+    assert candidate(('[]')) == False
+    assert candidate('[[[[]]]]') == True
+    assert candidate('[]]]]]]]]]]') == False
+    assert candidate('[][][[]]') == True
+    assert candidate('[[]') == False
+    assert candidate('[]]') == False
+    assert candidate('[[]][[') == True
+    assert candidate('[[][]]') == True
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('') == False, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate('[[[[[[[[') == False
+    assert candidate(']]]]]]]]') == False
+
+"
+"
+
+def sum_squares(lst):
+    """"""숫자의 리스트를 주어집니다. 주어진 리스트의 제곱 숫자의 합을 반환하고, 리스트의 각 요소를 상위 int (~ 천장) 로 먼저 둥글게 해야 합니다. 예: lst = [1,2,3] 에 대한 출력은 14 lst = [1,4,9] 에 대한 출력은 98 lst = [1,3,5,7] 에 대한 출력은 84 lst = [1.4,4.2,0] 에 대한 출력은 29 lst = [-2.4,1,1] 에 대한 출력은 6
+    
+
+    """"""
+","    import math
+    squared = 0
+    for i in lst:
+        squared += math.ceil(i)**2
+    return squared
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,2,3])==14, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1.0,2,3])==14, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1,3,5,7])==84, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1.4,4.2,0])==29, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([-2.4,1,1])==6, ""This prints if this assert fails 1 (good for debugging!)""
+
+    assert candidate([100,1,15,2])==10230, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([10000,10000])==200000000, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([-1.4,4.6,6.3])==75, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([-1.4,17.9,18.9,19.9])==1086, ""This prints if this assert fails 1 (good for debugging!)""
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([0])==0, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([-1])==1, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([-1,1,0])==2, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def check_if_last_char_is_a_letter(txt):
+    '''
+    Create a function that returns True if the last character
+    of a given string is an alphabetical character and is not
+    a part of a word, and False otherwise.
+    Note: ""word"" is a group of characters separated by space.
+
+    Examples:
+    check_if_last_char_is_a_letter(""apple pie"") â -> False
+    check_if_last_char_is_a_letter(""apple pi e"") â -> True
+    check_if_last_char_is_a_letter(""apple pi e "") â -> False
+    check_if_last_char_is_a_letter("""") â -> False 
+    '''
+"," 
+    check = txt.split(' ')[-1]
+    return True if len(check) == 1 and (97 <= ord(check.lower()) <= 122) else False
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""apple"") == False
+    assert candidate(""apple pi e"") == True
+    assert candidate(""eeeee"") == False
+    assert candidate(""A"") == True
+    assert candidate(""Pumpkin pie "") == False
+    assert candidate(""Pumpkin pie 1"") == False
+    assert candidate("""") == False
+    assert candidate(""eeeee e "") == False
+    assert candidate(""apple pie"") == False
+    assert candidate(""apple pi e "") == False
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def can_arrange(arr):
+    """"""가장 큰 인덱스를 반환하는 함수를 생성합니다. 이 함수는 바로 앞의 인덱스보다 크거나 같지는 않습니다. 만약 이러한 인덱스가 존재하지 않는다면 -1을 반환합니다. 주어진 배열에는 중복된 값이 포함되지 않습니다. 예: can_arrange (([1,2,4,3,5]) = 3 can_arrange[(1,2,3]) = -1
+    """"""
+","    ind=-1
+    i=1
+    while i<len(arr):
+      if arr[i]<arr[i-1]:
+        ind=i
+      i+=1
+    return ind
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,2,4,3,5])==3
+    assert candidate([1,2,4,5])==-1
+    assert candidate([1,4,2,5,6,7,8,9,10])==2
+    assert candidate([4,8,5,7,3])==4
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([])==-1
+
+"
+"
+def largest_smallest_integers(lst):
+    '''
+    Create a function that returns a tuple (a, b), where 'a' is
+    the largest of negative integers, and 'b' is the smallest
+    of positive integers in a list.
+    If there is no negative or positive integers, return them as None.
+
+    Examples:
+    largest_smallest_integers([2, 4, 1, 3, 5, 7]) == (None, 1)
+    largest_smallest_integers([]) == (None, None)
+    largest_smallest_integers([0]) == (None, None)
+    '''
+","    smallest = list(filter(lambda x: x < 0, lst))
+    largest = list(filter(lambda x: x > 0, lst))
+    return (max(smallest) if smallest else None, min(largest) if largest else None)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([2, 4, 1, 3, 5, 7]) == (None, 1)
+    assert candidate([2, 4, 1, 3, 5, 7, 0]) == (None, 1)
+    assert candidate([1, 3, 2, 4, 5, 6, -2]) == (-2, 1)
+    assert candidate([4, 5, 3, 6, 2, 7, -7]) == (-7, 2)
+    assert candidate([7, 3, 8, 4, 9, 2, 5, -9]) == (-9, 2)
+    assert candidate([]) == (None, None)
+    assert candidate([0]) == (None, None)
+    assert candidate([-1, -3, -5, -6]) == (-1, None)
+    assert candidate([-1, -3, -5, -6, 0]) == (-1, None)
+    assert candidate([-6, -4, -4, -3, 1]) == (-3, 1)
+    assert candidate([-6, -4, -4, -3, -100, 1]) == (-3, 1)
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+"
+"
+def compare_one(a, b):
+    """"""
+    실수, 플로이트 또는 실수를 나타내는 문자열을 가져다가 주어진 변수 유형에서 더 큰 변수를 반환하는 함수를 생성합니다. 값이 같다면 null을 반환합니다. 참고: 실수가 문자열로 표현되면 부동 소수는. 또는, compare_one ({1,2,5) -> 2.5 compare_one ({1, ""2,3"") -> ""2,3"" compare_one ({5,1"", ""6"") -> ""6"" compare_one ({1"", 1) -> None
+    """"""
+","    temp_a, temp_b = a, b
+    if isinstance(temp_a, str): temp_a = temp_a.replace(',','.')
+    if isinstance(temp_b, str): temp_b = temp_b.replace(',','.')
+    if float(temp_a) == float(temp_b): return None
+    return a if float(temp_a) > float(temp_b) else b 
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(1, 2) == 2
+    assert candidate(1, 2.5) == 2.5
+    assert candidate(2, 3) == 3
+    assert candidate(5, 6) == 6
+    assert candidate(1, ""2,3"") == ""2,3""
+    assert candidate(""5,1"", ""6"") == ""6""
+    assert candidate(""1"", ""2"") == ""2""
+    assert candidate(""1"", 1) == None
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def is_equal_to_sum_even(n):
+    """"""주어진 숫자 n이 정확히 4개의 양수 짝수의 합으로 쓸 수 있는지 평가합니다. 예제 is_equal_to_sum_even (정수_합_합_합_합) 4) == False is_equal_to_sum_even (정수_합_합_합) 6) == False is_equal_to_sum_합_합_합 (정수_합_합_합) 8) == True
+    """"""
+","    return n%2 == 0 and n >= 8
+","def check(candidate):
+    assert candidate(4) == False
+    assert candidate(6) == False
+    assert candidate(8) == True
+    assert candidate(10) == True
+    assert candidate(11) == False
+    assert candidate(12) == True
+    assert candidate(13) == False
+    assert candidate(16) == True
+"
+"
+def special_factorial(n):
+    """"""브라질 인수수는 다음과 같이 정의된다: brazilian_factorial (n) = n! * (n-1)! * (n-2)! *... * 1! n > 0 가 있다. 예를 들어:
+    >>> special_factorial(4)
+    288
+
+    The function will receive an integer as input and should return the special
+    factorial of this integer.
+    """"""
+","    fact_i = 1
+    special_fact = 1
+    for i in range(1, n+1):
+        fact_i *= i
+        special_fact *= fact_i
+    return special_fact
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(4) == 288, ""Test 4""
+    assert candidate(5) == 34560, ""Test 5""
+    assert candidate(7) == 125411328000, ""Test 7""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1) == 1, ""Test 1""
+
+"
+"
+def fix_spaces(text):
+    """"""
+    문자열 텍스트를 주어, 모든 빈 공간을 밑줄로 대체하고, 문자열이 2개 이상의 연속적인 빈 공간을 가지고 있다면, 모든 연속적인 빈 공간을 - fix_spaces (예: ""예: ""예: "" fix_spaces (예: ""예: 1"") == ""예: 1"" fix_spaces (예: ""예: 2"") == ""_Example_2"" fix_spaces (예: ""예: 3"") == ""_Example-3""로 대체합니다.
+    """"""
+","    new_text = """"
+    i = 0
+    start, end = 0, 0
+    while i < len(text):
+        if text[i] == "" "":
+            end += 1
+        else:
+            if end - start > 2:
+                new_text += ""-""+text[i]
+            elif end - start > 0:
+                new_text += ""_""*(end - start)+text[i]
+            else:
+                new_text += text[i]
+            start, end = i+1, i+1
+        i+=1
+    if end - start > 2:
+        new_text += ""-""
+    elif end - start > 0:
+        new_text += ""_""
+    return new_text
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""Example"") == ""Example"", ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(""Mudasir Hanif "") == ""Mudasir_Hanif_"", ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate(""Yellow Yellow  Dirty  Fellow"") == ""Yellow_Yellow__Dirty__Fellow"", ""This prints if this assert fails 3 (good for debugging!)""
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""Exa   mple"") == ""Exa-mple"", ""This prints if this assert fails 4 (good for debugging!)""
+    assert candidate(""   Exa 1 2 2 mple"") == ""-Exa_1_2_2_mple"", ""This prints if this assert fails 4 (good for debugging!)""
+
+"
+"
+def file_name_check(file_name):
+    """"""파일의 이름을 나타내는 문자열을 가져다가, 파일의 이름이 유효하다면 '예'를 반환하고, 그렇지 않으면 '아니오'를 반환하는 함수를 생성합니다. 파일의 이름은 다음과 같은 조건이 모두 충족된 경우에만 유효하다고 간주됩니다. - 파일의 이름에는 세 자릿수 ('0'-'9') 이상이 없어야 합니다. - 파일의 이름에는 정확히 한 점 '.'이 포함됩니다. - 점의 앞의 하위 문자열은 빈 것이어야 하며, 점의 앞에는 라틴 알파벳의 한 글자가 있어야 합니다. ('a'-'z' 및 'A'Z'-). - 점의 뒤에는 다음 중 하나가 있어야 합니다.
+    """"""
+","    suf = ['txt', 'exe', 'dll']
+    lst = file_name.split(sep='.')
+    if len(lst) != 2:
+        return 'No'
+    if not lst[1] in suf:
+        return 'No'
+    if len(lst[0]) == 0:
+        return 'No'
+    if not lst[0][0].isalpha():
+        return 'No'
+    t = len([x for x in lst[0] if x.isdigit()])
+    if t > 3:
+        return 'No'
+    return 'Yes'
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""example.txt"") == 'Yes'
+    assert candidate(""1example.dll"") == 'No'
+    assert candidate('s1sdf3.asd') == 'No'
+    assert candidate('K.dll') == 'Yes'
+    assert candidate('MY16FILE3.exe') == 'Yes'
+    assert candidate('His12FILE94.exe') == 'No'
+    assert candidate('_Y.txt') == 'No'
+    assert candidate('?aREYA.exe') == 'No'
+    assert candidate('/this_is_valid.dll') == 'No'
+    assert candidate('this_is_valid.wow') == 'No'
+    assert candidate('this_is_valid.txt') == 'Yes'
+    assert candidate('this_is_valid.txtexe') == 'No'
+    assert candidate('#this2_i4s_5valid.ten') == 'No'
+    assert candidate('@this1_is6_valid.exe') == 'No'
+    assert candidate('this_is_12valid.6exe4.txt') == 'No'
+    assert candidate('all.exe.txt') == 'No'
+    assert candidate('I563_No.exe') == 'Yes'
+    assert candidate('Is3youfault.txt') == 'Yes'
+    assert candidate('no_one#knows.dll') == 'Yes'
+    assert candidate('1I563_Yes3.exe') == 'No'
+    assert candidate('I563_Yes3.txtt') == 'No'
+    assert candidate('final..txt') == 'No'
+    assert candidate('final132') == 'No'
+    assert candidate('_f4indsartal132.') == 'No'
+    
+        
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('.txt') == 'No'
+    assert candidate('s.') == 'No'
+
+"
+"
+
+
+def sum_squares(lst):
+    """""""" 이 함수는 정수들의 목록을 가져옵니다. 목록의 모든 항목에 대해, 함수는 3의 인덱스가 3의 배수인 경우 정수 항목을 제곱하고, 4의 배수인 경우 정수 항목을 세로합니다. 함수는 3 또는 4의 배수가 아닌 목록의 항목을 변경하지 않습니다. 함수는 모든 항목의 합을 반환합니다. 예: lst = [1,2,3] 에 대해 출력은 6 lst = [] 에 대해 출력은 0 lst = [-1,-5,2,-1,-5] 에 대해 출력은 -126
+    """"""
+","    result =[]
+    for i in range(len(lst)):
+        if i %3 == 0:
+            result.append(lst[i]**2)
+        elif i % 4 == 0 and i%3 != 0:
+            result.append(lst[i]**3)
+        else:
+            result.append(lst[i])
+    return sum(result)
+","def check(candidate):
+
+    # Check some simple cases
+    
+    assert candidate([1,2,3]) == 6
+    assert candidate([1,4,9]) == 14
+    assert candidate([]) == 0
+    assert candidate([1,1,1,1,1,1,1,1,1]) == 9
+    assert candidate([-1,-1,-1,-1,-1,-1,-1,-1,-1]) == -3
+    assert candidate([0]) == 0
+    assert candidate([-1,-5,2,-1,-5]) == -126
+    assert candidate([-56,-99,1,0,-2]) == 3030
+    assert candidate([-1,0,0,0,0,0,0,0,-1]) == 0
+    assert candidate([-16, -9, -2, 36, 36, 26, -20, 25, -40, 20, -4, 12, -26, 35, 37]) == -14196
+    assert candidate([-1, -3, 17, -1, -15, 13, -1, 14, -14, -12, -5, 14, -14, 6, 13, 11, 16, 16, 4, 10]) == -1448
+    
+    
+    # Don't remove this line:
+"
+"
+def words_in_sentence(sentence):
+    """"""
+    문장을 나타내는 문자열이 주어져 있고, 문장에는 공백으로 분리된 몇 개의 단어가 포함되어 있으며, 원래 문장에서 나온 단어가 포함된 문자열을 반환해야 하며, 그 길이는 소수이며, 새 문자열의 단어들의 순서는 원래와 동일해야 합니다. 예1: 입력: 문장 = ""이것은 테스트입니다"" 출력: ""입니다"" 예2: 입력: 문장 = "" 수영을 가도록 하자"" 출력: ""가십시오"" 제약: * 1 <= len(sentence) <= 100 * 문장에는 문자만 포함됩니다
+    """"""
+","    new_lst = []
+    for word in sentence.split():
+        flg = 0
+        if len(word) == 1:
+            flg = 1
+        for i in range(2, len(word)):
+            if len(word)%i == 0:
+                flg = 1
+        if flg == 0 or len(word) == 2:
+            new_lst.append(word)
+    return "" "".join(new_lst)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""This is a test"") == ""is""
+    assert candidate(""lets go for swimming"") == ""go for""
+    assert candidate(""there is no place available here"") == ""there is no place""
+    assert candidate(""Hi I am Hussein"") == ""Hi am Hussein""
+    assert candidate(""go for it"") == ""go for it""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""here"") == """"
+    assert candidate(""here is"") == ""is""
+
+"
+"
+def simplify(x, n):
+    """"""함수는 x * n가 실수라면 True를 반환하고 그렇지 않으면 False를 반환합니다. x와 n는 분수의 문자열 표현이며, 다음과 같은 형식을 가지고 있습니다. 분자와 분모가 양수 실수입니다. x와 n는 유효 분수이며 분모는 0이 아닙니다. simplify (일분) ""1/5"", ""5/1"") = True simplify (일분) ""1/6"", ""2/1"") = False simplify (일분) ""7/10"", ""10/2"") = False
+    """"""
+","    a, b = x.split(""/"")
+    c, d = n.split(""/"")
+    numerator = int(a) * int(c)
+    denom = int(b) * int(d)
+    if (numerator/denom == int(numerator/denom)):
+        return True
+    return False
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""1/5"", ""5/1"") == True, 'test1'
+    assert candidate(""1/6"", ""2/1"") == False, 'test2'
+    assert candidate(""5/1"", ""3/1"") == True, 'test3'
+    assert candidate(""7/10"", ""10/2"") == False, 'test4'
+    assert candidate(""2/10"", ""50/10"") == True, 'test5'
+    assert candidate(""7/2"", ""4/2"") == True, 'test6'
+    assert candidate(""11/6"", ""6/1"") == True, 'test7'
+    assert candidate(""2/3"", ""5/2"") == False, 'test8'
+    assert candidate(""5/2"", ""3/5"") == False, 'test9'
+    assert candidate(""2/4"", ""8/4"") == True, 'test10'
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""2/4"", ""4/2"") == True, 'test11'
+    assert candidate(""1/5"", ""5/1"") == True, 'test12'
+    assert candidate(""1/5"", ""1/5"") == False, 'test13'
+
+"
+"
+def order_by_points(nums):
+    """"""
+    주어진 정수 목록을 숫자의 합에 따라 상승 순서로 정렬하는 함수를 작성하십시오. 참고: 숫자의 합이 비슷한 항목이 여러 개 있으면 원래 목록의 인덱스에 따라 순서를 매겨주세요. 예를 들어:
+    >>> order_by_points([1, 11, -1, -11, -12]) == [-1, -11, 1, -12, 11]
+    >>> order_by_points([]) == []
+    """"""
+","    def digits_sum(n):
+        neg = 1
+        if n < 0: n, neg = -1 * n, -1 
+        n = [int(i) for i in str(n)]
+        n[0] = n[0] * neg
+        return sum(n)
+    return sorted(nums, key=digits_sum)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1, 11, -1, -11, -12]) == [-1, -11, 1, -12, 11]
+    assert candidate([1234,423,463,145,2,423,423,53,6,37,3457,3,56,0,46]) == [0, 2, 3, 6, 53, 423, 423, 423, 1234, 145, 37, 46, 56, 463, 3457]
+    assert candidate([]) == []
+    assert candidate([1, -11, -32, 43, 54, -98, 2, -3]) == [-3, -32, -98, -11, 1, 2, 43, 54]
+    assert candidate([1,2,3,4,5,6,7,8,9,10,11]) == [1, 10, 2, 11, 3, 4, 5, 6, 7, 8, 9]
+    assert candidate([0,6,6,-76,-21,23,4]) == [-76, -21, 0, 4, 23, 6, 6]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def specialFilter(nums):
+    """"""숫자의 배열을 입력으로 받아 배열의 요소 수가 10보다 많고 숫자의 첫 번째와 마지막 숫자가 홀수 (1, 3, 5, 7, 9) 인 함수를 작성하십시오. 예를 들어: specialFilter (([15, -73, 14, -15]) => 1 specialFilter (([33, -2, -3, 45, 21, 109]) => 2
+    """"""
+","    
+    count = 0
+    for num in nums:
+        if num > 10:
+            odd_digits = (1, 3, 5, 7, 9)
+            number_as_string = str(num)
+            if int(number_as_string[0]) in odd_digits and int(number_as_string[-1]) in odd_digits:
+                count += 1
+        
+    return count 
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([5, -2, 1, -5]) == 0  
+    assert candidate([15, -73, 14, -15]) == 1
+    assert candidate([33, -2, -3, 45, 21, 109]) == 2
+    assert candidate([43, -12, 93, 125, 121, 109]) == 4
+    assert candidate([71, -2, -33, 75, 21, 19]) == 3
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1]) == 0              
+    assert candidate([]) == 0                   
+
+"
+"
+def get_max_triples(n):
+    """"""
+    양수 n을 주어 길이가 n인 정수 배열 a를 만들어야 합니다. 각 i (1 ‰¤ i ‰¤ n) 에 대해 a[i] = i * i - i + 1의 값은 a의 삼배 (a[i], a[j], a[k]) 의 수를 반환합니다. i < j < k, 그리고 a[i] + a[j] + a[k]는 3의 배수입니다. 예: 입력: n = 5 출력: 1 설명: a = [1, 3, 7, 13, 21] 유효한 유일한 삼배는 (1, 7, 13) 입니다.
+    """"""
+","    A = [i*i - i + 1 for i in range(1,n+1)]
+    ans = []
+    for i in range(n):
+        for j in range(i+1,n):
+            for k in range(j+1,n):
+                if (A[i]+A[j]+A[k])%3 == 0:
+                    ans += [(A[i],A[j],A[k])]
+    return len(ans)
+","def check(candidate):
+
+    assert candidate(5) == 1
+    assert candidate(6) == 4
+    assert candidate(10) == 36
+    assert candidate(100) == 53361
+"
+"
+def bf(planet1, planet2):
+    '''
+    There are eight planets in our solar system: the closerst to the Sun 
+    is Mercury, the next one is Venus, then Earth, Mars, Jupiter, Saturn, 
+    Uranus, Neptune.
+    Write a function that takes two planet names as strings planet1 and planet2. 
+    The function should return a tuple containing all planets whose orbits are 
+    located between the orbit of planet1 and the orbit of planet2, sorted by 
+    the proximity to the sun. 
+    The function should return an empty tuple if planet1 or planet2
+    are not correct planet names. 
+    Examples
+    bf(""Jupiter"", ""Neptune"") ==> (""Saturn"", ""Uranus"")
+    bf(""Earth"", ""Mercury"") ==> (""Venus"")
+    bf(""Mercury"", ""Uranus"") ==> (""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn"")
+    '''
+","    planet_names = (""Mercury"", ""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn"", ""Uranus"", ""Neptune"")
+    if planet1 not in planet_names or planet2 not in planet_names or planet1 == planet2:
+        return ()
+    planet1_index = planet_names.index(planet1)
+    planet2_index = planet_names.index(planet2)
+    if planet1_index < planet2_index:
+        return (planet_names[planet1_index + 1: planet2_index])
+    else:
+        return (planet_names[planet2_index + 1 : planet1_index])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""Jupiter"", ""Neptune"") == (""Saturn"", ""Uranus""), ""First test error: "" + str(len(candidate(""Jupiter"", ""Neptune"")))      
+    assert candidate(""Earth"", ""Mercury"") == (""Venus"",), ""Second test error: "" + str(candidate(""Earth"", ""Mercury""))  
+    assert candidate(""Mercury"", ""Uranus"") == (""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn""), ""Third test error: "" + str(candidate(""Mercury"", ""Uranus""))      
+    assert candidate(""Neptune"", ""Venus"") == (""Earth"", ""Mars"", ""Jupiter"", ""Saturn"", ""Uranus""), ""Fourth test error: "" + str(candidate(""Neptune"", ""Venus""))  
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""Earth"", ""Earth"") == ()
+    assert candidate(""Mars"", ""Earth"") == ()
+    assert candidate(""Jupiter"", ""Makemake"") == ()
+
+"
+"
+def sorted_list_sum(lst):
+    """"""문자열 목록을 파라미터로 받아, 홀수 길이의 문자열을 삭제하고, 정렬된 순서로 결과 목록을 반환하는 함수를 작성합니다. 목록은 항상 문자열 목록이며, 숫자의 배열이 아니며, 중복된 숫자를 포함할 수 있습니다. 목록의 순서는 각 단어의 길이에 따라 상승해야하며, 해당 규칙에 따라 정렬된 목록을 반환해야합니다. 두 단어의 길이 같으면, 목록을 알파벳 순으로 정렬하십시오. 함수는 정렬된 순서로 문자열 목록을 반환해야합니다. 모든 단어는 동일한 길이가 될 것으로 가정 할 수 있습니다. 예를 들어: assert list_sort[""aa"", ""a"", ""aaa""]) => assert list_sort[""ab"", ""a"", ""aaa"", ""cd"" => [""ab"", ""cd""]
+    """"""
+","    lst.sort()
+    new_lst = []
+    for i in lst:
+        if len(i)%2 == 0:
+            new_lst.append(i)
+    return sorted(new_lst, key=len)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([""aa"", ""a"", ""aaa""]) == [""aa""]
+    assert candidate([""school"", ""AI"", ""asdf"", ""b""]) == [""AI"", ""asdf"", ""school""]
+    assert candidate([""d"", ""b"", ""c"", ""a""]) == []
+    assert candidate([""d"", ""dcba"", ""abcd"", ""a""]) == [""abcd"", ""dcba""]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([""AI"", ""ai"", ""au""]) == [""AI"", ""ai"", ""au""]
+    assert candidate([""a"", ""b"", ""b"", ""c"", ""c"", ""a""]) == []
+    assert candidate(['aaaa', 'bbbb', 'dd', 'cc']) == [""cc"", ""dd"", ""aaaa"", ""bbbb""]
+
+"
+"
+def x_or_y(n, x, y):
+    """"""n이 소수라면 x의 값을 반환해야 하고 그렇지 않으면 y의 값을 반환해야 하는 간단한 프로그램. 예: x_or_y(7, 34, 12) == 34 x_or_y(15, 8, 5) == 5
+    
+    """"""
+","    if n == 1:
+        return y
+    for i in range(2, n):
+        if n % i == 0:
+            return y
+            break
+    else:
+        return x
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(7, 34, 12) == 34
+    assert candidate(15, 8, 5) == 5
+    assert candidate(3, 33, 5212) == 33
+    assert candidate(1259, 3, 52) == 3
+    assert candidate(7919, -1, 12) == -1
+    assert candidate(3609, 1245, 583) == 583
+    assert candidate(91, 56, 129) == 129
+    assert candidate(6, 34, 1234) == 1234
+    
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1, 2, 0) == 0
+    assert candidate(2, 2, 0) == 2
+
+"
+"
+def double_the_difference(lst):
+    '''
+    Given a list of numbers, return the sum of squares of the numbers
+    in the list that are odd. Ignore numbers that are negative or not integers.
+    
+    double_the_difference([1, 3, 2, 0]) == 1 + 9 + 0 + 0 = 10
+    double_the_difference([-1, -2, 0]) == 0
+    double_the_difference([9, -2]) == 81
+    double_the_difference([0]) == 0  
+   
+    If the input list is empty, return 0.
+    '''
+","    return sum([i**2 for i in lst if i > 0 and i%2!=0 and ""."" not in str(i)])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([]) == 0 , ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([5, 4]) == 25 , ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate([0.1, 0.2, 0.3]) == 0 , ""This prints if this assert fails 3 (good for debugging!)""
+    assert candidate([-10, -20, -30]) == 0 , ""This prints if this assert fails 4 (good for debugging!)""
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([-1, -2, 8]) == 0, ""This prints if this assert fails 5 (also good for debugging!)""
+    assert candidate([0.2, 3, 5]) == 34, ""This prints if this assert fails 6 (also good for debugging!)""
+    lst = list(range(-99, 100, 2))
+    odd_sum = sum([i**2 for i in lst if i%2!=0 and i > 0])
+    assert candidate(lst) == odd_sum , ""This prints if this assert fails 7 (good for debugging!)""
+
+"
+"
+def compare(game,guess):
+    """"""많은 사람들이 예상했던 어떤 사건의 결과가 마침내 알려졌을 때, 우리는 모두 그 느낌을 기억한다고 생각합니다. 그 순간에 당신이 가진 감정과 생각은 확실히 기록하고 비교할 가치가 있습니다. 당신의 임무는 사람이 여러 번의 일치의 결과를 올바르게 추측했는지 여부를 결정하는 것입니다. 당신은 각 인덱스가 일치하는 두 개의 점수와 같은 길이의 추측 배열을 주어집니다. 각 추측이 얼마나 멀리 떨어져 있는지 나타내는 동일한 길이의 배열을 반환하십시오. 그들이 정확하게 추측했다면 값은 0이고, 그렇지 않으면 값은 추측과 점수 사이의 절대 차이입니다. 예: (([1,2,3,4,5,1],[1,2,3,4,2,]) -> [0,0,0,0,3,3] 비교 ([0,5,0,4],[4,1,0,-2]) -> [4,4,0,1,0,6]
+    """"""
+","    return [abs(x-y) for x,y in zip(game,guess)]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,2,3,4,5,1],[1,2,3,4,2,-2])==[0,0,0,0,3,3], ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([0,0,0,0,0,0],[0,0,0,0,0,0])==[0,0,0,0,0,0], ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1,2,3],[-1,-2,-3])==[2,4,6], ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1,2,3,5],[-1,2,3,4])==[2,0,0,1], ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def Strongest_Extension(class_name, extensions):
+    """"""클래스 이름 (스트링) 과 확장 목록이 주어집니다. 확장들은 클래스에 추가 클래스를 로드하는데 사용됩니다. 확장의 강도는 다음과 같습니다. CAP는 확장 이름의 대문자 수이고, SM는 확장 이름의 소문자 수입니다. 그 강도는 CAP - SM 분수로 주어집니다. 가장 강한 확장자를 찾아서 다음과 같은 형식으로 문자열을 반환해야 합니다: ClassName.StrongestExtensionName. 동일한 강도를 가진 두 개 이상의 확장자가 있으면 목록에서 먼저 나오는 것을 선택해야 합니다. 예를 들어, 클래스와 확장 목록으로 ""Slices""를 주어지면 'Slices.SliviCes.SEviCes.SEviCes.SEviCes.SEviCes.SEviCes.SEviCes.SEviCes.SEviCes.SEviCes.SEviCes.SEviCes.SEvi
+    """"""
+","    strong = extensions[0]
+    my_val = len([x for x in extensions[0] if x.isalpha() and x.isupper()]) - len([x for x in extensions[0] if x.isalpha() and x.islower()])
+    for s in extensions:
+        val = len([x for x in s if x.isalpha() and x.isupper()]) - len([x for x in s if x.isalpha() and x.islower()])
+        if val > my_val:
+            strong = s
+            my_val = val
+
+    ans = class_name + ""."" + strong
+    return ans
+
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('Watashi', ['tEN', 'niNE', 'eIGHt8OKe']) == 'Watashi.eIGHt8OKe'
+    assert candidate('Boku123', ['nani', 'NazeDa', 'YEs.WeCaNe', '32145tggg']) == 'Boku123.YEs.WeCaNe'
+    assert candidate('__YESIMHERE', ['t', 'eMptY', 'nothing', 'zeR00', 'NuLl__', '123NoooneB321']) == '__YESIMHERE.NuLl__'
+    assert candidate('K', ['Ta', 'TAR', 't234An', 'cosSo']) == 'K.TAR'
+    assert candidate('__HAHA', ['Tab', '123', '781345', '-_-']) == '__HAHA.123'
+    assert candidate('YameRore', ['HhAas', 'okIWILL123', 'WorkOut', 'Fails', '-_-']) == 'YameRore.okIWILL123'
+    assert candidate('finNNalLLly', ['Die', 'NowW', 'Wow', 'WoW']) == 'finNNalLLly.WoW'
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('_', ['Bb', '91245']) == '_.Bb'
+    assert candidate('Sp', ['671235', 'Bb']) == 'Sp.671235'
+    
+"
+"
+def cycpattern_check(a , b):
+    """"""2개의 단어가 주어집니다. 두 번째 단어 또는 그 중 어떤 회전이 첫 번째 단어의 하위 문자열이라면 True를 반환해야 합니다. cycpattern_check(""abcd"",""abd"") => False cycpattern_check(""hello"",""ell"") => True cycpattern_check(""whassup"",""psus"") => False cycpattern_check""(abab"",""baa"") => True cycpattern_check""(""efef"",""eeff"") => False cycpattern_check""(hims"",""simen"") => True
+
+    """"""
+","    l = len(b)
+    pat = b + b
+    for i in range(len(a) - l + 1):
+        for j in range(l + 1):
+            if a[i:i+l] == pat[j:j+l]:
+                return True
+    return False
+","def check(candidate):
+
+    # Check some simple cases
+    #assert True, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    #assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert  candidate(""xyzw"",""xyw"") == False , ""test #0""
+    assert  candidate(""yello"",""ell"") == True , ""test #1""
+    assert  candidate(""whattup"",""ptut"") == False , ""test #2""
+    assert  candidate(""efef"",""fee"") == True , ""test #3""
+    assert  candidate(""abab"",""aabb"") == False , ""test #4""
+    assert  candidate(""winemtt"",""tinem"") == True , ""test #5""
+
+"
+"
+def even_odd_count(num):
+    """"""정수 를 주어. 정수 와 홀수 의 수 를 각각 가진 튜플 을 반환 합니다. 예: even_odd_count(-12) ==> (1, 1) even_odd_count(123) ==> (1, 2)
+    """"""
+","    even_count = 0
+    odd_count = 0
+    for i in str(abs(num)):
+        if int(i)%2==0:
+            even_count +=1
+        else:
+            odd_count +=1
+    return (even_count, odd_count)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(7) == (0, 1)
+    assert candidate(-78) == (1, 1)
+    assert candidate(3452) == (2, 2)
+    assert candidate(346211) == (3, 3)
+    assert candidate(-345821) == (3, 3)
+    assert candidate(-2) == (1, 0)
+    assert candidate(-45347) == (2, 3)
+    assert candidate(0) == (1, 0)
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def int_to_mini_roman(number):
+    """"""
+    양수 인 정수를 주어, 그 로마자 수와 동등한 문자열을 얻어 소문자로 반환한다. 제한: 1 <= num <= 1000 예:
+    >>> int_to_mini_roman(19) == 'xix'
+    >>> int_to_mini_roman(152) == 'clii'
+    >>> int_to_mini_roman(426) == 'cdxxvi'
+    """"""
+","    num = [1, 4, 5, 9, 10, 40, 50, 90,  
+           100, 400, 500, 900, 1000] 
+    sym = [""I"", ""IV"", ""V"", ""IX"", ""X"", ""XL"",  
+           ""L"", ""XC"", ""C"", ""CD"", ""D"", ""CM"", ""M""] 
+    i = 12
+    res = ''
+    while number: 
+        div = number // num[i] 
+        number %= num[i] 
+        while div: 
+            res += sym[i] 
+            div -= 1
+        i -= 1
+    return res.lower()
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(19) == 'xix'
+    assert candidate(152) == 'clii'
+    assert candidate(251) == 'ccli'
+    assert candidate(426) == 'cdxxvi'
+    assert candidate(500) == 'd'
+    assert candidate(1) == 'i'
+    assert candidate(4) == 'iv'
+    assert candidate(43) == 'xliii'
+    assert candidate(90) == 'xc'
+    assert candidate(94) == 'xciv'
+    assert candidate(532) == 'dxxxii'
+    assert candidate(900) == 'cm'
+    assert candidate(994) == 'cmxciv'
+    assert candidate(1000) == 'm'
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def right_angle_triangle(a, b, c):
+    '''
+    Given the lengths of the three sides of a triangle. Return True if the three
+    sides form a right-angled triangle, False otherwise.
+    A right-angled triangle is a triangle in which one angle is right angle or 
+    90 degree.
+    Example:
+    right_angle_triangle(3, 4, 5) == True
+    right_angle_triangle(1, 2, 3) == False
+    '''
+","    return a*a == b*b + c*c or b*b == a*a + c*c or c*c == a*a + b*b
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(3, 4, 5) == True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(1, 2, 3) == False
+    assert candidate(10, 6, 8) == True
+    assert candidate(2, 2, 2) == False
+    assert candidate(7, 24, 25) == True
+    assert candidate(10, 5, 7) == False
+    assert candidate(5, 12, 13) == True
+    assert candidate(15, 8, 17) == True
+    assert candidate(48, 55, 73) == True
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1, 1, 1) == False, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(2, 2, 10) == False
+
+"
+"
+def find_max(words):
+    """"""문자열 목록을 받아들이는 함수를 작성하십시오. 목록에는 다른 단어가 포함되어 있습니다. 최대 고유 한 문자 수를 가진 단어를 반환하십시오. 여러 문자열이 최대 고유 한 문자 수를 가지고 있다면 사전 순서로 먼저 나오는 것을 반환하십시오. find_max (([""name"", ""of"", ""string""]) == ""string"" find_max (([""name"", ""enam"", ""game""]) == ""enam"" find_max (([""aaaaaaa"", ""bb"", ""cc""]) == """"aaaaaaa""
+    """"""
+","    return sorted(words, key = lambda x: (-len(set(x)), x))[0]
+","def check(candidate):
+
+    # Check some simple cases
+    assert (candidate([""name"", ""of"", ""string""]) == ""string""), ""t1""
+    assert (candidate([""name"", ""enam"", ""game""]) == ""enam""), 't2'
+    assert (candidate([""aaaaaaa"", ""bb"", ""cc""]) == ""aaaaaaa""), 't3'
+    assert (candidate([""abc"", ""cba""]) == ""abc""), 't4'
+    assert (candidate([""play"", ""this"", ""game"", ""of"",""footbott""]) == ""footbott""), 't5'
+    assert (candidate([""we"", ""are"", ""gonna"", ""rock""]) == ""gonna""), 't6'
+    assert (candidate([""we"", ""are"", ""a"", ""mad"", ""nation""]) == ""nation""), 't7'
+    assert (candidate([""this"", ""is"", ""a"", ""prrk""]) == ""this""), 't8'
+
+    # Check some edge cases that are easy to work out by hand.
+    assert (candidate([""b""]) == ""b""), 't9'
+    assert (candidate([""play"", ""play"", ""play""]) == ""play""), 't10'
+
+"
+"
+def eat(number, need, remaining):
+    """"""
+    당신은 배고픈 토끼이고 이미 일정 수의 당근을 먹었지만, 이제 하루의 식사를 완료하기 위해 더 많은 당근을 먹어야 합니다. 당신은 [먹은 당근의 총 수, 식사 후 남은 당근의 수 ]의 배열을 반환해야 합니다. 만약 남은 당근이 충분하지 않다면, 남은 당근을 다 먹지만 여전히 배고프게 될 것입니다. 예: * 먹어 (5, 6, 10) -> [11, 4] * 먹어 (4, 8, 9) -> [12, 1] * 먹어 (1, 10, 10) -> [11, 0] * 먹어 (2, 11, 5) -> [7, 0] 변수: @수: 당신이 먹은 당근의 수를 정수화하십시오. @ 필요: 당신이 먹어야 할 당근의 수를 정수화하십시오. @ 나머지: 남은 당근의 수를 정수화하십시오.
+    """"""
+","    if(need <= remaining):
+        return [ number + need , remaining-need ]
+    else:
+        return [ number + remaining , 0]
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(5, 6, 10) == [11, 4], ""Error""
+    assert candidate(4, 8, 9) == [12, 1], ""Error""
+    assert candidate(1, 10, 10) == [11, 0], ""Error""
+    assert candidate(2, 11, 5) == [7, 0], ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(4, 5, 7) == [9, 2], ""Error""
+    assert candidate(4, 5, 1) == [5, 0], ""Error""
+
+"
+"
+def do_algebra(operator, operand):
+    """"""
+    두 개의 리스트에 대수와 연산자가 주어진다. 첫 번째 리스트에는 기본 대수 연산이 있고, 두 번째 리스트는 정수 목록이다. 주어진 두 개의 리스트를 사용하여 대수 표현을 만들고 이 표현의 값을 반환한다. 기본 대수 연산: 덧셈 (+) 셈 (-)) 곱셈 (*) 바닥분할 (//) 기수 (** 예제): operator['+', '*', '-'] array = [2, 3, 4, 5] result = 2 + 3 * 4 - 5 => result = 9 참고: 연산자 리스트의 길이는 연산자 리스트의 길이가 1 빼기 같으며, 연산자는 비 음수의 정수 목록이다. 연산자는 적어도 하나의 연산자를 가지고 있고, 연산자는 적어도 두 개의 연산자를 가지고 있다.
+
+    """"""
+","    expression = str(operand[0])
+    for oprt, oprn in zip(operator, operand[1:]):
+        expression+= oprt + str(oprn)
+    return eval(expression)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(['**', '*', '+'], [2, 3, 4, 5]) == 37
+    assert candidate(['+', '*', '-'], [2, 3, 4, 5]) == 9
+    assert candidate(['//', '*'], [7, 3, 4]) == 8, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def solve(s):
+    """"""string s를 주어집니다. s[i]가 문자라면, 그 대문자를 아래에서 위로 또는 위쪽으로 역전합니다. 그렇지 않으면 그대로 유지합니다. 문자열에 문자가 없으면 문자열을 역전합니다. 함수는 결과 문자열을 반환해야합니다. 예제 solve ((""1234"") = ""4321"" solve ((""ab"") = ""AB"" solve ((""#a@C"") = ""#A@c""
+    """"""
+","    flg = 0
+    idx = 0
+    new_str = list(s)
+    for i in s:
+        if i.isalpha():
+            new_str[idx] = i.swapcase()
+            flg = 1
+        idx += 1
+    s = """"
+    for i in new_str:
+        s += i
+    if flg == 0:
+        return s[len(s)::-1]
+    return s
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""AsDf"") == ""aSdF""
+    assert candidate(""1234"") == ""4321""
+    assert candidate(""ab"") == ""AB""
+    assert candidate(""#a@C"") == ""#A@c""
+    assert candidate(""#AsdfW^45"") == ""#aSDFw^45""
+    assert candidate(""#6@2"") == ""2@6#""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""#$a^D"") == ""#$A^d""
+    assert candidate(""#ccc"") == ""#CCC""
+
+    # Don't remove this line:
+"
+"
+def string_to_md5(text):
+    """"""
+    문자열 'text'을 주어 md5 해시 대응 문자열을 반환합니다. 'text'이 빈 문자열이라면 None를 반환합니다.
+
+    >>> string_to_md5('Hello world') == '3e25960a79dbc69b674cd4ec67a72c62'
+    """"""
+","    import hashlib
+    return hashlib.md5(text.encode('ascii')).hexdigest() if text else None
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('Hello world') == '3e25960a79dbc69b674cd4ec67a72c62'
+    assert candidate('') == None
+    assert candidate('A B C') == '0ef78513b0cb8cef12743f5aeb35f888'
+    assert candidate('password') == '5f4dcc3b5aa765d61d8327deb882cf99'
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def generate_integers(a, b):
+    """"""
+    양수 a와 b를 두 개로 나누어 a와 b 사이의 짝수 숫자를 상승 순서로 반환합니다. 예를 들어: generate_integers ((2, 8) => [2, 4, 6, 8] generate_integers ((8, 2) => [2, 4, 6, 8] generate_integers ((10, 14) => []
+    """"""
+","    lower = max(2, min(a, b))
+    upper = min(8, max(a, b))
+
+    return [i for i in range(lower, upper+1) if i % 2 == 0]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(2, 10) == [2, 4, 6, 8], ""Test 1""
+    assert candidate(10, 2) == [2, 4, 6, 8], ""Test 2""
+    assert candidate(132, 2) == [2, 4, 6, 8], ""Test 3""
+    assert candidate(17,89) == [], ""Test 4""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"

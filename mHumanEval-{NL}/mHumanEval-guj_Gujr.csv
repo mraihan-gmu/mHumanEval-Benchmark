@@ -1,0 +1,4615 @@
+prompt,canonical_solution,test
+"from typing import List
+
+
+def has_close_elements(numbers: List[float], threshold: float) -> bool:
+    """""" આપેલ સંખ્યાઓની યાદીમાં, આપેલ થ્રેશોલ્ડ કરતાં એકબીજાની નજીક કોઈ બે સંખ્યાઓ છે કે નહીં તે તપાસો. ઉદાહરણઃ
+    >>> has_close_elements([1.0, 2.0, 3.0], 0.5)
+    False
+    >>> has_close_elements([1.0, 2.8, 3.0, 4.0, 5.0, 2.0], 0.3)
+    True
+    """"""
+","for idx, elem in enumerate(numbers):
+    for idx2, elem2 in enumerate(numbers):
+        if idx != idx2:
+            distance = abs(elem - elem2)
+            if distance < threshold:
+                return True
+return False
+","def check(candidate):
+    assert candidate([1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.3) == True
+    assert candidate([1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.05) == False
+    assert candidate([1.0, 2.0, 5.9, 4.0, 5.0], 0.95) == True
+    assert candidate([1.0, 2.0, 5.9, 4.0, 5.0], 0.8) == False
+    assert candidate([1.0, 2.0, 3.0, 4.0, 5.0, 2.0], 0.1) == True
+    assert candidate([1.1, 2.2, 3.1, 4.1, 5.1], 1.0) == True
+    assert candidate([1.1, 2.2, 3.1, 4.1, 5.1], 0.5) == False
+
+"
+"from typing import List
+
+
+def separate_paren_groups(paren_string: str) -> List[str]:
+    """""" આ ફંક્શન માટે ઇનપુટ એ વાળા કૌંસના બહુવિધ જૂથો ધરાવતી શબ્દમાળા છે. તમારો ધ્યેય તે જૂથને અલગ વાળા શબ્દમાળાઓમાં અલગ કરવાનો અને તે યાદીને પરત કરવાનો છે. અલગ જૂથો સંતુલિત છે (દરેક ખુલ્લા કૌંસ યોગ્ય રીતે બંધ છે) અને એકબીજાની અંદર વાળા નથી ઇનપુટ શબ્દમાળામાં કોઈપણ જગ્યાઓને અવગણો. ઉદાહરણ:
+    >>> separate_paren_groups('( ) (( )) (( )( ))')
+    ['()', '(())', '(()())']
+    """"""
+","    result = []
+    current_string = []
+    current_depth = 0
+
+    for c in paren_string:
+        if c == '(':
+            current_depth += 1
+            current_string.append(c)
+        elif c == ')':
+            current_depth -= 1
+            current_string.append(c)
+
+            if current_depth == 0:
+                result.append(''.join(current_string))
+                current_string.clear()
+
+    return result
+","def check(candidate):
+    assert candidate('(()()) ((())) () ((())()())') == [
+        '(()())', '((()))', '()', '((())()())'
+    ]
+    assert candidate('() (()) ((())) (((())))') == [
+        '()', '(())', '((()))', '(((())))'
+    ]
+    assert candidate('(()(())((())))') == [
+        '(()(())((())))'
+    ]
+    assert candidate('( ) (( )) (( )( ))') == ['()', '(())', '(()())']
+"
+"
+
+def truncate_number(number: float) -> float:
+    """""" હકારાત્મક ફ્લોટિંગ પોઇન્ટ નંબર આપવામાં આવે છે, તે પૂર્ણાંક ભાગ (આપેલ નંબર કરતાં મોટી પૂર્ણાંક નાની) અને દશાંશ (બાકી ભાગ હંમેશા 1 કરતા નાની) માં વિભાજિત કરી શકાય છે. સંખ્યાના દશાંશ ભાગને પરત કરો. ઉદાહરણઃ
+    >>> truncate_number(3.5)
+    0.5
+    """"""
+","    return number % 1.0
+","def check(candidate):
+    assert candidate(3.5) == 0.5
+    assert abs(candidate(1.33) - 0.33) < 1e-6
+    assert abs(candidate(123.456) - 0.456) < 1e-6
+"
+"from typing import List
+
+
+def below_zero(operations: List[int]) -> bool:
+    """""" તમને બેંક ખાતા પર ડિપોઝિટ અને ઉપાડ કામગીરીની સૂચિ આપવામાં આવે છે જે શૂન્ય સંતુલનથી શરૂ થાય છે. તમારું કાર્ય એ શોધવાનું છે કે કોઈ પણ સમયે ખાતાની સંતુલન શૂન્યથી નીચે આવે છે, અને તે સમયે કાર્ય સાચું પરત કરવું જોઈએ. અન્યથા તે ખોટું પરત કરવું જોઈએ. ઉદાહરણઃ
+    >>> below_zero([1, 2, 3])
+    False
+    >>> below_zero([1, 2, -4, 5])
+    True
+    """"""
+","    balance = 0
+
+    for op in operations:
+        balance += op
+        if balance < 0:
+            return True
+
+    return False
+","def check(candidate):
+    assert candidate([]) == False
+    assert candidate([1, 2, -3, 1, 2, -3]) == False
+    assert candidate([1, 2, -4, 5, 6]) == True
+    assert candidate([1, -1, 2, -2, 5, -5, 4, -4]) == False
+    assert candidate([1, -1, 2, -2, 5, -5, 4, -5]) == True
+    assert candidate([1, -2, 2, -2, 5, -5, 4, -4]) == True
+"
+"from typing import List
+
+
+def mean_absolute_deviation(numbers: List[float]) -> float:
+    """""" ઇનપુટ નંબરોની આપેલ સૂચિ માટે, આ ડેટાસેટના સરેરાશની આસપાસ સરેરાશ નિરપેક્ષ વિચલનની ગણતરી કરો. સરેરાશ નિરપેક્ષ વિચલન એ દરેક તત્વ અને કેન્દ્ર બિંદુ (આ કિસ્સામાં સરેરાશ) વચ્ચેનો સરેરાશ નિરપેક્ષ તફાવત છેઃ એમએડી = સરેરાશ. x - x_mean. ઉદાહરણઃ
+    >>> mean_absolute_deviation([1.0, 2.0, 3.0, 4.0])
+    1.0
+    """"""
+","    mean = sum(numbers) / len(numbers)
+    return sum(abs(x - mean) for x in numbers) / len(numbers)
+","def check(candidate):
+    assert abs(candidate([1.0, 2.0, 3.0]) - 2.0/3.0) < 1e-6
+    assert abs(candidate([1.0, 2.0, 3.0, 4.0]) - 1.0) < 1e-6
+    assert abs(candidate([1.0, 2.0, 3.0, 4.0, 5.0]) - 6.0/5.0) < 1e-6
+
+"
+"from typing import List
+
+
+def intersperse(numbers: List[int], delimeter: int) -> List[int]:
+    """""" ઇનપુટ સૂચિના દરેક બે અનુક્રમિક તત્વો વચ્ચે એક નંબર 'ડિલીમીટર' દાખલ કરો '
+    >>> intersperse([], 4)
+    []
+    >>> intersperse([1, 2, 3], 4)
+    [1, 4, 2, 4, 3]
+    """"""
+","    if not numbers:
+        return []
+
+    result = []
+
+    for n in numbers[:-1]:
+        result.append(n)
+        result.append(delimeter)
+
+    result.append(numbers[-1])
+
+    return result
+","def check(candidate):
+    assert candidate([], 7) == []
+    assert candidate([5, 6, 3, 2], 8) == [5, 8, 6, 8, 3, 8, 2]
+    assert candidate([2, 2, 2], 2) == [2, 2, 2, 2, 2]
+"
+"from typing import List
+
+
+def parse_nested_parens(paren_string: str) -> List[int]:
+    """""" આ ફંક્શનમાં ઇનપુટ એ જગ્યાઓ દ્વારા અલગ પાડવામાં આવેલા કૌંસ માટે બહુવિધ જૂથોનું પ્રતિનિધિત્વ કરતી શબ્દમાળા છે. દરેક જૂથ માટે, કૌંસના સૌથી ઊંડા સ્તરે આઉટપુટ. ઉદાહરણ તરીકે (() (()) માં મહત્તમ બે સ્તરો છે જ્યારે ((())) માં ત્રણ છે.
+
+    >>> parse_nested_parens('(()()) ((())) () ((())()())')
+    [2, 3, 1, 3]
+    """"""
+","    def parse_paren_group(s):
+        depth = 0
+        max_depth = 0
+        for c in s:
+            if c == '(':
+                depth += 1
+                max_depth = max(depth, max_depth)
+            else:
+                depth -= 1
+
+        return max_depth
+
+    return [parse_paren_group(x) for x in paren_string.split(' ') if x]
+","def check(candidate):
+    assert candidate('(()()) ((())) () ((())()())') == [2, 3, 1, 3]
+    assert candidate('() (()) ((())) (((())))') == [1, 2, 3, 4]
+    assert candidate('(()(())((())))') == [4]
+"
+"from typing import List
+
+
+def filter_by_substring(strings: List[str], substring: str) -> List[str]:
+    """""" આપેલ સબસ્ટ્રિંગ ધરાવતી સ્ટ્રિંગ્સની ઇનપુટ સૂચિને ફક્ત તે માટે ફિલ્ટર કરો
+    >>> filter_by_substring([], 'a')
+    []
+    >>> filter_by_substring(['abc', 'bacd', 'cde', 'array'], 'a')
+    ['abc', 'bacd', 'array']
+    """"""
+","    return [x for x in strings if substring in x]
+","def check(candidate):
+    assert candidate([], 'john') == []
+    assert candidate(['xxx', 'asd', 'xxy', 'john doe', 'xxxAAA', 'xxx'], 'xxx') == ['xxx', 'xxxAAA', 'xxx']
+    assert candidate(['xxx', 'asd', 'aaaxxy', 'john doe', 'xxxAAA', 'xxx'], 'xx') == ['xxx', 'aaaxxy', 'xxxAAA', 'xxx']
+    assert candidate(['grunt', 'trumpet', 'prune', 'gruesome'], 'run') == ['grunt', 'prune']
+"
+"from typing import List, Tuple
+
+
+def sum_product(numbers: List[int]) -> Tuple[int, int]:
+    """""" પૂર્ણાંકની આપેલ સૂચિ માટે, એક સૂચિમાં તમામ પૂર્ણાંકના સરવાળો અને ઉત્પાદનથી બનેલા ટુપલ પરત કરો. ખાલી સરવાળો 0 અને ખાલી ઉત્પાદન 1 બરાબર હોવું જોઈએ.
+    >>> sum_product([])
+    (0, 1)
+    >>> sum_product([1, 2, 3, 4])
+    (10, 24)
+    """"""
+","    sum_value = 0
+    prod_value = 1
+
+    for n in numbers:
+        sum_value += n
+        prod_value *= n
+    return sum_value, prod_value
+","def check(candidate):
+    assert candidate([]) == (0, 1)
+    assert candidate([1, 1, 1]) == (3, 1)
+    assert candidate([100, 0]) == (100, 0)
+    assert candidate([3, 5, 7]) == (3 + 5 + 7, 3 * 5 * 7)
+    assert candidate([10]) == (10, 10)
+"
+"from typing import List, Tuple
+
+
+def rolling_max(numbers: List[int]) -> List[int]:
+    """""" પૂર્ણાંકની આપેલ સૂચિમાંથી, ક્રમમાં આપેલ ક્ષણ સુધી મળેલા રોલિંગ મહત્તમ તત્વની સૂચિ બનાવો.
+    >>> rolling_max([1, 2, 3, 2, 3, 4, 2])
+    [1, 2, 3, 3, 3, 4, 4]
+    """"""
+","    running_max = None
+    result = []
+
+    for n in numbers:
+        if running_max is None:
+            running_max = n
+        else:
+            running_max = max(running_max, n)
+
+        result.append(running_max)
+
+    return result
+","def check(candidate):
+    assert candidate([]) == []
+    assert candidate([1, 2, 3, 4]) == [1, 2, 3, 4]
+    assert candidate([4, 3, 2, 1]) == [4, 4, 4, 4]
+    assert candidate([3, 2, 3, 100, 3]) == [3, 3, 3, 100, 100]
+"
+"
+
+def is_palindrome(string: str) -> bool:
+    """""" આપેલ શબ્દમાળા પેલિન્ડ્રોમ છે કે નહીં તે ચકાસવા """"""
+    return string == string[::-1]
+
+
+def make_palindrome(string: str) -> str:
+    """""" Find the shortest palindrome that begins with a supplied string.
+    Algorithm idea is simple:
+    - Find the longest postfix of supplied string that is a palindrome.
+    - Append to the end of the string reverse of a string prefix that comes before the palindromic suffix.
+    >>> make_palindrome('')
+    ''
+    >>> make_palindrome('cat')
+    'catac'
+    >>> make_palindrome('cata')
+    'catac'
+    """"""
+","    if not string:
+        return ''
+
+    beginning_of_suffix = 0
+
+    while not is_palindrome(string[beginning_of_suffix:]):
+        beginning_of_suffix += 1
+
+    return string + string[:beginning_of_suffix][::-1]
+","def check(candidate):
+    assert candidate('') == ''
+    assert candidate('x') == 'x'
+    assert candidate('xyz') == 'xyzyx'
+    assert candidate('xyx') == 'xyx'
+    assert candidate('jerry') == 'jerryrrej'
+"
+"from typing import List
+
+
+def string_xor(a: str, b: str) -> str:
+    """""" ઇનપુટ એ બે શબ્દમાળાઓ છે a અને b જેમાં ફક્ત 1 અને 0 નો સમાવેશ થાય છે. આ ઇનપુટ્સ પર દ્વિસંગી XOR કરો અને પરિણામ પણ શબ્દમાળા તરીકે પરત કરો.
+    >>> string_xor('010', '110')
+    '100'
+    """"""
+","    def xor(i, j):
+        if i == j:
+            return '0'
+        else:
+            return '1'
+
+    return ''.join(xor(x, y) for x, y in zip(a, b))
+","def check(candidate):
+    assert candidate('111000', '101010') == '010010'
+    assert candidate('1', '1') == '0'
+    assert candidate('0101', '0000') == '0101'
+"
+"from typing import List, Optional
+
+
+def longest(strings: List[str]) -> Optional[str]:
+    """""" શબ્દમાળાઓની યાદીમાંથી, સૌથી લાંબી એક પરત કરો. સમાન લંબાઈના બહુવિધ શબ્દમાળાઓના કિસ્સામાં પ્રથમ એક પરત કરો. ઇનપુટ સૂચિ ખાલી હોય તો કોઈ પરત કરશો નહીં.
+    >>> longest([])
+
+    >>> longest(['a', 'b', 'c'])
+    'a'
+    >>> longest(['a', 'bb', 'ccc'])
+    'ccc'
+    """"""
+","    if not strings:
+        return None
+
+    maxlen = max(len(x) for x in strings)
+    for s in strings:
+        if len(s) == maxlen:
+            return s
+","def check(candidate):
+    assert candidate([]) == None
+    assert candidate(['x', 'y', 'z']) == 'x'
+    assert candidate(['x', 'yyy', 'zzzz', 'www', 'kkkk', 'abc']) == 'zzzz'
+"
+"
+
+def greatest_common_divisor(a: int, b: int) -> int:
+    """""" બે પૂર્ણાંકો a અને b નો સૌથી મોટો સામાન્ય વિભાજક પરત કરો
+    >>> greatest_common_divisor(3, 5)
+    1
+    >>> greatest_common_divisor(25, 15)
+    5
+    """"""
+","    while b:
+        a, b = b, a % b
+    return a
+","def check(candidate):
+    assert candidate(3, 7) == 1
+    assert candidate(10, 15) == 5
+    assert candidate(49, 14) == 7
+    assert candidate(144, 60) == 12
+"
+"from typing import List
+
+
+def all_prefixes(string: str) -> List[str]:
+    """""" ઇનપુટ શબ્દમાળાના સૌથી ટૂંકાથી સૌથી લાંબી સુધીના બધા ઉપસર્ગોની સૂચિ પરત કરો
+    >>> all_prefixes('abc')
+    ['a', 'ab', 'abc']
+    """"""
+","    result = []
+
+    for i in range(len(string)):
+        result.append(string[:i+1])
+    return result
+","def check(candidate):
+    assert candidate('') == []
+    assert candidate('asdfgh') == ['a', 'as', 'asd', 'asdf', 'asdfg', 'asdfgh']
+    assert candidate('WWW') == ['W', 'WW', 'WWW']
+"
+"
+
+def string_sequence(n: int) -> str:
+    """""" 0 થી n સુધીના અંતરાલ-મર્યાદિત સંખ્યાઓ ધરાવતી સ્ટ્રિંગ પરત કરે છે.
+    >>> string_sequence(0)
+    '0'
+    >>> string_sequence(5)
+    '0 1 2 3 4 5'
+    """"""
+","    return ' '.join([str(x) for x in range(n + 1)])
+","def check(candidate):
+    assert candidate(0) == '0'
+    assert candidate(3) == '0 1 2 3'
+    assert candidate(10) == '0 1 2 3 4 5 6 7 8 9 10'
+"
+"
+
+def count_distinct_characters(string: str) -> int:
+    """""" આપેલ શબ્દમાળા, તે કેટલા અલગ અક્ષરો (કેસને ધ્યાનમાં લીધા વગર) માંથી બને છે તે શોધો
+    >>> count_distinct_characters('xyzXYZ')
+    3
+    >>> count_distinct_characters('Jerry')
+    4
+    """"""
+","    return len(set(string.lower()))
+","def check(candidate):
+    assert candidate('') == 0
+    assert candidate('abcde') == 5
+    assert candidate('abcde' + 'cade' + 'CADE') == 5
+    assert candidate('aaaaAAAAaaaa') == 1
+    assert candidate('Jerry jERRY JeRRRY') == 5
+"
+"from typing import List
+
+
+def parse_music(music_string: str) -> List[int]:
+    """""" આ ફંક્શનમાં ઇનપુટ એ વિશિષ્ટ એએસસીઆઈઆઈ ફોર્મેટમાં સંગીતની નોંધોનું પ્રતિનિધિત્વ કરતી શબ્દમાળા છે. તમારું કાર્ય આ શબ્દમાળાને પાર્સ કરવું અને દરેક કેટલા બીટ્સ સુધી ચાલે છે તે અનુરૂપ પૂર્ણાંકની સૂચિ પરત કરવી છે. અહીં એક દંતકથા છેઃ 'ઓ' - સંપૂર્ણ નોંધ, ચાર બીટ્સ સુધી ચાલે છે 'ઓ' - અડધા નોંધ, બે બીટ્સ સુધી ચાલે છે 'ઓ' - ક્વાટર નોટ, એક બીટ સુધી ચાલે છે
+
+    >>> parse_music('o o| .| o| o| .| .| .| .| o o')
+    [4, 2, 1, 2, 2, 1, 1, 1, 1, 4, 4]
+    """"""
+","    note_map = {'o': 4, 'o|': 2, '.|': 1}
+    return [note_map[x] for x in music_string.split(' ') if x]
+","def check(candidate):
+    assert candidate('') == []
+    assert candidate('o o o o') == [4, 4, 4, 4]
+    assert candidate('.| .| .| .|') == [1, 1, 1, 1]
+    assert candidate('o| o| .| .| o o o o') == [2, 2, 1, 1, 4, 4, 4, 4]
+    assert candidate('o| .| o| .| o o| o o|') == [2, 1, 2, 1, 4, 2, 4, 2]
+"
+"
+
+def how_many_times(string: str, substring: str) -> int:
+    """""" મૂળ શબ્દમાળામાં આપેલ સબસ્ટ્રિંગ કેટલી વખત મળી શકે છે તે શોધો. ઓવરલેપિંગ કેસોની ગણતરી કરો.
+    >>> how_many_times('', 'a')
+    0
+    >>> how_many_times('aaa', 'a')
+    3
+    >>> how_many_times('aaaa', 'aa')
+    3
+    """"""
+","    times = 0
+
+    for i in range(len(string) - len(substring) + 1):
+        if string[i:i+len(substring)] == substring:
+            times += 1
+
+    return times
+","def check(candidate):
+    assert candidate('', 'x') == 0
+    assert candidate('xyxyxyx', 'x') == 4
+    assert candidate('cacacacac', 'cac') == 4
+    assert candidate('john doe', 'john') == 1
+"
+"from typing import List
+
+
+def sort_numbers(numbers: str) -> str:
+    """""" ઇનપુટ એ 'શૂન્ય' થી 'નવ' સુધીની સંખ્યાઓની જગ્યા-મર્યાદિત શબ્દમાળા છે. માન્ય પસંદગીઓ 'શૂન્ય', 'એક', 'બે', 'ત્રણ', 'ચાર', 'પાંચ', 'છ', 'સાત', 'આઠ' અને 'નવ' છે. નાનાથી મોટા સુધી સૉર્ટ કરેલા નંબરો સાથે શબ્દમાળા પરત કરો
+    >>> sort_numbers('three one five')
+    'one three five'
+    """"""
+","    value_map = {
+        'zero': 0,
+        'one': 1,
+        'two': 2,
+        'three': 3,
+        'four': 4,
+        'five': 5,
+        'six': 6,
+        'seven': 7,
+        'eight': 8,
+        'nine': 9
+    }
+    return ' '.join(sorted([x for x in numbers.split(' ') if x], key=lambda x: value_map[x]))
+","def check(candidate):
+    assert candidate('') == ''
+    assert candidate('three') == 'three'
+    assert candidate('three five nine') == 'three five nine'
+    assert candidate('five zero four seven nine eight') == 'zero four five seven eight nine'
+    assert candidate('six five four three two one zero') == 'zero one two three four five six'
+"
+"from typing import List, Tuple
+
+
+def find_closest_elements(numbers: List[float]) -> Tuple[float, float]:
+    """""" સંખ્યાઓની પૂરી પાડવામાં આવેલ સૂચિમાંથી (લંબાઈ ઓછામાં ઓછા બે) પસંદ કરો અને બેને પરત કરો જે એકબીજાની નજીક છે અને તેમને ક્રમમાં પરત કરો (નાની સંખ્યા, મોટી સંખ્યા).
+    >>> find_closest_elements([1.0, 2.0, 3.0, 4.0, 5.0, 2.2])
+    (2.0, 2.2)
+    >>> find_closest_elements([1.0, 2.0, 3.0, 4.0, 5.0, 2.0])
+    (2.0, 2.0)
+    """"""
+","    closest_pair = None
+    distance = None
+
+    for idx, elem in enumerate(numbers):
+        for idx2, elem2 in enumerate(numbers):
+            if idx != idx2:
+                if distance is None:
+                    distance = abs(elem - elem2)
+                    closest_pair = tuple(sorted([elem, elem2]))
+                else:
+                    new_distance = abs(elem - elem2)
+                    if new_distance < distance:
+                        distance = new_distance
+                        closest_pair = tuple(sorted([elem, elem2]))
+
+    return closest_pair
+","def check(candidate):
+    assert candidate([1.0, 2.0, 3.9, 4.0, 5.0, 2.2]) == (3.9, 4.0)
+    assert candidate([1.0, 2.0, 5.9, 4.0, 5.0]) == (5.0, 5.9)
+    assert candidate([1.0, 2.0, 3.0, 4.0, 5.0, 2.2]) == (2.0, 2.2)
+    assert candidate([1.0, 2.0, 3.0, 4.0, 5.0, 2.0]) == (2.0, 2.0)
+    assert candidate([1.1, 2.2, 3.1, 4.1, 5.1]) == (2.2, 3.1)
+
+"
+"from typing import List
+
+
+def rescale_to_unit(numbers: List[float]) -> List[float]:
+    """""" સંખ્યાઓની યાદી આપવામાં આવે છે (ઓછામાં ઓછા બે તત્વોની), તે સૂચિમાં રેખીય પરિવર્તન લાગુ કરો, જેમ કે સૌથી નાની સંખ્યા 0 અને સૌથી મોટી 1 બની જશે
+    >>> rescale_to_unit([1.0, 2.0, 3.0, 4.0, 5.0])
+    [0.0, 0.25, 0.5, 0.75, 1.0]
+    """"""
+","    min_number = min(numbers)
+    max_number = max(numbers)
+    return [(x - min_number) / (max_number - min_number) for x in numbers]
+","def check(candidate):
+    assert candidate([2.0, 49.9]) == [0.0, 1.0]
+    assert candidate([100.0, 49.9]) == [1.0, 0.0]
+    assert candidate([1.0, 2.0, 3.0, 4.0, 5.0]) == [0.0, 0.25, 0.5, 0.75, 1.0]
+    assert candidate([2.0, 1.0, 5.0, 3.0, 4.0]) == [0.25, 0.0, 1.0, 0.5, 0.75]
+    assert candidate([12.0, 11.0, 15.0, 13.0, 14.0]) == [0.25, 0.0, 1.0, 0.5, 0.75]
+"
+"from typing import List, Any
+
+
+def filter_integers(values: List[Any]) -> List[int]:
+    """""" માત્ર પૂર્ણાંકો માટે કોઈપણ Python મૂલ્યોની આપેલ સૂચિને ફિલ્ટર કરો
+    >>> filter_integers(['a', 3.14, 5])
+    [5]
+    >>> filter_integers([1, 2, 3, 'abc', {}, []])
+    [1, 2, 3]
+    """"""
+","    return [x for x in values if isinstance(x, int)]
+","def check(candidate):
+    assert candidate([]) == []
+    assert candidate([4, {}, [], 23.2, 9, 'adasd']) == [4, 9]
+    assert candidate([3, 'c', 3, 3, 'a', 'b']) == [3, 3, 3]
+"
+"
+
+def strlen(string: str) -> int:
+    """""" આપેલ શબ્દમાળાની વળતર લંબાઈ
+    >>> strlen('')
+    0
+    >>> strlen('abc')
+    3
+    """"""
+","    return len(string)
+","def check(candidate):
+    assert candidate('') == 0
+    assert candidate('x') == 1
+    assert candidate('asdasnakj') == 9
+"
+"
+
+def largest_divisor(n: int) -> int:
+    """""" આપેલ સંખ્યા n માટે, સૌથી મોટી સંખ્યા શોધો જે n ને સમાનરૂપે વહેંચે છે, n કરતા નાની
+    >>> largest_divisor(15)
+    5
+    """"""
+","    for i in reversed(range(n)):
+        if n % i == 0:
+            return i
+","def check(candidate):
+    assert candidate(3) == 1
+    assert candidate(7) == 1
+    assert candidate(10) == 5
+    assert candidate(100) == 50
+    assert candidate(49) == 7
+"
+"from typing import List
+
+
+def factorize(n: int) -> List[int]:
+    """""" આપેલ પૂર્ણાંકના મુખ્ય પરિબળોની યાદી સૌથી નાનાથી સૌથી મોટા ક્રમમાં આપે છે. દરેક પરિબળની સંખ્યાને તે પરિબળોમાં કેટલી વખત દેખાય છે તે અનુરૂપ સંખ્યાની યાદી આપવી જોઈએ. ઇનપુટ સંખ્યા બધા પરિબળોના ઉત્પાદનની બરાબર હોવી જોઈએ
+    >>> factorize(8)
+    [2, 2, 2]
+    >>> factorize(25)
+    [5, 5]
+    >>> factorize(70)
+    [2, 5, 7]
+    """"""
+","    import math
+    fact = []
+    i = 2
+    while i <= int(math.sqrt(n) + 1):
+        if n % i == 0:
+            fact.append(i)
+            n //= i
+        else:
+            i += 1
+
+    if n > 1:
+        fact.append(n)
+    return fact
+","def check(candidate):
+    assert candidate(2) == [2]
+    assert candidate(4) == [2, 2]
+    assert candidate(8) == [2, 2, 2]
+    assert candidate(3 * 19) == [3, 19]
+    assert candidate(3 * 19 * 3 * 19) == [3, 3, 19, 19]
+    assert candidate(3 * 19 * 3 * 19 * 3 * 19) == [3, 3, 3, 19, 19, 19]
+    assert candidate(3 * 19 * 19 * 19) == [3, 19, 19, 19]
+    assert candidate(3 * 2 * 3) == [2, 3, 3]
+"
+"from typing import List
+
+
+def remove_duplicates(numbers: List[int]) -> List[int]:
+    """""" પૂર્ણાંકોની સૂચિમાંથી, એક કરતા વધુ વખત થતા તમામ તત્વોને દૂર કરો. ઇનપુટમાં સમાન તત્વોનો ક્રમ રાખો.
+    >>> remove_duplicates([1, 2, 3, 2, 4])
+    [1, 3, 4]
+    """"""
+","    import collections
+    c = collections.Counter(numbers)
+    return [n for n in numbers if c[n] <= 1]
+","def check(candidate):
+    assert candidate([]) == []
+    assert candidate([1, 2, 3, 4]) == [1, 2, 3, 4]
+    assert candidate([1, 2, 3, 2, 4, 3, 5]) == [1, 4, 5]
+"
+"
+
+def flip_case(string: str) -> str:
+    """""" આપેલ શબ્દમાળા માટે, નાના અક્ષરોને મોટા અને મોટા અક્ષરોને નાનામાં ફેરવો.
+    >>> flip_case('Hello')
+    'hELLO'
+    """"""
+","    return string.swapcase()
+","def check(candidate):
+    assert candidate('') == ''
+    assert candidate('Hello!') == 'hELLO!'
+    assert candidate('These violent delights have violent ends') == 'tHESE VIOLENT DELIGHTS HAVE VIOLENT ENDS'
+"
+"from typing import List
+
+
+def concatenate(strings: List[str]) -> str:
+    """""" સિંગલ સ્ટ્રિંગમાં શબ્દમાળાઓની સૂચિને સંયોજિત કરો
+    >>> concatenate([])
+    ''
+    >>> concatenate(['a', 'b', 'c'])
+    'abc'
+    """"""
+","    return ''.join(strings)
+","def check(candidate):
+    assert candidate([]) == ''
+    assert candidate(['x', 'y', 'z']) == 'xyz'
+    assert candidate(['x', 'y', 'z', 'w', 'k']) == 'xyzwk'
+"
+"from typing import List
+
+
+def filter_by_prefix(strings: List[str], prefix: str) -> List[str]:
+    """""" આપેલ ઉપસર્ગ સાથે શરૂ થતા લોકો માટે માત્ર શબ્દમાળાઓની ઇનપુટ સૂચિને ફિલ્ટર કરો.
+    >>> filter_by_prefix([], 'a')
+    []
+    >>> filter_by_prefix(['abc', 'bcd', 'cde', 'array'], 'a')
+    ['abc', 'array']
+    """"""
+","    return [x for x in strings if x.startswith(prefix)]
+","def check(candidate):
+    assert candidate([], 'john') == []
+    assert candidate(['xxx', 'asd', 'xxy', 'john doe', 'xxxAAA', 'xxx'], 'xxx') == ['xxx', 'xxxAAA', 'xxx']
+"
+"
+
+def get_positive(l: list):
+    """"""સૂચિમાં માત્ર હકારાત્મક સંખ્યાઓ પરત કરો.
+    >>> get_positive([-1, 2, -4, 5, 6])
+    [2, 5, 6]
+    >>> get_positive([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])
+    [5, 3, 2, 3, 9, 123, 1]
+    """"""
+","    return [e for e in l if e > 0]
+","def check(candidate):
+    assert candidate([-1, -2, 4, 5, 6]) == [4, 5, 6]
+    assert candidate([5, 3, -5, 2, 3, 3, 9, 0, 123, 1, -10]) == [5, 3, 2, 3, 3, 9, 123, 1]
+    assert candidate([-1, -2]) == []
+    assert candidate([]) == []
+
+"
+"
+
+def is_prime(n):
+    """"""જો આપેલ સંખ્યા અપૂર્ણાંક હોય તો સાચું અને અન્યથા ખોટું પરત કરો.
+    >>> is_prime(6)
+    False
+    >>> is_prime(101)
+    True
+    >>> is_prime(11)
+    True
+    >>> is_prime(13441)
+    True
+    >>> is_prime(61)
+    True
+    >>> is_prime(4)
+    False
+    >>> is_prime(1)
+    False
+    """"""
+","    if n < 2:
+        return False
+    for k in range(2, n - 1):
+        if n % k == 0:
+            return False
+    return True
+","def check(candidate):
+    assert candidate(6) == False
+    assert candidate(101) == True
+    assert candidate(11) == True
+    assert candidate(13441) == True
+    assert candidate(61) == True
+    assert candidate(4) == False
+    assert candidate(1) == False
+    assert candidate(5) == True
+    assert candidate(11) == True
+    assert candidate(17) == True
+    assert candidate(5 * 17) == False
+    assert candidate(11 * 7) == False
+    assert candidate(13441 * 19) == False
+
+"
+"import math
+
+
+def poly(xs: list, x: float):
+    """"""
+    xs બિંદુ પર સહગુણાંકો xs સાથે બહુવચનનું મૂલ્યાંકન કરે છે. xs[0] + xs[1] * x + xs[1] * x^2 +.... xs[n] * x^n
+    """"""
+    return sum([coeff * math.pow(x, i) for i, coeff in enumerate(xs)])
+
+
+def find_zero(xs: list):
+    """""" xs are coefficients of a polynomial.
+    find_zero find x such that poly(x) = 0.
+    find_zero returns only only zero point, even if there are many.
+    Moreover, find_zero only takes list xs having even number of coefficients
+    and largest non zero coefficient as it guarantees
+    a solution.
+    >>> round(find_zero([1, 2]), 2) # f(x) = 1 + 2x
+    -0.5
+    >>> round(find_zero([-6, 11, -6, 1]), 2) # (x - 1) * (x - 2) * (x - 3) = -6 + 11x - 6x^2 + x^3
+    1.0
+    """"""
+","    begin, end = -1., 1.
+    while poly(xs, begin) * poly(xs, end) > 0:
+        begin *= 2.0
+        end *= 2.0
+    while end - begin > 1e-10:
+        center = (begin + end) / 2.0
+        if poly(xs, center) * poly(xs, begin) > 0:
+            begin = center
+        else:
+            end = center
+    return begin
+","def check(candidate):
+    import math
+    import random
+    rng = random.Random(42)
+    import copy
+    for _ in range(100):
+        ncoeff = 2 * rng.randint(1, 4)
+        coeffs = []
+        for _ in range(ncoeff):
+            coeff = rng.randint(-10, 10)
+            if coeff == 0:
+                coeff = 1
+            coeffs.append(coeff)
+        solution = candidate(copy.deepcopy(coeffs))
+        assert math.fabs(poly(coeffs, solution)) < 1e-4
+
+"
+"
+
+def sort_third(l: list):
+    """"""આ ફંક્શન એક યાદી લે છે અને એક યાદી આપે છે જે ત્રણ દ્વારા વિભાજીત ન હોય તેવા સૂચકાંકોમાં l' એ સમાન છે, જ્યારે ત્રણ દ્વારા વિભાજીત હોય તેવા સૂચકાંકોમાં તેના મૂલ્યો l ની અનુરૂપ સૂચકાંકોના મૂલ્યો જેટલા છે, પરંતુ સૉર્ટ કરેલા છે.
+    >>> sort_third([1, 2, 3])
+    [1, 2, 3]
+    >>> sort_third([5, 6, 3, 4, 8, 9, 2])
+    [2, 6, 3, 4, 8, 9, 5]
+    """"""
+","    l = list(l)
+    l[::3] = sorted(l[::3])
+    return l
+","def check(candidate):
+    assert tuple(candidate([1, 2, 3])) == tuple(sort_third([1, 2, 3]))
+    assert tuple(candidate([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])) == tuple(sort_third([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10]))
+    assert tuple(candidate([5, 8, -12, 4, 23, 2, 3, 11, 12, -10])) == tuple(sort_third([5, 8, -12, 4, 23, 2, 3, 11, 12, -10]))
+    assert tuple(candidate([5, 6, 3, 4, 8, 9, 2])) == tuple([2, 6, 3, 4, 8, 9, 5])
+    assert tuple(candidate([5, 8, 3, 4, 6, 9, 2])) == tuple([2, 8, 3, 4, 6, 9, 5])
+    assert tuple(candidate([5, 6, 9, 4, 8, 3, 2])) == tuple([2, 6, 9, 4, 8, 3, 5])
+    assert tuple(candidate([5, 6, 3, 4, 8, 9, 2, 1])) == tuple([2, 6, 3, 4, 8, 9, 5, 1])
+
+"
+"
+
+def unique(l: list):
+    """"""સૂચિમાં સૉર્ટ કરેલ અનન્ય તત્વો પરત કરે છે
+    >>> unique([5, 3, 5, 2, 3, 3, 9, 0, 123])
+    [0, 2, 3, 5, 9, 123]
+    """"""
+","    return sorted(list(set(l)))
+","def check(candidate):
+    assert candidate([5, 3, 5, 2, 3, 3, 9, 0, 123]) == [0, 2, 3, 5, 9, 123]
+
+"
+"
+
+def max_element(l: list):
+    """"""યાદીમાં મહત્તમ તત્વ પરત કરે છે.
+    >>> max_element([1, 2, 3])
+    3
+    >>> max_element([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])
+    123
+    """"""
+","    m = l[0]
+    for e in l:
+        if e > m:
+            m = e
+    return m
+","def check(candidate):
+    assert candidate([1, 2, 3]) == 3
+    assert candidate([5, 3, -5, 2, -3, 3, 9, 0, 124, 1, -10]) == 124
+"
+"
+
+def fizz_buzz(n: int):
+    """"""11 અથવા 13 દ્વારા વિભાજીત થયેલા n કરતા ઓછા પૂર્ણાંકોમાં 7 અંક દેખાય છે તે વખતની સંખ્યા પરત કરો.
+    >>> fizz_buzz(50)
+    0
+    >>> fizz_buzz(78)
+    2
+    >>> fizz_buzz(79)
+    3
+    """"""
+","    ns = []
+    for i in range(n):
+        if i % 11 == 0 or i % 13 == 0:
+            ns.append(i)
+    s = ''.join(list(map(str, ns)))
+    ans = 0
+    for c in s:
+        ans += (c == '7')
+    return ans
+","def check(candidate):
+    assert candidate(50) == 0
+    assert candidate(78) == 2
+    assert candidate(79) == 3
+    assert candidate(100) == 3
+    assert candidate(200) == 6
+    assert candidate(4000) == 192
+    assert candidate(10000) == 639
+    assert candidate(100000) == 8026
+
+"
+"
+
+def sort_even(l: list):
+    """"""આ ફંક્શન એક યાદી લે છે અને એક યાદી આપે છે જે એવી છે કે જે વિચિત્ર સૂચકાંકોમાં l' એ l સાથે સમાન છે, જ્યારે તે પણ સૂચકાંકોમાં તેના મૂલ્યો પણ l ની સમાન સૂચકાંકોના મૂલ્યો જેટલા છે, પરંતુ સૉર્ટ કરેલા છે.
+    >>> sort_even([1, 2, 3])
+    [1, 2, 3]
+    >>> sort_even([5, 6, 3, 4])
+    [3, 6, 5, 4]
+    """"""
+","    evens = l[::2]
+    odds = l[1::2]
+    evens.sort()
+    ans = []
+    for e, o in zip(evens, odds):
+        ans.extend([e, o])
+    if len(evens) > len(odds):
+        ans.append(evens[-1])
+    return ans
+","def check(candidate):
+    assert tuple(candidate([1, 2, 3])) == tuple([1, 2, 3])
+    assert tuple(candidate([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])) == tuple([-10, 3, -5, 2, -3, 3, 5, 0, 9, 1, 123])
+    assert tuple(candidate([5, 8, -12, 4, 23, 2, 3, 11, 12, -10])) == tuple([-12, 8, 3, 4, 5, 2, 12, 11, 23, -10])
+
+"
+"
+
+def encode_cyclic(s: str):
+    """"""
+    ત્રણ અક્ષરોના ચક્ર જૂથો દ્વારા એન્કોડેડ શબ્દમાળા આપે છે.
+    """"""
+    # split string to groups. Each of length 3.
+    groups = [s[(3 * i):min((3 * i + 3), len(s))] for i in range((len(s) + 2) // 3)]
+    # cycle elements in each group. Unless group has fewer elements than 3.
+    groups = [(group[1:] + group[0]) if len(group) == 3 else group for group in groups]
+    return """".join(groups)
+
+
+def decode_cyclic(s: str):
+    """"""
+    takes as input string encoded with encode_cyclic function. Returns decoded string.
+    """"""
+","    return encode_cyclic(encode_cyclic(s))
+","def check(candidate):
+    from random import randint, choice
+    import string
+
+    letters = string.ascii_lowercase
+    for _ in range(100):
+        str = ''.join(choice(letters) for i in range(randint(10, 20)))
+        encoded_str = encode_cyclic(str)
+        assert candidate(encoded_str) == str
+
+"
+"
+
+def prime_fib(n: int):
+    """"""
+    prime_fib એ n-th નંબર આપે છે જે ફિબોનાકી નંબર છે અને તે પણ અગ્રણી છે.
+    >>> prime_fib(1)
+    2
+    >>> prime_fib(2)
+    3
+    >>> prime_fib(3)
+    5
+    >>> prime_fib(4)
+    13
+    >>> prime_fib(5)
+    89
+    """"""
+","    import math
+
+    def is_prime(p):
+        if p < 2:
+            return False
+        for k in range(2, min(int(math.sqrt(p)) + 1, p - 1)):
+            if p % k == 0:
+                return False
+        return True
+    f = [0, 1]
+    while True:
+        f.append(f[-1] + f[-2])
+        if is_prime(f[-1]):
+            n -= 1
+        if n == 0:
+            return f[-1]
+","def check(candidate):
+    assert candidate(1) == 2
+    assert candidate(2) == 3
+    assert candidate(3) == 5
+    assert candidate(4) == 13
+    assert candidate(5) == 89
+    assert candidate(6) == 233
+    assert candidate(7) == 1597
+    assert candidate(8) == 28657
+    assert candidate(9) == 514229
+    assert candidate(10) == 433494437
+
+"
+"
+
+def triples_sum_to_zero(l: list):
+    """"""
+    triples_sum_to_zero એ પૂર્ણાંકની સૂચિને ઇનપુટ તરીકે લે છે. તે સાચું આપે છે જો સૂચિમાં ત્રણ અલગ તત્વો હોય કે જે શૂન્ય સુધીનો સરવાળો કરે છે, અને ખોટા અન્યથા.
+
+    >>> triples_sum_to_zero([1, 3, 5, 0])
+    False
+    >>> triples_sum_to_zero([1, 3, -2, 1])
+    True
+    >>> triples_sum_to_zero([1, 2, 3, 7])
+    False
+    >>> triples_sum_to_zero([2, 4, -5, 3, 9, 7])
+    True
+    >>> triples_sum_to_zero([1])
+    False
+    """"""
+","    for i in range(len(l)):
+        for j in range(i + 1, len(l)):
+            for k in range(j + 1, len(l)):
+                if l[i] + l[j] + l[k] == 0:
+                    return True
+    return False
+","def check(candidate):
+    assert candidate([1, 3, 5, 0]) == False
+    assert candidate([1, 3, 5, -1]) == False
+    assert candidate([1, 3, -2, 1]) == True
+    assert candidate([1, 2, 3, 7]) == False
+    assert candidate([1, 2, 5, 7]) == False
+    assert candidate([2, 4, -5, 3, 9, 7]) == True
+    assert candidate([1]) == False
+    assert candidate([1, 3, 5, -100]) == False
+    assert candidate([100, 3, 5, -100]) == False
+
+"
+"
+
+def car_race_collision(n: int):
+    """"""
+    એક રસ્તાની કલ્પના કરો જે એક સંપૂર્ણ સીધી અનંત લાંબી રેખા છે. n કાર ડાબેથી જમણે ડ્રાઇવિંગ કરી રહી છે; એક સાથે, n કારનો એક અલગ સમૂહ જમણેથી ડાબે ડ્રાઇવિંગ કરી રહ્યો છે. કારના બે સમૂહો એકબીજાથી ખૂબ દૂર છે. બધી કાર એક જ ઝડપે આગળ વધી રહી છે. બે કારને ટકરાતા કહેવામાં આવે છે જ્યારે ડાબેથી જમણે ખસેડતી કાર જમણેથી ડાબે ખસેડતી કારને ટકરાય છે. જો કે, કાર અનંત મજબૂત અને મજબૂત છે; પરિણામે, તેઓ તેમના ટ્રેકટરીમાં આગળ વધતા રહે છે જેમ કે તેઓ ટકરાતા નથી. આ કાર્ય આવા અથડામણની સંખ્યાને આઉટપુટ કરે છે.
+    """"""
+","    return n**2
+","def check(candidate):
+    assert candidate(2) == 4
+    assert candidate(3) == 9
+    assert candidate(4) == 16
+    assert candidate(8) == 64
+    assert candidate(10) == 100
+
+"
+"
+
+def incr_list(l: list):
+    """"""1 દ્વારા વધેલા તત્વો સાથે વળતર સૂચિ
+    >>> incr_list([1, 2, 3])
+    [2, 3, 4]
+    >>> incr_list([5, 3, 5, 2, 3, 3, 9, 0, 123])
+    [6, 4, 6, 3, 4, 4, 10, 1, 124]
+    """"""
+","    return [(e + 1) for e in l]
+","def check(candidate):
+    assert candidate([]) == []
+    assert candidate([3, 2, 1]) == [4, 3, 2]
+    assert candidate([5, 2, 5, 2, 3, 3, 9, 0, 123]) == [6, 3, 6, 3, 4, 4, 10, 1, 124]
+
+"
+"
+
+def pairs_sum_to_zero(l):
+    """"""
+    pairs_sum_to_zero એ પૂર્ણાંકની યાદીને ઇનપુટ તરીકે લે છે. જો યાદીમાં બે અલગ અલગ તત્વો હોય તો તે સાચું છે, અને અન્યથા ખોટા છે.
+    >>> pairs_sum_to_zero([1, 3, 5, 0])
+    False
+    >>> pairs_sum_to_zero([1, 3, -2, 1])
+    False
+    >>> pairs_sum_to_zero([1, 2, 3, 7])
+    False
+    >>> pairs_sum_to_zero([2, 4, -5, 3, 5, 7])
+    True
+    >>> pairs_sum_to_zero([1])
+    False
+    """"""
+","    for i, l1 in enumerate(l):
+        for j in range(i + 1, len(l)):
+            if l1 + l[j] == 0:
+                return True
+    return False
+","def check(candidate):
+    assert candidate([1, 3, 5, 0]) == False
+    assert candidate([1, 3, -2, 1]) == False
+    assert candidate([1, 2, 3, 7]) == False
+    assert candidate([2, 4, -5, 3, 5, 7]) == True
+    assert candidate([1]) == False
+
+    assert candidate([-3, 9, -1, 3, 2, 30]) == True
+    assert candidate([-3, 9, -1, 3, 2, 31]) == True
+    assert candidate([-3, 9, -1, 4, 2, 30]) == False
+    assert candidate([-3, 9, -1, 4, 2, 31]) == False
+
+"
+"
+
+def change_base(x: int, base: int):
+    """"""ઇનપુટ નંબર x ના આંકડાકીય આધારને આધારમાં બદલો. રૂપાંતરણ પછી શબ્દમાળા પ્રતિનિધિત્વ પરત કરો. આધાર સંખ્યાઓ 10 કરતા ઓછી છે.
+    >>> change_base(8, 3)
+    '22'
+    >>> change_base(8, 2)
+    '1000'
+    >>> change_base(7, 2)
+    '111'
+    """"""
+","    ret = """"
+    while x > 0:
+        ret = str(x % base) + ret
+        x //= base
+    return ret
+","def check(candidate):
+    assert candidate(8, 3) == ""22""
+    assert candidate(9, 3) == ""100""
+    assert candidate(234, 2) == ""11101010""
+    assert candidate(16, 2) == ""10000""
+    assert candidate(8, 2) == ""1000""
+    assert candidate(7, 2) == ""111""
+    for x in range(2, 8):
+        assert candidate(x, x + 1) == str(x)
+
+"
+"
+
+def triangle_area(a, h):
+    """"""ત્રિકોણ માટે બાજુની લંબાઈ અને ઉચ્ચ વળતર વિસ્તાર આપવામાં આવે છે.
+    >>> triangle_area(5, 3)
+    7.5
+    """"""
+","    return a * h / 2.0
+","def check(candidate):
+    assert candidate(5, 3) == 7.5
+    assert candidate(2, 2) == 2.0
+    assert candidate(10, 8) == 40.0
+
+"
+"
+
+def fib4(n: int):
+    """"""Fib4 નંબર સિક્વન્સ એ ફિબોનાકી સિક્વન્સ જેવું જ સિક્વન્સ છે જે નીચે પ્રમાણે વ્યાખ્યાયિત થયેલ છેઃ fib4(0) -> 0 fib4(1) -> 0 fib4(2) -> 2 fib4(3) -> 0 fib4(n) -> fib4(n-1) + fib4(n-2) + fib4(n-3) + fib4(n-4). કૃપા કરીને fib4 નંબર સિક્વન્સના n-th તત્વની અસરકારક રીતે ગણતરી કરવા માટે એક કાર્ય લખો. પુનરાવર્તનનો ઉપયોગ કરશો નહીં.
+    >>> fib4(5)
+    4
+    >>> fib4(6)
+    8
+    >>> fib4(7)
+    14
+    """"""
+","    results = [0, 0, 2, 0]
+    if n < 4:
+        return results[n]
+
+    for _ in range(4, n + 1):
+        results.append(results[-1] + results[-2] + results[-3] + results[-4])
+        results.pop(0)
+
+    return results[-1]
+","def check(candidate):
+    assert candidate(5) == 4
+    assert candidate(8) == 28
+    assert candidate(10) == 104
+    assert candidate(12) == 386
+
+"
+"
+
+def median(l: list):
+    """"""સૂચિમાં તત્વોની મધ્યમ પરત કરો l.
+    >>> median([3, 1, 2, 4, 5])
+    3
+    >>> median([-10, 4, 6, 1000, 10, 20])
+    15.0
+    """"""
+","    l = sorted(l)
+    if len(l) % 2 == 1:
+        return l[len(l) // 2]
+    else:
+        return (l[len(l) // 2 - 1] + l[len(l) // 2]) / 2.0
+","def check(candidate):
+    assert candidate([3, 1, 2, 4, 5]) == 3
+    assert candidate([-10, 4, 6, 1000, 10, 20]) == 8.0
+    assert candidate([5]) == 5
+    assert candidate([6, 5]) == 5.5
+    assert candidate([8, 1, 3, 9, 9, 2, 7]) == 7 
+
+"
+"
+
+def is_palindrome(text: str):
+    """"""
+    આપેલ શબ્દમાળા પેલિન્ડ્રોમ છે કે નહીં તે તપાસે છે
+    >>> is_palindrome('')
+    True
+    >>> is_palindrome('aba')
+    True
+    >>> is_palindrome('aaaaa')
+    True
+    >>> is_palindrome('zbcd')
+    False
+    """"""
+","    for i in range(len(text)):
+        if text[i] != text[len(text) - 1 - i]:
+            return False
+    return True
+","def check(candidate):
+    assert candidate('') == True
+    assert candidate('aba') == True
+    assert candidate('aaaaa') == True
+    assert candidate('zbcd') == False
+    assert candidate('xywyx') == True
+    assert candidate('xywyz') == False
+    assert candidate('xywzx') == False
+
+"
+"
+
+def modp(n: int, p: int):
+    """"""2^n મોડ્યુલો પી (આંકડાકીય બાબતોથી પરિચિત રહો) પરત કરો.
+    >>> modp(3, 5)
+    3
+    >>> modp(1101, 101)
+    2
+    >>> modp(0, 101)
+    1
+    >>> modp(3, 11)
+    8
+    >>> modp(100, 101)
+    1
+    """"""
+","    ret = 1
+    for i in range(n):
+        ret = (2 * ret) % p
+    return ret
+","def check(candidate):
+    assert candidate(3, 5) == 3
+    assert candidate(1101, 101) == 2
+    assert candidate(0, 101) == 1
+    assert candidate(3, 11) == 8
+    assert candidate(100, 101) == 1
+    assert candidate(30, 5) == 4
+    assert candidate(31, 5) == 3
+
+"
+"
+
+def encode_shift(s: str):
+    """"""
+    મૂળાક્ષરમાં 5 દ્વારા દરેક અક્ષરને ખસેડીને એન્કોડેડ શબ્દમાળા આપે છે.
+    """"""
+    return """".join([chr(((ord(ch) + 5 - ord(""a"")) % 26) + ord(""a"")) for ch in s])
+
+
+def decode_shift(s: str):
+    """"""
+    takes as input string encoded with encode_shift function. Returns decoded string.
+    """"""
+","    return """".join([chr(((ord(ch) - 5 - ord(""a"")) % 26) + ord(""a"")) for ch in s])
+","def check(candidate):
+    from random import randint, choice
+    import copy
+    import string
+
+    letters = string.ascii_lowercase
+    for _ in range(100):
+        str = ''.join(choice(letters) for i in range(randint(10, 20)))
+        encoded_str = encode_shift(str)
+        assert candidate(copy.deepcopy(encoded_str)) == str
+
+"
+"
+
+def remove_vowels(text):
+    """"""
+    remove_vowels એ એક કાર્ય છે જે શબ્દમાળા લે છે અને સ્વરો વગર શબ્દમાળા આપે છે.
+    >>> remove_vowels('')
+    ''
+    >>> remove_vowels(""abcdef\nghijklm"")
+    'bcdf\nghjklm'
+    >>> remove_vowels('abcdef')
+    'bcdf'
+    >>> remove_vowels('aaaaa')
+    ''
+    >>> remove_vowels('aaBAA')
+    'B'
+    >>> remove_vowels('zbcd')
+    'zbcd'
+    """"""
+","    return """".join([s for s in text if s.lower() not in [""a"", ""e"", ""i"", ""o"", ""u""]])
+","def check(candidate):
+    assert candidate('') == ''
+    assert candidate(""abcdef\nghijklm"") == 'bcdf\nghjklm'
+    assert candidate('fedcba') == 'fdcb'
+    assert candidate('eeeee') == ''
+    assert candidate('acBAA') == 'cB'
+    assert candidate('EcBOO') == 'cB'
+    assert candidate('ybcd') == 'ybcd'
+
+"
+"
+
+def below_threshold(l: list, t: int):
+    """"""જો યાદીમાં બધા નંબરો થ્રેશોલ્ડ t ની નીચે હોય તો સાચું પરત કરો.
+    >>> below_threshold([1, 2, 4, 10], 100)
+    True
+    >>> below_threshold([1, 20, 4, 10], 5)
+    False
+    """"""
+","    for e in l:
+        if e >= t:
+            return False
+    return True
+","def check(candidate):
+    assert candidate([1, 2, 4, 10], 100)
+    assert not candidate([1, 20, 4, 10], 5)
+    assert candidate([1, 20, 4, 10], 21)
+    assert candidate([1, 20, 4, 10], 22)
+    assert candidate([1, 8, 4, 10], 11)
+    assert not candidate([1, 8, 4, 10], 10)
+
+"
+"
+
+def add(x: int, y: int):
+    """"""બે સંખ્યા x અને y ઉમેરો
+    >>> add(2, 3)
+    5
+    >>> add(5, 7)
+    12
+    """"""
+","    return x + y
+","def check(candidate):
+    import random
+
+    assert candidate(0, 1) == 1
+    assert candidate(1, 0) == 1
+    assert candidate(2, 3) == 5
+    assert candidate(5, 7) == 12
+    assert candidate(7, 5) == 12
+
+    for i in range(100):
+        x, y = random.randint(0, 1000), random.randint(0, 1000)
+        assert candidate(x, y) == x + y
+
+"
+"
+
+def same_chars(s0: str, s1: str):
+    """"""
+    તપાસો કે બે શબ્દોમાં સમાન અક્ષરો છે.
+    >>> same_chars('eabcdzzzz', 'dddzzzzzzzddeddabc')
+    True
+    >>> same_chars('abcd', 'dddddddabc')
+    True
+    >>> same_chars('dddddddabc', 'abcd')
+    True
+    >>> same_chars('eabcd', 'dddddddabc')
+    False
+    >>> same_chars('abcd', 'dddddddabce')
+    False
+    >>> same_chars('eabcdzzzz', 'dddzzzzzzzddddabc')
+    False
+    """"""
+","    return set(s0) == set(s1)
+","def check(candidate):
+    assert candidate('eabcdzzzz', 'dddzzzzzzzddeddabc') == True
+    assert candidate('abcd', 'dddddddabc') == True
+    assert candidate('dddddddabc', 'abcd') == True
+    assert candidate('eabcd', 'dddddddabc') == False
+    assert candidate('abcd', 'dddddddabcf') == False
+    assert candidate('eabcdzzzz', 'dddzzzzzzzddddabc') == False
+    assert candidate('aabb', 'aaccc') == False
+
+"
+"
+
+def fib(n: int):
+    """"""n-th ફિબોનાકી નંબર પરત કરો.
+    >>> fib(10)
+    55
+    >>> fib(1)
+    1
+    >>> fib(8)
+    21
+    """"""
+","    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+    return fib(n - 1) + fib(n - 2)
+","def check(candidate):
+    assert candidate(10) == 55
+    assert candidate(1) == 1
+    assert candidate(8) == 21
+    assert candidate(11) == 89
+    assert candidate(12) == 144
+
+"
+"
+
+def correct_bracketing(brackets: str):
+    """""" brackets એ ""<"" અને "">"" ની સ્ટ્રિંગ છે. જો દરેક ઓપનિંગ કૌંસમાં અનુરૂપ બંધ કૌંસ હોય તો સાચું પરત કરો.
+
+    >>> correct_bracketing(""<"")
+    False
+    >>> correct_bracketing(""<>"")
+    True
+    >>> correct_bracketing(""<<><>>"")
+    True
+    >>> correct_bracketing(""><<>"")
+    False
+    """"""
+","    depth = 0
+    for b in brackets:
+        if b == ""<"":
+            depth += 1
+        else:
+            depth -= 1
+        if depth < 0:
+            return False
+    return depth == 0
+","def check(candidate):
+    assert candidate(""<>"")
+    assert candidate(""<<><>>"")
+    assert candidate(""<><><<><>><>"")
+    assert candidate(""<><><<<><><>><>><<><><<>>>"")
+    assert not candidate(""<<<><>>>>"")
+    assert not candidate(""><<>"")
+    assert not candidate(""<"")
+    assert not candidate(""<<<<"")
+    assert not candidate("">"")
+    assert not candidate(""<<>"")
+    assert not candidate(""<><><<><>><>><<>"")
+    assert not candidate(""<><><<><>><>>><>"")
+
+"
+"
+
+def monotonic(l: list):
+    """"""સાચું પરત કરો એ છે કે સૂચિ તત્વો એકવિધ રીતે વધી રહ્યા છે અથવા ઘટી રહ્યા છે.
+    >>> monotonic([1, 2, 4, 20])
+    True
+    >>> monotonic([1, 20, 4, 10])
+    False
+    >>> monotonic([4, 1, 0, -10])
+    True
+    """"""
+","    if l == sorted(l) or l == sorted(l, reverse=True):
+        return True
+    return False
+","def check(candidate):
+    assert candidate([1, 2, 4, 10]) == True
+    assert candidate([1, 2, 4, 20]) == True
+    assert candidate([1, 20, 4, 10]) == False
+    assert candidate([4, 1, 0, -10]) == True
+    assert candidate([4, 1, 1, 0]) == True
+    assert candidate([1, 2, 3, 2, 5, 60]) == False
+    assert candidate([1, 2, 3, 4, 5, 60]) == True
+    assert candidate([9, 9, 9, 9]) == True
+
+"
+"
+
+def common(l1: list, l2: list):
+    """"""બે યાદીઓ માટે સૉર્ટ કરેલ અનન્ય સામાન્ય તત્વો પરત કરે છે.
+    >>> common([1, 4, 3, 34, 653, 2, 5], [5, 7, 1, 5, 9, 653, 121])
+    [1, 5, 653]
+    >>> common([5, 3, 2, 8], [3, 2])
+    [2, 3]
+
+    """"""
+","    ret = set()
+    for e1 in l1:
+        for e2 in l2:
+            if e1 == e2:
+                ret.add(e1)
+    return sorted(list(ret))
+","def check(candidate):
+    assert candidate([1, 4, 3, 34, 653, 2, 5], [5, 7, 1, 5, 9, 653, 121]) == [1, 5, 653]
+    assert candidate([5, 3, 2, 8], [3, 2]) == [2, 3]
+    assert candidate([4, 3, 2, 8], [3, 2, 4]) == [2, 3, 4]
+    assert candidate([4, 3, 2, 8], []) == []
+
+"
+"
+
+def largest_prime_factor(n: int):
+    """"""n નો સૌથી મોટો પ્રાઇમ ફેક્ટર પરત કરો. ધારો કે n > 1 અને તે પ્રાઇમ નથી.
+    >>> largest_prime_factor(13195)
+    29
+    >>> largest_prime_factor(2048)
+    2
+    """"""
+","    def is_prime(k):
+        if k < 2:
+            return False
+        for i in range(2, k - 1):
+            if k % i == 0:
+                return False
+        return True
+    largest = 1
+    for j in range(2, n + 1):
+        if n % j == 0 and is_prime(j):
+            largest = max(largest, j)
+    return largest
+","def check(candidate):
+    assert candidate(15) == 5
+    assert candidate(27) == 3
+    assert candidate(63) == 7
+    assert candidate(330) == 11
+    assert candidate(13195) == 29
+
+"
+"
+
+def sum_to_n(n: int):
+    """"""sum_to_n એ એક કાર્ય છે જે 1 થી n સુધીની સંખ્યાઓનો સરવાળો કરે છે.
+    >>> sum_to_n(30)
+    465
+    >>> sum_to_n(100)
+    5050
+    >>> sum_to_n(5)
+    15
+    >>> sum_to_n(10)
+    55
+    >>> sum_to_n(1)
+    1
+    """"""
+","    return sum(range(n + 1))
+","def check(candidate):
+    assert candidate(1) == 1
+    assert candidate(6) == 21
+    assert candidate(11) == 66
+    assert candidate(30) == 465
+    assert candidate(100) == 5050
+
+"
+"
+
+def correct_bracketing(brackets: str):
+    """""" brackets એ ""("" અને """") ની સ્ટ્રિંગ છે. જો દરેક ઓપનિંગ કૌંસમાં અનુરૂપ બંધ કૌંસ હોય તો સાચું પરત કરો.
+
+    >>> correct_bracketing(""("")
+    False
+    >>> correct_bracketing(""()"")
+    True
+    >>> correct_bracketing(""(()())"")
+    True
+    >>> correct_bracketing("")(()"")
+    False
+    """"""
+","    depth = 0
+    for b in brackets:
+        if b == ""("":
+            depth += 1
+        else:
+            depth -= 1
+        if depth < 0:
+            return False
+    return depth == 0
+","def check(candidate):
+    assert candidate(""()"")
+    assert candidate(""(()())"")
+    assert candidate(""()()(()())()"")
+    assert candidate(""()()((()()())())(()()(()))"")
+    assert not candidate(""((()())))"")
+    assert not candidate("")(()"")
+    assert not candidate(""("")
+    assert not candidate(""(((("")
+    assert not candidate("")"")
+    assert not candidate(""(()"")
+    assert not candidate(""()()(()())())(()"")
+    assert not candidate(""()()(()())()))()"")
+
+"
+"
+
+def derivative(xs: list):
+    """""" xs એ બહુવચનનાં ગુણાંકનું પ્રતિનિધિત્વ કરે છે. xs[0] + xs[1] * x + xs[2] * x^2 +.... આ બહુવચનનું ડેરિવેટિવ એ જ સ્વરૂપમાં આપે છે.
+    >>> derivative([3, 1, 2, 4, 5])
+    [1, 4, 12, 20]
+    >>> derivative([1, 2, 3])
+    [2, 6]
+    """"""
+","    return [(i * x) for i, x in enumerate(xs)][1:]
+","def check(candidate):
+    assert candidate([3, 1, 2, 4, 5]) == [1, 4, 12, 20]
+    assert candidate([1, 2, 3]) == [2, 6]
+    assert candidate([3, 2, 1]) == [2, 2]
+    assert candidate([3, 2, 1, 0, 4]) == [2, 2, 0, 16]
+    assert candidate([1]) == []
+
+"
+"
+
+def fibfib(n: int):
+    """"""ફાઈબફાઇબ નંબર સિક્વન્સ એ ફાઈબોનાકી સિક્વન્સ જેવું જ એક સિક્વન્સ છે જે નીચે પ્રમાણે વ્યાખ્યાયિત થયેલ છેઃ ફાઈબફાઇબ (n-1) + ફાઈબફાઇબ (n-2) + ફાઈબફાઇબ (n-3) કૃપા કરીને ફાઈબફાઇબ નંબર સિક્વન્સના n-th તત્વની કાર્યક્ષમ રીતે ગણતરી કરવા માટે એક કાર્ય લખો.
+    >>> fibfib(1)
+    0
+    >>> fibfib(5)
+    4
+    >>> fibfib(8)
+    24
+    """"""
+","    if n == 0:
+        return 0
+    if n == 1:
+        return 0
+    if n == 2:
+        return 1
+    return fibfib(n - 1) + fibfib(n - 2) + fibfib(n - 3)
+","def check(candidate):
+    assert candidate(2) == 1
+    assert candidate(1) == 0
+    assert candidate(5) == 4
+    assert candidate(8) == 24
+    assert candidate(10) == 81
+    assert candidate(12) == 274
+    assert candidate(14) == 927
+
+"
+"
+FIX = """"""
+વધુ પરીક્ષણ કેસો ઉમેરો.
+""""""
+
+def vowels_count(s):
+    """"""Write a function vowels_count which takes a string representing
+    a word as input and returns the number of vowels in the string.
+    Vowels in this case are 'a', 'e', 'i', 'o', 'u'. Here, 'y' is also a
+    vowel, but only when it is at the end of the given word.
+
+    Example:
+    >>> vowels_count(""abcde"")
+    2
+    >>> vowels_count(""ACEDY"")
+    3
+    """"""
+","    vowels = ""aeiouAEIOU""
+    n_vowels = sum(c in vowels for c in s)
+    if s[-1] == 'y' or s[-1] == 'Y':
+        n_vowels += 1
+    return n_vowels
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""abcde"") == 2, ""Test 1""
+    assert candidate(""Alone"") == 3, ""Test 2""
+    assert candidate(""key"") == 2, ""Test 3""
+    assert candidate(""bye"") == 1, ""Test 4""
+    assert candidate(""keY"") == 2, ""Test 5""
+    assert candidate(""bYe"") == 1, ""Test 6""
+    assert candidate(""ACEDY"") == 3, ""Test 7""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def circular_shift(x, shift):
+    """"""પરિપત્ર પૂર્ણાંક x ના અંકો ખસેડો, ડિજિટને જમણે ખસેડો અને પરિણામ સ્ટ્રિંગ તરીકે પરત કરો. જો શિફ્ટ > અંકોની સંખ્યા, રિટર્ન અંકો ઉલટાવી દેવામાં આવે છે.
+    >>> circular_shift(12, 1)
+    ""21""
+    >>> circular_shift(12, 2)
+    ""12""
+    """"""
+","    s = str(x)
+    if shift > len(s):
+        return s[::-1]
+    else:
+        return s[len(s) - shift:] + s[:len(s) - shift]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(100, 2) == ""001""
+    assert candidate(12, 2) == ""12""
+    assert candidate(97, 8) == ""79""
+    assert candidate(12, 1) == ""21"", ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(11, 101) == ""11"", ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def digitSum(s):
+    """"""કાર્ય એક ફંક્શન લખો જે ઇનપુટ તરીકે શબ્દમાળા લે છે અને માત્ર ઉપલા અક્ષરોના સરવાળો આપે છે. ઉદાહરણોઃ digitSum ((("""") => 0 digitSum ((""abAB"") => 131 digitSum ((""abcCd"") => 67 digitSum (((""helloE"") => 69 digitSum (((""woArBld"") => 131 digitSum (((""aAaaaXa"") => 153
+    """"""
+","    if s == """": return 0
+    return sum(ord(char) if char.isupper() else 0 for char in s)
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate("""") == 0, ""Error""
+    assert candidate(""abAB"") == 131, ""Error""
+    assert candidate(""abcCd"") == 67, ""Error""
+    assert candidate(""helloE"") == 69, ""Error""
+    assert candidate(""woArBld"") == 131, ""Error""
+    assert candidate(""aAaaaXa"") == 153, ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate("" How are yOu?"") == 151, ""Error""
+    assert candidate(""You arE Very Smart"") == 327, ""Error""
+
+"
+"
+def fruit_distribution(s,n):
+    """"""
+    આ કાર્યમાં, તમને એક શબ્દમાળા આપવામાં આવશે જે સફરજન અને નારંગીની સંખ્યાને રજૂ કરે છે જે ફળોની ટોપલીમાં વહેંચવામાં આવે છે આ બાસ્કેટમાં સફરજન, નારંગી અને કેરીના ફળોનો સમાવેશ થાય છે. શબ્દમાળા આપવામાં આવે છે જે નારંગી અને સફરજનની કુલ સંખ્યાને રજૂ કરે છે અને એક પૂર્ણાંક જે બાસ્કેટમાં ફળોની કુલ સંખ્યાને રજૂ કરે છે તે બાસ્કેટમાં કેરીના ફળોની સંખ્યા પરત કરે છે. ઉદાહરણ તરીકેઃ fruit_distribution""5(apples and 6 oranges"", 19) -> 19 - 5 - 6 = 8 fruit_distribution""0 apples and 1 oranges"",3) -> 3 - 0 - 1 = 2 fruit_distribution""2 apples and 3 oranges"", 100) -> 100 - 2 - 3 = 95 fruit_distribution""100 apples and 1
+    """"""
+","    lis = list()
+    for i in s.split(' '):
+        if i.isdigit():
+            lis.append(int(i))
+    return n - sum(lis)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""5 apples and 6 oranges"",19) == 8
+    assert candidate(""5 apples and 6 oranges"",21) == 10
+    assert candidate(""0 apples and 1 oranges"",3) == 2
+    assert candidate(""1 apples and 0 oranges"",3) == 2
+    assert candidate(""2 apples and 3 oranges"",100) == 95
+    assert candidate(""2 apples and 3 oranges"",5) == 0
+    assert candidate(""1 apples and 100 oranges"",120) == 19
+"
+"
+def pluck(arr):
+    """"""
+    ""એક ઝાડની શાખાનું પ્રતિનિધિત્વ કરતી એરે આપવામાં આવે છે જેમાં બિન-નકારાત્મક પૂર્ણાંક ગાંઠો હોય છે તમારું કાર્ય એ છે કે ગાંઠોમાંથી એકને પસંદ કરો અને તેને પરત કરો. પસંદ કરેલ ગાંઠ સૌથી નાના પણ મૂલ્ય સાથેનો ગાંઠ હોવો જોઈએ. જો સમાન સૌથી નાના પણ મૂલ્યવાળા બહુવિધ ગાંઠો મળે તો સૌથી નાનો અનુક્રમણિકા ધરાવતો ગાંઠ પરત કરો. પસંદ કરેલ ગાંઠને સૂચિમાં પરત કરવો જોઈએ, [smallest_value, તેના અનુક્રમણિકા ], જો ત્યાં કોઈ પણ મૂલ્યો નથી અથવા આપેલ એરે ખાલી છે, તો પાછા આવો []. ઉદાહરણ 1: ઇનપુટઃ [4,2,3] આઉટપુટઃ [2, 1] સમજૂતીઃ 2 સૌથી નાનું પણ મૂલ્ય ધરાવે છે, અને 2 સૌથી નાનું અનુક્રમણિકા ધરાવે છે. ઉદાહરણ 2: ઇનપુટઃ
+    """"""
+","    if(len(arr) == 0): return []
+    evens = list(filter(lambda x: x%2 == 0, arr))
+    if(evens == []): return []
+    return [min(evens), arr.index(min(evens))]
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([4,2,3]) == [2, 1], ""Error""
+    assert candidate([1,2,3]) == [2, 1], ""Error""
+    assert candidate([]) == [], ""Error""
+    assert candidate([5, 0, 3, 0, 4, 2]) == [0, 1], ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([1, 2, 3, 0, 5, 3]) == [0, 3], ""Error""
+    assert candidate([5, 4, 8, 4 ,8]) == [4, 1], ""Error""
+    assert candidate([7, 6, 7, 1]) == [6, 1], ""Error""
+    assert candidate([7, 9, 7, 1]) == [], ""Error""
+
+"
+"
+def search(lst):
+    '''
+    You are given a non-empty list of positive integers. Return the greatest integer that is greater than 
+    zero, and has a frequency greater than or equal to the value of the integer itself. 
+    The frequency of an integer is the number of times it appears in the list.
+    If no such a value exist, return -1.
+    Examples:
+        search([4, 1, 2, 2, 3, 1]) == 2
+        search([1, 2, 2, 3, 3, 3, 4, 4, 4]) == 3
+        search([5, 5, 4, 4, 4]) == -1
+    '''
+","    frq = [0] * (max(lst) + 1)
+    for i in lst:
+        frq[i] += 1;
+
+    ans = -1
+    for i in range(1, len(frq)):
+        if frq[i] >= i:
+            ans = i
+    
+    return ans
+","def check(candidate):
+
+    # manually generated tests
+    assert candidate([5, 5, 5, 5, 1]) == 1
+    assert candidate([4, 1, 4, 1, 4, 4]) == 4
+    assert candidate([3, 3]) == -1
+    assert candidate([8, 8, 8, 8, 8, 8, 8, 8]) == 8
+    assert candidate([2, 3, 3, 2, 2]) == 2
+
+    # automatically generated tests
+    assert candidate([2, 7, 8, 8, 4, 8, 7, 3, 9, 6, 5, 10, 4, 3, 6, 7, 1, 7, 4, 10, 8, 1]) == 1
+    assert candidate([3, 2, 8, 2]) == 2
+    assert candidate([6, 7, 1, 8, 8, 10, 5, 8, 5, 3, 10]) == 1
+    assert candidate([8, 8, 3, 6, 5, 6, 4]) == -1
+    assert candidate([6, 9, 6, 7, 1, 4, 7, 1, 8, 8, 9, 8, 10, 10, 8, 4, 10, 4, 10, 1, 2, 9, 5, 7, 9]) == 1
+    assert candidate([1, 9, 10, 1, 3]) == 1
+    assert candidate([6, 9, 7, 5, 8, 7, 5, 3, 7, 5, 10, 10, 3, 6, 10, 2, 8, 6, 5, 4, 9, 5, 3, 10]) == 5
+    assert candidate([1]) == 1
+    assert candidate([8, 8, 10, 6, 4, 3, 5, 8, 2, 4, 2, 8, 4, 6, 10, 4, 2, 1, 10, 2, 1, 1, 5]) == 4
+    assert candidate([2, 10, 4, 8, 2, 10, 5, 1, 2, 9, 5, 5, 6, 3, 8, 6, 4, 10]) == 2
+    assert candidate([1, 6, 10, 1, 6, 9, 10, 8, 6, 8, 7, 3]) == 1
+    assert candidate([9, 2, 4, 1, 5, 1, 5, 2, 5, 7, 7, 7, 3, 10, 1, 5, 4, 2, 8, 4, 1, 9, 10, 7, 10, 2, 8, 10, 9, 4]) == 4
+    assert candidate([2, 6, 4, 2, 8, 7, 5, 6, 4, 10, 4, 6, 3, 7, 8, 8, 3, 1, 4, 2, 2, 10, 7]) == 4
+    assert candidate([9, 8, 6, 10, 2, 6, 10, 2, 7, 8, 10, 3, 8, 2, 6, 2, 3, 1]) == 2
+    assert candidate([5, 5, 3, 9, 5, 6, 3, 2, 8, 5, 6, 10, 10, 6, 8, 4, 10, 7, 7, 10, 8]) == -1
+    assert candidate([10]) == -1
+    assert candidate([9, 7, 7, 2, 4, 7, 2, 10, 9, 7, 5, 7, 2]) == 2
+    assert candidate([5, 4, 10, 2, 1, 1, 10, 3, 6, 1, 8]) == 1
+    assert candidate([7, 9, 9, 9, 3, 4, 1, 5, 9, 1, 2, 1, 1, 10, 7, 5, 6, 7, 6, 7, 7, 6]) == 1
+    assert candidate([3, 10, 10, 9, 2]) == -1
+
+"
+"
+def strange_sort_list(lst):
+    '''
+    Given list of integers, return list in strange order.
+    Strange sorting, is when you start with the minimum value,
+    then maximum of the remaining integers, then minimum and so on.
+
+    Examples:
+    strange_sort_list([1, 2, 3, 4]) == [1, 4, 2, 3]
+    strange_sort_list([5, 5, 5, 5]) == [5, 5, 5, 5]
+    strange_sort_list([]) == []
+    '''
+","    res, switch = [], True
+    while lst:
+        res.append(min(lst) if switch else max(lst))
+        lst.remove(res[-1])
+        switch = not switch
+    return res
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1, 2, 3, 4]) == [1, 4, 2, 3]
+    assert candidate([5, 6, 7, 8, 9]) == [5, 9, 6, 8, 7]
+    assert candidate([1, 2, 3, 4, 5]) == [1, 5, 2, 4, 3]
+    assert candidate([5, 6, 7, 8, 9, 1]) == [1, 9, 5, 8, 6, 7]
+    assert candidate([5, 5, 5, 5]) == [5, 5, 5, 5]
+    assert candidate([]) == []
+    assert candidate([1,2,3,4,5,6,7,8]) == [1, 8, 2, 7, 3, 6, 4, 5]
+    assert candidate([0,2,2,2,5,5,-5,-5]) == [-5, 5, -5, 5, 0, 2, 2, 2]
+    assert candidate([111111]) == [111111]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def triangle_area(a, b, c):
+    '''
+    Given the lengths of the three sides of a triangle. Return the area of
+    the triangle rounded to 2 decimal points if the three sides form a valid triangle. 
+    Otherwise return -1
+    Three sides make a valid triangle when the sum of any two sides is greater 
+    than the third side.
+    Example:
+    triangle_area(3, 4, 5) == 6.00
+    triangle_area(1, 2, 10) == -1
+    '''
+","    if a + b <= c or a + c <= b or b + c <= a:
+        return -1 
+    s = (a + b + c)/2    
+    area = (s * (s - a) * (s - b) * (s - c)) ** 0.5
+    area = round(area, 2)
+    return area
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(3, 4, 5) == 6.00, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(1, 2, 10) == -1
+    assert candidate(4, 8, 5) == 8.18
+    assert candidate(2, 2, 2) == 1.73
+    assert candidate(1, 2, 3) == -1
+    assert candidate(10, 5, 7) == 16.25
+    assert candidate(2, 6, 3) == -1
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1, 1, 1) == 0.43, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(2, 2, 10) == -1
+
+"
+"
+def will_it_fly(q,w):
+    '''
+    Write a function that returns True if the object q will fly, and False otherwise.
+    The object q will fly if it's balanced (it is a palindromic list) and the sum of its elements is less than or equal the maximum possible weight w.
+
+    Example:
+    will_it_fly([1, 2], 5) â -> False 
+    # 1+2 is less than the maximum possible weight, but it's unbalanced.
+
+    will_it_fly([3, 2, 3], 1) â -> False
+    # it's balanced, but 3+2+3 is more than the maximum possible weight.
+
+    will_it_fly([3, 2, 3], 9) â -> True
+    # 3+2+3 is less than the maximum possible weight, and it's balanced.
+
+    will_it_fly([3], 5) â -> True
+    # 3 is less than the maximum possible weight, and it's balanced.
+    '''
+","    if sum(q) > w:
+        return False
+
+    i, j = 0, len(q)-1
+    while i<j:
+        if q[i] != q[j]:
+            return False
+        i+=1
+        j-=1
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([3, 2, 3], 9) is True
+    assert candidate([1, 2], 5) is False
+    assert candidate([3], 5) is True
+    assert candidate([3, 2, 3], 1) is False
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1, 2, 3], 6) is False
+    assert candidate([5], 5) is True
+
+"
+"
+def smallest_change(arr):
+    """"""
+    પૂર્ણાંકની એરે આપવામાં આવે છે, એરેને પાલિન્ડ્રોમિક બનાવવા માટે બદલવાની જરૂર છે તે તત્વોની લઘુત્તમ સંખ્યા શોધો. પાલિન્ડ્રોમિક એરે એ એરે છે જે પાછળ અને આગળ સમાન વાંચે છે. એક ફેરફારમાં, તમે એક તત્વને કોઈપણ અન્ય તત્વમાં બદલી શકો છો. ઉદાહરણ તરીકેઃ smallest_change (([1,2,3,5,4,7,9,6]) == 4 smallest_change (([1, 2, 3, 4, 3, 2, 2]) == 1 smallest_change (([1, 2, 3, 2, 1]) == 0
+    """"""
+","    ans = 0
+    for i in range(len(arr) // 2):
+        if arr[i] != arr[len(arr) - i - 1]:
+            ans += 1
+    return ans
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,2,3,5,4,7,9,6]) == 4
+    assert candidate([1, 2, 3, 4, 3, 2, 2]) == 1
+    assert candidate([1, 4, 2]) == 1
+    assert candidate([1, 4, 4, 2]) == 1
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1, 2, 3, 2, 1]) == 0
+    assert candidate([3, 1, 1, 3]) == 0
+    assert candidate([1]) == 0
+    assert candidate([0, 1]) == 1
+
+"
+"
+def total_match(lst1, lst2):
+    '''
+    Write a function that accepts two lists of strings and returns the list that has 
+    total number of chars in the all strings of the list less than the other list.
+
+    if the two lists have the same number of chars, return the first list.
+
+    Examples
+    total_match([], []) â -> []
+    total_match(['hi', 'admin'], ['hI', 'Hi']) â -> ['hI', 'Hi']
+    total_match(['hi', 'admin'], ['hi', 'hi', 'admin', 'project']) â -> ['hi', 'admin']
+    total_match(['hi', 'admin'], ['hI', 'hi', 'hi']) â -> ['hI', 'hi', 'hi']
+    total_match(['4'], ['1', '2', '3', '4', '5']) â -> ['4']
+    '''
+","    l1 = 0
+    for st in lst1:
+        l1 += len(st)
+    
+    l2 = 0
+    for st in lst2:
+        l2 += len(st)
+    
+    if l1 <= l2:
+        return lst1
+    else:
+        return lst2
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([], []) == []
+    assert candidate(['hi', 'admin'], ['hi', 'hi']) == ['hi', 'hi']
+    assert candidate(['hi', 'admin'], ['hi', 'hi', 'admin', 'project']) == ['hi', 'admin']
+    assert candidate(['4'], ['1', '2', '3', '4', '5']) == ['4']
+    assert candidate(['hi', 'admin'], ['hI', 'Hi']) == ['hI', 'Hi']
+    assert candidate(['hi', 'admin'], ['hI', 'hi', 'hi']) == ['hI', 'hi', 'hi']
+    assert candidate(['hi', 'admin'], ['hI', 'hi', 'hii']) == ['hi', 'admin']
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([], ['this']) == []
+    assert candidate(['this'], []) == []
+
+"
+"
+def is_multiply_prime(a):
+    """"""એક ફંક્શન લખો જે સાચું છે જો આપેલ સંખ્યા 3 પ્રાઇમ નંબરોનો ગુણાકાર છે અને અન્યથા ખોટા છે. એ જાણીને કે (એ) 100 કરતાં ઓછું છે. ઉદાહરણઃ is_multiply_prime(30) == સાચું 30 = 2 * 3 * 5
+    """"""
+","    def is_prime(n):
+        for j in range(2,n):
+            if n%j == 0:
+                return False
+        return True
+
+    for i in range(2,101):
+        if not is_prime(i): continue
+        for j in range(2,101):
+            if not is_prime(j): continue
+            for k in range(2,101):
+                if not is_prime(k): continue
+                if i*j*k == a: return True
+    return False
+","def check(candidate):
+
+    assert candidate(5) == False
+    assert candidate(30) == True
+    assert candidate(8) == True
+    assert candidate(10) == False
+    assert candidate(125) == True
+    assert candidate(3 * 5 * 7) == True
+    assert candidate(3 * 6 * 7) == False
+    assert candidate(9 * 9 * 9) == False
+    assert candidate(11 * 9 * 9) == False
+    assert candidate(11 * 13 * 7) == True
+
+"
+"
+def is_simple_power(x, n):
+    """"""તમારું કાર્ય એ ફંક્શન લખવાનું છે જે સાચું છે જો સંખ્યા x એ n ની સરળ શક્તિ છે અને અન્ય કિસ્સાઓમાં ખોટી છે. x એ n ની સરળ શક્તિ છે જો n**int=x ઉદાહરણ તરીકેઃ is_simple_power(1, 4) => true is_simple_power(2, 2) => true is_simple_power(8, 2) => true is_simple_power(3, 2) => false is_simple_power(3, 1) false => is_simple_power(5, 3) => false
+    """"""
+","    if (n == 1): 
+        return (x == 1) 
+    power = 1
+    while (power < x): 
+        power = power * n 
+    return (power == x) 
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(16, 2)== True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(143214, 16)== False, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(4, 2)==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(9, 3)==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(16, 4)==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(24, 2)==False, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(128, 4)==False, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(12, 6)==False, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1, 1)==True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(1, 12)==True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def iscube(a):
+    '''
+    Write a function that takes an integer a and returns True 
+    if this ingeger is a cube of some integer number.
+    Note: you may assume the input is always valid.
+    Examples:
+    iscube(1) ==> True
+    iscube(2) ==> False
+    iscube(-1) ==> True
+    iscube(64) ==> True
+    iscube(0) ==> True
+    iscube(180) ==> False
+    '''
+","    a = abs(a)
+    return int(round(a ** (1. / 3))) ** 3 == a
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(1) == True, ""First test error: "" + str(candidate(1))
+    assert candidate(2) == False, ""Second test error: "" + str(candidate(2))
+    assert candidate(-1) == True, ""Third test error: "" + str(candidate(-1))
+    assert candidate(64) == True, ""Fourth test error: "" + str(candidate(64))
+    assert candidate(180) == False, ""Fifth test error: "" + str(candidate(180))
+    assert candidate(1000) == True, ""Sixth test error: "" + str(candidate(1000))
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(0) == True, ""1st edge test error: "" + str(candidate(0))
+    assert candidate(1729) == False, ""2nd edge test error: "" + str(candidate(1728))
+
+"
+"
+def hex_key(num):
+    """"""તમને એક ફંક્શન લખવાનું કામ સોંપવામાં આવ્યું છે જે હેક્ઝાડેસિમલ નંબરને સ્ટ્રિંગ તરીકે મેળવે છે અને હેક્ઝાડેસિમલ અંકોની સંખ્યાની ગણતરી કરે છે જે પ્રાઇમ છે (પ્રાઇમ નંબર, અથવા પ્રાઇમ, 1 કરતા મોટી કુદરતી સંખ્યા છે જે બે નાના કુદરતી સંખ્યાઓનો ઉત્પાદન નથી). હેક્ઝાડેસિમલ અંકો 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F છે. પ્રાઇમ નંબરો 2, 3, 5, 7, 11, 13, 17 છે,... તેથી તમારે નીચેના અંકોની સંખ્યા નક્કી કરવી પડશેઃ 2, 3, 5, 7, B (= ડેસિમલ 11), D (= ડેસિમલ 13). નોંધઃ તમે ધારી શકો છો કે ઇનપુટ હંમેશાં સાચું અથવા ખાલી છે સ્ટ્રિંગ, અને પ્રતીકો A, B, C, D, E, F હંમેશા મોટા
+    """"""
+","    primes = ('2', '3', '5', '7', 'B', 'D')
+    total = 0
+    for i in range(0, len(num)):
+        if num[i] in primes:
+            total += 1
+    return total
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""AB"") == 1, ""First test error: "" + str(candidate(""AB""))      
+    assert candidate(""1077E"") == 2, ""Second test error: "" + str(candidate(""1077E""))  
+    assert candidate(""ABED1A33"") == 4, ""Third test error: "" + str(candidate(""ABED1A33""))      
+    assert candidate(""2020"") == 2, ""Fourth test error: "" + str(candidate(""2020""))  
+    assert candidate(""123456789ABCDEF0"") == 6, ""Fifth test error: "" + str(candidate(""123456789ABCDEF0""))      
+    assert candidate(""112233445566778899AABBCCDDEEFF00"") == 12, ""Sixth test error: "" + str(candidate(""112233445566778899AABBCCDDEEFF00""))  
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([]) == 0
+
+"
+"
+def decimal_to_binary(decimal):
+    """"""તમને દશાંશ સ્વરૂપમાં સંખ્યા આપવામાં આવશે અને તમારું કાર્ય તેને દ્વિસંગી બંધારણમાં રૂપાંતરિત કરવાનું છે. ફંક્શનને એક શબ્દમાળા પરત કરવી જોઈએ, જેમાં દરેક અક્ષર દ્વિસંગી સંખ્યાનું પ્રતિનિધિત્વ કરે છે. શબ્દમાળામાં દરેક અક્ષર '0' અથવા '1' હશે. શબ્દમાળાની શરૂઆતમાં અને અંતે વધારાના અક્ષરો 'db' હશે. વધારાના અક્ષરો ફોર્મેટમાં મદદ કરવા માટે છે. ઉદાહરણોઃ decimal_to_binary ((15) # ""db1111db"" દશાંશ_to_binary32) # ""db100000db"" આપે છે
+    """"""
+","    return ""db"" + bin(decimal)[2:] + ""db""
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(0) == ""db0db""
+    assert candidate(32) == ""db100000db""
+    assert candidate(103) == ""db1100111db""
+    assert candidate(15) == ""db1111db"", ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def is_happy(s):
+    """"""તમને એક શબ્દમાળા s આપવામાં આવે છે. તમારું કાર્ય એ તપાસવાનું છે કે શબ્દમાળા ખુશ છે કે નહીં. એક શબ્દમાળા ખુશ છે જો તેની લંબાઈ ઓછામાં ઓછી 3 છે અને દરેક 3 સળંગ અક્ષરો અલગ છે ઉદાહરણ તરીકેઃ is_happy ((a) => False is_happy ((aa) => False is_happy ((abcd) => True is_happy ((aabb) => False is_happy ((adb) => True is_happy ((xyy)) => False
+    """"""
+","    if len(s) < 3:
+      return False
+
+    for i in range(len(s) - 2):
+      
+      if s[i] == s[i+1] or s[i+1] == s[i+2] or s[i] == s[i+2]:
+        return False
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""a"") == False , ""a""
+    assert candidate(""aa"") == False , ""aa""
+    assert candidate(""abcd"") == True , ""abcd""
+    assert candidate(""aabb"") == False , ""aabb""
+    assert candidate(""adb"") == True , ""adb""
+    assert candidate(""xyy"") == False , ""xyy""
+    assert candidate(""iopaxpoi"") == True , ""iopaxpoi""
+    assert candidate(""iopaxioi"") == False , ""iopaxioi""
+"
+"
+def numerical_letter_grade(grades):
+    """"""તે સેમેસ્ટરના છેલ્લા સપ્તાહમાં છે અને શિક્ષક વિદ્યાર્થીઓને ગ્રેડ આપવાનું છે. શિક્ષક ગ્રેડિંગ માટે પોતાનો અલ્ગોરિધમ બનાવી રહ્યા છે. એકમાત્ર સમસ્યા એ છે કે, તેણીએ ગ્રેડિંગ માટે વપરાયેલ કોડ ગુમાવ્યો છે. તેણીએ તમને કેટલાક વિદ્યાર્થીઓ માટે જીપીએની સૂચિ આપી છે અને તમારે એક કાર્ય લખવું પડશે જે નીચેના કોષ્ટકનો ઉપયોગ કરીને અક્ષર ગ્રેડની સૂચિને આઉટપુટ કરી શકે છેઃ જીપીએ. અક્ષર ગ્રેડ 4.0 એ + > 3.7 એ > 3.3 એ- > 3.0 બી + > 2.7 બી > 2.3 બી- > 2.3 બી + > 2.0 સી + > 1.7 સી > 1.3 સી- > 1.0 ડી + > 0.7 ડી > 0.0 ડી- 0.0 ઇ ઉદાહરણઃ grade_equation (([4.0, 3, 1.7, 2, 3.5]) ==> ['A+', 'B', 'C-',
+    """"""
+","
+   
+    letter_grade = []
+    for gpa in grades:
+        if gpa == 4.0:
+            letter_grade.append(""A+"")
+        elif gpa > 3.7:
+            letter_grade.append(""A"")
+        elif gpa > 3.3:
+            letter_grade.append(""A-"")
+        elif gpa > 3.0:
+            letter_grade.append(""B+"")
+        elif gpa > 2.7:
+            letter_grade.append(""B"")
+        elif gpa > 2.3:
+            letter_grade.append(""B-"")
+        elif gpa > 2.0:
+            letter_grade.append(""C+"")
+        elif gpa > 1.7:
+            letter_grade.append(""C"")
+        elif gpa > 1.3:
+            letter_grade.append(""C-"")
+        elif gpa > 1.0:
+            letter_grade.append(""D+"")
+        elif gpa > 0.7:
+            letter_grade.append(""D"")
+        elif gpa > 0.0:
+            letter_grade.append(""D-"")
+        else:
+            letter_grade.append(""E"")
+    return letter_grade
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([4.0, 3, 1.7, 2, 3.5]) == ['A+', 'B', 'C-', 'C', 'A-']
+    assert candidate([1.2]) == ['D+']
+    assert candidate([0.5]) == ['D-']
+    assert candidate([0.0]) == ['E']
+    assert candidate([1, 0.3, 1.5, 2.8, 3.3]) == ['D', 'D-', 'C-', 'B', 'B+']
+    assert candidate([0, 0.7]) == ['E', 'D-']
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def prime_length(string):
+    """"""એક ફંક્શન લખો જે સ્ટ્રિંગ લે છે અને સાચું આપે છે જો સ્ટ્રિંગની લંબાઈ અપૂર્ણાંક હોય અથવા ખોટી હોય અન્યથા ઉદાહરણો prime_length (('Hello') == True prime_length (('abcdcba') == True prime_length (('kittens') == True prime_length (('orange') == False
+    """"""
+","    l = len(string)
+    if l == 0 or l == 1:
+        return False
+    for i in range(2, l):
+        if l % i == 0:
+            return False
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('Hello') == True
+    assert candidate('abcdcba') == True
+    assert candidate('kittens') == True
+    assert candidate('orange') == False
+    assert candidate('wow') == True
+    assert candidate('world') == True
+    assert candidate('MadaM') == True
+    assert candidate('Wow') == True
+    assert candidate('') == False
+    assert candidate('HI') == True
+    assert candidate('go') == True
+    assert candidate('gogo') == False
+    assert candidate('aaaaaaaaaaaaaaa') == False
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('Madam') == True
+    assert candidate('M') == False
+    assert candidate('0') == False
+
+"
+"
+def starts_one_ends(n):
+    """"""
+    હકારાત્મક પૂર્ણાંક n આપવામાં આવે છે, તે n-અંકની હકારાત્મક પૂર્ણાંકની સંખ્યાની ગણતરી આપે છે જે 1 થી શરૂ થાય છે અથવા સમાપ્ત થાય છે.
+    """"""
+","    if n == 1: return 1
+    return 18 * (10 ** (n - 2))
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(1) == 1
+    assert candidate(2) == 18
+    assert candidate(3) == 180
+    assert candidate(4) == 1800
+    assert candidate(5) == 18000
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def solve(N):
+    """"""હકારાત્મક પૂર્ણાંક N આપવામાં આવે છે, તેના અંકોનો કુલ સરવાળો દ્વિસંગીમાં આપે છે. ઉદાહરણ N = 1000 માટે, અંકોનો સરવાળો 1 હશે આઉટપુટ ""1"" હોવું જોઈએ. N = 150 માટે, અંકોનો સરવાળો 6 હશે આઉટપુટ ""110"" હોવું જોઈએ. N = 147 માટે, અંકોનો સરવાળો 12 હશે આઉટપુટ ""1100"" હોવું જોઈએ. ચલોઃ @N પૂર્ણાંક પ્રતિબંધોઃ 0 â‰¤ N â‰¤ 10000. આઉટપુટઃ દ્વિસંગી સંખ્યાની શબ્દમાળા
+    """"""
+","    return bin(sum(int(i) for i in str(N)))[2:]
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(1000) == ""1"", ""Error""
+    assert candidate(150) == ""110"", ""Error""
+    assert candidate(147) == ""1100"", ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(333) == ""1001"", ""Error""
+    assert candidate(963) == ""10010"", ""Error""
+
+"
+"
+def add(lst):
+    """"""પૂર્ણાંકોની બિન-ખાલી સૂચિ આપવામાં આવે છે. પ્રથમ. વિચિત્ર અનુક્રમણિકાઓ પર હોય તેવા પણ તત્વો ઉમેરો. ઉદાહરણોઃ add (([4, 2, 6, 7]) ==> 2 
+    """"""
+","    return sum([lst[i] for i in range(1, len(lst), 2) if lst[i]%2 == 0])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([4, 88]) == 88
+    assert candidate([4, 5, 6, 7, 2, 122]) == 122
+    assert candidate([4, 0, 6, 7]) == 0
+    assert candidate([4, 4, 6, 8]) == 12
+
+    # Check some edge cases that are easy to work out by hand.
+    
+"
+"
+def anti_shuffle(s):
+    """"""
+    એક શબ્દમાળા લે છે અને તેનું ક્રમબદ્ધ સંસ્કરણ આપે છે. શબ્દમાળાનું ક્રમબદ્ધ સંસ્કરણ, એક શબ્દમાળા છે જ્યાં બધા શબ્દો (અવકાશ દ્વારા અલગ) ને નવા શબ્દ દ્વારા બદલવામાં આવે છે જ્યાં બધા અક્ષરો ASCII મૂલ્યના આધારે વધતા ક્રમમાં ગોઠવવામાં આવે છે. નોંધઃ તમારે વાક્યમાં શબ્દો અને ખાલી જગ્યાઓનો ક્રમ રાખવો જોઈએ. ઉદાહરણ તરીકેઃ anti_shuffle ((('Hi') 'Hi' anti_shuffle ((('hello') આપે છે 'ehllo' anti_shuffle (('Hello World!!!') આપે છે 'Hello!!!Wdlor'
+    """"""
+","    return ' '.join([''.join(sorted(list(i))) for i in s.split(' ')])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('Hi') == 'Hi'
+    assert candidate('hello') == 'ehllo'
+    assert candidate('number') == 'bemnru'
+    assert candidate('abcd') == 'abcd'
+    assert candidate('Hello World!!!') == 'Hello !!!Wdlor'
+    assert candidate('') == ''
+    assert candidate('Hi. My name is Mister Robot. How are you?') == '.Hi My aemn is Meirst .Rboot How aer ?ouy'
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def get_row(lst, x):
+    """"""
+    તમને 2 પરિમાણીય ડેટા આપવામાં આવે છે, જેમ કે નેસ્ટેડ સૂચિઓ, જે મેટ્રિક્સની જેમ જ છે, જો કે, મેટ્રિક્સથી વિપરીત, દરેક પંક્તિમાં વિવિધ સંખ્યામાં કૉલમ હોઈ શકે છે. lst અને પૂર્ણાંક x આપવામાં આવે છે, સૂચિમાં પૂર્ણાંક x શોધો, અને ટુપલ્સની સૂચિ પરત કરો, [(x1, y1), (x2, y2)...] જેમ કે દરેક ટુપલ એક કોઓર્ડિનેટ છે - (પંક્તિ, કૉલમ), 0 થી શરૂ થાય છે. કોઓર્ડને શરૂઆતમાં ascending ક્રમમાં પંક્તિઓ દ્વારા સૉર્ટ કરો. પણ, નીચે આવતા ક્રમમાં કૉલમ દ્વારા પંક્તિના કોઓર્ડિનેટ્સને સૉર્ટ કરો. ઉદાહરણોઃ get_row[1,2,3,4,5,6], [1,2,3,4,1,6], [1,
+    """"""
+","    coords = [(i, j) for i in range(len(lst)) for j in range(len(lst[i])) if lst[i][j] == x]
+    return sorted(sorted(coords, key=lambda x: x[1], reverse=True), key=lambda x: x[0])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([
+        [1,2,3,4,5,6],
+        [1,2,3,4,1,6],
+        [1,2,3,4,5,1]
+    ], 1) == [(0, 0), (1, 4), (1, 0), (2, 5), (2, 0)]
+    assert candidate([
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6]
+    ], 2) == [(0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (5, 1)]
+    assert candidate([
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,1,3,4,5,6],
+        [1,2,1,4,5,6],
+        [1,2,3,1,5,6],
+        [1,2,3,4,1,6],
+        [1,2,3,4,5,1]
+    ], 1) == [(0, 0), (1, 0), (2, 1), (2, 0), (3, 2), (3, 0), (4, 3), (4, 0), (5, 4), (5, 0), (6, 5), (6, 0)]
+    assert candidate([], 1) == []
+    assert candidate([[1]], 2) == []
+    assert candidate([[], [1], [1, 2, 3]], 3) == [(2, 2)]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def sort_array(array):
+    """"""
+    બિન-નકારાત્મક પૂર્ણાંકોની એરે આપવામાં આવે છે, સોર્ટિંગ પછી આપેલ એરેની નકલ પરત કરો, જો સરવાળો ((પ્રથમ ઇન્ડેક્સ મૂલ્ય, છેલ્લું ઇન્ડેક્સ મૂલ્ય) વિચિત્ર હોય તો તમે આપેલ એરેને ચડતા ક્રમમાં સૉર્ટ કરશો, અથવા જો સરવાળો ((પ્રથમ ઇન્ડેક્સ મૂલ્ય, છેલ્લું ઇન્ડેક્સ મૂલ્ય) પણ હોય તો તેને નીચેના ક્રમમાં સૉર્ટ કરો. નોંધઃ * આપેલ એરેને બદલશો નહીં. ઉદાહરણોઃ * sort_array[(]) => [] * sort_array[]] => [5] * sort_array[2, 4, 3, 0, 1, 5]) => [0, 1, 2, 3, 4, 5] * sort_array[2, 4, 3, 0, 1, 5, 6]) => [6, 5, 4, 3, 2, 1, 5, 0]
+    """"""
+","    return [] if len(array) == 0 else sorted(array, reverse= (array[0]+array[-1]) % 2 == 0) 
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([]) == [], ""Error""
+    assert candidate([5]) == [5], ""Error""
+    assert candidate([2, 4, 3, 0, 1, 5]) == [0, 1, 2, 3, 4, 5], ""Error""
+    assert candidate([2, 4, 3, 0, 1, 5, 6]) == [6, 5, 4, 3, 2, 1, 0], ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([2, 1]) == [1, 2], ""Error""
+    assert candidate([15, 42, 87, 32 ,11, 0]) == [0, 11, 15, 32, 42, 87], ""Error""
+    assert candidate([21, 14, 23, 11]) == [23, 21, 14, 11], ""Error""
+
+"
+"
+def encrypt(s):
+    """"""એક ફંક્શન એન્ક્રિપ્ટ બનાવો જે શબ્દમાળાને દલીલ તરીકે લે છે અને મૂળાક્ષર ફેરવવામાં આવે છે તે સાથે એન્ક્રિપ્ટેડ શબ્દમાળા આપે છે. મૂળાક્ષરને એવી રીતે ફેરવવું જોઈએ કે અક્ષરો બે દ્વારા બે સ્થાનો પર ખસેડવામાં આવે. ઉદાહરણ તરીકેઃ એન્ક્રિપ્ટ (('hi') 'lm' એન્ક્રિપ્ટ (('asdfghjkl') આપે છે 'ewhjklnop' એન્ક્રિપ્ટ (('gf') આપે છે 'kj' એન્ક્રિપ્ટ (('et') આપે છે 'ix'
+    """"""
+","    d = 'abcdefghijklmnopqrstuvwxyz'
+    out = ''
+    for c in s:
+        if c in d:
+            out += d[(d.index(c)+2*2) % 26]
+        else:
+            out += c
+    return out
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('hi') == 'lm', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('asdfghjkl') == 'ewhjklnop', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('gf') == 'kj', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('et') == 'ix', ""This prints if this assert fails 1 (good for debugging!)""
+
+    assert candidate('faewfawefaewg')=='jeiajeaijeiak', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('hellomyfriend')=='lippsqcjvmirh', ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate('dxzdlmnilfuhmilufhlihufnmlimnufhlimnufhfucufh')=='hbdhpqrmpjylqmpyjlpmlyjrqpmqryjlpmqryjljygyjl', ""This prints if this assert fails 3 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('a')=='e', ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def next_smallest(lst):
+    """"""
+    તમને પૂર્ણાંકની યાદી આપવામાં આવે છે. એક કાર્ય next_smallest લખો જે યાદીના બીજા સૌથી નાના તત્વને આપે છે. જો આવા તત્વ ન હોય તો કોઈ પણ નહીં આપે. next_smallest (([1, 2, 3, 4, 5]) == 2 next_smallest (([5, 1, 4, 3, 2]) == 2 next_smallest (([]) == None next_smallest (([1, 1]) == None
+    """"""
+","    lst = sorted(set(lst))
+    return None if len(lst) < 2 else lst[1]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1, 2, 3, 4, 5]) == 2
+    assert candidate([5, 1, 4, 3, 2]) == 2
+    assert candidate([]) == None
+    assert candidate([1, 1]) == None
+    assert candidate([1,1,1,1,0]) == 1
+    assert candidate([1, 0**0]) == None
+    assert candidate([-35, 34, 12, -45]) == -35
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def is_bored(S):
+    """"""
+    તમને શબ્દોની એક શબ્દમાળા આપવામાં આવશે, અને તમારું કાર્ય કંટાળાની સંખ્યા ગણવાનું છે. કંટાળા એ એક વાક્ય છે જે ""હું"" શબ્દથી શરૂ થાય છે. વાક્યો '.', '?' અથવા '!'દ્વારા અલગ કરવામાં આવે છે. ઉદાહરણ તરીકેઃ
+    >>> is_bored(""Hello world"")
+    0
+    >>> is_bored(""The sky is blue. The sun is shining. I love this weather"")
+    1
+    """"""
+","    import re
+    sentences = re.split(r'[.?!]\s*', S)
+    return sum(sentence[0:2] == 'I ' for sentence in sentences)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""Hello world"") == 0, ""Test 1""
+    assert candidate(""Is the sky blue?"") == 0, ""Test 2""
+    assert candidate(""I love It !"") == 1, ""Test 3""
+    assert candidate(""bIt"") == 0, ""Test 4""
+    assert candidate(""I feel good today. I will be productive. will kill It"") == 2, ""Test 5""
+    assert candidate(""You and I are going for a walk"") == 0, ""Test 6""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def any_int(x, y, z):
+    '''
+    Create a function that takes 3 numbers.
+    Returns true if one of the numbers is equal to the sum of the other two, and all numbers are integers.
+    Returns false in any other cases.
+    
+    Examples
+    any_int(5, 2, 7) â -> True
+    
+    any_int(3, 2, 2) â -> False
+
+    any_int(3, -2, 1) â -> True
+    
+    any_int(3.6, -2.2, 2) â -> False
+  
+
+    
+    '''
+","    
+    if isinstance(x,int) and isinstance(y,int) and isinstance(z,int):
+        if (x+y==z) or (x+z==y) or (y+z==x):
+            return True
+        return False
+    return False
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(2, 3, 1)==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(2.5, 2, 3)==False, ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate(1.5, 5, 3.5)==False, ""This prints if this assert fails 3 (good for debugging!)""
+    assert candidate(2, 6, 2)==False, ""This prints if this assert fails 4 (good for debugging!)""
+    assert candidate(4, 2, 2)==True, ""This prints if this assert fails 5 (good for debugging!)""
+    assert candidate(2.2, 2.2, 2.2)==False, ""This prints if this assert fails 6 (good for debugging!)""
+    assert candidate(-4, 6, 2)==True, ""This prints if this assert fails 7 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(2,1,1)==True, ""This prints if this assert fails 8 (also good for debugging!)""
+    assert candidate(3,4,7)==True, ""This prints if this assert fails 9 (also good for debugging!)""
+    assert candidate(3.0,4,7)==False, ""This prints if this assert fails 10 (also good for debugging!)""
+
+"
+"
+def encode(message):
+    """"""
+    એક કાર્ય લખો જે સંદેશ લે છે, અને તે રીતે એન્કોડ કરે છે કે તે તમામ અક્ષરોના કેસને સ્વેપ કરે છે, સંદેશમાં તમામ સ્વરોને અંગ્રેજી મૂળાક્ષરમાં તે સ્વરથી 2 સ્થાનો આગળ દેખાય છે તે અક્ષર સાથે બદલે છે. ફક્ત અક્ષરો ધારો. ઉદાહરણોઃ
+    >>> encode('test')
+    'TGST'
+    >>> encode('This is a message')
+    'tHKS KS C MGSSCGG'
+    """"""
+","    vowels = ""aeiouAEIOU""
+    vowels_replace = dict([(i, chr(ord(i) + 2)) for i in vowels])
+    message = message.swapcase()
+    return ''.join([vowels_replace[i] if i in vowels else i for i in message])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('TEST') == 'tgst', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('Mudasir') == 'mWDCSKR', ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate('YES') == 'ygs', ""This prints if this assert fails 3 (good for debugging!)""
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('This is a message') == 'tHKS KS C MGSSCGG', ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(""I DoNt KnOw WhAt tO WrItE"") == 'k dQnT kNqW wHcT Tq wRkTg', ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+
+def skjkasdkd(lst):
+    """"""તમને પૂર્ણાંકની સૂચિ આપવામાં આવે છે. તમારે સૌથી મોટું પ્રાઇમ મૂલ્ય શોધવાની જરૂર છે અને તેના અંકોનો સરવાળો પાછો આપવો પડશે. ઉદાહરણોઃ lst = [0,3,2,1,3,5,7,4,5,5,5,2,181,32,4,32,3,2,32,324,4,3] માટે આઉટપુટ 10 હોવું જોઈએ lst = [1,0,1,8,2,4597,2,1,3,40,1,2,1,2,4,2,5,1] માટે આઉટપુટ 25 હોવું જોઈએ lst = [1,3,1,32,5107,34,83278,109,163,23,2323,32,30,1,9,3] માટે આઉટપુટ 13 હોવું જોઈએ lst = [0,724,32,71,99,32,6,0,5,91,83,0,5,6] માટે આઉટપુટ 11 હોવું જોઈએ lst = [0,81,12,31,21] માટે આ
+    """"""
+","    def isPrime(n):
+        for i in range(2,int(n**0.5)+1):
+            if n%i==0:
+                return False
+
+        return True
+    maxx = 0
+    i = 0
+    while i < len(lst):
+        if(lst[i] > maxx and isPrime(lst[i])):
+            maxx = lst[i]
+        i+=1
+    result = sum(int(digit) for digit in str(maxx))
+    return result
+
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([0,3,2,1,3,5,7,4,5,5,5,2,181,32,4,32,3,2,32,324,4,3]) == 10, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1,0,1,8,2,4597,2,1,3,40,1,2,1,2,4,2,5,1]) == 25, ""This prints if this assert fails 2 (also good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1,3,1,32,5107,34,83278,109,163,23,2323,32,30,1,9,3]) == 13, ""This prints if this assert fails 3 (also good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([0,724,32,71,99,32,6,0,5,91,83,0,5,6]) == 11, ""This prints if this assert fails 4 (also good for debugging!)""
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([0,81,12,3,1,21]) == 3, ""This prints if this assert fails 5 (also good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([0,8,1,2,1,7]) == 7, ""This prints if this assert fails 6 (also good for debugging!)""
+
+    assert candidate([8191]) == 19, ""This prints if this assert fails 7 (also good for debugging!)""
+    assert candidate([8191, 123456, 127, 7]) == 19, ""This prints if this assert fails 8 (also good for debugging!)""
+    assert candidate([127, 97, 8192]) == 10, ""This prints if this assert fails 9 (also good for debugging!)""
+"
+"
+def check_dict_case(dict):
+    """"""
+    જો કોઈ શબ્દકોશ આપવામાં આવે તો, જો બધી કીઓ નાના કેસમાં શબ્દમાળાઓ હોય અથવા બધી કીઓ મોટા કેસમાં શબ્દમાળાઓ હોય તો સાચું પરત કરો, અન્યથા ખોટું પરત કરો. આપેલ શબ્દકોશ ખાલી હોય તો ફંક્શન ખોટું પરત કરવું જોઈએ. ઉદાહરણોઃ check_dict_case{""a"":""apple"", ""b"":""banana""}) સાચું પરત કરવું જોઈએ. check_dict_case{""a"":""apple"", ""A"":""banana"", ""B"":""banana""}) ખોટું પરત કરવું જોઈએ. check_dict_case{""a"":""apple"", 8:""banana"", ""a"":""apple""}) ખોટું પરત કરવું જોઈએ. check_dict_case{""Name"":""John"", ""Age"":""36"", ""City"":""Houston""
+    """"""
+","    if len(dict.keys()) == 0:
+        return False
+    else:
+        state = ""start""
+        for key in dict.keys():
+
+            if isinstance(key, str) == False:
+                state = ""mixed""
+                break
+            if state == ""start"":
+                if key.isupper():
+                    state = ""upper""
+                elif key.islower():
+                    state = ""lower""
+                else:
+                    break
+            elif (state == ""upper"" and not key.isupper()) or (state == ""lower"" and not key.islower()):
+                    state = ""mixed""
+                    break
+            else:
+                break
+        return state == ""upper"" or state == ""lower"" 
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate({""p"":""pineapple"", ""b"":""banana""}) == True, ""First test error: "" + str(candidate({""p"":""pineapple"", ""b"":""banana""}))
+    assert candidate({""p"":""pineapple"", ""A"":""banana"", ""B"":""banana""}) == False, ""Second test error: "" + str(candidate({""p"":""pineapple"", ""A"":""banana"", ""B"":""banana""}))
+    assert candidate({""p"":""pineapple"", 5:""banana"", ""a"":""apple""}) == False, ""Third test error: "" + str(candidate({""p"":""pineapple"", 5:""banana"", ""a"":""apple""}))
+    assert candidate({""Name"":""John"", ""Age"":""36"", ""City"":""Houston""}) == False, ""Fourth test error: "" + str(candidate({""Name"":""John"", ""Age"":""36"", ""City"":""Houston""}))
+    assert candidate({""STATE"":""NC"", ""ZIP"":""12345"" }) == True, ""Fifth test error: "" + str(candidate({""STATE"":""NC"", ""ZIP"":""12345"" }))      
+    assert candidate({""fruit"":""Orange"", ""taste"":""Sweet"" }) == True, ""Fourth test error: "" + str(candidate({""fruit"":""Orange"", ""taste"":""Sweet"" }))      
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate({}) == False, ""1st edge test error: "" + str(candidate({}))
+
+"
+"
+def count_up_to(n):
+    """"""એક ફંક્શન અમલમાં મૂકો જે બિન-નકારાત્મક પૂર્ણાંક લે છે અને પ્રથમ n પૂર્ણાંકની એરે આપે છે જે અગ્ર સંખ્યાઓ છે અને n કરતા ઓછી છે. ઉદાહરણ તરીકેઃ count_up_to(5) => [2,3] count_up_to(11) => [2,3,5,7] count_up_to(0) => [] count_up_to(20) => [2,3,5,7,11,13,17,19] count_up_to(1) => [] count_up_to(18) => [2,3,5,7,11,13,17]
+    """"""
+","    primes = []
+    for i in range(2, n):
+        is_prime = True
+        for j in range(2, i):
+            if i % j == 0:
+                is_prime = False
+                break
+        if is_prime:
+            primes.append(i)
+    return primes
+
+","def check(candidate):
+
+    assert candidate(5) == [2,3]
+    assert candidate(6) == [2,3,5]
+    assert candidate(7) == [2,3,5]
+    assert candidate(10) == [2,3,5,7]
+    assert candidate(0) == []
+    assert candidate(22) == [2,3,5,7,11,13,17,19]
+    assert candidate(1) == []
+    assert candidate(18) == [2,3,5,7,11,13,17]
+    assert candidate(47) == [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43]
+    assert candidate(101) == [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]
+
+"
+"
+def multiply(a, b):
+    """"""બે પૂર્ણાંકો લે છે અને તેમના એકમ અંકોના ઉત્પાદનને આપે છે તે કાર્ય પૂર્ણ કરો. ધારો કે ઇનપુટ હંમેશા માન્ય છે. ઉદાહરણોઃ ગુણાકાર 148, 412) 16 પરત કરવો જોઈએ ગુણાકાર 19 28 72 પરત કરવો જોઈએ ગુણાકાર 2020 1851 0 પરત કરવું જોઈએ ગુણાકાર 14 15 20 પરત કરવું જોઈએ
+    """"""
+","    return abs(a % 10) * abs(b % 10)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(148, 412) == 16, ""First test error: "" + str(candidate(148, 412))                    
+    assert candidate(19, 28) == 72, ""Second test error: "" + str(candidate(19, 28))           
+    assert candidate(2020, 1851) == 0, ""Third test error: "" + str(candidate(2020, 1851))
+    assert candidate(14,-15) == 20, ""Fourth test error: "" + str(candidate(14,-15))      
+    assert candidate(76, 67) == 42, ""Fifth test error: "" + str(candidate(76, 67))      
+    assert candidate(17, 27) == 49, ""Sixth test error: "" + str(candidate(17, 27))      
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(0, 1) == 0, ""1st edge test error: "" + str(candidate(0, 1))
+    assert candidate(0, 0) == 0, ""2nd edge test error: "" + str(candidate(0, 0))
+
+"
+"
+def count_upper(s):
+    """"""
+    આપેલ શબ્દમાળા s, સમ સંખ્યામાં મોટા અક્ષરોની સંખ્યા ગણાય છે. ઉદાહરણ તરીકેઃ count_upper (('aBCdEf') 1 count_upper (('abcdefg') 0 count_upper (('dBBE') 0 આપે છે
+    """"""
+","    count = 0
+    for i in range(0,len(s),2):
+        if s[i] in ""AEIOU"":
+            count += 1
+    return count
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('aBCdEf')  == 1
+    assert candidate('abcdefg') == 0
+    assert candidate('dBBE') == 0
+    assert candidate('B')  == 0
+    assert candidate('U')  == 1
+    assert candidate('') == 0
+    assert candidate('EEEE') == 2
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def closest_integer(value):
+    '''
+    Create a function that takes a value (string) representing a number
+    and returns the closest integer to it. If the number is equidistant
+    from two integers, round it away from zero.
+
+    Examples
+    >>> closest_integer(""10"")
+    10
+    >>> closest_integer(""15.3"")
+    15
+
+    Note:
+    Rounding away from zero means that if the given number is equidistant
+    from two integers, the one you should return is the one that is the
+    farthest from zero. For Exampleclosest_integer(""14.5"") should
+    return 15 and closest_integer(""-14.5"") should return -15.
+    '''
+","    from math import floor, ceil
+
+    if value.count('.') == 1:
+        # remove trailing zeros
+        while (value[-1] == '0'):
+            value = value[:-1]
+
+    num = float(value)
+    if value[-2:] == '.5':
+        if num > 0:
+            res = ceil(num)
+        else:
+            res = floor(num)
+    elif len(value) > 0:
+        res = int(round(num))
+    else:
+        res = 0
+
+    return res
+
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""10"") == 10, ""Test 1""
+    assert candidate(""14.5"") == 15, ""Test 2""
+    assert candidate(""-15.5"") == -16, ""Test 3""
+    assert candidate(""15.3"") == 15, ""Test 3""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""0"") == 0, ""Test 0""
+
+"
+"
+def make_a_pile(n):
+    """"""
+    સકારાત્મક પૂર્ણાંક n આપવામાં આવે છે, તમારે પથ્થરોના n સ્તરોનો ઢગલો બનાવવો પડશે. પ્રથમ સ્તરમાં n પથ્થરો છે. આગલા સ્તરમાં પથ્થરોની સંખ્યા છેઃ - આગામી વિચિત્ર સંખ્યા જો n વિચિત્ર હોય તો - આગામી સંખ્યા જો n પણ હોય તો. દરેક સ્તરમાં પથ્થરોની સંખ્યાને સૂચિમાં પરત કરો, જ્યાં ઇન્ડેક્સ i પર તત્વ સ્તર (i + 1) માં પથ્થરોની સંખ્યાનું પ્રતિનિધિત્વ કરે છે. ઉદાહરણો:
+    >>> make_a_pile(3)
+    [3, 5, 7]
+    """"""
+","    return [n + 2*i for i in range(n)]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(3) == [3, 5, 7], ""Test 3""
+    assert candidate(4) == [4,6,8,10], ""Test 4""
+    assert candidate(5) == [5, 7, 9, 11, 13]
+    assert candidate(6) == [6, 8, 10, 12, 14, 16]
+    assert candidate(8) == [8, 10, 12, 14, 16, 18, 20, 22]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def words_string(s):
+    """"""
+    તમને અલ્પવિરામ અથવા જગ્યાઓ દ્વારા અલગ શબ્દોની શબ્દમાળા આપવામાં આવશે. તમારું કાર્ય શબ્દમાળાને શબ્દોમાં વિભાજીત કરવું અને શબ્દોની એરે પરત કરવું છે. ઉદાહરણ તરીકેઃ words_string ((""હાય, મારું નામ જ્હોન છે"") == [""હાય"", ""મારું"", ""નામ"", ""છે"", ""જહોન""] words_string ((""એક, બે, ત્રણ, ચાર, પાંચ, છ"") == [""એક"", ""બે"", ""ત્રણ"", ""ચાર"", ""પાંચ"", ""છ""]
+    """"""
+","    if not s:
+        return []
+
+    s_list = []
+
+    for letter in s:
+        if letter == ',':
+            s_list.append(' ')
+        else:
+            s_list.append(letter)
+
+    s_list = """".join(s_list)
+    return s_list.split()
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(""Hi, my name is John"") == [""Hi"", ""my"", ""name"", ""is"", ""John""]
+    assert candidate(""One, two, three, four, five, six"") == [""One"", ""two"", ""three"", ""four"", ""five"", ""six""]
+    assert candidate(""Hi, my name"") == [""Hi"", ""my"", ""name""]
+    assert candidate(""One,, two, three, four, five, six,"") == [""One"", ""two"", ""three"", ""four"", ""five"", ""six""]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate("""") == []
+    assert candidate(""ahmed     , gamal"") == [""ahmed"", ""gamal""]
+
+"
+"
+def choose_num(x, y):
+    """"""આ ફંક્શન બે હકારાત્મક સંખ્યાઓ x અને y લે છે અને સૌથી મોટી પૂર્ણાંક સંખ્યા આપે છે જે શ્રેણી [x, y] માં છે. જો આવી કોઈ સંખ્યા ન હોય તો, ફંક્શનને -1 પરત કરવી જોઈએ. ઉદાહરણ તરીકેઃ પસંદ કરો_ નંબર (૧૨, ૧૫) = 14 પસંદ કરો_ નંબર (૧૩, ૧૨) = -1
+    """"""
+","    if x > y:
+        return -1
+    if y % 2 == 0:
+        return y
+    if x == y:
+        return -1
+    return y - 1
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(12, 15) == 14
+    assert candidate(13, 12) == -1
+    assert candidate(33, 12354) == 12354
+    assert candidate(5234, 5233) == -1
+    assert candidate(6, 29) == 28
+    assert candidate(27, 10) == -1
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(7, 7) == -1
+    assert candidate(546, 546) == 546
+
+"
+"
+def rounded_avg(n, m):
+    """"""તમને બે હકારાત્મક પૂર્ણાંકો n અને m આપવામાં આવે છે, અને તમારું કાર્ય n થી m સુધીના પૂર્ણાંકોની સરેરાશ ગણતરી કરવાનું છે (n અને m સહિત). જવાબને નજીકના પૂર્ણાંકમાં ગોળાકાર કરો અને તેને દ્વિસંગીમાં રૂપાંતરિત કરો. જો n m કરતા વધારે હોય, તો -1. ઉદાહરણઃ ગોળાકાર_avg ((1, 5) => ""0b11"" ગોળાકાર_avg ((7, 5) => -1 ગોળાકાર_avg ((10, 20) => ""0b1111"" ગોળાકાર_avg ((20, 33) => ""0b11010""
+    """"""
+","    if m < n:
+        return -1
+    summation = 0
+    for i in range(n, m+1):
+        summation += i
+    return bin(round(summation/(m - n + 1)))
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(1, 5) == ""0b11""
+    assert candidate(7, 13) == ""0b1010""
+    assert candidate(964,977) == ""0b1111001010""
+    assert candidate(996,997) == ""0b1111100100""
+    assert candidate(560,851) == ""0b1011000010""
+    assert candidate(185,546) == ""0b101101110""
+    assert candidate(362,496) == ""0b110101101""
+    assert candidate(350,902) == ""0b1001110010""
+    assert candidate(197,233) == ""0b11010111""
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(7, 5) == -1
+    assert candidate(5, 1) == -1
+    assert candidate(5, 5) == ""0b101""
+
+"
+"
+def unique_digits(x):
+    """"""હકારાત્મક પૂર્ણાંકોની સૂચિ આપવામાં આવે છે. બધા તત્વોની સૉર્ટ કરેલી સૂચિ પરત કરે છે જેમાં કોઈ પણ અંક નથી. નોંધઃ પરત કરેલી સૂચિ વધતા ક્રમમાં સૉર્ટ થવી જોઈએ. ઉદાહરણ તરીકેઃ
+    >>> unique_digits([15, 33, 1422, 1])
+    [1, 15, 33]
+    >>> unique_digits([152, 323, 1422, 10])
+    []
+    """"""
+","    odd_digit_elements = []
+    for i in x:
+        if all (int(c) % 2 == 1 for c in str(i)):
+            odd_digit_elements.append(i)
+    return sorted(odd_digit_elements)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([15, 33, 1422, 1]) == [1, 15, 33]
+    assert candidate([152, 323, 1422, 10]) == []
+    assert candidate([12345, 2033, 111, 151]) == [111, 151]
+    assert candidate([135, 103, 31]) == [31, 135]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def by_length(arr):
+    """"""
+    પૂર્ણાંકની એરે આપવામાં આવે છે, તે પૂર્ણાંકને 1 અને 9 ની વચ્ચે સૉર્ટ કરો, પરિણામી એરેને રિવર્સ કરો, અને પછી દરેક અંકને તેના અનુરૂપ નામથી ""એક"", ""બે"", ""ત્રણ"", ""ચાર"", ""પાંચ"", ""છ"", ""સાત"", ""આઠ"", ""નવ"" માંથી બદલો. ઉદાહરણ તરીકેઃ arr = [2, 1, 1, 4, 5, 8, 2, 3] -> સૉર્ટ કરો arr -> [1, 1, 2, 2, 3, 4, 5, 8] -> રિવર્સ arr -> [8, 5, 4, 3, 2, 2, 1, 1] પાછા ફરો [""આઠ"", ""પાંચ"", ""ત્રણ"", ""બે"", ""બે"", ""બે"", ""એક"", ""એક""] જો એરે ખાલી હોય, તો એક ખાલી વળતર આપે છેઃ arr = [] return [] જો એરેમાં કોઈ વિચિત્ર નંબર હોય તો તેને અવગણોઃ arr = [
+    """"""
+","    dic = {
+        1: ""One"",
+        2: ""Two"",
+        3: ""Three"",
+        4: ""Four"",
+        5: ""Five"",
+        6: ""Six"",
+        7: ""Seven"",
+        8: ""Eight"",
+        9: ""Nine"",
+    }
+    sorted_arr = sorted(arr, reverse=True)
+    new_arr = []
+    for var in sorted_arr:
+        try:
+            new_arr.append(dic[var])
+        except:
+            pass
+    return new_arr
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([2, 1, 1, 4, 5, 8, 2, 3]) == [""Eight"", ""Five"", ""Four"", ""Three"", ""Two"", ""Two"", ""One"", ""One""], ""Error""
+    assert candidate([]) == [], ""Error""
+    assert candidate([1, -1 , 55]) == ['One'], ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([1, -1, 3, 2]) == [""Three"", ""Two"", ""One""]
+    assert candidate([9, 4, 8]) == [""Nine"", ""Eight"", ""Four""]
+
+"
+"
+def f(n):
+    """""" ફંક્શન f ને અમલમાં મૂકો જે n ને પરિમાણ તરીકે લે છે, અને કદ n ની સૂચિ આપે છે, જેમ કે ઇન્ડેક્સ i પર તત્વનું મૂલ્ય i નું ફેક્ટોરિયલ છે જો i પણ હોય અથવા 1 થી i સુધીની સંખ્યાઓનો સરવાળો હોય. i 1 થી શરૂ થાય છે. i નું ફેક્ટોરિયલ 1 થી i સુધીની સંખ્યાઓનો ગુણાકાર છે (1 * 2 *... * i). ઉદાહરણઃ f ((5) == [1, 2, 6, 24, 15]
+    """"""
+","    ret = []
+    for i in range(1,n+1):
+        if i%2 == 0:
+            x = 1
+            for j in range(1,i+1): x *= j
+            ret += [x]
+        else:
+            x = 0
+            for j in range(1,i+1): x += j
+            ret += [x]
+    return ret
+","def check(candidate):
+
+    assert candidate(5) == [1, 2, 6, 24, 15]
+    assert candidate(7) == [1, 2, 6, 24, 15, 720, 28]
+    assert candidate(1) == [1]
+    assert candidate(3) == [1, 2, 6]
+"
+"
+def even_odd_palindrome(n):
+    """"""
+    સકારાત્મક પૂર્ણાંક n આપવામાં આવે છે, એક ટુપલ પરત કરો કે જેમાં શ્રેણીમાં આવતા સમ અને વિચિત્ર પૂર્ણાંક પાલિન્ડ્રોમની સંખ્યા છે. ઉદાહરણ 1: ઇનપુટઃ 3 આઉટપુટઃ (1, 2) સમજૂતીઃ પૂર્ણાંક પાલિન્ડ્રોમ 1, 2, 3. તેમાંના એક પણ છે, અને તેમાંના બે વિચિત્ર છે. ઉદાહરણ 2: ઇનપુટઃ 12 આઉટપુટઃ (4, 6) સમજૂતીઃ પૂર્ણાંક પાલિન્ડ્રોમ 1, 2, 3, 4, 5, 6, 7, 8, 9, 11. તેમાંના ચાર પણ છે, અને તેમાંના 6 વિચિત્ર છે. નોંધઃ 1. 1 <= n <= 10^3 2. ટુપલએ અનુક્રમે સમ અને વિચિત્ર પૂર્ણાંક પાલિન્ડ્રોમની સંખ્યા પરત કરી છે.
+    """"""
+","    def is_palindrome(n):
+        return str(n) == str(n)[::-1]
+
+    even_palindrome_count = 0
+    odd_palindrome_count = 0
+
+    for i in range(1, n+1):
+        if i%2 == 1 and is_palindrome(i):
+                odd_palindrome_count += 1
+        elif i%2 == 0 and is_palindrome(i):
+            even_palindrome_count += 1
+    return (even_palindrome_count, odd_palindrome_count)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(123) == (8, 13)
+    assert candidate(12) == (4, 6)
+    assert candidate(3) == (1, 2)
+    assert candidate(63) == (6, 8)
+    assert candidate(25) == (5, 6)
+    assert candidate(19) == (4, 6)
+    assert candidate(9) == (4, 5), ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1) == (0, 1), ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def count_nums(arr):
+    """"""
+    એક કાર્ય count_nums લખો જે પૂર્ણાંકની એરે લે છે અને તત્વોની સંખ્યા આપે છે જેમાં અંકોનો સરવાળો છે > 0. જો કોઈ સંખ્યા નકારાત્મક છે, તો પછી તેનું પ્રથમ સહી કરેલું અંક નકારાત્મક હશેઃ ઉદાહરણ તરીકે -123 એ અંકો -1, 2 અને 3 પર સહી કરી છે.
+    >>> count_nums([]) == 0
+    >>> count_nums([-1, 11, -11]) == 1
+    >>> count_nums([1, 1, 2]) == 3
+    """"""
+","    def digits_sum(n):
+        neg = 1
+        if n < 0: n, neg = -1 * n, -1 
+        n = [int(i) for i in str(n)]
+        n[0] = n[0] * neg
+        return sum(n)
+    return len(list(filter(lambda x: x > 0, [digits_sum(i) for i in arr])))
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([]) == 0
+    assert candidate([-1, -2, 0]) == 0
+    assert candidate([1, 1, 2, -2, 3, 4, 5]) == 6
+    assert candidate([1, 6, 9, -6, 0, 1, 5]) == 5
+    assert candidate([1, 100, 98, -7, 1, -1]) == 4
+    assert candidate([12, 23, 34, -45, -56, 0]) == 5
+    assert candidate([-0, 1**0]) == 1
+    assert candidate([1]) == 1
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def move_one_ball(arr):
+    """"""આપણી પાસે N પૂર્ણાંકોની એરે 'arr' છે arr[1], arr[2],..., arr[N]. એરેમાંની સંખ્યાઓ રેન્ડમલી ક્રમમાં ક્રમમાં આવશે. આપનું કાર્ય એ નક્કી કરવાનું છે કે આપેલ એરે પર નીચેની કામગીરી કરીને એરેને બિન-ઘટાઉ ક્રમમાં સૉર્ટ કરવું શક્ય છે કે નહીં: આપને આપેલ એરે પર કોઈપણ સંખ્યામાં જમણે પાળી કામગીરી કરવાની મંજૂરી છે. એક જમણે પાળી કામગીરીનો અર્થ એ છે કે એરેના બધા તત્વોને જમણી દિશામાં એક સ્થાન દ્વારા ખસેડવું. એરેનો છેલ્લો તત્વ એરેમાં પ્રારંભિક સ્થિતિ એટલે કે 0 મી અનુક્રમમાં ખસેડવામાં આવશે. જો ઉપર આપેલ ઓપરેશન કરીને સૉર્ટ કરેલ એરે મેળવવી શક્ય છે તો સાચું પરત કરો અન્યથા ખોટું પરત કરો. જો આપેલ એરે ખાલી હોય તો સાચું પરત કરો. નોંધઃ આપેલ
+                
+    """"""
+","    if len(arr)==0:
+      return True
+    sorted_array=sorted(arr)
+    my_arr=[]
+    
+    min_value=min(arr)
+    min_index=arr.index(min_value)
+    my_arr=arr[min_index:]+arr[0:min_index]
+    for i in range(len(arr)):
+      if my_arr[i]!=sorted_array[i]:
+        return False
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([3, 4, 5, 1, 2])==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([3, 5, 10, 1, 2])==True
+    assert candidate([4, 3, 1, 2])==False
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([3, 5, 4, 1, 2])==False, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([])==True
+"
+"
+def exchange(lst1, lst2):
+    """"""આ સમસ્યામાં, તમે એક ફંક્શન અમલમાં મૂકશો જે સંખ્યાઓની બે સૂચિ લે છે, અને તે નક્કી કરે છે કે શું તે તેમની વચ્ચે તત્વોની આપ-લે કરવા માટે શક્ય છે કે જેથી lst1 માત્ર સંખ્યાઓની સૂચિ બનાવે. lst1 અને lst2 વચ્ચે વિનિમયિત તત્વોની સંખ્યા પર કોઈ મર્યાદા નથી. જો lst1 અને lst2 વચ્ચે તત્વોની આપ-લે કરવી શક્ય છે જેથી lst1 ના બધા તત્વો પણ હોય, તો ""હા"" પરત કરો. અન્યથા, ""ના"" પરત કરો. ઉદાહરણ તરીકેઃ exchange[(1, 2, 3, 4], [1, 2, 3, 4]) => ""હા"" exchange[(1, 2, 3, 4], [1, 5, 3, 4]) => ""ના"" એવું માનવામાં આવે છે કે ઇનપુટ સૂચિઓ બિન-ખાલી હશે.
+    """"""
+","    odd = 0
+    even = 0
+    for i in lst1:
+        if i%2 == 1:
+            odd += 1
+    for i in lst2:
+        if i%2 == 0:
+            even += 1
+    if even >= odd:
+        return ""YES""
+    return ""NO""
+            
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1, 2, 3, 4], [1, 2, 3, 4]) == ""YES""
+    assert candidate([1, 2, 3, 4], [1, 5, 3, 4]) == ""NO""
+    assert candidate([1, 2, 3, 4], [2, 1, 4, 3]) == ""YES"" 
+    assert candidate([5, 7, 3], [2, 6, 4]) == ""YES""
+    assert candidate([5, 7, 3], [2, 6, 3]) == ""NO"" 
+    assert candidate([3, 2, 6, 1, 8, 9], [3, 5, 5, 1, 1, 1]) == ""NO""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([100, 200], [200, 200]) == ""YES""
+
+"
+"
+def histogram(test):
+    """"""જો કોઈ શબ્દમાળા આપવામાં આવે છે જે જગ્યાથી અલગ નાના અક્ષરોનું પ્રતિનિધિત્વ કરે છે, તો સૌથી વધુ પુનરાવર્તન સાથે અક્ષરનું શબ્દકોશ પરત કરો અને અનુરૂપ ગણતરી શામેલ કરો. જો કેટલાક અક્ષરો સમાન ઘટના ધરાવે છે, તો તે બધાને પરત કરો. ઉદાહરણઃ હિસ્ટોગ્રામ (('a b c') == {'a': 1, 'b': 1, 'c': 1} હિસ્ટોગ્રામ (('a b b a') == {'a': 2, 'b': 2} હિસ્ટોગ્રામ (('a b c a b') == {'a': 2, 'b': 2} હિસ્ટોગ્રામ (('b b a') == {'b 4}': હિસ્ટોગ્રામ (('a') == {}
+
+    """"""
+","    dict1={}
+    list1=test.split("" "")
+    t=0
+
+    for i in list1:
+        if(list1.count(i)>t) and i!='':
+            t=list1.count(i)
+    if t>0:
+        for i in list1:
+            if(list1.count(i)==t):
+                
+                dict1[i]=t
+    return dict1
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('a b b a') == {'a':2,'b': 2}, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('a b c a b') == {'a': 2, 'b': 2}, ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate('a b c d g') == {'a': 1, 'b': 1, 'c': 1, 'd': 1, 'g': 1}, ""This prints if this assert fails 3 (good for debugging!)""
+    assert candidate('r t g') == {'r': 1,'t': 1,'g': 1}, ""This prints if this assert fails 4 (good for debugging!)""
+    assert candidate('b b b b a') == {'b': 4}, ""This prints if this assert fails 5 (good for debugging!)""
+    assert candidate('r t g') == {'r': 1,'t': 1,'g': 1}, ""This prints if this assert fails 6 (good for debugging!)""
+    
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('') == {}, ""This prints if this assert fails 7 (also good for debugging!)""
+    assert candidate('a') == {'a': 1}, ""This prints if this assert fails 8 (also good for debugging!)""
+
+"
+"
+def reverse_delete(s,c):
+    """"""કાર્ય આપણને બે શબ્દમાળાઓ s અને c આપવામાં આવે છે, તમારે s માંના બધા અક્ષરોને કાઢી નાખવા પડશે જે c માંના કોઈપણ અક્ષર સાથે સમાન છે પછી તપાસો કે પરિણામ શબ્દમાળા પાલિન્ડ્રોમ છે. જો તે આગળની જેમ જ પાછળની તરફ વાંચે છે તો શબ્દમાળાને પાલિન્ડ્રોમ કહેવામાં આવે છે. તમારે પરિણામ શબ્દમાળા અને સાચું / ખોટું તપાસ માટે એક ટુપલ પરત કરવું જોઈએ. ઉદાહરણ માટે s = ""abcde"", c = ""ae"", પરિણામ હોવું જોઈએ ('bcd', ખોટું) માટે s = ""abcdef"", c = ""b"" પરિણામ હોવું જોઈએ ('acdef', ખોટું) માટે s = ""abcdedcba"", c = ""ab"", પરિણામ હોવું જોઈએ ('cdedc', સાચું)
+    """"""
+","    s = ''.join([char for char in s if char not in c])
+    return (s,s[::-1] == s)
+","def check(candidate):
+
+    assert candidate(""abcde"",""ae"") == ('bcd',False)
+    assert candidate(""abcdef"", ""b"") == ('acdef',False)
+    assert candidate(""abcdedcba"",""ab"") == ('cdedc',True)
+    assert candidate(""dwik"",""w"") == ('dik',False)
+    assert candidate(""a"",""a"") == ('',True)
+    assert candidate(""abcdedcba"","""") == ('abcdedcba',True)
+    assert candidate(""abcdedcba"",""v"") == ('abcdedcba',True)
+    assert candidate(""vabba"",""v"") == ('abba',True)
+    assert candidate(""mamma"", ""mia"") == ("""", True)
+"
+"
+def odd_count(lst):
+    """"""શબ્દમાળાઓની સૂચિ આપવામાં આવે છે, જ્યાં દરેક શબ્દમાળામાં માત્ર અંકો હોય છે, એક સૂચિ પરત કરો. આઉટપુટના દરેક તત્વ i એ ""ઇનપુટની શબ્દમાળા i માં વિચિત્ર તત્વોની સંખ્યા"" હોવી જોઈએ. જ્યાં બધા i ને ઇનપુટની i'th શબ્દમાળામાં વિચિત્ર અંકોની સંખ્યા દ્વારા બદલવામાં આવવી જોઈએ.
+
+    >>> odd_count(['1234567'])
+    [""the number of odd elements 4n the str4ng 4 of the 4nput.""]
+    >>> odd_count(['3',""11111111""])
+    [""the number of odd elements 1n the str1ng 1 of the 1nput."",
+     ""the number of odd elements 8n the str8ng 8 of the 8nput.""]
+    """"""
+","    res = []
+    for arr in lst:
+        n = sum(int(d)%2==1 for d in arr)
+        res.append(""the number of odd elements "" + str(n) + ""n the str""+ str(n) +""ng ""+ str(n) +"" of the ""+ str(n) +""nput."")
+    return res
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(['1234567']) == [""the number of odd elements 4n the str4ng 4 of the 4nput.""], ""Test 1""
+    assert candidate(['3',""11111111""]) == [""the number of odd elements 1n the str1ng 1 of the 1nput."", ""the number of odd elements 8n the str8ng 8 of the 8nput.""], ""Test 2""
+    assert candidate(['271', '137', '314']) == [
+        'the number of odd elements 2n the str2ng 2 of the 2nput.',
+        'the number of odd elements 3n the str3ng 3 of the 3nput.',
+        'the number of odd elements 2n the str2ng 2 of the 2nput.'
+    ]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def minSubArraySum(nums):
+    """"""
+    પૂર્ણાંક n ની એરે આપવામાં આવે છે, n ની કોઈપણ બિન-ખાલી સબ-એરેનો ન્યૂનતમ સરવાળો શોધો. ઉદાહરણ minSubArraySum (([2, 3, 4, 1, 2, 4]) == 1 minSubArraySum (([-1, -2, -3]) == -6
+    """"""
+","    max_sum = 0
+    s = 0
+    for num in nums:
+        s += -num
+        if (s < 0):
+            s = 0
+        max_sum = max(s, max_sum)
+    if max_sum == 0:
+        max_sum = max(-i for i in nums)
+    min_sum = -max_sum
+    return min_sum
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([2, 3, 4, 1, 2, 4]) == 1, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([-1, -2, -3]) == -6
+    assert candidate([-1, -2, -3, 2, -10]) == -14
+    assert candidate([-9999999999999999]) == -9999999999999999
+    assert candidate([0, 10, 20, 1000000]) == 0
+    assert candidate([-1, -2, -3, 10, -5]) == -6
+    assert candidate([100, -1, -2, -3, 10, -5]) == -6
+    assert candidate([10, 11, 13, 8, 3, 4]) == 3
+    assert candidate([100, -33, 32, -1, 0, -2]) == -33
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([-10]) == -10, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([7]) == 7
+    assert candidate([1, -1]) == -1
+"
+"
+def max_fill(grid, capacity):
+    import math
+    """"""
+    તમને કૂવાઓની લંબચોરસ ગ્રીડ આપવામાં આવે છે. દરેક પંક્તિ એક કૂવાને રજૂ કરે છે, અને દરેક પંક્તિમાં 1 પાણીના એક એકમનું પ્રતિનિધિત્વ કરે છે. દરેક કૂવામાં અનુરૂપ ડોલ છે જેનો ઉપયોગ તેનાથી પાણી કાઢવા માટે થઈ શકે છે, અને તમામ ડોલ સમાન ક્ષમતા ધરાવે છે. તમારું કાર્ય કૂવાઓને ખાલી કરવા માટે ડોલનો ઉપયોગ કરવાનું છે. તમે કૂવાઓને નીચે મૂકવાની જરૂર છે તે સંખ્યાને આઉટપુટ કરો. ઉદાહરણ 1: ઇનપુટઃ ગ્રીડઃ [[0,0,1,0], [0,1,0,0], [1,1,1,1]] bucket_capacity: 1 આઉટપુટઃ 6 ઉદાહરણ 2: ઇનપુટઃ ગ્રીડઃ [[0,0,1,1], [0,0,0,0], [1,1,1], [0,1,1,1]] bucket_capacity: 2 આઉટ
+    """"""
+","    return sum([math.ceil(sum(arr)/capacity) for arr in grid])
+","def check(candidate):
+
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([[0,0,1,0], [0,1,0,0], [1,1,1,1]], 1) == 6, ""Error""
+    assert candidate([[0,0,1,1], [0,0,0,0], [1,1,1,1], [0,1,1,1]], 2) == 5, ""Error""
+    assert candidate([[0,0,0], [0,0,0]], 5) == 0, ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([[1,1,1,1], [1,1,1,1]], 2) == 4, ""Error""
+    assert candidate([[1,1,1,1], [1,1,1,1]], 9) == 2, ""Error""
+
+"
+"
+def sort_array(arr):
+    """"""
+    આ કાટામાં, તમારે બિન-નકારાત્મક પૂર્ણાંકની એરેને તેમની દ્વિસંગી પ્રતિનિધિત્વમાં સંખ્યાના આધારે વધતા ક્રમમાં સૉર્ટ કરવી પડશે. સમાન સંખ્યાના એક માટે, દશાંશ મૂલ્ય પર આધારિત સૉર્ટ કરો. તે આ રીતે અમલમાં હોવું જોઈએઃ
+    >>> sort_array([1, 5, 2, 3, 4]) == [1, 2, 3, 4, 5]
+    >>> sort_array([-2, -3, -4, -5, -6]) == [-6, -5, -4, -3, -2]
+    >>> sort_array([1, 0, 2, 3, 4]) [0, 1, 2, 3, 4]
+    """"""
+","    return sorted(sorted(arr), key=lambda x: bin(x)[2:].count('1'))
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1,5,2,3,4]) == [1, 2, 4, 3, 5]
+    assert candidate([-2,-3,-4,-5,-6]) == [-4, -2, -6, -5, -3]
+    assert candidate([1,0,2,3,4]) == [0, 1, 2, 4, 3]
+    assert candidate([]) == []
+    assert candidate([2,5,77,4,5,3,5,7,2,3,4]) == [2, 2, 4, 4, 3, 3, 5, 5, 5, 7, 77]
+    assert candidate([3,6,44,12,32,5]) == [32, 3, 5, 6, 12, 44]
+    assert candidate([2,4,8,16,32]) == [2, 4, 8, 16, 32]
+    assert candidate([2,4,8,16,32]) == [2, 4, 8, 16, 32]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def select_words(s, n):
+    """"""જો string s અને કુદરતી સંખ્યા n આપવામાં આવે, તો તમને એક કાર્ય અમલમાં મૂકવાનું કામ સોંપવામાં આવ્યું છે જે string s માંથી બધા શબ્દોની સૂચિ આપે છે જેમાં બરાબર n વ્યંજનો હોય છે, જેથી આ શબ્દો string s માં દેખાય છે. જો string s ખાલી હોય તો ફંક્શનને ખાલી સૂચિ પરત કરવી જોઈએ. નોંધઃ તમે ધારી શકો છો કે ઇનપુટ શબ્દમાળામાં ફક્ત અક્ષરો અને જગ્યાઓ છે. ઉદાહરણોઃ select_words ""મેરી પાસે થોડું ઘેટું હતું"", 4) ==> [""little""] select_words ""મેરી પાસે થોડું ઘેટું હતું"", 3) ==> [""મેરી"", ""લેમ્બ""] select_words ""સાદા સફેદ જગ્યા"", 2) ==> [] select_words ""હેલો વર્લ્ડ"", 4) ==> [""world""] select_words ""અંકલ સેમ"", 3) ==> [""Uncle""]
+    """"""
+","    result = []
+    for word in s.split():
+        n_consonants = 0
+        for i in range(0, len(word)):
+            if word[i].lower() not in [""a"",""e"",""i"",""o"",""u""]:
+                n_consonants += 1 
+        if n_consonants == n:
+            result.append(word)
+    return result
+
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""Mary had a little lamb"", 4) == [""little""], ""First test error: "" + str(candidate(""Mary had a little lamb"", 4))      
+    assert candidate(""Mary had a little lamb"", 3) == [""Mary"", ""lamb""], ""Second test error: "" + str(candidate(""Mary had a little lamb"", 3))  
+    assert candidate(""simple white space"", 2) == [], ""Third test error: "" + str(candidate(""simple white space"", 2))      
+    assert candidate(""Hello world"", 4) == [""world""], ""Fourth test error: "" + str(candidate(""Hello world"", 4))  
+    assert candidate(""Uncle sam"", 3) == [""Uncle""], ""Fifth test error: "" + str(candidate(""Uncle sam"", 3))
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate("""", 4) == [], ""1st edge test error: "" + str(candidate("""", 4))
+    assert candidate(""a b c d e f"", 1) == [""b"", ""c"", ""d"", ""f""], ""2nd edge test error: "" + str(candidate(""a b c d e f"", 1))
+
+"
+"
+def get_closest_vowel(word):
+    """"""તમને એક શબ્દ આપવામાં આવે છે. તમારું કાર્ય એ છે કે શબ્દની જમણી બાજુથી બે વ્યંજનો વચ્ચે સૌથી નજીકનો સ્વર શોધો (કેસ સેન્સિટિવ). શરૂઆત અને અંતમાં સ્વરોની ગણતરી થતી નથી. જો તમને ઉપરોક્ત શરત પૂરી ન થાય તો ખાલી શબ્દમાળા પરત કરો. તમે ધારણ કરી શકો છો કે આપેલ શબ્દમાળામાં ફક્ત અંગ્રેજી અક્ષર છે. ઉદાહરણઃ get_closest_vowel (((""yogurt"") ==> ""u"" get_closest_vowel (((""F"") ==> ""UULL"" get_closest_vowel (((""quick"") ==> """" get_closest_vowel"" (((ab"") ==> """"
+    """"""
+","    if len(word) < 3:
+        return """"
+
+    vowels = {""a"", ""e"", ""i"", ""o"", ""u"", ""A"", ""E"", 'O', 'U', 'I'}
+    for i in range(len(word)-2, 0, -1):
+        if word[i] in vowels:
+            if (word[i+1] not in vowels) and (word[i-1] not in vowels):
+                return word[i]
+    return """"
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""yogurt"") == ""u""
+    assert candidate(""full"") == ""u""
+    assert candidate(""easy"") == """"
+    assert candidate(""eAsy"") == """"
+    assert candidate(""ali"") == """"
+    assert candidate(""bad"") == ""a""
+    assert candidate(""most"") == ""o""
+    assert candidate(""ab"") == """"
+    assert candidate(""ba"") == """"
+    assert candidate(""quick"") == """"
+    assert candidate(""anime"") == ""i""
+    assert candidate(""Asia"") == """"
+    assert candidate(""Above"") == ""o""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def match_parens(lst):
+    '''
+    You are given a list of two strings, both strings consist of open
+    parentheses '(' or close parentheses ')' only.
+    Your job is to check if it is possible to concatenate the two strings in
+    some order, that the resulting string will be good.
+    A string S is considered to be good if and only if all parentheses in S
+    are balanced. For example: the string '(())()' is good, while the string
+    '())' is not.
+    Return 'Yes' if there's a way to make a good string, and return 'No' otherwise.
+
+    Examples:
+    match_parens(['()(', ')']) == 'Yes'
+    match_parens([')', ')']) == 'No'
+    '''
+","    def check(s):
+        val = 0
+        for i in s:
+            if i == '(':
+                val = val + 1
+            else:
+                val = val - 1
+            if val < 0:
+                return False
+        return True if val == 0 else False
+
+    S1 = lst[0] + lst[1]
+    S2 = lst[1] + lst[0]
+    return 'Yes' if check(S1) or check(S2) else 'No'
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(['()(', ')']) == 'Yes'
+    assert candidate([')', ')']) == 'No'
+    assert candidate(['(()(())', '())())']) == 'No'
+    assert candidate([')())', '(()()(']) == 'Yes'
+    assert candidate(['(())))', '(()())((']) == 'Yes'
+    assert candidate(['()', '())']) == 'No'
+    assert candidate(['(()(', '()))()']) == 'Yes'
+    assert candidate(['((((', '((())']) == 'No'
+    assert candidate([')(()', '(()(']) == 'No'
+    assert candidate([')(', ')(']) == 'No'
+    
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(['(', ')']) == 'Yes'
+    assert candidate([')', '(']) == 'Yes' 
+
+"
+"
+def maximum(arr, k):
+    """"""
+    પૂર્ણાંક arr અને હકારાત્મક પૂર્ણાંક k આપેલ છે, એરેમાં મહત્તમ k સંખ્યાઓ સાથે લંબાઈ k ની સૉર્ટ કરેલી સૂચિ પરત કરો. ઉદાહરણ 1: ઇનપુટઃ arr = [-3, -4, 5], k = 3 આઉટપુટઃ [-4, -3, 5] ઉદાહરણ 2: ઇનપુટઃ arr = [4, -4, 4], k = 2 આઉટપુટઃ [4, 4] ઉદાહરણ 3: ઇનપુટઃ arr = [-3, 2, 1, 2, -1, -2, 1], k = 1 આઉટપુટઃ [2] નોંધઃ 1. એરેની લંબાઈ [1, 1000] ની રેન્જમાં હશે. 2. એરેમાં તત્વો [-1000, 1000] ની રેન્જમાં હશે. 3. 0 <= k <= len ((arr)
+    """"""
+","    if k == 0:
+        return []
+    arr.sort()
+    ans = arr[-k:]
+    return ans
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([-3, -4, 5], 3) == [-4, -3, 5]
+    assert candidate([4, -4, 4], 2) == [4, 4]
+    assert candidate([-3, 2, 1, 2, -1, -2, 1], 1) == [2]
+    assert candidate([123, -123, 20, 0 , 1, 2, -3], 3) == [2, 20, 123]
+    assert candidate([-123, 20, 0 , 1, 2, -3], 4) == [0, 1, 2, 20]
+    assert candidate([5, 15, 0, 3, -13, -8, 0], 7) == [-13, -8, 0, 0, 3, 5, 15]
+    assert candidate([-1, 0, 2, 5, 3, -10], 2) == [3, 5]
+    assert candidate([1, 0, 5, -7], 1) == [5]
+    assert candidate([4, -4], 2) == [-4, 4]
+    assert candidate([-10, 10], 2) == [-10, 10]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1, 2, 3, -23, 243, -400, 0], 0) == []
+
+"
+"
+def solution(lst):
+    """"""પૂર્ણાંકોની બિન-ખાલી સૂચિ આપવામાં આવે છે, તે બધા વિચિત્ર તત્વોનો સરવાળો આપે છે જે પણ સ્થિતિમાં છે. ઉદાહરણો ઉકેલ (([5, 8, 7, 1]) ==> 12 ઉકેલ (([3, 3, 3, 3, 3]) ==> 9 ઉકેલ (([30, 13, 24, 321]) ==> 0
+    """"""
+","    return sum([x for idx, x in enumerate(lst) if idx%2==0 and x%2==1])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([5, 8, 7, 1])    == 12
+    assert candidate([3, 3, 3, 3, 3]) == 9
+    assert candidate([30, 13, 24, 321]) == 0
+    assert candidate([5, 9]) == 5
+    assert candidate([2, 4, 8]) == 0
+    assert candidate([30, 13, 23, 32]) == 23
+    assert candidate([3, 13, 2, 9]) == 3
+
+    # Check some edge cases that are easy to work out by hand.
+
+"
+"
+def add_elements(arr, k):
+    """"""
+    પૂર્ણાંક arr અને પૂર્ણાંક k ની બિન-ખાલી એરે આપવામાં આવે છે, એરના પ્રથમ k તત્વોમાંથી વધુમાં વધુ બે અંકો સાથેના તત્વોનો સરવાળો પાછો આપે છે. ઉદાહરણઃ ઇનપુટઃ arr = [111,21,3,4000,5,6,7,8,9], k = 4 આઉટપુટઃ 24 # 21 + 3 ની રકમ પ્રતિબંધોઃ 1. 1 <= lenarr) <= 100 2. 1 <= k <= lenarr)
+    """"""
+","    return sum(elem for elem in arr[:k] if len(str(elem)) <= 2)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,-2,-3,41,57,76,87,88,99], 3) == -4
+    assert candidate([111,121,3,4000,5,6], 2) == 0
+    assert candidate([11,21,3,90,5,6,7,8,9], 4) == 125
+    assert candidate([111,21,3,4000,5,6,7,8,9], 4) == 24, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1], 1) == 1, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def get_odd_collatz(n):
+    """"""
+    સકારાત્મક પૂર્ણાંક n આપવામાં આવે છે, એક સૉર્ટ કરેલી સૂચિ પરત કરો જેમાં કોલાત્ઝ ક્રમમાં વિચિત્ર સંખ્યાઓ છે. કોલાત્ઝ અનુમાન એ ગણિતમાં એક અનુમાન છે જે નીચે પ્રમાણે વ્યાખ્યાયિત ક્રમથી સંબંધિત છેઃ કોઈપણ સકારાત્મક પૂર્ણાંક n થી પ્રારંભ કરો. પછી દરેક શબ્દ અગાઉના શબ્દમાંથી નીચે પ્રમાણે મેળવવામાં આવે છેઃ જો અગાઉનો શબ્દ પણ હોય, તો પછીનો શબ્દ પાછલા શબ્દનો અડધો ભાગ છે. જો અગાઉનો શબ્દ વિચિત્ર હોય, તો પછીનો શબ્દ અગાઉના શબ્દનો 3 ગણો છે વત્તા 1. અનુમાન એ છે કે n ની કિંમત ગમે તે હોય, ક્રમ હંમેશા 1 સુધી પહોંચશે. નોંધઃ 1. કોલાત્ઝ ((1) [1] છે. 2. પરત કરેલી સૂચિ ક્રમમાં વધતી ક્રમમાં સૉર્ટ કરેલી છે. ઉદાહરણ તરીકેઃ get_odd_collatz ((5) [1, 5] પરત કરે છે 5 માટે કો
+    """"""
+","    if n%2==0:
+        odd_collatz = [] 
+    else:
+        odd_collatz = [n]
+    while n > 1:
+        if n % 2 == 0:
+            n = n/2
+        else:
+            n = n*3 + 1
+            
+        if n%2 == 1:
+            odd_collatz.append(int(n))
+
+    return sorted(odd_collatz)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(14) == [1, 5, 7, 11, 13, 17]
+    assert candidate(5) == [1, 5]
+    assert candidate(12) == [1, 3, 5], ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1) == [1], ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def valid_date(date):
+    """"""તમારે એક ફંક્શન લખવું પડશે જે આપેલ તારીખ શબ્દમાળાને માન્ય કરે છે અને જો તારીખ માન્ય હોય તો સાચું આપે છે અન્યથા ખોટા. તારીખ માન્ય છે જો નીચેના તમામ નિયમો સંતોષાય છેઃ 1. તારીખ શબ્દમાળા ખાલી નથી. 2. મહિના 1,3,5,7,8,10,12 માટે દિવસોની સંખ્યા 1 કરતા ઓછી અથવા 31 દિવસથી વધુ નથી. અને મહિના 4,6,9,11 માટે દિવસોની સંખ્યા 1 કરતા ઓછી અથવા 30 દિવસથી વધુ નથી. અને, મહિના માટે દિવસની સંખ્યા 1 કરતા ઓછી અથવા 29 કરતા વધુ નથી. 2. 3. મહિના 1 કરતા ઓછા અથવા 12 કરતા વધુ ન હોવા જોઈએ. 4. તારીખ આ ફોર્મેટમાં હોવી જોઈએઃ mm-dd-yyyy ઉદાહરણ તરીકેઃ valid_date (('03-11-2000') => true_date (('15-01-2012') => false_date (('04-01-2040') => false_date (('06-04-2020') => true_date (('06/
+    """"""
+","    try:
+        date = date.strip()
+        month, day, year = date.split('-')
+        month, day, year = int(month), int(day), int(year)
+        if month < 1 or month > 12:
+            return False
+        if month in [1,3,5,7,8,10,12] and day < 1 or day > 31:
+            return False
+        if month in [4,6,9,11] and day < 1 or day > 30:
+            return False
+        if month == 2 and day < 1 or day > 29:
+            return False
+    except:
+        return False
+
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('03-11-2000') == True
+
+    assert candidate('15-01-2012') == False
+
+    assert candidate('04-0-2040') == False
+
+    assert candidate('06-04-2020') == True
+
+    assert candidate('01-01-2007') == True
+
+    assert candidate('03-32-2011') == False
+
+    assert candidate('') == False
+
+    assert candidate('04-31-3000') == False
+
+    assert candidate('06-06-2005') == True
+
+    assert candidate('21-31-2000') == False
+
+    assert candidate('04-12-2003') == True
+
+    assert candidate('04122003') == False
+
+    assert candidate('20030412') == False
+
+    assert candidate('2003-04') == False
+
+    assert candidate('2003-04-12') == False
+
+    assert candidate('04-2003') == False
+"
+"
+def split_words(txt):
+    '''
+    Given a string of words, return a list of words split on whitespace, if no whitespaces exists in the text you
+    should split on commas ',' if no commas exists you should return the number of lower-case letters with odd order in the
+    alphabet, ord('a') = 0, ord('b') = 1, ... ord('z') = 25
+    Examples
+    split_words(""Hello world!"") â -> [""Hello"", ""world!""]
+    split_words(""Hello,world!"") â -> [""Hello"", ""world!""]
+    split_words(""abcdef"") == 3 
+    '''
+","    if "" "" in txt:
+        return txt.split()
+    elif "","" in txt:
+        return txt.replace(',',' ').split()
+    else:
+        return len([i for i in txt if i.islower() and ord(i)%2 == 0])
+","def check(candidate):
+
+    assert candidate(""Hello world!"") == [""Hello"",""world!""]
+    assert candidate(""Hello,world!"") == [""Hello"",""world!""]
+    assert candidate(""Hello world,!"") == [""Hello"",""world,!""]
+    assert candidate(""Hello,Hello,world !"") == [""Hello,Hello,world"",""!""]
+    assert candidate(""abcdef"") == 3
+    assert candidate(""aaabb"") == 2
+    assert candidate(""aaaBb"") == 1
+    assert candidate("""") == 0
+"
+"
+def is_sorted(lst):
+    '''
+    Given a list of numbers, return whether or not they are sorted
+    in ascending order. If list has more than 1 duplicate of the same
+    number, return False. Assume no negative numbers and only integers.
+
+    Examples
+    is_sorted([5]) â -> True
+    is_sorted([1, 2, 3, 4, 5]) â -> True
+    is_sorted([1, 3, 2, 4, 5]) â -> False
+    is_sorted([1, 2, 3, 4, 5, 6]) â -> True
+    is_sorted([1, 2, 3, 4, 5, 6, 7]) â -> True
+    is_sorted([1, 3, 2, 4, 5, 6, 7]) â -> False
+    is_sorted([1, 2, 2, 3, 3, 4]) â -> True
+    is_sorted([1, 2, 2, 2, 3, 4]) â -> False
+    '''
+","    count_digit = dict([(i, 0) for i in lst])
+    for i in lst:
+        count_digit[i]+=1 
+    if any(count_digit[i] > 2 for i in lst):
+        return False
+    if all(lst[i-1] <= lst[i] for i in range(1, len(lst))):
+        return True
+    else:
+        return False
+    
+    
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([5]) == True
+    assert candidate([1, 2, 3, 4, 5]) == True
+    assert candidate([1, 3, 2, 4, 5]) == False
+    assert candidate([1, 2, 3, 4, 5, 6]) == True
+    assert candidate([1, 2, 3, 4, 5, 6, 7]) == True
+    assert candidate([1, 3, 2, 4, 5, 6, 7]) == False, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([]) == True, ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate([1]) == True, ""This prints if this assert fails 3 (good for debugging!)""
+    assert candidate([3, 2, 1]) == False, ""This prints if this assert fails 4 (good for debugging!)""
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1, 2, 2, 2, 3, 4]) == False, ""This prints if this assert fails 5 (good for debugging!)""
+    assert candidate([1, 2, 3, 3, 3, 4]) == False, ""This prints if this assert fails 6 (good for debugging!)""
+    assert candidate([1, 2, 2, 3, 3, 4]) == True, ""This prints if this assert fails 7 (good for debugging!)""
+    assert candidate([1, 2, 3, 4]) == True, ""This prints if this assert fails 8 (good for debugging!)""
+
+"
+"
+def intersection(interval1, interval2):
+    """"""તમને બે અંતરાલો આપવામાં આવે છે, જ્યાં દરેક અંતરાલ પૂર્ણાંકની જોડી છે. ઉદાહરણ તરીકે, અંતરાલ = (પ્રારંભ, અંત) = (1, 2). આપેલ અંતરાલો બંધ છે જેનો અર્થ છે કે અંતરાલ (પ્રારંભ, અંત) માં શરૂઆત અને અંત બંનેનો સમાવેશ થાય છે. દરેક અંતરાલ માટે, એવું માનવામાં આવે છે કે તેની શરૂઆત તેની અંતરથી ઓછી છે અથવા તેની બરાબર છે. તમારું કાર્ય એ નક્કી કરવાનું છે કે આ બે અંતરાલોના આંતરછેદની લંબાઈ એક અગ્ર સંખ્યા છે કે નહીં. ઉદાહરણ તરીકે, અંતરાલો (1, 3), (2, 4) નું આંતરછેદ (2, 3) છે, જેની લંબાઈ 1 છે, જે અગ્ર સંખ્યા નથી. જો આંતરછેદની લંબાઈ અગ્ર સંખ્યા છે, તો ""હા"" પરત કરો, અન્યથા, ""ના"" પરત કરો. જો બે અંતરાલો એકબીજા સાથે જોડાયેલા નથી,
+    """"""
+","    def is_prime(num):
+        if num == 1 or num == 0:
+            return False
+        if num == 2:
+            return True
+        for i in range(2, num):
+            if num%i == 0:
+                return False
+        return True
+
+    l = max(interval1[0], interval2[0])
+    r = min(interval1[1], interval2[1])
+    length = r - l
+    if length > 0 and is_prime(length):
+        return ""YES""
+    return ""NO""
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate((1, 2), (2, 3)) == ""NO""
+    assert candidate((-1, 1), (0, 4)) == ""NO""
+    assert candidate((-3, -1), (-5, 5)) == ""YES""
+    assert candidate((-2, 2), (-4, 0)) == ""YES""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate((-11, 2), (-1, -1)) == ""NO""
+    assert candidate((1, 2), (3, 5)) == ""NO""
+    assert candidate((1, 2), (1, 2)) == ""NO""
+    assert candidate((-2, -2), (-3, -2)) == ""NO""
+
+"
+"
+def prod_signs(arr):
+    """"""
+    તમને પૂર્ણાંકની એરે આપવામાં આવે છે અને તમારે એરેમાં દરેક સંખ્યાના બધા ચિહ્નોના ઉત્પાદન દ્વારા ગુણાકાર કરેલા પૂર્ણાંકની માત્રાનો સરવાળો પાછો આપવો પડશે, જે 1, -1 અથવા 0 દ્વારા રજૂ થાય છે. નોંધઃ ખાલી એઆર માટે કોઈ નહીં. ઉદાહરણઃ
+    >>> prod_signs([1, 2, 2, -4]) == -9
+    >>> prod_signs([0, 1]) == 0
+    >>> prod_signs([]) == None
+    """"""
+","    if not arr: return None
+    prod = 0 if 0 in arr else (-1) ** len(list(filter(lambda x: x < 0, arr)))
+    return prod * sum([abs(i) for i in arr])
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1, 2, 2, -4]) == -9
+    assert candidate([0, 1]) == 0
+    assert candidate([1, 1, 1, 2, 3, -1, 1]) == -10
+    assert candidate([]) == None
+    assert candidate([2, 4,1, 2, -1, -1, 9]) == 20
+    assert candidate([-1, 1, -1, 1]) == 4
+    assert candidate([-1, 1, 1, 1]) == -4
+    assert candidate([-1, 1, 1, 0]) == 0
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def minPath(grid, k):
+    """"""
+    N પંક્તિઓ અને N સ્તંભો (N >= 2) અને હકારાત્મક પૂર્ણાંક k સાથેની ગ્રીડ આપવામાં આવે છે, ગ્રીડના દરેક કોષમાં મૂલ્ય હોય છે. [1, N * N] સહિતના દરેક પૂર્ણાંક ગ્રીડના કોશિકાઓ પર બરાબર એક વાર દેખાય છે. તમારે ગ્રીડમાં લંબાઈ k ની લઘુત્તમ પાથ શોધવી પડશે. તમે કોઈપણ કોષથી શરૂ કરી શકો છો, અને દરેક પગલામાં તમે કોઈ પણ પડોશી કોશિકાઓ પર જઈ શકો છો, બીજા શબ્દોમાં કહીએ તો, તમે કોઈપણ પડોશી કોશિકાઓ પર જઈ શકો છો જે તમારી સાથે એક ધાર શેર કરે છે વર્તમાન કોષ. કૃપા કરીને નોંધો કે k ની લંબાઈનો માર્ગ બરાબર k કોશિકાઓ (જરૂરી નથી તે અલગ) ની મુલાકાત લેવાનો અર્થ છે. તમે ગ્રીડમાંથી બહાર ન જઇ શકો
+    """"""
+","    n = len(grid)
+    val = n * n + 1
+    for i in range(n):
+        for j in range(n):
+            if grid[i][j] == 1:
+                temp = []
+                if i != 0:
+                    temp.append(grid[i - 1][j])
+
+                if j != 0:
+                    temp.append(grid[i][j - 1])
+
+                if i != n - 1:
+                    temp.append(grid[i + 1][j])
+
+                if j != n - 1:
+                    temp.append(grid[i][j + 1])
+
+                val = min(temp)
+
+    ans = []
+    for i in range(k):
+        if i % 2 == 0:
+            ans.append(1)
+        else:
+            ans.append(val)
+    return ans
+","def check(candidate):
+
+    # Check some simple cases
+    print
+    assert candidate([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 3) == [1, 2, 1]
+    assert candidate([[5, 9, 3], [4, 1, 6], [7, 8, 2]], 1) == [1]
+    assert candidate([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]], 4) == [1, 2, 1, 2]
+    assert candidate([[6, 4, 13, 10], [5, 7, 12, 1], [3, 16, 11, 15], [8, 14, 9, 2]], 7) == [1, 10, 1, 10, 1, 10, 1]
+    assert candidate([[8, 14, 9, 2], [6, 4, 13, 15], [5, 7, 1, 12], [3, 10, 11, 16]], 5) == [1, 7, 1, 7, 1]
+    assert candidate([[11, 8, 7, 2], [5, 16, 14, 4], [9, 3, 15, 6], [12, 13, 10, 1]], 9) == [1, 6, 1, 6, 1, 6, 1, 6, 1]
+    assert candidate([[12, 13, 10, 1], [9, 3, 15, 6], [5, 16, 14, 4], [11, 8, 7, 2]], 12) == [1, 6, 1, 6, 1, 6, 1, 6, 1, 6, 1, 6]
+    assert candidate([[2, 7, 4], [3, 1, 5], [6, 8, 9]], 8) == [1, 3, 1, 3, 1, 3, 1, 3]
+    assert candidate([[6, 1, 5], [3, 8, 9], [2, 7, 4]], 8) == [1, 5, 1, 5, 1, 5, 1, 5]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([[1, 2], [3, 4]], 10) == [1, 2, 1, 2, 1, 2, 1, 2, 1, 2]
+    assert candidate([[1, 3], [3, 2]], 10) == [1, 3, 1, 3, 1, 3, 1, 3, 1, 3]
+
+"
+"
+def tri(n):
+    """"""દરેક વ્યક્તિ ફિબોનાકી ક્રમ જાણે છે, છેલ્લા બે સદીઓમાં ગણિતશાસ્ત્રીઓ દ્વારા તેનો ઊંડાણપૂર્વક અભ્યાસ કરવામાં આવ્યો હતો. જો કે, લોકો જે જાણતા નથી તે ટ્રિબોનાકી ક્રમ છે. ટ્રિબોનાકી ક્રમ પુનરાવર્તન દ્વારા વ્યાખ્યાયિત કરવામાં આવે છેઃ ત્રિ (૧) = 3 ત્રિ (૧) = 1 + એન / 2, જો એન પણ છે. ત્રિ (૧) = ત્રિ (૧) + ત્રિ (૧) - 2) + ત્રિ (૧) + એન + 1, જો એન વિચિત્ર છે. ઉદાહરણ તરીકેઃ ત્રિ (૨) = 1 + (2 / 2) = 2 ત્રિ (૧) = 3 ત્રિ (૩) = ત્રિ (૧) + ત્રિ (૪) = 2 + 3 + 3 = 8 તમને બિન-નકારાત્મક પૂર્ણાંક નંબર એન આપવામાં આવે છે, તમારે ટ્રિબોનાકી ક્રમની પ્રથમ એન + 1
+    """"""
+","    if n == 0:
+        return [1]
+    my_tri = [1, 3]
+    for i in range(2, n + 1):
+        if i % 2 == 0:
+            my_tri.append(i / 2 + 1)
+        else:
+            my_tri.append(my_tri[i - 1] + my_tri[i - 2] + (i + 3) / 2)
+    return my_tri
+","def check(candidate):
+
+    # Check some simple cases
+    
+    assert candidate(3) == [1, 3, 2.0, 8.0]
+    assert candidate(4) == [1, 3, 2.0, 8.0, 3.0]
+    assert candidate(5) == [1, 3, 2.0, 8.0, 3.0, 15.0]
+    assert candidate(6) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0]
+    assert candidate(7) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0, 24.0]
+    assert candidate(8) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0, 24.0, 5.0]
+    assert candidate(9) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0, 24.0, 5.0, 35.0]
+    assert candidate(20) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0, 24.0, 5.0, 35.0, 6.0, 48.0, 7.0, 63.0, 8.0, 80.0, 9.0, 99.0, 10.0, 120.0, 11.0]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(0) == [1]
+    assert candidate(1) == [1, 3]
+"
+"
+def digits(n):
+    """"""સકારાત્મક પૂર્ણાંક n આપવામાં આવે છે, વિચિત્ર અંકોનું ઉત્પાદન પરત કરો. જો બધા અંકો પણ હોય તો 0 પરત કરો. ઉદાહરણ તરીકેઃ અંકો ((1) == 1 અંકો ((4) == 0 અંકો ((235) == 15
+    """"""
+","    product = 1
+    odd_count = 0
+    for digit in str(n):
+        int_digit = int(digit)
+        if int_digit%2 == 1:
+            product= product*int_digit
+            odd_count+=1
+    if odd_count ==0:
+        return 0
+    else:
+        return product
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(5) == 5
+    assert candidate(54) == 5
+    assert candidate(120) ==1
+    assert candidate(5014) == 5
+    assert candidate(98765) == 315
+    assert candidate(5576543) == 2625
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(2468) == 0
+
+"
+"
+def is_nested(string):
+    '''
+    Create a function that takes a string as input which contains only square brackets.
+    The function should return True if and only if there is a valid subsequence of brackets 
+    where at least one bracket in the subsequence is nested.
+
+    is_nested('[[]]') â -> True
+    is_nested('[]]]]]]][[[[[]') â -> False
+    is_nested('[][]') â -> False
+    is_nested('[]') â -> False
+    is_nested('[[][]]') â -> True
+    is_nested('[[]][[') â -> True
+    '''
+","    opening_bracket_index = []
+    closing_bracket_index = []
+    for i in range(len(string)):
+        if string[i] == '[':
+            opening_bracket_index.append(i)
+        else:
+            closing_bracket_index.append(i)
+    closing_bracket_index.reverse()
+    cnt = 0
+    i = 0
+    l = len(closing_bracket_index)
+    for idx in opening_bracket_index:
+        if i < l and idx < closing_bracket_index[i]:
+            cnt += 1
+            i += 1
+    return cnt >= 2
+
+    
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('[[]]') == True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('[]]]]]]][[[[[]') == False
+    assert candidate('[][]') == False
+    assert candidate(('[]')) == False
+    assert candidate('[[[[]]]]') == True
+    assert candidate('[]]]]]]]]]]') == False
+    assert candidate('[][][[]]') == True
+    assert candidate('[[]') == False
+    assert candidate('[]]') == False
+    assert candidate('[[]][[') == True
+    assert candidate('[[][]]') == True
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('') == False, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate('[[[[[[[[') == False
+    assert candidate(']]]]]]]]') == False
+
+"
+"
+
+def sum_squares(lst):
+    """"""તમને સંખ્યાઓની યાદી આપવામાં આવે છે. તમારે આપેલ સૂચિમાં ચોરસ સંખ્યાઓનો સરવાળો પાછો આપવો પડશે, પ્રથમ યાદીમાં દરેક તત્વને ઉપલા int ((Ceiling) પર ગોળાકાર કરો. ઉદાહરણોઃ lst = [1,2,3] માટે આઉટપુટ 14 હોવું જોઈએ lst = [1,4,9] માટે આઉટપુટ 98 હોવું જોઈએ lst = [1,3,5,7] માટે આઉટપુટ 84 હોવું જોઈએ lst = [1.4,4.2,0] માટે આઉટપુટ 29 હોવું જોઈએ lst = [-2.4,1,1] માટે આઉટપુટ 6 હોવું જોઈએ
+    
+
+    """"""
+","    import math
+    squared = 0
+    for i in lst:
+        squared += math.ceil(i)**2
+    return squared
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,2,3])==14, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1.0,2,3])==14, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1,3,5,7])==84, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1.4,4.2,0])==29, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([-2.4,1,1])==6, ""This prints if this assert fails 1 (good for debugging!)""
+
+    assert candidate([100,1,15,2])==10230, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([10000,10000])==200000000, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([-1.4,4.6,6.3])==75, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([-1.4,17.9,18.9,19.9])==1086, ""This prints if this assert fails 1 (good for debugging!)""
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([0])==0, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([-1])==1, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([-1,1,0])==2, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def check_if_last_char_is_a_letter(txt):
+    '''
+    Create a function that returns True if the last character
+    of a given string is an alphabetical character and is not
+    a part of a word, and False otherwise.
+    Note: ""word"" is a group of characters separated by space.
+
+    Examples:
+    check_if_last_char_is_a_letter(""apple pie"") â -> False
+    check_if_last_char_is_a_letter(""apple pi e"") â -> True
+    check_if_last_char_is_a_letter(""apple pi e "") â -> False
+    check_if_last_char_is_a_letter("""") â -> False 
+    '''
+"," 
+    check = txt.split(' ')[-1]
+    return True if len(check) == 1 and (97 <= ord(check.lower()) <= 122) else False
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""apple"") == False
+    assert candidate(""apple pi e"") == True
+    assert candidate(""eeeee"") == False
+    assert candidate(""A"") == True
+    assert candidate(""Pumpkin pie "") == False
+    assert candidate(""Pumpkin pie 1"") == False
+    assert candidate("""") == False
+    assert candidate(""eeeee e "") == False
+    assert candidate(""apple pie"") == False
+    assert candidate(""apple pi e "") == False
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def can_arrange(arr):
+    """"""એક ફંક્શન બનાવો જે તત્વના સૌથી મોટા અનુક્રમણિકાને આપે છે જે તત્વની તુલનામાં વધારે અથવા બરાબર નથી. જો આવા કોઈ તત્વ અસ્તિત્વમાં નથી તો પછી -1. આપેલ એરેમાં ડુપ્લિકેટ મૂલ્યો શામેલ નહીં હોય. ઉદાહરણોઃ can_arrange (([1,2,4,3,5]) = 3 can_arrange[(1,2,3]) = -1
+    """"""
+","    ind=-1
+    i=1
+    while i<len(arr):
+      if arr[i]<arr[i-1]:
+        ind=i
+      i+=1
+    return ind
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,2,4,3,5])==3
+    assert candidate([1,2,4,5])==-1
+    assert candidate([1,4,2,5,6,7,8,9,10])==2
+    assert candidate([4,8,5,7,3])==4
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([])==-1
+
+"
+"
+def largest_smallest_integers(lst):
+    '''
+    Create a function that returns a tuple (a, b), where 'a' is
+    the largest of negative integers, and 'b' is the smallest
+    of positive integers in a list.
+    If there is no negative or positive integers, return them as None.
+
+    Examples:
+    largest_smallest_integers([2, 4, 1, 3, 5, 7]) == (None, 1)
+    largest_smallest_integers([]) == (None, None)
+    largest_smallest_integers([0]) == (None, None)
+    '''
+","    smallest = list(filter(lambda x: x < 0, lst))
+    largest = list(filter(lambda x: x > 0, lst))
+    return (max(smallest) if smallest else None, min(largest) if largest else None)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([2, 4, 1, 3, 5, 7]) == (None, 1)
+    assert candidate([2, 4, 1, 3, 5, 7, 0]) == (None, 1)
+    assert candidate([1, 3, 2, 4, 5, 6, -2]) == (-2, 1)
+    assert candidate([4, 5, 3, 6, 2, 7, -7]) == (-7, 2)
+    assert candidate([7, 3, 8, 4, 9, 2, 5, -9]) == (-9, 2)
+    assert candidate([]) == (None, None)
+    assert candidate([0]) == (None, None)
+    assert candidate([-1, -3, -5, -6]) == (-1, None)
+    assert candidate([-1, -3, -5, -6, 0]) == (-1, None)
+    assert candidate([-6, -4, -4, -3, 1]) == (-3, 1)
+    assert candidate([-6, -4, -4, -3, -100, 1]) == (-3, 1)
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+"
+"
+def compare_one(a, b):
+    """"""
+    એક ફંક્શન બનાવો જે પૂર્ણાંક, ફ્લોટ્સ અથવા વાસ્તવિક સંખ્યાઓનું પ્રતિનિધિત્વ કરતી શબ્દમાળાઓ લે છે અને તેના આપેલ ચલ પ્રકારમાં મોટા ચલને પરત કરે છે. જો મૂલ્યો સમાન હોય તો કોઈ નહીં પરત કરો. નોંધઃ જો વાસ્તવિક સંખ્યાને શબ્દમાળા તરીકે રજૂ કરવામાં આવે તો ફ્લોટિંગ પોઇન્ટ હોઈ શકે છે. અથવા, compare_one{1, 2.5) â -> 2.5 compare_one{1, ""2,3"") â -> ""2,3"" compare_one{5,1"", ""6"") â -> ""6"" compare_one{1"", 1) â -> કોઈ નહીં
+    """"""
+","    temp_a, temp_b = a, b
+    if isinstance(temp_a, str): temp_a = temp_a.replace(',','.')
+    if isinstance(temp_b, str): temp_b = temp_b.replace(',','.')
+    if float(temp_a) == float(temp_b): return None
+    return a if float(temp_a) > float(temp_b) else b 
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(1, 2) == 2
+    assert candidate(1, 2.5) == 2.5
+    assert candidate(2, 3) == 3
+    assert candidate(5, 6) == 6
+    assert candidate(1, ""2,3"") == ""2,3""
+    assert candidate(""5,1"", ""6"") == ""6""
+    assert candidate(""1"", ""2"") == ""2""
+    assert candidate(""1"", 1) == None
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def is_equal_to_sum_even(n):
+    """"""આપેલ સંખ્યા n ને બરાબર 4 હકારાત્મક સંખ્યાઓના સરવાળો તરીકે લખી શકાય છે કે નહીં તેનું મૂલ્યાંકન કરો ઉદાહરણ is_equal_to_sum_even ()) 4) == ખોટી is_equal_to_sum_even ()) == ખોટી is_equal_to_sum_even ()) 8) == સાચું
+    """"""
+","    return n%2 == 0 and n >= 8
+","def check(candidate):
+    assert candidate(4) == False
+    assert candidate(6) == False
+    assert candidate(8) == True
+    assert candidate(10) == True
+    assert candidate(11) == False
+    assert candidate(12) == True
+    assert candidate(13) == False
+    assert candidate(16) == True
+"
+"
+def special_factorial(n):
+    """"""બ્રાઝિલિયન ફેક્ટરીયલ આ રીતે વ્યાખ્યાયિત થયેલ છેઃ બ્રાઝિલિયન_ફેક્ટરીયલ (n) = n! * (n-1)! * (n-2)! *... * 1! જ્યાં n > 0 ઉદાહરણ તરીકેઃ
+    >>> special_factorial(4)
+    288
+
+    The function will receive an integer as input and should return the special
+    factorial of this integer.
+    """"""
+","    fact_i = 1
+    special_fact = 1
+    for i in range(1, n+1):
+        fact_i *= i
+        special_fact *= fact_i
+    return special_fact
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(4) == 288, ""Test 4""
+    assert candidate(5) == 34560, ""Test 5""
+    assert candidate(7) == 125411328000, ""Test 7""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1) == 1, ""Test 1""
+
+"
+"
+def fix_spaces(text):
+    """"""
+    શબ્દમાળા ટેક્સ્ટ આપવામાં આવે છે, તેમાં તમામ જગ્યાઓ અંડરકોર્સ સાથે બદલો, અને જો શબ્દમાળામાં 2 થી વધુ સળંગ જગ્યાઓ હોય, તો પછી તમામ સળંગ જગ્યાઓને - fix_spaces સાથે બદલો.
+    """"""
+","    new_text = """"
+    i = 0
+    start, end = 0, 0
+    while i < len(text):
+        if text[i] == "" "":
+            end += 1
+        else:
+            if end - start > 2:
+                new_text += ""-""+text[i]
+            elif end - start > 0:
+                new_text += ""_""*(end - start)+text[i]
+            else:
+                new_text += text[i]
+            start, end = i+1, i+1
+        i+=1
+    if end - start > 2:
+        new_text += ""-""
+    elif end - start > 0:
+        new_text += ""_""
+    return new_text
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""Example"") == ""Example"", ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(""Mudasir Hanif "") == ""Mudasir_Hanif_"", ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate(""Yellow Yellow  Dirty  Fellow"") == ""Yellow_Yellow__Dirty__Fellow"", ""This prints if this assert fails 3 (good for debugging!)""
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""Exa   mple"") == ""Exa-mple"", ""This prints if this assert fails 4 (good for debugging!)""
+    assert candidate(""   Exa 1 2 2 mple"") == ""-Exa_1_2_2_mple"", ""This prints if this assert fails 4 (good for debugging!)""
+
+"
+"
+def file_name_check(file_name):
+    """"""એક ફંક્શન બનાવો જે ફાઇલનું નામ રજૂ કરતી શબ્દમાળા લે છે, અને જો ફાઇલનું નામ માન્ય હોય તો 'હા' આપે છે, અને અન્યથા 'ના' આપે છે. ફાઇલનું નામ માન્ય માનવામાં આવે છે જો અને માત્ર જો નીચેની બધી શરતો પૂરી થાય તોઃ - ફાઇલના નામમાં ત્રણ અંકો ('0'-'9') કરતાં વધુ ન હોવા જોઈએ. - ફાઇલનું નામ બરાબર એક બિંદુ '.' ધરાવે છે. - બિંદુ પહેલાં સબસ્ટ્રિંગ ખાલી ન હોવું જોઈએ, અને તે લેટિન આલ્ફાપેટ ('a'-'z' અને 'A'Z'-) ના અક્ષરથી શરૂ થાય છે. - બિંદુ પછી સબસ્ટ્રિંગ આમાંથી એક હોવું જોઈએઃ ['txt', 'exe', 'lld'] ઉદાહરણોઃ file_name_check""(example. txt. #"") => 'હા' file_name_
+    """"""
+","    suf = ['txt', 'exe', 'dll']
+    lst = file_name.split(sep='.')
+    if len(lst) != 2:
+        return 'No'
+    if not lst[1] in suf:
+        return 'No'
+    if len(lst[0]) == 0:
+        return 'No'
+    if not lst[0][0].isalpha():
+        return 'No'
+    t = len([x for x in lst[0] if x.isdigit()])
+    if t > 3:
+        return 'No'
+    return 'Yes'
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""example.txt"") == 'Yes'
+    assert candidate(""1example.dll"") == 'No'
+    assert candidate('s1sdf3.asd') == 'No'
+    assert candidate('K.dll') == 'Yes'
+    assert candidate('MY16FILE3.exe') == 'Yes'
+    assert candidate('His12FILE94.exe') == 'No'
+    assert candidate('_Y.txt') == 'No'
+    assert candidate('?aREYA.exe') == 'No'
+    assert candidate('/this_is_valid.dll') == 'No'
+    assert candidate('this_is_valid.wow') == 'No'
+    assert candidate('this_is_valid.txt') == 'Yes'
+    assert candidate('this_is_valid.txtexe') == 'No'
+    assert candidate('#this2_i4s_5valid.ten') == 'No'
+    assert candidate('@this1_is6_valid.exe') == 'No'
+    assert candidate('this_is_12valid.6exe4.txt') == 'No'
+    assert candidate('all.exe.txt') == 'No'
+    assert candidate('I563_No.exe') == 'Yes'
+    assert candidate('Is3youfault.txt') == 'Yes'
+    assert candidate('no_one#knows.dll') == 'Yes'
+    assert candidate('1I563_Yes3.exe') == 'No'
+    assert candidate('I563_Yes3.txtt') == 'No'
+    assert candidate('final..txt') == 'No'
+    assert candidate('final132') == 'No'
+    assert candidate('_f4indsartal132.') == 'No'
+    
+        
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('.txt') == 'No'
+    assert candidate('s.') == 'No'
+
+"
+"
+
+
+def sum_squares(lst):
+    """""""" આ ફંક્શન પૂર્ણાંકની યાદી લેશે. યાદીમાંની તમામ એન્ટ્રીઓ માટે, ફંક્શન પૂર્ણાંક એન્ટ્રીને ચોરસ બનાવશે જો તેની ઇન્ડેક્સ 3 ની ગુણાંક છે અને પૂર્ણાંક એન્ટ્રીને સમઘન બનાવશે જો તેની ઇન્ડેક્સ 4 ની ગુણાંક છે અને 3 ની ગુણાંક નથી. ફંક્શન સૂચિમાં એન્ટ્રીઝને બદલશે નહીં જેની અનુક્રમણિકા 3 અથવા 4 ની ગુણાંક નથી. ફંક્શન પછી તમામ એન્ટ્રીઝનો સરવાળો આપશે. ઉદાહરણોઃ lst = [1,2,3] માટે આઉટપુટ 6 હોવું જોઈએ lst = [] માટે આઉટપુટ 0 હોવું જોઈએ lst = [-1,-5,2,-1,-5] માટે આઉટપુટ -126 હોવું જોઈએ
+    """"""
+","    result =[]
+    for i in range(len(lst)):
+        if i %3 == 0:
+            result.append(lst[i]**2)
+        elif i % 4 == 0 and i%3 != 0:
+            result.append(lst[i]**3)
+        else:
+            result.append(lst[i])
+    return sum(result)
+","def check(candidate):
+
+    # Check some simple cases
+    
+    assert candidate([1,2,3]) == 6
+    assert candidate([1,4,9]) == 14
+    assert candidate([]) == 0
+    assert candidate([1,1,1,1,1,1,1,1,1]) == 9
+    assert candidate([-1,-1,-1,-1,-1,-1,-1,-1,-1]) == -3
+    assert candidate([0]) == 0
+    assert candidate([-1,-5,2,-1,-5]) == -126
+    assert candidate([-56,-99,1,0,-2]) == 3030
+    assert candidate([-1,0,0,0,0,0,0,0,-1]) == 0
+    assert candidate([-16, -9, -2, 36, 36, 26, -20, 25, -40, 20, -4, 12, -26, 35, 37]) == -14196
+    assert candidate([-1, -3, 17, -1, -15, 13, -1, 14, -14, -12, -5, 14, -14, 6, 13, 11, 16, 16, 4, 10]) == -1448
+    
+    
+    # Don't remove this line:
+"
+"
+def words_in_sentence(sentence):
+    """"""
+    તમને એક વાક્યનું પ્રતિનિધિત્વ કરતી શબ્દમાળા આપવામાં આવે છે, વાક્યમાં કેટલાક શબ્દો હોય છે જે જગ્યા દ્વારા અલગ પડે છે, અને તમારે એક શબ્દમાળા પરત કરવી પડશે જેમાં મૂળ વાક્યના શબ્દો હોય છે, જેની લંબાઈ અંક સંખ્યાઓ છે, નવી શબ્દમાળામાં શબ્દોનો ક્રમ મૂળની જેમ જ હોવો જોઈએ. ઉદાહરણ 1: ઇનપુટઃ વાક્ય = ""આ એક પરીક્ષણ છે"" આઉટપુટઃ ""છે"" ઉદાહરણ 2: ઇનપુટઃ વાક્ય = ""સ્વિમિંગ માટે જવા દો"" આઉટપુટઃ ""જાઓ"" પ્રતિબંધોઃ * 1 <= len(sentence) <= 100 * વાક્યમાં ફક્ત અક્ષરો છે
+    """"""
+","    new_lst = []
+    for word in sentence.split():
+        flg = 0
+        if len(word) == 1:
+            flg = 1
+        for i in range(2, len(word)):
+            if len(word)%i == 0:
+                flg = 1
+        if flg == 0 or len(word) == 2:
+            new_lst.append(word)
+    return "" "".join(new_lst)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""This is a test"") == ""is""
+    assert candidate(""lets go for swimming"") == ""go for""
+    assert candidate(""there is no place available here"") == ""there is no place""
+    assert candidate(""Hi I am Hussein"") == ""Hi am Hussein""
+    assert candidate(""go for it"") == ""go for it""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""here"") == """"
+    assert candidate(""here is"") == ""is""
+
+"
+"
+def simplify(x, n):
+    """"""તમારું કાર્ય એક કાર્ય અમલમાં મૂકવાનું છે જે એક્સપ્રેશનને સરળ બનાવશે x * n. કાર્ય સાચું વળતર આપે છે જો x * n એક સંપૂર્ણ સંખ્યાને મૂલ્યાંકન કરે છે અને અન્યથા ખોટા છે. બંને x અને n, અપૂર્ણાંકના શબ્દમાળા પ્રતિનિધિત્વ છે, અને નીચેના ફોર્મેટ છે, <numerator> / <denominator> જ્યાં બંને ન્યુમેરેટર અને નામાંકકકક હકારાત્મક સંપૂર્ણ સંખ્યાઓ છે. તમે ધારી શકો છો કે x, અને n માન્ય અપૂર્ણાંક છે, અને નામાંકક તરીકે શૂન્ય નથી. સરળ "" 1/5 "", ""5/1"") = સાચું સરળ "" 1/6 "", ""2/1"") = ખોટા સરળ "" 7/10 "", ""10/2"") = ખોટા
+    """"""
+","    a, b = x.split(""/"")
+    c, d = n.split(""/"")
+    numerator = int(a) * int(c)
+    denom = int(b) * int(d)
+    if (numerator/denom == int(numerator/denom)):
+        return True
+    return False
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""1/5"", ""5/1"") == True, 'test1'
+    assert candidate(""1/6"", ""2/1"") == False, 'test2'
+    assert candidate(""5/1"", ""3/1"") == True, 'test3'
+    assert candidate(""7/10"", ""10/2"") == False, 'test4'
+    assert candidate(""2/10"", ""50/10"") == True, 'test5'
+    assert candidate(""7/2"", ""4/2"") == True, 'test6'
+    assert candidate(""11/6"", ""6/1"") == True, 'test7'
+    assert candidate(""2/3"", ""5/2"") == False, 'test8'
+    assert candidate(""5/2"", ""3/5"") == False, 'test9'
+    assert candidate(""2/4"", ""8/4"") == True, 'test10'
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""2/4"", ""4/2"") == True, 'test11'
+    assert candidate(""1/5"", ""5/1"") == True, 'test12'
+    assert candidate(""1/5"", ""1/5"") == False, 'test13'
+
+"
+"
+def order_by_points(nums):
+    """"""
+    એક કાર્ય લખો જે પૂર્ણાંકની આપેલ સૂચિને તેમના અંકોના સરવાળો અનુસાર વધતા ક્રમમાં સૉર્ટ કરે છે. નોંધઃ જો તેમના અંકોના સમાન સરવાળો સાથે ઘણી વસ્તુઓ હોય, તો તેમને મૂળ સૂચિમાં તેમના અનુક્રમણિકાના આધારે ક્રમ આપો. ઉદાહરણ તરીકેઃ
+    >>> order_by_points([1, 11, -1, -11, -12]) == [-1, -11, 1, -12, 11]
+    >>> order_by_points([]) == []
+    """"""
+","    def digits_sum(n):
+        neg = 1
+        if n < 0: n, neg = -1 * n, -1 
+        n = [int(i) for i in str(n)]
+        n[0] = n[0] * neg
+        return sum(n)
+    return sorted(nums, key=digits_sum)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1, 11, -1, -11, -12]) == [-1, -11, 1, -12, 11]
+    assert candidate([1234,423,463,145,2,423,423,53,6,37,3457,3,56,0,46]) == [0, 2, 3, 6, 53, 423, 423, 423, 1234, 145, 37, 46, 56, 463, 3457]
+    assert candidate([]) == []
+    assert candidate([1, -11, -32, 43, 54, -98, 2, -3]) == [-3, -32, -98, -11, 1, 2, 43, 54]
+    assert candidate([1,2,3,4,5,6,7,8,9,10,11]) == [1, 10, 2, 11, 3, 4, 5, 6, 7, 8, 9]
+    assert candidate([0,6,6,-76,-21,23,4]) == [-76, -21, 0, 4, 23, 6, 6]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def specialFilter(nums):
+    """"""એક ફંક્શન લખો જે સંખ્યાઓના એરેને ઇનપુટ તરીકે લે છે અને એરેમાં તત્વોની સંખ્યા આપે છે જે 10 કરતા વધારે છે અને સંખ્યાના પ્રથમ અને છેલ્લા બંને અંકો વિચિત્ર છે (1, 3, 5, 7, 9). ઉદાહરણ તરીકેઃ specialFilter (([15, -73, 14, -15]) => 1 specialFilter (([33, -2, -3, 45, 21, 109]) => 2
+    """"""
+","    
+    count = 0
+    for num in nums:
+        if num > 10:
+            odd_digits = (1, 3, 5, 7, 9)
+            number_as_string = str(num)
+            if int(number_as_string[0]) in odd_digits and int(number_as_string[-1]) in odd_digits:
+                count += 1
+        
+    return count 
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([5, -2, 1, -5]) == 0  
+    assert candidate([15, -73, 14, -15]) == 1
+    assert candidate([33, -2, -3, 45, 21, 109]) == 2
+    assert candidate([43, -12, 93, 125, 121, 109]) == 4
+    assert candidate([71, -2, -33, 75, 21, 19]) == 3
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1]) == 0              
+    assert candidate([]) == 0                   
+
+"
+"
+def get_max_triples(n):
+    """"""
+    તમને હકારાત્મક પૂર્ણાંક n આપવામાં આવે છે. તમારે લંબાઈ n ની પૂર્ણાંક એરે બનાવવી પડશે. દરેક i (1 â ‰¤ i â ‰¤ n) માટે, a[i] = i * i - i + 1 ની કિંમત. a ની ત્રિપુટીઓની સંખ્યા (a[i], a[j], a[k]) પરત કરો જ્યાં i < j < k, અને a[i] + a[j] + a[k] એ 3 નું ગુણાંક છે. ઉદાહરણઃ ઇનપુટઃ n = 5 આઉટપુટઃ 1 સમજૂતીઃ a = [1, 3, 7, 13, 21] એકમાત્ર માન્ય ત્રિપુટી (1, 7, 13) છે.
+    """"""
+","    A = [i*i - i + 1 for i in range(1,n+1)]
+    ans = []
+    for i in range(n):
+        for j in range(i+1,n):
+            for k in range(j+1,n):
+                if (A[i]+A[j]+A[k])%3 == 0:
+                    ans += [(A[i],A[j],A[k])]
+    return len(ans)
+","def check(candidate):
+
+    assert candidate(5) == 1
+    assert candidate(6) == 4
+    assert candidate(10) == 36
+    assert candidate(100) == 53361
+"
+"
+def bf(planet1, planet2):
+    '''
+    There are eight planets in our solar system: the closerst to the Sun 
+    is Mercury, the next one is Venus, then Earth, Mars, Jupiter, Saturn, 
+    Uranus, Neptune.
+    Write a function that takes two planet names as strings planet1 and planet2. 
+    The function should return a tuple containing all planets whose orbits are 
+    located between the orbit of planet1 and the orbit of planet2, sorted by 
+    the proximity to the sun. 
+    The function should return an empty tuple if planet1 or planet2
+    are not correct planet names. 
+    Examples
+    bf(""Jupiter"", ""Neptune"") ==> (""Saturn"", ""Uranus"")
+    bf(""Earth"", ""Mercury"") ==> (""Venus"")
+    bf(""Mercury"", ""Uranus"") ==> (""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn"")
+    '''
+","    planet_names = (""Mercury"", ""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn"", ""Uranus"", ""Neptune"")
+    if planet1 not in planet_names or planet2 not in planet_names or planet1 == planet2:
+        return ()
+    planet1_index = planet_names.index(planet1)
+    planet2_index = planet_names.index(planet2)
+    if planet1_index < planet2_index:
+        return (planet_names[planet1_index + 1: planet2_index])
+    else:
+        return (planet_names[planet2_index + 1 : planet1_index])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""Jupiter"", ""Neptune"") == (""Saturn"", ""Uranus""), ""First test error: "" + str(len(candidate(""Jupiter"", ""Neptune"")))      
+    assert candidate(""Earth"", ""Mercury"") == (""Venus"",), ""Second test error: "" + str(candidate(""Earth"", ""Mercury""))  
+    assert candidate(""Mercury"", ""Uranus"") == (""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn""), ""Third test error: "" + str(candidate(""Mercury"", ""Uranus""))      
+    assert candidate(""Neptune"", ""Venus"") == (""Earth"", ""Mars"", ""Jupiter"", ""Saturn"", ""Uranus""), ""Fourth test error: "" + str(candidate(""Neptune"", ""Venus""))  
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""Earth"", ""Earth"") == ()
+    assert candidate(""Mars"", ""Earth"") == ()
+    assert candidate(""Jupiter"", ""Makemake"") == ()
+
+"
+"
+def sorted_list_sum(lst):
+    """"""એક ફંક્શન લખો જે શબ્દમાળાઓની યાદીને પરિમાણ તરીકે સ્વીકારે છે, તેમાંથી વિચિત્ર લંબાઈ ધરાવતા શબ્દમાળાઓને કાઢી નાખે છે, અને પરિણામી સૂચિને સૉર્ટ કરેલ ક્રમમાં આપે છે. સૂચિ હંમેશા શબ્દમાળાઓની સૂચિ છે અને ક્યારેય સંખ્યાઓની એરે નથી, અને તેમાં ડુપ્લિકેટ્સ હોઈ શકે છે. સૂચિનો ક્રમ દરેક શબ્દની લંબાઈ દ્વારા વધતો હોવો જોઈએ, અને તમારે તે નિયમ દ્વારા સૉર્ટ કરેલ સૂચિને પરત કરવી જોઈએ. જો બે શબ્દો સમાન લંબાઈ ધરાવે છે, તો સૂચિને મૂળાક્ષર પ્રમાણે સૉર્ટ કરો. ફંક્શનને સૉર્ટ કરેલ ક્રમમાં શબ્દમાળાઓની સૂચિ પરત કરવી જોઈએ. તમે ધારણ કરી શકો છો કે બધા શબ્દોની સમાન લંબાઈ હશે. ઉદાહરણ તરીકેઃ assert list_sort[""aa"", ""a"", ""aaa""])
+    """"""
+","    lst.sort()
+    new_lst = []
+    for i in lst:
+        if len(i)%2 == 0:
+            new_lst.append(i)
+    return sorted(new_lst, key=len)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([""aa"", ""a"", ""aaa""]) == [""aa""]
+    assert candidate([""school"", ""AI"", ""asdf"", ""b""]) == [""AI"", ""asdf"", ""school""]
+    assert candidate([""d"", ""b"", ""c"", ""a""]) == []
+    assert candidate([""d"", ""dcba"", ""abcd"", ""a""]) == [""abcd"", ""dcba""]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([""AI"", ""ai"", ""au""]) == [""AI"", ""ai"", ""au""]
+    assert candidate([""a"", ""b"", ""b"", ""c"", ""c"", ""a""]) == []
+    assert candidate(['aaaa', 'bbbb', 'dd', 'cc']) == [""cc"", ""dd"", ""aaaa"", ""bbbb""]
+
+"
+"
+def x_or_y(n, x, y):
+    """"""એક સરળ પ્રોગ્રામ જે x નું મૂલ્ય પાછું આપવું જોઈએ જો n એ અપૂર્ણાંક હોય અને y નું મૂલ્ય પાછું આપવું જોઈએ. ઉદાહરણોઃ x_or_y{7, 34, 12) માટે == 34 x_or_y{15, 8, 5) માટે == 5
+    
+    """"""
+","    if n == 1:
+        return y
+    for i in range(2, n):
+        if n % i == 0:
+            return y
+            break
+    else:
+        return x
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(7, 34, 12) == 34
+    assert candidate(15, 8, 5) == 5
+    assert candidate(3, 33, 5212) == 33
+    assert candidate(1259, 3, 52) == 3
+    assert candidate(7919, -1, 12) == -1
+    assert candidate(3609, 1245, 583) == 583
+    assert candidate(91, 56, 129) == 129
+    assert candidate(6, 34, 1234) == 1234
+    
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1, 2, 0) == 0
+    assert candidate(2, 2, 0) == 2
+
+"
+"
+def double_the_difference(lst):
+    '''
+    Given a list of numbers, return the sum of squares of the numbers
+    in the list that are odd. Ignore numbers that are negative or not integers.
+    
+    double_the_difference([1, 3, 2, 0]) == 1 + 9 + 0 + 0 = 10
+    double_the_difference([-1, -2, 0]) == 0
+    double_the_difference([9, -2]) == 81
+    double_the_difference([0]) == 0  
+   
+    If the input list is empty, return 0.
+    '''
+","    return sum([i**2 for i in lst if i > 0 and i%2!=0 and ""."" not in str(i)])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([]) == 0 , ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([5, 4]) == 25 , ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate([0.1, 0.2, 0.3]) == 0 , ""This prints if this assert fails 3 (good for debugging!)""
+    assert candidate([-10, -20, -30]) == 0 , ""This prints if this assert fails 4 (good for debugging!)""
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([-1, -2, 8]) == 0, ""This prints if this assert fails 5 (also good for debugging!)""
+    assert candidate([0.2, 3, 5]) == 34, ""This prints if this assert fails 6 (also good for debugging!)""
+    lst = list(range(-99, 100, 2))
+    odd_sum = sum([i**2 for i in lst if i%2!=0 and i > 0])
+    assert candidate(lst) == odd_sum , ""This prints if this assert fails 7 (good for debugging!)""
+
+"
+"
+def compare(game,guess):
+    """"""મને લાગે છે કે આપણે બધા તે લાગણીને યાદ કરીએ છીએ જ્યારે કોઈ લાંબા સમયથી રાહ જોવાતી ઘટનાનું પરિણામ આખરે જાણી શકાય છે. તે ક્ષણે તમારી પાસેની લાગણીઓ અને વિચારો ચોક્કસપણે નોંધવા અને તુલના કરવા યોગ્ય છે. તમારું કાર્ય એ નક્કી કરવાનું છે કે કોઈ વ્યક્તિએ સંખ્યાબંધ મેચના પરિણામોને યોગ્ય રીતે અનુમાન લગાવ્યું છે કે નહીં. તમને સમાન લંબાઈના સ્કોર્સ અને અનુમાનની બે એરે આપવામાં આવે છે, જ્યાં દરેક અનુક્રમણિકા મેચ બતાવે છે. દરેક અનુમાન કેટલું દૂર હતું તે દર્શાવતી સમાન લંબાઈની એરે પરત કરો. જો તેઓએ યોગ્ય રીતે અનુમાન લગાવ્યું હોય, તો મૂલ્ય 0 છે, અને જો નહીં, તો મૂલ્ય અનુમાન અને સ્કોર વચ્ચેનો સંપૂર્ણ તફાવત છે. ઉદાહરણઃ (([1,2,3,4,5,1],[1,2,3,4,2,]) -> [0,0,0,0,0,3,3] compare (([0,5,0,4,
+    """"""
+","    return [abs(x-y) for x,y in zip(game,guess)]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,2,3,4,5,1],[1,2,3,4,2,-2])==[0,0,0,0,3,3], ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([0,0,0,0,0,0],[0,0,0,0,0,0])==[0,0,0,0,0,0], ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1,2,3],[-1,-2,-3])==[2,4,6], ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1,2,3,5],[-1,2,3,4])==[2,0,0,1], ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def Strongest_Extension(class_name, extensions):
+    """"""તમને એક વર્ગનું નામ (એક શબ્દમાળા) અને એક્સ્ટેન્શન્સની યાદી આપવામાં આવશે. એક્સ્ટેન્શન્સનો ઉપયોગ વર્ગમાં વધારાના વર્ગોને લોડ કરવા માટે કરવામાં આવશે. એક્સ્ટેન્શનની મજબૂતાઈ નીચે મુજબ છેઃ CAP એ એક્સ્ટેન્શનના નામમાં મોટા અક્ષરોની સંખ્યા હોય, અને SM એ એક્સ્ટેન્શનના નામમાં નાના અક્ષરોની સંખ્યા હોય, તો મજબૂતાઈ CAP - SM અપૂર્ણાંક દ્વારા આપવામાં આવે છે. તમારે સૌથી મજબૂત એક્સ્ટેન્શન શોધવું જોઈએ અને આ ફોર્મેટમાં એક શબ્દમાળા પરત કરવી જોઈએઃ ClassName.StrongestExtensionName. જો સમાન મજબૂતાઈ સાથે બે અથવા વધુ એક્સ્ટેન્શન્સ હોય, તો તમારે સૂચિમાં પ્રથમ આવે છે તે પસંદ કરવું જોઈએ. ઉદાહરણ તરીકે, જો તમને વર્ગ તરીકે ""સ્લાઇસેસ"" અને એક્સ્ટેન્શન્સની સૂચિ આપવામાં આવે છેઃ ['
+    """"""
+","    strong = extensions[0]
+    my_val = len([x for x in extensions[0] if x.isalpha() and x.isupper()]) - len([x for x in extensions[0] if x.isalpha() and x.islower()])
+    for s in extensions:
+        val = len([x for x in s if x.isalpha() and x.isupper()]) - len([x for x in s if x.isalpha() and x.islower()])
+        if val > my_val:
+            strong = s
+            my_val = val
+
+    ans = class_name + ""."" + strong
+    return ans
+
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('Watashi', ['tEN', 'niNE', 'eIGHt8OKe']) == 'Watashi.eIGHt8OKe'
+    assert candidate('Boku123', ['nani', 'NazeDa', 'YEs.WeCaNe', '32145tggg']) == 'Boku123.YEs.WeCaNe'
+    assert candidate('__YESIMHERE', ['t', 'eMptY', 'nothing', 'zeR00', 'NuLl__', '123NoooneB321']) == '__YESIMHERE.NuLl__'
+    assert candidate('K', ['Ta', 'TAR', 't234An', 'cosSo']) == 'K.TAR'
+    assert candidate('__HAHA', ['Tab', '123', '781345', '-_-']) == '__HAHA.123'
+    assert candidate('YameRore', ['HhAas', 'okIWILL123', 'WorkOut', 'Fails', '-_-']) == 'YameRore.okIWILL123'
+    assert candidate('finNNalLLly', ['Die', 'NowW', 'Wow', 'WoW']) == 'finNNalLLly.WoW'
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('_', ['Bb', '91245']) == '_.Bb'
+    assert candidate('Sp', ['671235', 'Bb']) == 'Sp.671235'
+    
+"
+"
+def cycpattern_check(a , b):
+    """"""તમને 2 શબ્દો આપવામાં આવે છે. તમારે સાચું પરત કરવાની જરૂર છે જો બીજો શબ્દ અથવા તેના કોઈપણ પરિભ્રમણ પ્રથમ શબ્દમાં સબસ્ટ્રિંગ છે cycpattern_check(""abcd"",""abd"") => ખોટો cycpattern_check(""hello"",""ell"") => સાચું cycpattern_check(""whassup"",""psus"") => ખોટો cycpattern_check""abab"",""baa"") => સાચું cycpattern_check(""efef"",""eeff"") => ખોટો cycpattern_check""(hims"",""simen"") => સાચું
+
+    """"""
+","    l = len(b)
+    pat = b + b
+    for i in range(len(a) - l + 1):
+        for j in range(l + 1):
+            if a[i:i+l] == pat[j:j+l]:
+                return True
+    return False
+","def check(candidate):
+
+    # Check some simple cases
+    #assert True, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    #assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert  candidate(""xyzw"",""xyw"") == False , ""test #0""
+    assert  candidate(""yello"",""ell"") == True , ""test #1""
+    assert  candidate(""whattup"",""ptut"") == False , ""test #2""
+    assert  candidate(""efef"",""fee"") == True , ""test #3""
+    assert  candidate(""abab"",""aabb"") == False , ""test #4""
+    assert  candidate(""winemtt"",""tinem"") == True , ""test #5""
+
+"
+"
+def even_odd_count(num):
+    """"""પૂર્ણાંક આપવામાં આવે છે. એક ટુપલ પરત કરે છે જેમાં અનુક્રમે સમાન અને વિચિત્ર અંકોની સંખ્યા હોય છે. ઉદાહરણઃ પણ_અણુ_ગણતરી(-12) ==> (1, 1) પણ_અણુ_ગણતરી(123) ==> (1, 2)
+    """"""
+","    even_count = 0
+    odd_count = 0
+    for i in str(abs(num)):
+        if int(i)%2==0:
+            even_count +=1
+        else:
+            odd_count +=1
+    return (even_count, odd_count)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(7) == (0, 1)
+    assert candidate(-78) == (1, 1)
+    assert candidate(3452) == (2, 2)
+    assert candidate(346211) == (3, 3)
+    assert candidate(-345821) == (3, 3)
+    assert candidate(-2) == (1, 0)
+    assert candidate(-45347) == (2, 3)
+    assert candidate(0) == (1, 0)
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def int_to_mini_roman(number):
+    """"""
+    હકારાત્મક પૂર્ણાંક આપવામાં આવે છે, તેના રોમન આંકડાકીય સમકક્ષને શબ્દમાળા તરીકે મેળવો, અને તેને નાનામાં પરત કરો. પ્રતિબંધોઃ 1 <= num <= 1000 ઉદાહરણોઃ
+    >>> int_to_mini_roman(19) == 'xix'
+    >>> int_to_mini_roman(152) == 'clii'
+    >>> int_to_mini_roman(426) == 'cdxxvi'
+    """"""
+","    num = [1, 4, 5, 9, 10, 40, 50, 90,  
+           100, 400, 500, 900, 1000] 
+    sym = [""I"", ""IV"", ""V"", ""IX"", ""X"", ""XL"",  
+           ""L"", ""XC"", ""C"", ""CD"", ""D"", ""CM"", ""M""] 
+    i = 12
+    res = ''
+    while number: 
+        div = number // num[i] 
+        number %= num[i] 
+        while div: 
+            res += sym[i] 
+            div -= 1
+        i -= 1
+    return res.lower()
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(19) == 'xix'
+    assert candidate(152) == 'clii'
+    assert candidate(251) == 'ccli'
+    assert candidate(426) == 'cdxxvi'
+    assert candidate(500) == 'd'
+    assert candidate(1) == 'i'
+    assert candidate(4) == 'iv'
+    assert candidate(43) == 'xliii'
+    assert candidate(90) == 'xc'
+    assert candidate(94) == 'xciv'
+    assert candidate(532) == 'dxxxii'
+    assert candidate(900) == 'cm'
+    assert candidate(994) == 'cmxciv'
+    assert candidate(1000) == 'm'
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def right_angle_triangle(a, b, c):
+    '''
+    Given the lengths of the three sides of a triangle. Return True if the three
+    sides form a right-angled triangle, False otherwise.
+    A right-angled triangle is a triangle in which one angle is right angle or 
+    90 degree.
+    Example:
+    right_angle_triangle(3, 4, 5) == True
+    right_angle_triangle(1, 2, 3) == False
+    '''
+","    return a*a == b*b + c*c or b*b == a*a + c*c or c*c == a*a + b*b
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(3, 4, 5) == True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(1, 2, 3) == False
+    assert candidate(10, 6, 8) == True
+    assert candidate(2, 2, 2) == False
+    assert candidate(7, 24, 25) == True
+    assert candidate(10, 5, 7) == False
+    assert candidate(5, 12, 13) == True
+    assert candidate(15, 8, 17) == True
+    assert candidate(48, 55, 73) == True
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1, 1, 1) == False, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(2, 2, 10) == False
+
+"
+"
+def find_max(words):
+    """"""એક કાર્ય લખો જે શબ્દમાળાઓની સૂચિ સ્વીકારે છે. સૂચિમાં જુદા જુદા શબ્દો છે. મહત્તમ સંખ્યાના અનન્ય અક્ષરો સાથે શબ્દ પરત કરો. જો બહુવિધ શબ્દમાળાઓમાં મહત્તમ સંખ્યાના અનન્ય અક્ષરો હોય, તો તે એક પરત કરો જે લેક્સિકોગ્રાફિકલ ક્રમમાં પ્રથમ આવે છે. શોધ_મહત્તમ (([""નામ"", ""ની"", ""શબ્દમાળા""]) == ""શબ્દમાળા"" શોધ_મહત્તમ (([""નામ"", ""ઇનામ"", ""રમત""]) == ""ઇનામ"" શોધ_મહત્તમ (([""aaaaaaa"", ""bb"", ""cc""]) == """"aaaaaaa""
+    """"""
+","    return sorted(words, key = lambda x: (-len(set(x)), x))[0]
+","def check(candidate):
+
+    # Check some simple cases
+    assert (candidate([""name"", ""of"", ""string""]) == ""string""), ""t1""
+    assert (candidate([""name"", ""enam"", ""game""]) == ""enam""), 't2'
+    assert (candidate([""aaaaaaa"", ""bb"", ""cc""]) == ""aaaaaaa""), 't3'
+    assert (candidate([""abc"", ""cba""]) == ""abc""), 't4'
+    assert (candidate([""play"", ""this"", ""game"", ""of"",""footbott""]) == ""footbott""), 't5'
+    assert (candidate([""we"", ""are"", ""gonna"", ""rock""]) == ""gonna""), 't6'
+    assert (candidate([""we"", ""are"", ""a"", ""mad"", ""nation""]) == ""nation""), 't7'
+    assert (candidate([""this"", ""is"", ""a"", ""prrk""]) == ""this""), 't8'
+
+    # Check some edge cases that are easy to work out by hand.
+    assert (candidate([""b""]) == ""b""), 't9'
+    assert (candidate([""play"", ""play"", ""play""]) == ""play""), 't10'
+
+"
+"
+def eat(number, need, remaining):
+    """"""
+    તમે ભૂખ્યા સસલું છો, અને તમે પહેલાથી જ ચોક્કસ સંખ્યામાં ગાજર ખાઈ લીધા છે, પરંતુ હવે તમારે દિવસના ભોજનને પૂર્ણ કરવા માટે વધુ ગાજર ખાવાની જરૂર છે. તમારે [ખાધા પછી ખાવામાં આવેલા ગાજરની કુલ સંખ્યા, તમારા ભોજન પછી બાકી રહેલા ગાજરની સંખ્યા ] ની એરે પરત કરવી જોઈએ જો ત્યાં પૂરતા બાકીના ગાજર ન હોય, તો તમે બાકીના બધા ગાજર ખાશો, પરંતુ હજી પણ ભૂખ્યા હશો. ઉદાહરણઃ * ખાવું ((5, 6, 10) -> [11, 4] * ખાવું ((4, 8, 9) -> [12, 1] * ખાવું ((1, 10, 10) -> [11, 0] * ખાવું ((2, 11, 5) -> [7, 0] વેરિયેબલ્સઃ @ સંખ્યાઃ તમે ખાઈ લીધેલા ગાજરની સંખ્યા. @ જરૂર છેઃ તમને ખાવાની જરૂર છે તે ગાજરની સંખ્યા. @ બાકીનાઃ શેરોમાં રહેલા ગાજરની સંખ્યા.
+    """"""
+","    if(need <= remaining):
+        return [ number + need , remaining-need ]
+    else:
+        return [ number + remaining , 0]
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(5, 6, 10) == [11, 4], ""Error""
+    assert candidate(4, 8, 9) == [12, 1], ""Error""
+    assert candidate(1, 10, 10) == [11, 0], ""Error""
+    assert candidate(2, 11, 5) == [7, 0], ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(4, 5, 7) == [9, 2], ""Error""
+    assert candidate(4, 5, 1) == [5, 0], ""Error""
+
+"
+"
+def do_algebra(operator, operand):
+    """"""
+    બે યાદીઓ ઓપરેટર અને ઓપરેન્ડ. પ્રથમ યાદીમાં મૂળભૂત બીજગણિત કામગીરી છે, અને બીજી યાદી પૂર્ણાંકની યાદી છે. બીજગણિત અભિવ્યક્તિ બનાવવા માટે અને આ અભિવ્યક્તિનું મૂલ્યાંકન પરત કરવા માટે બે આપેલ યાદીઓનો ઉપયોગ કરો. મૂળભૂત બીજગણિત કામગીરીઃ ઉમેરો (+) બાદબાકી (-)) ગુણાકાર (*) ફ્લોર ડિવિઝન ( //) એક્સપોનન્ટિએશન ( ** ઉદાહરણ) ઓપરેટર['+', '*', '-'] એરે = [2, 3, 4, 5] પરિણામ = 2 + 3 * 4 - 5 => પરિણામ = 9 નોંધઃ ઓપરેટરની સૂચિની લંબાઈ ઓપરેન્ડની સૂચિની લંબાઈ બરાબર છે. ઓપરેન્ડ બિન-નકારાત્મક પૂર્ણાંકની સૂચિ છે. ઓપરેટરની ઓછામાં ઓછી એક ઓપરેટરની સૂચિ છે, અને ઓપ
+
+    """"""
+","    expression = str(operand[0])
+    for oprt, oprn in zip(operator, operand[1:]):
+        expression+= oprt + str(oprn)
+    return eval(expression)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(['**', '*', '+'], [2, 3, 4, 5]) == 37
+    assert candidate(['+', '*', '-'], [2, 3, 4, 5]) == 9
+    assert candidate(['//', '*'], [7, 3, 4]) == 8, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def solve(s):
+    """"""તમને એક શબ્દમાળા s આપવામાં આવે છે. જો s[i] એક અક્ષર છે, તો તેના કેસને નીચલાથી ઉપરના અથવા વિપરીતથી ઉલટાવી દો, અન્યથા તેને તે જ રાખો. જો શબ્દમાળામાં કોઈ અક્ષરો ન હોય તો, શબ્દમાળાને ઉલટાવી દો. કાર્યને પરિણામી શબ્દમાળા પરત કરવી જોઈએ. ઉદાહરણો solve ((""1234"") = ""4321"" solve ((""ab"") = ""AB"" solve ((""#a@C"") = ""#A@c""
+    """"""
+","    flg = 0
+    idx = 0
+    new_str = list(s)
+    for i in s:
+        if i.isalpha():
+            new_str[idx] = i.swapcase()
+            flg = 1
+        idx += 1
+    s = """"
+    for i in new_str:
+        s += i
+    if flg == 0:
+        return s[len(s)::-1]
+    return s
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""AsDf"") == ""aSdF""
+    assert candidate(""1234"") == ""4321""
+    assert candidate(""ab"") == ""AB""
+    assert candidate(""#a@C"") == ""#A@c""
+    assert candidate(""#AsdfW^45"") == ""#aSDFw^45""
+    assert candidate(""#6@2"") == ""2@6#""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""#$a^D"") == ""#$A^d""
+    assert candidate(""#ccc"") == ""#CCC""
+
+    # Don't remove this line:
+"
+"
+def string_to_md5(text):
+    """"""
+    જો 'text' ખાલી શબ્દમાળા હોય તો, None પરત કરો.
+
+    >>> string_to_md5('Hello world') == '3e25960a79dbc69b674cd4ec67a72c62'
+    """"""
+","    import hashlib
+    return hashlib.md5(text.encode('ascii')).hexdigest() if text else None
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('Hello world') == '3e25960a79dbc69b674cd4ec67a72c62'
+    assert candidate('') == None
+    assert candidate('A B C') == '0ef78513b0cb8cef12743f5aeb35f888'
+    assert candidate('password') == '5f4dcc3b5aa765d61d8327deb882cf99'
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def generate_integers(a, b):
+    """"""
+    બે હકારાત્મક પૂર્ણાંકો a અને b આપવામાં આવે છે, a અને b વચ્ચેના પણ અંકો, વધતા ક્રમમાં પરત કરો. ઉદાહરણ તરીકેઃ generate_integers ((2, 8) => [2, 4, 6, 8] generate_integers ((8, 2) => [2, 4, 6, 8] generate_integers ((10, 14) => []
+    """"""
+","    lower = max(2, min(a, b))
+    upper = min(8, max(a, b))
+
+    return [i for i in range(lower, upper+1) if i % 2 == 0]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(2, 10) == [2, 4, 6, 8], ""Test 1""
+    assert candidate(10, 2) == [2, 4, 6, 8], ""Test 2""
+    assert candidate(132, 2) == [2, 4, 6, 8], ""Test 3""
+    assert candidate(17,89) == [], ""Test 4""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"

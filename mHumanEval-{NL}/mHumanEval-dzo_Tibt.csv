@@ -1,0 +1,4615 @@
+prompt,canonical_solution,test
+"from typing import List
+
+
+def has_close_elements(numbers: List[float], threshold: float) -> bool:
+    """""" ཨང་གྲངས་ཀྱི་ཐོ་ནང་ ཨང་གྲངས་གཉིས་རེ་ བྱིན་ཡོད་པའི་ཚད་ལས་ཉེ་བར་ཡོད་མེད་བལྟ་། དཔེ་འབད་བ་ཅིན་:
+    >>> has_close_elements([1.0, 2.0, 3.0], 0.5)
+    False
+    >>> has_close_elements([1.0, 2.8, 3.0, 4.0, 5.0, 2.0], 0.3)
+    True
+    """"""
+","for idx, elem in enumerate(numbers):
+    for idx2, elem2 in enumerate(numbers):
+        if idx != idx2:
+            distance = abs(elem - elem2)
+            if distance < threshold:
+                return True
+return False
+","def check(candidate):
+    assert candidate([1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.3) == True
+    assert candidate([1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.05) == False
+    assert candidate([1.0, 2.0, 5.9, 4.0, 5.0], 0.95) == True
+    assert candidate([1.0, 2.0, 5.9, 4.0, 5.0], 0.8) == False
+    assert candidate([1.0, 2.0, 3.0, 4.0, 5.0, 2.0], 0.1) == True
+    assert candidate([1.1, 2.2, 3.1, 4.1, 5.1], 1.0) == True
+    assert candidate([1.1, 2.2, 3.1, 4.1, 5.1], 0.5) == False
+
+"
+"from typing import List
+
+
+def separate_paren_groups(paren_string: str) -> List[str]:
+    """""" འ་ནི་ལས་འགན་ནང་ཨེབ་གཏང་འབད་མི་འདི་ ནང་ཐིག་ནང་ཡོད་པའི་ ཀེར་ཐིག་སྡེ་ཚན་ལེ་ཤ་ཡོད་པའི་ ཀེར་ཐིག་ཨིན། ཁྱོད་ཀྱི་དམིགས་ཡུལ་འདི་ སྡེ་ཚན་དེ་སོ་སོར་སྦེ་ ཕྲ་རིང་ནང་དབྱེ་བ་ཕྱེ་ནི་དང་ འདི་ཚུ་གི་ཐོ་དེ་སླར་ལོག་འབདཝ་ཨིན། སྡེ་ཚན་སོ་སོར་ཚུ་ ཚད་ལྡན་བཟོ་སྟེ་ (སྒོ་སྒྲིག་རེ་རེའི་ ཀེར་ཐིག་འདི་ ལེགས་ཤོམ་སྦེ་བསྡམ་ཡོདཔ་) དང་ གཅིག་གིས་གཅིག་ལུ་ ནང་ཐིག་ནང་མ་ཚུད་དེ་ཡོད། ཨེབ་གཏང་ཐིག་ནང་ བར་སྟོང་ཚུ་སྣང་མེད་བཟོ་དགོ། དཔེ་:
+    >>> separate_paren_groups('( ) (( )) (( )( ))')
+    ['()', '(())', '(()())']
+    """"""
+","    result = []
+    current_string = []
+    current_depth = 0
+
+    for c in paren_string:
+        if c == '(':
+            current_depth += 1
+            current_string.append(c)
+        elif c == ')':
+            current_depth -= 1
+            current_string.append(c)
+
+            if current_depth == 0:
+                result.append(''.join(current_string))
+                current_string.clear()
+
+    return result
+","def check(candidate):
+    assert candidate('(()()) ((())) () ((())()())') == [
+        '(()())', '((()))', '()', '((())()())'
+    ]
+    assert candidate('() (()) ((())) (((())))') == [
+        '()', '(())', '((()))', '(((())))'
+    ]
+    assert candidate('(()(())((())))') == [
+        '(()(())((())))'
+    ]
+    assert candidate('( ) (( )) (( )( ))') == ['()', '(())', '(()())']
+"
+"
+
+def truncate_number(number: float) -> float:
+    """""" ཨང་གྲངས་ཀྱི་ཆ་ཤས་འདི་ ཨང་གྲངས་ཀྱི་ཆ་ཤས་འདི་ཨང་གྲངས་ཀྱི་ཆ་ཤས་འདི་ཨང་གྲངས་ཀྱི་ཆ་ཤས་འདི་ཨང་གྲངས་ཀྱི་ཆ་ཤས་འདི་ཨང་གྲངས་ཀྱི་ཆ་ཤས་འདི་ཨང་གྲངས་ཀྱི་ཆ་ཤས་འདི་ཨང་གྲངས་ཀྱི་ཆ་ཤས་འདི་ཨང་གྲངས་ཀྱི་ཆ་ཤས་འདི་ཨང་གྲངས་ཀྱི་ཆ་ཤས་འདི་ཨང་གྲངས་ཀྱི་ཆ་ཤས་འདི་ཨང་གྲངས་ཀྱི་ཆ་ཤས་འདི་ཨང་གྲངས་ཀྱི་ཆ་ཤས་འདི་ཨང་གྲངས་ཀྱི་ཆ་ཤས་འདི་ཨང་གྲངས་ཀྱི་ཆ་ཤས་འདི་ཨང་གྲངས་ཀྱི་ཆ་ཤས་འདི་ཨང་གྲངས་ཀྱི་ཆ་ཤས་འདི་ཨང་གྲངས་ཀྱི་ཆ་ཤས་འདི་ཨང་གྲངས་ཀྱི་ཆ་ཤས་འདི་ཨང་གྲངས་ཀྱི་ཆ་ཤས་འདི་ཨང་གྲངས་ཀྱི་ཆ་ཤས་འདི་ཨང་གྲངས་ཀྱི་ཆ་ཤས་འདི་ཨང་གྲངས་འདི་ཨང་གྲངས་འདི་ཨང་གྲངས་འདི་ཨང་གྲངས་འདི་ཨང་གྲངས་འདི་ཨང་གྲངས་འདི་ཨང་གྲངས་འདི་ཨང་གྲངས་འདི་ཨང་གྲངས་འདི་ཨང་གྲངས་འདི་ཨང་གྲངས་འདི་ཨ
+    >>> truncate_number(3.5)
+    0.5
+    """"""
+","    return number % 1.0
+","def check(candidate):
+    assert candidate(3.5) == 0.5
+    assert abs(candidate(1.33) - 0.33) < 1e-6
+    assert abs(candidate(123.456) - 0.456) < 1e-6
+"
+"from typing import List
+
+
+def below_zero(operations: List[int]) -> bool:
+    """""" ཁྱོད་ཀྱིས་ དངུལ་ཁང་གི་རྩིས་ཁྲ་ནང་ དངུལ་བཙུགས་དང་བཏོན་པའི་ལཱ་གི་ཐོ་འདི་ འབོར་ཆ་ ༠ ལས་འགོ་བཙུགསཔ་ཨིན། ཁྱོད་ཀྱི་ལཱ་འདི་ གནས་སྟངས་གང་རུང་ཅིག་ནང་ དངུལ་རྩིས་རྩིས་ཁྲ་གི་གནས་གོང་ ༠ ལས་མར་བབས་སོང་པ་ཅིན་འཚོལ་ཞིབ་འབད་ནི་དང་ གནས་སྟངས་དེ་ནང་ལུ་ ལས་འགན་གིས་ བདེན་ཚིག་སྦེ་ལོག་འོང་དགོཔ་ཨིན། དེ་མེན་པ་ཅིན་ རྫུན་ཚིག་སྦེ་ལོག་འོང་དགོཔ་ཨིན། དཔེ་འབད་བ་ཅིན་:
+    >>> below_zero([1, 2, 3])
+    False
+    >>> below_zero([1, 2, -4, 5])
+    True
+    """"""
+","    balance = 0
+
+    for op in operations:
+        balance += op
+        if balance < 0:
+            return True
+
+    return False
+","def check(candidate):
+    assert candidate([]) == False
+    assert candidate([1, 2, -3, 1, 2, -3]) == False
+    assert candidate([1, 2, -4, 5, 6]) == True
+    assert candidate([1, -1, 2, -2, 5, -5, 4, -4]) == False
+    assert candidate([1, -1, 2, -2, 5, -5, 4, -5]) == True
+    assert candidate([1, -2, 2, -2, 5, -5, 4, -4]) == True
+"
+"from typing import List
+
+
+def mean_absolute_deviation(numbers: List[float]) -> float:
+    """""" ནང་བསྐྱོད་ཨང་གྲངས་ཀྱི་ཐོ་ཡིག་ཅིག་གི་དོན་ལུ་ གནས་སྡུད་དེ་གི་བར་མཚམས་ལུ་བར་མཚམས་ཆ་མཉམ་ཤོམ་རྩིས་རྐྱབས། བར་མཚམས་ཆ་མཉམ་ཤོམ་འདི་ དབྱེ་བ་ཆ་མཉམ་དང་ལྟེ་བ་ (གནས་སྡུད་དེ་གི་བར་མཚམས་) གི་བར་མཚམས་ཆ་མཉམ་ཤོམ་ཨིན། MAD = average ཨིན། x - x_mean དཔེ་གཞི་:
+    >>> mean_absolute_deviation([1.0, 2.0, 3.0, 4.0])
+    1.0
+    """"""
+","    mean = sum(numbers) / len(numbers)
+    return sum(abs(x - mean) for x in numbers) / len(numbers)
+","def check(candidate):
+    assert abs(candidate([1.0, 2.0, 3.0]) - 2.0/3.0) < 1e-6
+    assert abs(candidate([1.0, 2.0, 3.0, 4.0]) - 1.0) < 1e-6
+    assert abs(candidate([1.0, 2.0, 3.0, 4.0, 5.0]) - 6.0/5.0) < 1e-6
+
+"
+"from typing import List
+
+
+def intersperse(numbers: List[int], delimeter: int) -> List[int]:
+    """""" ནང་བསྐྱོད་ཐོ་ཡིག་ནང་ཐིག་གཉིས་སྦེ་ཡོད་མི་ཆ་ཤས་ཚུ་གི་བར་ན་ ཨང་གྲངས་ ""delimiter"" ཅིག་བཙུགས་དགོ།
+    >>> intersperse([], 4)
+    []
+    >>> intersperse([1, 2, 3], 4)
+    [1, 4, 2, 4, 3]
+    """"""
+","    if not numbers:
+        return []
+
+    result = []
+
+    for n in numbers[:-1]:
+        result.append(n)
+        result.append(delimeter)
+
+    result.append(numbers[-1])
+
+    return result
+","def check(candidate):
+    assert candidate([], 7) == []
+    assert candidate([5, 6, 3, 2], 8) == [5, 8, 6, 8, 3, 8, 2]
+    assert candidate([2, 2, 2], 2) == [2, 2, 2, 2, 2]
+"
+"from typing import List
+
+
+def parse_nested_parens(paren_string: str) -> List[int]:
+    """""" འ་ནི་ལས་འགན་འདི་ནང་ ནང་ཐིག་འདི་ སྦྲེལ་ཡོད་པའི་སྒོ་སྒྲིག་ཚུ་གི་དོན་ལུ་ སྡེ་ཚན་ལེ་ཤ་ཅིག་གིས་ ངོ་ཚབ་འབད་ཡོད་པའི་ཐིག་ཁྲམ་ཨིན། སྡེ་ཚན་རེ་རེ་བཞིན་དུ་གི་དོན་ལུ་ ནང་ཐིག་གི་ཧིང་གི་གནས་ཚད་འདི་ ཕྱི་ཁར་བཏོན་དགོ། དཔེར་ན་ (() (()) ནང་ཧིང་གི་གནས་ཚད་གཉིས་ཡོདཔ་དང་ ((())) ནང་གསུམ་ཡོདཔ་ཨིན།
+
+    >>> parse_nested_parens('(()()) ((())) () ((())()())')
+    [2, 3, 1, 3]
+    """"""
+","    def parse_paren_group(s):
+        depth = 0
+        max_depth = 0
+        for c in s:
+            if c == '(':
+                depth += 1
+                max_depth = max(depth, max_depth)
+            else:
+                depth -= 1
+
+        return max_depth
+
+    return [parse_paren_group(x) for x in paren_string.split(' ') if x]
+","def check(candidate):
+    assert candidate('(()()) ((())) () ((())()())') == [2, 3, 1, 3]
+    assert candidate('() (()) ((())) (((())))') == [1, 2, 3, 4]
+    assert candidate('(()(())((())))') == [4]
+"
+"from typing import List
+
+
+def filter_by_substring(strings: List[str], substring: str) -> List[str]:
+    """""" ནང་ཐིག་གི་ཐོ་ཡིག་ནང་ ཚིག་ཡིག་ཚུའི་ཐོ་ཡིག་ནང་ ཚིག་ཡིག་ཚུའི་ཐོ་ཡིག་ཚུའི་ཐོ་ཡིག་ཚུའི་ནང་ ཚིག་ཡིག་ཚུའི་ཐོ་ཡིག་ཚུའི་ནང་ ཚིག་ཡིག་ཚུའི་ནང་ ཚིག་ཡིག་ཚུའི་ནང་ ཚིག་ཡིག་ཚུའི་ནང་ ཚིག་ཡིག་ཚུའི་ནང་ ཚིག་ཡིག་ཚུའི་ནང་ ཚིག་ཡིག་ཚུའི་ནང་ ཚིག་ཡིག་ཚུའི་ནང་ ཚིག་ཡིག་ཚུའི་ནང་ ཚིག་ཡིག་ཚུའི་ནང་ ཚིག་ཡིག་ཚུའི་ནང་ ཚིག་ཡིག་ཚུའི་ནང་ ཚིག་ཡིག་ཚུའི་ནང་ ཚིག་ཡིག་ཚུའི་ནང་
+    >>> filter_by_substring([], 'a')
+    []
+    >>> filter_by_substring(['abc', 'bacd', 'cde', 'array'], 'a')
+    ['abc', 'bacd', 'array']
+    """"""
+","    return [x for x in strings if substring in x]
+","def check(candidate):
+    assert candidate([], 'john') == []
+    assert candidate(['xxx', 'asd', 'xxy', 'john doe', 'xxxAAA', 'xxx'], 'xxx') == ['xxx', 'xxxAAA', 'xxx']
+    assert candidate(['xxx', 'asd', 'aaaxxy', 'john doe', 'xxxAAA', 'xxx'], 'xx') == ['xxx', 'aaaxxy', 'xxxAAA', 'xxx']
+    assert candidate(['grunt', 'trumpet', 'prune', 'gruesome'], 'run') == ['grunt', 'prune']
+"
+"from typing import List, Tuple
+
+
+def sum_product(numbers: List[int]) -> Tuple[int, int]:
+    """""" ཨང་གྲངས་ཧྲིལ་བུའི་ཐོ་ཡིག་ཅིག་གི་དོན་ལུ་ ཨང་གྲངས་ཧྲིལ་བུའི་ཐོ་ཡིག་ནང་ལུ་ ཨང་གྲངས་ཧྲིལ་བུའི་བསྡོམས་དང་ དབྱེ་གཞི་ཚུ་ཡོད་མི་འདི་སླར་ལོག་འབདཝ་ཨིན། ཨང་གྲངས་ཧྲིལ་བུའི་བསྡོམས་དེ་ ༠ དང་ དབྱེ་གཞི་ཧྲིལ་བུའི་བསྡོམས་དེ་ ༡ སྦེ་ཆ་མཉམ་དགོ།
+    >>> sum_product([])
+    (0, 1)
+    >>> sum_product([1, 2, 3, 4])
+    (10, 24)
+    """"""
+","    sum_value = 0
+    prod_value = 1
+
+    for n in numbers:
+        sum_value += n
+        prod_value *= n
+    return sum_value, prod_value
+","def check(candidate):
+    assert candidate([]) == (0, 1)
+    assert candidate([1, 1, 1]) == (3, 1)
+    assert candidate([100, 0]) == (100, 0)
+    assert candidate([3, 5, 7]) == (3 + 5 + 7, 3 * 5 * 7)
+    assert candidate([10]) == (10, 10)
+"
+"from typing import List, Tuple
+
+
+def rolling_max(numbers: List[int]) -> List[int]:
+    """""" ཨང་གྲངས་ཧྲིལ་བུའི་ཐོ་ཡིག་ཅིག་ལས་ ཚུད་རིམ་ནང་ ཚུད་རིམ་གྱི་དུས་སྐབས་ཅིག་ཚུན་ཚོད་ མཐོང་ཡོད་པའི་ ཨང་གྲངས་ཧྲིལ་བུའི་ཐོ་ཡིག་ཅིག་ བཟོ་དགོ།
+    >>> rolling_max([1, 2, 3, 2, 3, 4, 2])
+    [1, 2, 3, 3, 3, 4, 4]
+    """"""
+","    running_max = None
+    result = []
+
+    for n in numbers:
+        if running_max is None:
+            running_max = n
+        else:
+            running_max = max(running_max, n)
+
+        result.append(running_max)
+
+    return result
+","def check(candidate):
+    assert candidate([]) == []
+    assert candidate([1, 2, 3, 4]) == [1, 2, 3, 4]
+    assert candidate([4, 3, 2, 1]) == [4, 4, 4, 4]
+    assert candidate([3, 2, 3, 100, 3]) == [3, 3, 3, 100, 100]
+"
+"
+
+def is_palindrome(string: str) -> bool:
+    """""" string འདི་ palindrome ཨིན་ན་བརྟག་དཔྱད་འབད་ """"""
+    return string == string[::-1]
+
+
+def make_palindrome(string: str) -> str:
+    """""" Find the shortest palindrome that begins with a supplied string.
+    Algorithm idea is simple:
+    - Find the longest postfix of supplied string that is a palindrome.
+    - Append to the end of the string reverse of a string prefix that comes before the palindromic suffix.
+    >>> make_palindrome('')
+    ''
+    >>> make_palindrome('cat')
+    'catac'
+    >>> make_palindrome('cata')
+    'catac'
+    """"""
+","    if not string:
+        return ''
+
+    beginning_of_suffix = 0
+
+    while not is_palindrome(string[beginning_of_suffix:]):
+        beginning_of_suffix += 1
+
+    return string + string[:beginning_of_suffix][::-1]
+","def check(candidate):
+    assert candidate('') == ''
+    assert candidate('x') == 'x'
+    assert candidate('xyz') == 'xyzyx'
+    assert candidate('xyx') == 'xyx'
+    assert candidate('jerry') == 'jerryrrej'
+"
+"from typing import List
+
+
+def string_xor(a: str, b: str) -> str:
+    """""" ནང་བསྐྱོད་འདི་ string a དང་ b གཉིས་ཨིན་ འདི་ནང་ 1 དང་ 0 ཚུ་རྐྱངམ་ཅིག་ཡོདཔ་ཨིན། འ་ནི་ནང་བསྐྱོད་ནང་ binary XOR འདི་འབད་ཞིནམ་ལས་ གྲུབ་འབྲས་འདི་ string སྦེ་ལོག་གཏང་འོང་།
+    >>> string_xor('010', '110')
+    '100'
+    """"""
+","    def xor(i, j):
+        if i == j:
+            return '0'
+        else:
+            return '1'
+
+    return ''.join(xor(x, y) for x, y in zip(a, b))
+","def check(candidate):
+    assert candidate('111000', '101010') == '010010'
+    assert candidate('1', '1') == '0'
+    assert candidate('0101', '0000') == '0101'
+"
+"from typing import List, Optional
+
+
+def longest(strings: List[str]) -> Optional[str]:
+    """""" string གི་ཐོ་ཡིག་ནང་ལས་ ཚེ་རིང་ཤོས་དེ་སླར་ལོག་འབདཝ་ཨིན། ཚེ་རིང་འདྲ་མཉམ་ལེ་ཤ་ཡོད་པ་ཅིན་ དང་པ་དེ་སླར་ལོག་འབདཝ་ཨིན། ནང་བསྐྱོད་ཐོ་ཡིག་སྟོངམ་ཡོད་པ་ཅིན་ རྩ་མེད་དེ་སླར་ལོག་འབདཝ་ཨིན།
+    >>> longest([])
+
+    >>> longest(['a', 'b', 'c'])
+    'a'
+    >>> longest(['a', 'bb', 'ccc'])
+    'ccc'
+    """"""
+","    if not strings:
+        return None
+
+    maxlen = max(len(x) for x in strings)
+    for s in strings:
+        if len(s) == maxlen:
+            return s
+","def check(candidate):
+    assert candidate([]) == None
+    assert candidate(['x', 'y', 'z']) == 'x'
+    assert candidate(['x', 'yyy', 'zzzz', 'www', 'kkkk', 'abc']) == 'zzzz'
+"
+"
+
+def greatest_common_divisor(a: int, b: int) -> int:
+    """""" ཨང་གྲངས་ཧྲིལ་པོ་ a དང་ b གཉིས་ཀྱི་སྤྱིར་བཏང་ཆ་བགོས་སྦོམ་ཤོས་ཅིག་སླར་ལོག་འབདཝ་ཨིན།
+    >>> greatest_common_divisor(3, 5)
+    1
+    >>> greatest_common_divisor(25, 15)
+    5
+    """"""
+","    while b:
+        a, b = b, a % b
+    return a
+","def check(candidate):
+    assert candidate(3, 7) == 1
+    assert candidate(10, 15) == 5
+    assert candidate(49, 14) == 7
+    assert candidate(144, 60) == 12
+"
+"from typing import List
+
+
+def all_prefixes(string: str) -> List[str]:
+    """""" ནང་བསྐྱོད་ཐིག་གི་ཕྲ་རིང་ལས་ ཕྲ་རིང་ཚུན་གྱི་སྔོན་འཇུག་ག་ར་སླར་ལོག་འབདཝ་ཨིན།
+    >>> all_prefixes('abc')
+    ['a', 'ab', 'abc']
+    """"""
+","    result = []
+
+    for i in range(len(string)):
+        result.append(string[:i+1])
+    return result
+","def check(candidate):
+    assert candidate('') == []
+    assert candidate('asdfgh') == ['a', 'as', 'asd', 'asdf', 'asdfg', 'asdfgh']
+    assert candidate('WWW') == ['W', 'WW', 'WWW']
+"
+"
+
+def string_sequence(n: int) -> str:
+    """""" ༠ ལས་འགོ་བཙུགས་ཏེ་ n ཚུན་གྱི་བར་ནའི་བར་སྟོང་ནང་ལུ་ དབྱེ་ཞིབ་འབད་མི་ཨང་གྲངས་ཚུ་ཡོད་པའི་ཐིག་ཁྲམ་ཅིག་སླར་ལོག་འབདཝ་ཨིན།
+    >>> string_sequence(0)
+    '0'
+    >>> string_sequence(5)
+    '0 1 2 3 4 5'
+    """"""
+","    return ' '.join([str(x) for x in range(n + 1)])
+","def check(candidate):
+    assert candidate(0) == '0'
+    assert candidate(3) == '0 1 2 3'
+    assert candidate(10) == '0 1 2 3 4 5 6 7 8 9 10'
+"
+"
+
+def count_distinct_characters(string: str) -> int:
+    """""" string ཅིག་བྱིན་པ་ཅིན་ (ཡིག་གཟུགས་སྦོམ་ཆུང་ག་ཏེ་ཡོད་རུང་) འདི་ནང་ལུ་ཡིག་འབྲུ་ག་དེ་ཅིག་ཡོདཔ་ཨིན་ན་འཚོལ་ཚུགས།
+    >>> count_distinct_characters('xyzXYZ')
+    3
+    >>> count_distinct_characters('Jerry')
+    4
+    """"""
+","    return len(set(string.lower()))
+","def check(candidate):
+    assert candidate('') == 0
+    assert candidate('abcde') == 5
+    assert candidate('abcde' + 'cade' + 'CADE') == 5
+    assert candidate('aaaaAAAAaaaa') == 1
+    assert candidate('Jerry jERRY JeRRRY') == 5
+"
+"from typing import List
+
+
+def parse_music(music_string: str) -> List[int]:
+    """""" འ་ནི་ལས་འགན་འདི་ནང་ལུ་ ཚིག་ཡིག་འདི་ ASCII ཚད་གཞི་ནང་ལུ་ཡོད་པའི་ ཚིག་ཡིག་ཡིག་སྦེ་བཙུགས་ཡོདཔ་ཨིན། ཁྱོད་ཀྱི་ལཱ་འདི་ ཚིག་ཡིག་འདི་ བཀྲམ་སྟོན་འབད་ཞིནམ་ལས་ ཚིག་ཡིག་འདི་ག་དེ་ཅིག་ལུ་ བཀྲམ་སྟོན་འབད་ཡོདཔ་ཨིན་ན་དང་ ཚིག་ཡིག་འདི་ག་དེ་ཅིག་ལུ་ བཀྲམ་སྟོན་འབད་ཡོདཔ་ཨིན་ན་ཚུ་སླར་ལོག་འབདཝ་ཨིན། འདི་ནང་ལུ་ མིང་ཚིག་ཅིག་ཡང་ཡོདཔ་ཨིན། 'o' - ཚིག་ཡིག་ཆ་མཉམ་ལུ་ བཀྲམ་སྟོན་འབད་ཡོདཔ་ཨིན་ འདི་ཡང་ ཚིག་ཡིག་བཞི་ལུ་ བཀྲམ་སྟོན་འབད་ཡོདཔ་ཨིན་ 'o"" - ཚིག་ཡིག་ཕྱེད་ཀ་ལུ་ བཀྲམ་སྟོན་འབད་ཡོདཔ་ཨིན་ ཚིག་ཡིག་ཆ་མཉམ་ལུ་ བཀྲམ་སྟོན་འབད་ཡོདཔ་ཨིན་ ཚིག་ཡིག་ཆ་བཞི་ལུ་ བཀྲམ་སྟོན་འབད་ཡོདཔ་ཨིན་ ཚིག་ཡིག་ཆ་མཉམ་ལུ་ བཀྲམ་སྟོན་འབད་ཡོདཔ་ཨིན་
+
+    >>> parse_music('o o| .| o| o| .| .| .| .| o o')
+    [4, 2, 1, 2, 2, 1, 1, 1, 1, 4, 4]
+    """"""
+","    note_map = {'o': 4, 'o|': 2, '.|': 1}
+    return [note_map[x] for x in music_string.split(' ') if x]
+","def check(candidate):
+    assert candidate('') == []
+    assert candidate('o o o o') == [4, 4, 4, 4]
+    assert candidate('.| .| .| .|') == [1, 1, 1, 1]
+    assert candidate('o| o| .| .| o o o o') == [2, 2, 1, 1, 4, 4, 4, 4]
+    assert candidate('o| .| o| .| o o| o o|') == [2, 1, 2, 1, 4, 2, 4, 2]
+"
+"
+
+def how_many_times(string: str, substring: str) -> int:
+    """""" གཞི་རྟེན་ཐིག་ཁྲམ་ནང་ལུ་ ཚར་ག་དེ་ཅིག་རང་ ཚར་གྲངས་ཀྱི་ཐིག་ཁྲམ་འདི་ཐོབ་ཚུགས་ག་འཚོལ་ཏེ་བལྟ་། ཐིག་ཁྲམ་འདི་གུ་ཐིམ་པའི་གནད་དོན་ཚུ་རྩིས་སྟོནམ་ཨིན།
+    >>> how_many_times('', 'a')
+    0
+    >>> how_many_times('aaa', 'a')
+    3
+    >>> how_many_times('aaaa', 'aa')
+    3
+    """"""
+","    times = 0
+
+    for i in range(len(string) - len(substring) + 1):
+        if string[i:i+len(substring)] == substring:
+            times += 1
+
+    return times
+","def check(candidate):
+    assert candidate('', 'x') == 0
+    assert candidate('xyxyxyx', 'x') == 4
+    assert candidate('cacacacac', 'cac') == 4
+    assert candidate('john doe', 'john') == 1
+"
+"from typing import List
+
+
+def sort_numbers(numbers: str) -> str:
+    """""" ནང་བསྐྱོད་འདི་ ས་སྒོ་ནང་ཐིག་ཡིག་ཡོད་པའི་ string འདི་'༠' ལས་'༩' ཚུན་ཨིན། གདམ་ཁ་ཚུ་'༠'༡'༢'༣'༤'༥'༦'༧'༨'༩'ཚུ་ཨིན། string འདི་ཆུང་ཤོས་ལས་སྦོམ་ཤོས་ཚུན་རིམ་སྒྲིག་འབད་ཡོད་པའི་ཨང་གྲངས་ཚུ་སླར་ལོག་འབདཝ་ཨིན།
+    >>> sort_numbers('three one five')
+    'one three five'
+    """"""
+","    value_map = {
+        'zero': 0,
+        'one': 1,
+        'two': 2,
+        'three': 3,
+        'four': 4,
+        'five': 5,
+        'six': 6,
+        'seven': 7,
+        'eight': 8,
+        'nine': 9
+    }
+    return ' '.join(sorted([x for x in numbers.split(' ') if x], key=lambda x: value_map[x]))
+","def check(candidate):
+    assert candidate('') == ''
+    assert candidate('three') == 'three'
+    assert candidate('three five nine') == 'three five nine'
+    assert candidate('five zero four seven nine eight') == 'zero four five seven eight nine'
+    assert candidate('six five four three two one zero') == 'zero one two three four five six'
+"
+"from typing import List, Tuple
+
+
+def find_closest_elements(numbers: List[float]) -> Tuple[float, float]:
+    """""" ཨང་གྲངས་ཀྱི་ཐོ་ཡིག་ཅིག་ལས་ (ཉུང་ཤོས་ཨང་གྲངས་གཉིས་) གཅིག་དང་གཅིག་དང་ཉེ་བའི་ཨང་གྲངས་གཉིས་གདམ་ཁ་རྐྱབ་སྟེ་ལོག་གཏང་ནི་དང་ ཨང་གྲངས་ཚུ་རིམ་པ་བཞིན་དུ་ལོག་གཏང་ (ཨང་གྲངས་ཆུང་ཤོས་དང་ ཨང་གྲངས་སྦོམ་ཤོས་) །
+    >>> find_closest_elements([1.0, 2.0, 3.0, 4.0, 5.0, 2.2])
+    (2.0, 2.2)
+    >>> find_closest_elements([1.0, 2.0, 3.0, 4.0, 5.0, 2.0])
+    (2.0, 2.0)
+    """"""
+","    closest_pair = None
+    distance = None
+
+    for idx, elem in enumerate(numbers):
+        for idx2, elem2 in enumerate(numbers):
+            if idx != idx2:
+                if distance is None:
+                    distance = abs(elem - elem2)
+                    closest_pair = tuple(sorted([elem, elem2]))
+                else:
+                    new_distance = abs(elem - elem2)
+                    if new_distance < distance:
+                        distance = new_distance
+                        closest_pair = tuple(sorted([elem, elem2]))
+
+    return closest_pair
+","def check(candidate):
+    assert candidate([1.0, 2.0, 3.9, 4.0, 5.0, 2.2]) == (3.9, 4.0)
+    assert candidate([1.0, 2.0, 5.9, 4.0, 5.0]) == (5.0, 5.9)
+    assert candidate([1.0, 2.0, 3.0, 4.0, 5.0, 2.2]) == (2.0, 2.2)
+    assert candidate([1.0, 2.0, 3.0, 4.0, 5.0, 2.0]) == (2.0, 2.0)
+    assert candidate([1.1, 2.2, 3.1, 4.1, 5.1]) == (2.2, 3.1)
+
+"
+"from typing import List
+
+
+def rescale_to_unit(numbers: List[float]) -> List[float]:
+    """""" ཨང་གྲངས་ཀྱི་ཐོ་འདི་ (ཉུང་ཤོས་རང་ ཨང་གཉིས་ལས་) བྱིན་པ་ཅིན་ ཨང་གྲངས་ཆུང་ཤོས་འདི་ ༠ དང་སྦོམ་ཤོས་འདི་ ༡ སྦེ་འགྱུར་བའི་ཐབས་ལུ་ ཐིག་ཁྲམ་འགྱུར་བཅོས་འདི་ ལག་ལེན་འཐབ་དགོ།
+    >>> rescale_to_unit([1.0, 2.0, 3.0, 4.0, 5.0])
+    [0.0, 0.25, 0.5, 0.75, 1.0]
+    """"""
+","    min_number = min(numbers)
+    max_number = max(numbers)
+    return [(x - min_number) / (max_number - min_number) for x in numbers]
+","def check(candidate):
+    assert candidate([2.0, 49.9]) == [0.0, 1.0]
+    assert candidate([100.0, 49.9]) == [1.0, 0.0]
+    assert candidate([1.0, 2.0, 3.0, 4.0, 5.0]) == [0.0, 0.25, 0.5, 0.75, 1.0]
+    assert candidate([2.0, 1.0, 5.0, 3.0, 4.0]) == [0.25, 0.0, 1.0, 0.5, 0.75]
+    assert candidate([12.0, 11.0, 15.0, 13.0, 14.0]) == [0.25, 0.0, 1.0, 0.5, 0.75]
+"
+"from typing import List, Any
+
+
+def filter_integers(values: List[Any]) -> List[int]:
+    """""" ཨང་གྲངས་ཧྲིལ་བུམ་གྱི་དོན་ལུ་རྐྱངམ་གཅིག་ Python གནས་གོང་ཚུ་བཙུགསཔ་ཨིན།
+    >>> filter_integers(['a', 3.14, 5])
+    [5]
+    >>> filter_integers([1, 2, 3, 'abc', {}, []])
+    [1, 2, 3]
+    """"""
+","    return [x for x in values if isinstance(x, int)]
+","def check(candidate):
+    assert candidate([]) == []
+    assert candidate([4, {}, [], 23.2, 9, 'adasd']) == [4, 9]
+    assert candidate([3, 'c', 3, 3, 'a', 'b']) == [3, 3, 3]
+"
+"
+
+def strlen(string: str) -> int:
+    """""" string གི་རིང་ཚད་སླར་ལོག་འབདཝ་ཨིན།
+    >>> strlen('')
+    0
+    >>> strlen('abc')
+    3
+    """"""
+","    return len(string)
+","def check(candidate):
+    assert candidate('') == 0
+    assert candidate('x') == 1
+    assert candidate('asdasnakj') == 9
+"
+"
+
+def largest_divisor(n: int) -> int:
+    """""" ཨང་གྲངས་ n ཅིག་ལུ་ ཨང་གྲངས་སྦོམ་ཤོས་ཅིག་ n ལས་ཆུང་བ་ཅིག་སྦེ་ དབྱེ་བ་ཕྱེ་མི་ཨང་གྲངས་སྦོམ་ཤོས་ཅིག་འཚོལ་དགོ།
+    >>> largest_divisor(15)
+    5
+    """"""
+","    for i in reversed(range(n)):
+        if n % i == 0:
+            return i
+","def check(candidate):
+    assert candidate(3) == 1
+    assert candidate(7) == 1
+    assert candidate(10) == 5
+    assert candidate(100) == 50
+    assert candidate(49) == 7
+"
+"from typing import List
+
+
+def factorize(n: int) -> List[int]:
+    """""" ཨང་གྲངས་མཐའ་དག་གི་གཞི་གྲངས་ཚུ་ ཆུང་ཤོས་ལས་སྦོམ་ཤོས་ལུ་རིམ་པ་བཞིན་དུ་ སླར་ལོག་འབདཝ་ཨིན། ཆ་ཤས་རེ་རེ་ལུ་ ཨང་གྲངས་རྩིས་སྟོན་ནང་ ཚར་ག་དེ་ཅིག་འཐོན་དོ་ག་དང་བསྟུན་པའི་གྱངས་ཁ་བཀོད་དེ་ཡོད་དགོ ཨང་གྲངས་རྩིས་སྟོན་འདི་ ཆ་ཤས་ཆ་ཤས་ཆ་ཤས་ཆ་ཤས་ག་ར་གི་གྱངས་ཁ་དང་འདྲན་འདྲ་དགོཔ་ཨིན།
+    >>> factorize(8)
+    [2, 2, 2]
+    >>> factorize(25)
+    [5, 5]
+    >>> factorize(70)
+    [2, 5, 7]
+    """"""
+","    import math
+    fact = []
+    i = 2
+    while i <= int(math.sqrt(n) + 1):
+        if n % i == 0:
+            fact.append(i)
+            n //= i
+        else:
+            i += 1
+
+    if n > 1:
+        fact.append(n)
+    return fact
+","def check(candidate):
+    assert candidate(2) == [2]
+    assert candidate(4) == [2, 2]
+    assert candidate(8) == [2, 2, 2]
+    assert candidate(3 * 19) == [3, 19]
+    assert candidate(3 * 19 * 3 * 19) == [3, 3, 19, 19]
+    assert candidate(3 * 19 * 3 * 19 * 3 * 19) == [3, 3, 3, 19, 19, 19]
+    assert candidate(3 * 19 * 19 * 19) == [3, 19, 19, 19]
+    assert candidate(3 * 2 * 3) == [2, 3, 3]
+"
+"from typing import List
+
+
+def remove_duplicates(numbers: List[int]) -> List[int]:
+    """""" ཨང་གྲངས་ཧྲིལ་བུམ་གྱི་ཐོ་ཡིག་ནང་ལས་ ཚར་གཅིག་ལས་ལྷག་པའི་ནང་ཡོད་པའི་ཆ་ཤས་ཚུ་བཏོན་གཏང་། ནང་བསྐྱོད་ནང་བཟུམ་སྦེ་ཆ་ཤས་ཚུ་རིམ་པ་གཅིག་སྦེ་བཞག་དགོ།
+    >>> remove_duplicates([1, 2, 3, 2, 4])
+    [1, 3, 4]
+    """"""
+","    import collections
+    c = collections.Counter(numbers)
+    return [n for n in numbers if c[n] <= 1]
+","def check(candidate):
+    assert candidate([]) == []
+    assert candidate([1, 2, 3, 4]) == [1, 2, 3, 4]
+    assert candidate([1, 2, 3, 2, 4, 3, 5]) == [1, 4, 5]
+"
+"
+
+def flip_case(string: str) -> str:
+    """""" གྲལ་ཐིག་ཅིག་ལུ་ཡིག་འབྲུ་ཆུང་བ་འདི་ ཆེ་ཆུང་ལུ་དང་ ཆེ་ཆུང་འདི་ ཆུང་བ་ལུ་བསྒྱུར་གཏང་།
+    >>> flip_case('Hello')
+    'hELLO'
+    """"""
+","    return string.swapcase()
+","def check(candidate):
+    assert candidate('') == ''
+    assert candidate('Hello!') == 'hELLO!'
+    assert candidate('These violent delights have violent ends') == 'tHESE VIOLENT DELIGHTS HAVE VIOLENT ENDS'
+"
+"from typing import List
+
+
+def concatenate(strings: List[str]) -> str:
+    """""" string གི་ཐོ་ཡིག་ཅིག་ string གཅིག་ནང་བཙུག་
+    >>> concatenate([])
+    ''
+    >>> concatenate(['a', 'b', 'c'])
+    'abc'
+    """"""
+","    return ''.join(strings)
+","def check(candidate):
+    assert candidate([]) == ''
+    assert candidate(['x', 'y', 'z']) == 'xyz'
+    assert candidate(['x', 'y', 'z', 'w', 'k']) == 'xyzwk'
+"
+"from typing import List
+
+
+def filter_by_prefix(strings: List[str], prefix: str) -> List[str]:
+    """""" ནང་བསྐྱོད་ཐོ་ཡིག་ནང་ལུ་ string འདི་ཚུ་ prefix ཅིག་ལས་འགོ་བཙུགས་ཏེ་ཡོད་མི་ཚུ་རྐྱངམ་ཅིག་ ཌའི་ལོག་འབདཝ་ཨིན།
+    >>> filter_by_prefix([], 'a')
+    []
+    >>> filter_by_prefix(['abc', 'bcd', 'cde', 'array'], 'a')
+    ['abc', 'array']
+    """"""
+","    return [x for x in strings if x.startswith(prefix)]
+","def check(candidate):
+    assert candidate([], 'john') == []
+    assert candidate(['xxx', 'asd', 'xxy', 'john doe', 'xxxAAA', 'xxx'], 'xxx') == ['xxx', 'xxxAAA', 'xxx']
+"
+"
+
+def get_positive(l: list):
+    """"""ཨང་གྲངས་ཀྱི་ཐོ་ནང་ ནུས་ཅན་ཨང་གྲངས་ཚུ་རྐྱངམ་ཅིག་ལོག་གཏང་།
+    >>> get_positive([-1, 2, -4, 5, 6])
+    [2, 5, 6]
+    >>> get_positive([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])
+    [5, 3, 2, 3, 9, 123, 1]
+    """"""
+","    return [e for e in l if e > 0]
+","def check(candidate):
+    assert candidate([-1, -2, 4, 5, 6]) == [4, 5, 6]
+    assert candidate([5, 3, -5, 2, 3, 3, 9, 0, 123, 1, -10]) == [5, 3, 2, 3, 3, 9, 123, 1]
+    assert candidate([-1, -2]) == []
+    assert candidate([]) == []
+
+"
+"
+
+def is_prime(n):
+    """"""ཨང་གྲངས་འདི་ཨང་གྲངས་ངོ་མ་ཨིན་པ་ཅིན་ true སླར་ལོག་འབདཝ་ཨིན།
+    >>> is_prime(6)
+    False
+    >>> is_prime(101)
+    True
+    >>> is_prime(11)
+    True
+    >>> is_prime(13441)
+    True
+    >>> is_prime(61)
+    True
+    >>> is_prime(4)
+    False
+    >>> is_prime(1)
+    False
+    """"""
+","    if n < 2:
+        return False
+    for k in range(2, n - 1):
+        if n % k == 0:
+            return False
+    return True
+","def check(candidate):
+    assert candidate(6) == False
+    assert candidate(101) == True
+    assert candidate(11) == True
+    assert candidate(13441) == True
+    assert candidate(61) == True
+    assert candidate(4) == False
+    assert candidate(1) == False
+    assert candidate(5) == True
+    assert candidate(11) == True
+    assert candidate(17) == True
+    assert candidate(5 * 17) == False
+    assert candidate(11 * 7) == False
+    assert candidate(13441 * 19) == False
+
+"
+"import math
+
+
+def poly(xs: list, x: float):
+    """"""
+    ཚད་ལྡན་ xs ཚུ་ཡོད་པའི་སྒོ་འདི་ xs ལུ་རྩིས་སྟོནམ་ཨིན། སླར་ལོག་ xs[0] + xs[1] * x + xs[1] * x^2 +.... xs[n] * x^n
+    """"""
+    return sum([coeff * math.pow(x, i) for i, coeff in enumerate(xs)])
+
+
+def find_zero(xs: list):
+    """""" xs are coefficients of a polynomial.
+    find_zero find x such that poly(x) = 0.
+    find_zero returns only only zero point, even if there are many.
+    Moreover, find_zero only takes list xs having even number of coefficients
+    and largest non zero coefficient as it guarantees
+    a solution.
+    >>> round(find_zero([1, 2]), 2) # f(x) = 1 + 2x
+    -0.5
+    >>> round(find_zero([-6, 11, -6, 1]), 2) # (x - 1) * (x - 2) * (x - 3) = -6 + 11x - 6x^2 + x^3
+    1.0
+    """"""
+","    begin, end = -1., 1.
+    while poly(xs, begin) * poly(xs, end) > 0:
+        begin *= 2.0
+        end *= 2.0
+    while end - begin > 1e-10:
+        center = (begin + end) / 2.0
+        if poly(xs, center) * poly(xs, begin) > 0:
+            begin = center
+        else:
+            end = center
+    return begin
+","def check(candidate):
+    import math
+    import random
+    rng = random.Random(42)
+    import copy
+    for _ in range(100):
+        ncoeff = 2 * rng.randint(1, 4)
+        coeffs = []
+        for _ in range(ncoeff):
+            coeff = rng.randint(-10, 10)
+            if coeff == 0:
+                coeff = 1
+            coeffs.append(coeff)
+        solution = candidate(copy.deepcopy(coeffs))
+        assert math.fabs(poly(coeffs, solution)) < 1e-4
+
+"
+"
+
+def sort_third(l: list):
+    """"""འ་ནི་ལས་འགན་འདི་གིས་ཐོ་ཡིག་ lལེན་ཏེ་ཐོ་ཡིག་ l'འདི་སླར་ལོག་འབདཝ་ཨིན། འདི་ཡང་ཐོ་ཡིག་ l'འདི་ བརྡ་བཀོད་ཚུ་ནང་ l དང་འདྲ་མཉམ་ཨིན་རུང་ གསུམ་གྱིས་བགོ་བཤའ་རྐྱབ་མི་བཏུབ་ཨིནམ་དང་ དེ་ལས་ བརྡ་བཀོད་ཚུ་ནང་ འདི་གི་གནས་གོང་ཚུ་ གསུམ་གྱིས་བགོ་བཤའ་རྐྱབ་མི་བཏུབ་རུང་ འདྲ་མཉམ་ཨིན།
+    >>> sort_third([1, 2, 3])
+    [1, 2, 3]
+    >>> sort_third([5, 6, 3, 4, 8, 9, 2])
+    [2, 6, 3, 4, 8, 9, 5]
+    """"""
+","    l = list(l)
+    l[::3] = sorted(l[::3])
+    return l
+","def check(candidate):
+    assert tuple(candidate([1, 2, 3])) == tuple(sort_third([1, 2, 3]))
+    assert tuple(candidate([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])) == tuple(sort_third([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10]))
+    assert tuple(candidate([5, 8, -12, 4, 23, 2, 3, 11, 12, -10])) == tuple(sort_third([5, 8, -12, 4, 23, 2, 3, 11, 12, -10]))
+    assert tuple(candidate([5, 6, 3, 4, 8, 9, 2])) == tuple([2, 6, 3, 4, 8, 9, 5])
+    assert tuple(candidate([5, 8, 3, 4, 6, 9, 2])) == tuple([2, 8, 3, 4, 6, 9, 5])
+    assert tuple(candidate([5, 6, 9, 4, 8, 3, 2])) == tuple([2, 6, 9, 4, 8, 3, 5])
+    assert tuple(candidate([5, 6, 3, 4, 8, 9, 2, 1])) == tuple([2, 6, 3, 4, 8, 9, 5, 1])
+
+"
+"
+
+def unique(l: list):
+    """"""ཐོ་བཀོད་ནང་ཐོ་བཀོད་འབད་ཡོད་པའི་ ཁྱད་ཆོས་ཅན་གྱི་ཆ་ཤས་ཚུ་སླར་ལོག་འབདཝ་ཨིན།
+    >>> unique([5, 3, 5, 2, 3, 3, 9, 0, 123])
+    [0, 2, 3, 5, 9, 123]
+    """"""
+","    return sorted(list(set(l)))
+","def check(candidate):
+    assert candidate([5, 3, 5, 2, 3, 3, 9, 0, 123]) == [0, 2, 3, 5, 9, 123]
+
+"
+"
+
+def max_element(l: list):
+    """"""མིང་ཐོ་ནང་ལུ་ ཨེ་རེ་ཆེ་དྲགས་སྦེ་ལོག་འབདཝ་ཨིན།
+    >>> max_element([1, 2, 3])
+    3
+    >>> max_element([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])
+    123
+    """"""
+","    m = l[0]
+    for e in l:
+        if e > m:
+            m = e
+    return m
+","def check(candidate):
+    assert candidate([1, 2, 3]) == 3
+    assert candidate([5, 3, -5, 2, -3, 3, 9, 0, 124, 1, -10]) == 124
+"
+"
+
+def fizz_buzz(n: int):
+    """"""ཨང་གྲངས་ 7འདི་ ཨང་གྲངས་ n ལས་ཆུང་བ་ནང་ལུ་མཐོང་མི་གྱངས་ཁ་འདི་སླར་ལོག་འབདཝ་ཨིན། དེ་ཡང་ ༡༡ དང་ ༡༣ ལུ་ཆ་བགོས་འབད་ཚུགས།
+    >>> fizz_buzz(50)
+    0
+    >>> fizz_buzz(78)
+    2
+    >>> fizz_buzz(79)
+    3
+    """"""
+","    ns = []
+    for i in range(n):
+        if i % 11 == 0 or i % 13 == 0:
+            ns.append(i)
+    s = ''.join(list(map(str, ns)))
+    ans = 0
+    for c in s:
+        ans += (c == '7')
+    return ans
+","def check(candidate):
+    assert candidate(50) == 0
+    assert candidate(78) == 2
+    assert candidate(79) == 3
+    assert candidate(100) == 3
+    assert candidate(200) == 6
+    assert candidate(4000) == 192
+    assert candidate(10000) == 639
+    assert candidate(100000) == 8026
+
+"
+"
+
+def sort_even(l: list):
+    """"""འ་ནི་ལས་འགན་འདི་གིས་ཐོ་ཡིག་ lལེན་ཏེ་ཐོ་ཡིག་ l' དེ་སླར་ལོག་འབདཝ་ཨིན། འདི་ཡང་ཐོ་ཡིག་ l' འདི་གྱ་དོནགྱི་ནང་ཐིག་ཚུ་ནང་ l དང་འདྲ་མཉམ་སྦེ་ཡོདཔ་དང་ དེ་ལས་ཐིག་ཡིག་ཆ་མཉམ་གྱི་ནང་ཐིག་གི་གནས་གོང་ཚུ་ འདྲ་མཉམ་སྦེ་ཡོད་རུང་ དབྱེ་བ་ཕྱེ་སྟེ་ཡོདཔ་ཨིན།
+    >>> sort_even([1, 2, 3])
+    [1, 2, 3]
+    >>> sort_even([5, 6, 3, 4])
+    [3, 6, 5, 4]
+    """"""
+","    evens = l[::2]
+    odds = l[1::2]
+    evens.sort()
+    ans = []
+    for e, o in zip(evens, odds):
+        ans.extend([e, o])
+    if len(evens) > len(odds):
+        ans.append(evens[-1])
+    return ans
+","def check(candidate):
+    assert tuple(candidate([1, 2, 3])) == tuple([1, 2, 3])
+    assert tuple(candidate([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])) == tuple([-10, 3, -5, 2, -3, 3, 5, 0, 9, 1, 123])
+    assert tuple(candidate([5, 8, -12, 4, 23, 2, 3, 11, 12, -10])) == tuple([-12, 8, 3, 4, 5, 2, 12, 11, 23, -10])
+
+"
+"
+
+def encode_cyclic(s: str):
+    """"""
+    ཨང་གྲངས་ཀྱི་ཐིག་ཁྲམ་འདི་ ཚར་གསུམ་གྱི་ཡིག་འབྲུ་སྡེ་ཚན་གྱིས་ ཨང་གྲངས་བཏགས་ཡོདཔ་ཨིན།
+    """"""
+    # split string to groups. Each of length 3.
+    groups = [s[(3 * i):min((3 * i + 3), len(s))] for i in range((len(s) + 2) // 3)]
+    # cycle elements in each group. Unless group has fewer elements than 3.
+    groups = [(group[1:] + group[0]) if len(group) == 3 else group for group in groups]
+    return """".join(groups)
+
+
+def decode_cyclic(s: str):
+    """"""
+    takes as input string encoded with encode_cyclic function. Returns decoded string.
+    """"""
+","    return encode_cyclic(encode_cyclic(s))
+","def check(candidate):
+    from random import randint, choice
+    import string
+
+    letters = string.ascii_lowercase
+    for _ in range(100):
+        str = ''.join(choice(letters) for i in range(randint(10, 20)))
+        encoded_str = encode_cyclic(str)
+        assert candidate(encoded_str) == str
+
+"
+"
+
+def prime_fib(n: int):
+    """"""
+    prime_fib གིས་ ཨང་གྲངས་ n-th དེ་ ཕི་བེ་ནཅི་ཨང་གྲངས་ཨིནམ་དང་ དེ་ཡང་ ཨང་གྲངས་ཨང་གྲངས་ཨང་གྲངས་ངོ་མ་ཅིག་ཨིན།
+    >>> prime_fib(1)
+    2
+    >>> prime_fib(2)
+    3
+    >>> prime_fib(3)
+    5
+    >>> prime_fib(4)
+    13
+    >>> prime_fib(5)
+    89
+    """"""
+","    import math
+
+    def is_prime(p):
+        if p < 2:
+            return False
+        for k in range(2, min(int(math.sqrt(p)) + 1, p - 1)):
+            if p % k == 0:
+                return False
+        return True
+    f = [0, 1]
+    while True:
+        f.append(f[-1] + f[-2])
+        if is_prime(f[-1]):
+            n -= 1
+        if n == 0:
+            return f[-1]
+","def check(candidate):
+    assert candidate(1) == 2
+    assert candidate(2) == 3
+    assert candidate(3) == 5
+    assert candidate(4) == 13
+    assert candidate(5) == 89
+    assert candidate(6) == 233
+    assert candidate(7) == 1597
+    assert candidate(8) == 28657
+    assert candidate(9) == 514229
+    assert candidate(10) == 433494437
+
+"
+"
+
+def triples_sum_to_zero(l: list):
+    """"""
+    triples_sum_to_zero གིས་ ཨང་གྲངས་ཧྲིལ་བུམ་གྱི་ཐོ་ཡིག་ཅིག་ཨེབ་གཏང་འབད་སྦེ་ལེན་ཡོདཔ་ཨིན། གལ་སྲིད་ཐོ་ཡིག་ནང་ལུ་ ཨང་གྲངས་ཧྲིལ་བུམ་ལུ་ ༠་དང་གཞན་མི་ཅིག་ལུ་རྫུས་མ་སྦེ་བསྡོམས་མི་ཁྱད་པར་ཅན་གསུམ་ཡོད་པ་ཅིན་ True སླར་ལོག་འབདཝ་ཨིན།
+
+    >>> triples_sum_to_zero([1, 3, 5, 0])
+    False
+    >>> triples_sum_to_zero([1, 3, -2, 1])
+    True
+    >>> triples_sum_to_zero([1, 2, 3, 7])
+    False
+    >>> triples_sum_to_zero([2, 4, -5, 3, 9, 7])
+    True
+    >>> triples_sum_to_zero([1])
+    False
+    """"""
+","    for i in range(len(l)):
+        for j in range(i + 1, len(l)):
+            for k in range(j + 1, len(l)):
+                if l[i] + l[j] + l[k] == 0:
+                    return True
+    return False
+","def check(candidate):
+    assert candidate([1, 3, 5, 0]) == False
+    assert candidate([1, 3, 5, -1]) == False
+    assert candidate([1, 3, -2, 1]) == True
+    assert candidate([1, 2, 3, 7]) == False
+    assert candidate([1, 2, 5, 7]) == False
+    assert candidate([2, 4, -5, 3, 9, 7]) == True
+    assert candidate([1]) == False
+    assert candidate([1, 3, 5, -100]) == False
+    assert candidate([100, 3, 5, -100]) == False
+
+"
+"
+
+def car_race_collision(n: int):
+    """"""
+    ཐད་ཀར་དུ་ཕྲང་ཡོད་པའི་མཐའ་མེད་པའི་ཐིག་ཁྲམ་ཅིག་ཡོད་པའི་ལམ་འདི་ ཧ་གོ་དགོ། སྣུམ་འཁོར་ n གིས་གཡོན་ལས་གཡས་ཁ་ཐུག་ལུ་འགྱོ་དོ་ཡོདཔ་དང་ དེ་བསྒང་ སྣུམ་འཁོར་ n གི་སྡེ་ཚན་གཞན་ཅིག་གིས་གཡས་ལས་གཡོན་ཁ་ཐུག་ལུ་འགྱོ་དོ་ཡོདཔ་ཨིན། སྣུམ་འཁོར་སྡེ་ཚན་གཉིས་འདི་ གཅིག་ལས་ཐག་རིང་ས་ཅིག་ལས་ འགོ་བཙུགས་ཏེ་ སྣུམ་འཁོར་ཆ་མཉམ་རང་ མགྱོགས་ཚད་གཅིག་སྦེ་འགྱོ་དོ་ཡོདཔ་ཨིན། སྣུམ་འཁོར་གཉིས་ཅིག་གིས་ ཐད་ཀར་དུ་ཕྲང་ཡོད་པའི་ལམ་འདི་ གཡས་ལས་གཡོན་ཁ་ཐུག་ལུ་འགྱོ་མི་ སྣུམ་འཁོར་ཅིག་གིས་ གཡས་ལས་གཡོན་ཁ་ཐུག་ལུ་འགྱོ་མི་ སྣུམ་འཁོར་ཅིག་ལུ་ཕོག་པའི་སྐབས་ སྣུམ་འཁོར་གཉིས་ཅིག་ ཐུག་དོ་ཡོདཔ་སྦེ་སླབ་ཨིན། ཨིན་རུང་ སྣུམ་འཁོར་ཚུ་ཚད་མེད་བརྟན་ཏོག་ཏོ་དང་སྒྲིང་སྒྲི་ཨིནམ་ལས་ དེ་གིས་ སྣུམ་འཁོར་ཚུ་ ཐུག་མ་མྱོང་དོ་བཟུམ་སྦེ་རང་ སྣུམ་འཁོར་གྱི་ལམ་བདའ་སྟེ་འགྱོ་དོ་ཡོདཔ་ཨིན། འ་ནི་ལས་འགན་
+    """"""
+","    return n**2
+","def check(candidate):
+    assert candidate(2) == 4
+    assert candidate(3) == 9
+    assert candidate(4) == 16
+    assert candidate(8) == 64
+    assert candidate(10) == 100
+
+"
+"
+
+def incr_list(l: list):
+    """"""ཨེ་རེ་ཚུ་ ༡ ལུ་ཡར་སེང་འབད་མི་དང་གཅིག་ཁར་ ལོག་གཏང་ནིའི་ཐོ་ཡིག་
+    >>> incr_list([1, 2, 3])
+    [2, 3, 4]
+    >>> incr_list([5, 3, 5, 2, 3, 3, 9, 0, 123])
+    [6, 4, 6, 3, 4, 4, 10, 1, 124]
+    """"""
+","    return [(e + 1) for e in l]
+","def check(candidate):
+    assert candidate([]) == []
+    assert candidate([3, 2, 1]) == [4, 3, 2]
+    assert candidate([5, 2, 5, 2, 3, 3, 9, 0, 123]) == [6, 3, 6, 3, 4, 4, 10, 1, 124]
+
+"
+"
+
+def pairs_sum_to_zero(l):
+    """"""
+    pairs_sum_to_zero གིས་ ཨང་གྲངས་ཧྲིལ་བུམ་གྱི་ཐོ་ཡིག་ཅིག་ཨེབ་གཏང་འབད་སྦེ་ལེན་ཡོདཔ་ཨིན། གལ་སྲིད་ཐོ་ཡིག་ནང་ལུ་ ཨང་གྲངས་ཧྲིལ་བུམ་དེ་ ༠ ལུ་བསྡོམས་ཏེ་ཡོད་པའི་ཁྱད་པར་ཅན་གྱི་ཆ་ཤས་གཉིས་ཡོད་པ་ཅིན་ True སླར་ལོག་འབདཝ་ཨིན།
+    >>> pairs_sum_to_zero([1, 3, 5, 0])
+    False
+    >>> pairs_sum_to_zero([1, 3, -2, 1])
+    False
+    >>> pairs_sum_to_zero([1, 2, 3, 7])
+    False
+    >>> pairs_sum_to_zero([2, 4, -5, 3, 5, 7])
+    True
+    >>> pairs_sum_to_zero([1])
+    False
+    """"""
+","    for i, l1 in enumerate(l):
+        for j in range(i + 1, len(l)):
+            if l1 + l[j] == 0:
+                return True
+    return False
+","def check(candidate):
+    assert candidate([1, 3, 5, 0]) == False
+    assert candidate([1, 3, -2, 1]) == False
+    assert candidate([1, 2, 3, 7]) == False
+    assert candidate([2, 4, -5, 3, 5, 7]) == True
+    assert candidate([1]) == False
+
+    assert candidate([-3, 9, -1, 3, 2, 30]) == True
+    assert candidate([-3, 9, -1, 3, 2, 31]) == True
+    assert candidate([-3, 9, -1, 4, 2, 30]) == False
+    assert candidate([-3, 9, -1, 4, 2, 31]) == False
+
+"
+"
+
+def change_base(x: int, base: int):
+    """"""ནང་བསྐྱོད་ཨང་གྲངས་ x གི་ཨང་གྲངས་གཞི་རྟེན་ལུ་ བསྒྱུར་བཅོས་འབད་། བསྒྱུར་བཅོས་འབད་བའི་ཤུལ་ལས་ string ངོ་ཚབ་ལོག་འབདཝ་ཨིན། གཞི་རྟེན་ཨང་གྲངས་ཚུ་ ༡༠ ལས་ཉུང་བ་ཨིན།
+    >>> change_base(8, 3)
+    '22'
+    >>> change_base(8, 2)
+    '1000'
+    >>> change_base(7, 2)
+    '111'
+    """"""
+","    ret = """"
+    while x > 0:
+        ret = str(x % base) + ret
+        x //= base
+    return ret
+","def check(candidate):
+    assert candidate(8, 3) == ""22""
+    assert candidate(9, 3) == ""100""
+    assert candidate(234, 2) == ""11101010""
+    assert candidate(16, 2) == ""10000""
+    assert candidate(8, 2) == ""1000""
+    assert candidate(7, 2) == ""111""
+    for x in range(2, 8):
+        assert candidate(x, x + 1) == str(x)
+
+"
+"
+
+def triangle_area(a, h):
+    """"""གཡོན་འདི་རིང་ཚད་དང་མཐོ་ཚད་སླར་ལོག་འབད་སའི་ས་སྒོ་འདི་གསུམ་ཟུར་ཅིག་ལུ་བྱིན་ཡོདཔ་ཨིན།
+    >>> triangle_area(5, 3)
+    7.5
+    """"""
+","    return a * h / 2.0
+","def check(candidate):
+    assert candidate(5, 3) == 7.5
+    assert candidate(2, 2) == 2.0
+    assert candidate(10, 8) == 40.0
+
+"
+"
+
+def fib4(n: int):
+    """"""Fib4 ཨང་རིམ་འདི་ Fibbonacci ཨང་རིམ་དང་འདྲཝ་སྦེ་ ངེས་ཚིག་བྱིན་ཡོདཔ་ཨིན། fib4(0) -> 0 fib4(1) -> 0 fib4(2) -> 2 fib4(3) -> 0 fib4(n) -> fib4(n-1) + fib4(n-2) + fib4(n-3) + fib4(n-4) ཨིན་པ་ཅིན་ ཨང་རིམ་གྱི་ཆ་ཤས་ཨང་གྲངས་ n པ་ངེས་འཛིན་འབད་ནིའི་དོན་ལུ་ ལས་འགན་ཅིག་འབྲི་གནང་། ལོག་ལོག་མི་ལག་ལེན་འཐབ་།
+    >>> fib4(5)
+    4
+    >>> fib4(6)
+    8
+    >>> fib4(7)
+    14
+    """"""
+","    results = [0, 0, 2, 0]
+    if n < 4:
+        return results[n]
+
+    for _ in range(4, n + 1):
+        results.append(results[-1] + results[-2] + results[-3] + results[-4])
+        results.pop(0)
+
+    return results[-1]
+","def check(candidate):
+    assert candidate(5) == 4
+    assert candidate(8) == 28
+    assert candidate(10) == 104
+    assert candidate(12) == 386
+
+"
+"
+
+def median(l: list):
+    """"""ཐོ་ཡིག་ l ནང་གི་གཞི་རིམ་གྱི་བར་མཚམས་སླར་ལོག་འབདཝ་ཨིན།
+    >>> median([3, 1, 2, 4, 5])
+    3
+    >>> median([-10, 4, 6, 1000, 10, 20])
+    15.0
+    """"""
+","    l = sorted(l)
+    if len(l) % 2 == 1:
+        return l[len(l) // 2]
+    else:
+        return (l[len(l) // 2 - 1] + l[len(l) // 2]) / 2.0
+","def check(candidate):
+    assert candidate([3, 1, 2, 4, 5]) == 3
+    assert candidate([-10, 4, 6, 1000, 10, 20]) == 8.0
+    assert candidate([5]) == 5
+    assert candidate([6, 5]) == 5.5
+    assert candidate([8, 1, 3, 9, 9, 2, 7]) == 7 
+
+"
+"
+
+def is_palindrome(text: str):
+    """"""
+    string འདི་ palindrome ཨིན་ན་བརྟག་དཔྱད་འབདཝ་ཨིན།
+    >>> is_palindrome('')
+    True
+    >>> is_palindrome('aba')
+    True
+    >>> is_palindrome('aaaaa')
+    True
+    >>> is_palindrome('zbcd')
+    False
+    """"""
+","    for i in range(len(text)):
+        if text[i] != text[len(text) - 1 - i]:
+            return False
+    return True
+","def check(candidate):
+    assert candidate('') == True
+    assert candidate('aba') == True
+    assert candidate('aaaaa') == True
+    assert candidate('zbcd') == False
+    assert candidate('xywyx') == True
+    assert candidate('xywyz') == False
+    assert candidate('xywzx') == False
+
+"
+"
+
+def modp(n: int, p: int):
+    """"""༢^n modulo p སླར་ལོག་འབདཝ་ཨིན། (ཨང་གྲངས་ཚུ་ཤེས་དགོ)
+    >>> modp(3, 5)
+    3
+    >>> modp(1101, 101)
+    2
+    >>> modp(0, 101)
+    1
+    >>> modp(3, 11)
+    8
+    >>> modp(100, 101)
+    1
+    """"""
+","    ret = 1
+    for i in range(n):
+        ret = (2 * ret) % p
+    return ret
+","def check(candidate):
+    assert candidate(3, 5) == 3
+    assert candidate(1101, 101) == 2
+    assert candidate(0, 101) == 1
+    assert candidate(3, 11) == 8
+    assert candidate(100, 101) == 1
+    assert candidate(30, 5) == 4
+    assert candidate(31, 5) == 3
+
+"
+"
+
+def encode_shift(s: str):
+    """"""
+    ཨེཕ་ཇི་ནང་ཡིག་འབྲུ་རེ་རེ་ལུ་ ༥ བསྒྱུར་ཐོག་ལས་ ཨེཕ་ཇི་ཨེན་ཨེན་ཨེན་ཨེན་ཨེན་ཨེན་ཨེན་ཨེན་ཨེན་ཨེན་ཨེན་ཨེན་ཨེན་ཨེན་ཨེན་ཨེན་ཨེན་ཨེན་ཨེན་ཨེན་ཨེན་ཨེན་ཨེན་ཨེན་ཨེན་ཨེན་ཨེན་ཨེན་ཨེན་ཨེན་ཨེན་ཨེན་ཨེན་ཨེན་
+    """"""
+    return """".join([chr(((ord(ch) + 5 - ord(""a"")) % 26) + ord(""a"")) for ch in s])
+
+
+def decode_shift(s: str):
+    """"""
+    takes as input string encoded with encode_shift function. Returns decoded string.
+    """"""
+","    return """".join([chr(((ord(ch) - 5 - ord(""a"")) % 26) + ord(""a"")) for ch in s])
+","def check(candidate):
+    from random import randint, choice
+    import copy
+    import string
+
+    letters = string.ascii_lowercase
+    for _ in range(100):
+        str = ''.join(choice(letters) for i in range(randint(10, 20)))
+        encoded_str = encode_shift(str)
+        assert candidate(copy.deepcopy(encoded_str)) == str
+
+"
+"
+
+def remove_vowels(text):
+    """"""
+    remove_vowels འདི་ལས་ལག་ལེན་ཅིག་ཨིན་མི་འདི་ string དང་ vowels མེད་པའི་ string སླར་ལོག་འབདཝ་ཨིན།
+    >>> remove_vowels('')
+    ''
+    >>> remove_vowels(""abcdef\nghijklm"")
+    'bcdf\nghjklm'
+    >>> remove_vowels('abcdef')
+    'bcdf'
+    >>> remove_vowels('aaaaa')
+    ''
+    >>> remove_vowels('aaBAA')
+    'B'
+    >>> remove_vowels('zbcd')
+    'zbcd'
+    """"""
+","    return """".join([s for s in text if s.lower() not in [""a"", ""e"", ""i"", ""o"", ""u""]])
+","def check(candidate):
+    assert candidate('') == ''
+    assert candidate(""abcdef\nghijklm"") == 'bcdf\nghjklm'
+    assert candidate('fedcba') == 'fdcb'
+    assert candidate('eeeee') == ''
+    assert candidate('acBAA') == 'cB'
+    assert candidate('EcBOO') == 'cB'
+    assert candidate('ybcd') == 'ybcd'
+
+"
+"
+
+def below_threshold(l: list, t: int):
+    """"""ཐོ་ཡིག་ནང་ཨང་གྲངས་ཚུ་ཆ་མཉམ་རང་ ཐོ་ཡིག་ཐིག་ལས་མར་ཡོད་པ་ཅིན་ True སླར་ལོག་འབདཝ་ཨིན།
+    >>> below_threshold([1, 2, 4, 10], 100)
+    True
+    >>> below_threshold([1, 20, 4, 10], 5)
+    False
+    """"""
+","    for e in l:
+        if e >= t:
+            return False
+    return True
+","def check(candidate):
+    assert candidate([1, 2, 4, 10], 100)
+    assert not candidate([1, 20, 4, 10], 5)
+    assert candidate([1, 20, 4, 10], 21)
+    assert candidate([1, 20, 4, 10], 22)
+    assert candidate([1, 8, 4, 10], 11)
+    assert not candidate([1, 8, 4, 10], 10)
+
+"
+"
+
+def add(x: int, y: int):
+    """"""ཨང་གྲངས་ x དང་ y གཉིས་བསྡོམས་འབད།
+    >>> add(2, 3)
+    5
+    >>> add(5, 7)
+    12
+    """"""
+","    return x + y
+","def check(candidate):
+    import random
+
+    assert candidate(0, 1) == 1
+    assert candidate(1, 0) == 1
+    assert candidate(2, 3) == 5
+    assert candidate(5, 7) == 12
+    assert candidate(7, 5) == 12
+
+    for i in range(100):
+        x, y = random.randint(0, 1000), random.randint(0, 1000)
+        assert candidate(x, y) == x + y
+
+"
+"
+
+def same_chars(s0: str, s1: str):
+    """"""
+    ཚིག་གཉིས་ལུ་ ཡིག་འབྲུ་འདྲ་མཉམ་ཡོད་མེད་བལྟ་།
+    >>> same_chars('eabcdzzzz', 'dddzzzzzzzddeddabc')
+    True
+    >>> same_chars('abcd', 'dddddddabc')
+    True
+    >>> same_chars('dddddddabc', 'abcd')
+    True
+    >>> same_chars('eabcd', 'dddddddabc')
+    False
+    >>> same_chars('abcd', 'dddddddabce')
+    False
+    >>> same_chars('eabcdzzzz', 'dddzzzzzzzddddabc')
+    False
+    """"""
+","    return set(s0) == set(s1)
+","def check(candidate):
+    assert candidate('eabcdzzzz', 'dddzzzzzzzddeddabc') == True
+    assert candidate('abcd', 'dddddddabc') == True
+    assert candidate('dddddddabc', 'abcd') == True
+    assert candidate('eabcd', 'dddddddabc') == False
+    assert candidate('abcd', 'dddddddabcf') == False
+    assert candidate('eabcdzzzz', 'dddzzzzzzzddddabc') == False
+    assert candidate('aabb', 'aaccc') == False
+
+"
+"
+
+def fib(n: int):
+    """"""ཕི་བེ་ནཅིཨང་ nth སླར་ལོག་འབདཝ་ཨིན།
+    >>> fib(10)
+    55
+    >>> fib(1)
+    1
+    >>> fib(8)
+    21
+    """"""
+","    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+    return fib(n - 1) + fib(n - 2)
+","def check(candidate):
+    assert candidate(10) == 55
+    assert candidate(1) == 1
+    assert candidate(8) == 21
+    assert candidate(11) == 89
+    assert candidate(12) == 144
+
+"
+"
+
+def correct_bracketing(brackets: str):
+    """""" brackets འདི་ ""<"" དང་ "">"" གི་ཐིག་ཁྲམ་ཨིན། གལ་སྲིད་སྒོ་སྒྲིག་ bracket ཅིག་ནང་ སྦྲེལ་མཐུད་ཡོད་པའི་ closing bracket ཅིག་ཡོད་པ་ཅིན་ True སླར་ལོག་འབདཝ་ཨིན།
+
+    >>> correct_bracketing(""<"")
+    False
+    >>> correct_bracketing(""<>"")
+    True
+    >>> correct_bracketing(""<<><>>"")
+    True
+    >>> correct_bracketing(""><<>"")
+    False
+    """"""
+","    depth = 0
+    for b in brackets:
+        if b == ""<"":
+            depth += 1
+        else:
+            depth -= 1
+        if depth < 0:
+            return False
+    return depth == 0
+","def check(candidate):
+    assert candidate(""<>"")
+    assert candidate(""<<><>>"")
+    assert candidate(""<><><<><>><>"")
+    assert candidate(""<><><<<><><>><>><<><><<>>>"")
+    assert not candidate(""<<<><>>>>"")
+    assert not candidate(""><<>"")
+    assert not candidate(""<"")
+    assert not candidate(""<<<<"")
+    assert not candidate("">"")
+    assert not candidate(""<<>"")
+    assert not candidate(""<><><<><>><>><<>"")
+    assert not candidate(""<><><<><>><>>><>"")
+
+"
+"
+
+def monotonic(l: list):
+    """"""སླར་ལོག་འབད་ནིའི་དོན་ལས་ True འདི་ཐོ་ཡིག་གི་ཆ་ཤས་ཚུ་ གཅིག་མཚུངས་སྦེ་ཡར་འཕར་འགྱོ་ ཡང་ན་ མར་ཕབ་འགྱོ་དོ་ཡོདཔ་ཨིན།
+    >>> monotonic([1, 2, 4, 20])
+    True
+    >>> monotonic([1, 20, 4, 10])
+    False
+    >>> monotonic([4, 1, 0, -10])
+    True
+    """"""
+","    if l == sorted(l) or l == sorted(l, reverse=True):
+        return True
+    return False
+","def check(candidate):
+    assert candidate([1, 2, 4, 10]) == True
+    assert candidate([1, 2, 4, 20]) == True
+    assert candidate([1, 20, 4, 10]) == False
+    assert candidate([4, 1, 0, -10]) == True
+    assert candidate([4, 1, 1, 0]) == True
+    assert candidate([1, 2, 3, 2, 5, 60]) == False
+    assert candidate([1, 2, 3, 4, 5, 60]) == True
+    assert candidate([9, 9, 9, 9]) == True
+
+"
+"
+
+def common(l1: list, l2: list):
+    """"""ཐོ་བཀོད་གཉིས་ཆ་རའི་དོན་ལུ་ དབྱེ་བ་ཕྱེ་ཡོད་པའི་ཁྱད་ཆོས་ཅན་གྱི་ཆ་ཤས་འདི་སླར་ལོག་འབདཝ་ཨིན།
+    >>> common([1, 4, 3, 34, 653, 2, 5], [5, 7, 1, 5, 9, 653, 121])
+    [1, 5, 653]
+    >>> common([5, 3, 2, 8], [3, 2])
+    [2, 3]
+
+    """"""
+","    ret = set()
+    for e1 in l1:
+        for e2 in l2:
+            if e1 == e2:
+                ret.add(e1)
+    return sorted(list(ret))
+","def check(candidate):
+    assert candidate([1, 4, 3, 34, 653, 2, 5], [5, 7, 1, 5, 9, 653, 121]) == [1, 5, 653]
+    assert candidate([5, 3, 2, 8], [3, 2]) == [2, 3]
+    assert candidate([4, 3, 2, 8], [3, 2, 4]) == [2, 3, 4]
+    assert candidate([4, 3, 2, 8], []) == []
+
+"
+"
+
+def largest_prime_factor(n: int):
+    """"""n གི་གཞི་གྲངས་སྦོམ་ཤོས་འདི་སླར་ལོག་འབདཝ་ཨིན། n > 1 དང་དེ་གཞི་གྲངས་ངོ་མ་མེན་པ་ཅིན་
+    >>> largest_prime_factor(13195)
+    29
+    >>> largest_prime_factor(2048)
+    2
+    """"""
+","    def is_prime(k):
+        if k < 2:
+            return False
+        for i in range(2, k - 1):
+            if k % i == 0:
+                return False
+        return True
+    largest = 1
+    for j in range(2, n + 1):
+        if n % j == 0 and is_prime(j):
+            largest = max(largest, j)
+    return largest
+","def check(candidate):
+    assert candidate(15) == 5
+    assert candidate(27) == 3
+    assert candidate(63) == 7
+    assert candidate(330) == 11
+    assert candidate(13195) == 29
+
+"
+"
+
+def sum_to_n(n: int):
+    """"""sum_to_n འདི་ལས་ 1 ལས་ n ཚུན་གྱི་ཨང་གྲངས་ཚུ་བསྡོམས་འབདཝ་ཨིན།
+    >>> sum_to_n(30)
+    465
+    >>> sum_to_n(100)
+    5050
+    >>> sum_to_n(5)
+    15
+    >>> sum_to_n(10)
+    55
+    >>> sum_to_n(1)
+    1
+    """"""
+","    return sum(range(n + 1))
+","def check(candidate):
+    assert candidate(1) == 1
+    assert candidate(6) == 21
+    assert candidate(11) == 66
+    assert candidate(30) == 465
+    assert candidate(100) == 5050
+
+"
+"
+
+def correct_bracketing(brackets: str):
+    """""" brackets འདི་ ""("" དང་ """") གི་ཐིག་ཁྲམ་ཨིནམ་དང་ གལ་སྲིད་སྒོ་སྒྲིག་ bracket ཅིག་ནང་ སྦྲགས་ཡོད་པའི་ closing bracket ཅིག་ཡོད་པ་ཅིན་ True སླར་ལོག་འབདཝ་ཨིན།
+
+    >>> correct_bracketing(""("")
+    False
+    >>> correct_bracketing(""()"")
+    True
+    >>> correct_bracketing(""(()())"")
+    True
+    >>> correct_bracketing("")(()"")
+    False
+    """"""
+","    depth = 0
+    for b in brackets:
+        if b == ""("":
+            depth += 1
+        else:
+            depth -= 1
+        if depth < 0:
+            return False
+    return depth == 0
+","def check(candidate):
+    assert candidate(""()"")
+    assert candidate(""(()())"")
+    assert candidate(""()()(()())()"")
+    assert candidate(""()()((()()())())(()()(()))"")
+    assert not candidate(""((()())))"")
+    assert not candidate("")(()"")
+    assert not candidate(""("")
+    assert not candidate(""(((("")
+    assert not candidate("")"")
+    assert not candidate(""(()"")
+    assert not candidate(""()()(()())())(()"")
+    assert not candidate(""()()(()())()))()"")
+
+"
+"
+
+def derivative(xs: list):
+    """""" xs འདི་ polynomial གི་གནས་གོང་ཚུ་ཨིན། xs[0] + xs[1] * x + xs[2] * x^2 +.... འདི་ polynomial གི་འབྱུང་ཁུངས་དེ་ འདྲ་བཟོ་ནང་སླར་ལོག་འབདཝ་ཨིན།
+    >>> derivative([3, 1, 2, 4, 5])
+    [1, 4, 12, 20]
+    >>> derivative([1, 2, 3])
+    [2, 6]
+    """"""
+","    return [(i * x) for i, x in enumerate(xs)][1:]
+","def check(candidate):
+    assert candidate([3, 1, 2, 4, 5]) == [1, 4, 12, 20]
+    assert candidate([1, 2, 3]) == [2, 6]
+    assert candidate([3, 2, 1]) == [2, 2]
+    assert candidate([3, 2, 1, 0, 4]) == [2, 2, 0, 16]
+    assert candidate([1]) == []
+
+"
+"
+
+def fibfib(n: int):
+    """"""FibFib ཨང་རིམ་འདི་ Fibbonacci ཨང་རིམ་དང་འདྲཝ་སྦེ་ར་ཨིནམ་ད་ འདི་ཚུ་ནང་དོན་འདི་བཀོད་དེ་འདུག: fibfib(0) == 0 fibfib(1) == 0 fibfib(2) == 1 fibfib(n) == fibfib(n-1) + fibfib(n-2) + fibfib(n-3) ཨིན་པ་ཅིན་ ཨང་རིམ་གྱི་ཆ་ཤས་ཨང་ n པ་འདི་ ཕྲ་རིང་སྦེ་རྩིས་སྟོན་འབད་ནིའི་དོན་ལུ་ ལས་འགན་ཅིག་འབྲི་གནང་
+    >>> fibfib(1)
+    0
+    >>> fibfib(5)
+    4
+    >>> fibfib(8)
+    24
+    """"""
+","    if n == 0:
+        return 0
+    if n == 1:
+        return 0
+    if n == 2:
+        return 1
+    return fibfib(n - 1) + fibfib(n - 2) + fibfib(n - 3)
+","def check(candidate):
+    assert candidate(2) == 1
+    assert candidate(1) == 0
+    assert candidate(5) == 4
+    assert candidate(8) == 24
+    assert candidate(10) == 81
+    assert candidate(12) == 274
+    assert candidate(14) == 927
+
+"
+"
+FIX = """"""
+བརྟག་དཔྱད་འབད་སའི་གནད་དོན་ཚུ་ ཁ་སྐོང་རྐྱབས།
+""""""
+
+def vowels_count(s):
+    """"""Write a function vowels_count which takes a string representing
+    a word as input and returns the number of vowels in the string.
+    Vowels in this case are 'a', 'e', 'i', 'o', 'u'. Here, 'y' is also a
+    vowel, but only when it is at the end of the given word.
+
+    Example:
+    >>> vowels_count(""abcde"")
+    2
+    >>> vowels_count(""ACEDY"")
+    3
+    """"""
+","    vowels = ""aeiouAEIOU""
+    n_vowels = sum(c in vowels for c in s)
+    if s[-1] == 'y' or s[-1] == 'Y':
+        n_vowels += 1
+    return n_vowels
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""abcde"") == 2, ""Test 1""
+    assert candidate(""Alone"") == 3, ""Test 2""
+    assert candidate(""key"") == 2, ""Test 3""
+    assert candidate(""bye"") == 1, ""Test 4""
+    assert candidate(""keY"") == 2, ""Test 5""
+    assert candidate(""bYe"") == 1, ""Test 6""
+    assert candidate(""ACEDY"") == 3, ""Test 7""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def circular_shift(x, shift):
+    """"""ཕྱོགས་བཞིར་ཨང་གྲངས་ x གི་ཨང་གྲངས་ཚུ་སོར་གཏང་ ཨང་གྲངས་ཚུ་གཡས་ཁ་ཐུག་སོར་གཏང་ དེ་ལས་ གྲུབ་འབྲས་དེ་ string སྦེ་ལོག་གཏང་། གལ་སྲིད་ shift > ཨང་གྲངས་ཚུ་ཨིན་པ་ཅིན་ ཨང་གྲངས་ཚུ་ལོག་གཏང་།
+    >>> circular_shift(12, 1)
+    ""21""
+    >>> circular_shift(12, 2)
+    ""12""
+    """"""
+","    s = str(x)
+    if shift > len(s):
+        return s[::-1]
+    else:
+        return s[len(s) - shift:] + s[:len(s) - shift]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(100, 2) == ""001""
+    assert candidate(12, 2) == ""12""
+    assert candidate(97, 8) == ""79""
+    assert candidate(12, 1) == ""21"", ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(11, 101) == ""11"", ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def digitSum(s):
+    """"""ལཱ་འགན་ ཨང་གྲངས་ཐིག་ཁྲམ་ཅིག་ནང་བཙུགས་སྦེ་ལེན་ཏེ་ ཨང་གྲངས་མཐོ་སའི་ཡིག་འབྲུ་ཚུ་རྐྱངམ་ཅིག་བསྡོམས་ཏེ་སླར་ལོག་འབདཝ་ཨིན། དཔེ་འབད་བ་ཅིན་: digitSum ((("""") => 0 digitSum (((""abAB"") => 131 digitSum (((""abcCd"") => 67 digitSum (((""helloE"") => 69 digitSum (((""woArBld"") => 131 digitSum (((""aAaaaXa"") => 153
+    """"""
+","    if s == """": return 0
+    return sum(ord(char) if char.isupper() else 0 for char in s)
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate("""") == 0, ""Error""
+    assert candidate(""abAB"") == 131, ""Error""
+    assert candidate(""abcCd"") == 67, ""Error""
+    assert candidate(""helloE"") == 69, ""Error""
+    assert candidate(""woArBld"") == 131, ""Error""
+    assert candidate(""aAaaaXa"") == 153, ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate("" How are yOu?"") == 151, ""Error""
+    assert candidate(""You arE Very Smart"") == 327, ""Error""
+
+"
+"
+def fruit_distribution(s,n):
+    """"""
+    འ་ནི་ལཱ་འདི་ནང་ལུ་ ཁྱོད་ཀྱིས་ ཨེབ་གཏང་འབད་ཡོད་པའི་ ཨང་གྲངས་འདི་ ཨང་གྲངས་ཀྱི་ཨང་གྲངས་དང་ ཨང་གྲངས་ཀྱི་ཨང་གྲངས་འདི་ ཨེབ་གཏང་འབད་ཡོད་པའི་ ཨང་གྲངས་ཀྱི་ཨང་གྲངས་འདི་ ཨང་གྲངས་ཀྱི་ཨང་གྲངས་འདི་ ཨང་གྲངས་ཀྱི་ཨང་གྲངས་འདི་ ཨང་གྲངས་ཀྱི་ཨང་གྲངས་འདི་ ཨང་གྲངས་ཀྱི་ཨང་གྲངས་འདི་ ཨང་གྲངས་ཀྱི་ཨང་གྲངས་འདི་ ཨང་གྲངས་ཀྱི་ཨང་གྲངས་འདི་ ཨང་གྲངས་ཀྱི་ཨང་གྲངས་འདི་ ཨང་གྲངས་ཀྱི་ཨང་གྲངས་འདི་ ཨང་གྲངས་ཀྱི་ཨང་གྲངས་དེ་ ཨང་གྲངས་ཀྱི་ཨང་གྲངས་དེ་ ཨང་གྲངས་ཀྱི་ཨང་གྲངས་དེ་ ཨང་གྲངས་ཀྱི་ཨང་གྲངས་དེ་ ཨང་གྲངས་ཀྱི་ཨང་གྲངས་དེ་ ཨང་གྲངས་ཀྱི་ཨང་གྲངས་དེ་ ཨང་གྲངས་ཀྱི་ཨང་གྲངས་དེ་ ཨང་གྲངས་ཀྱི་ཨང་གྲངས་དེ་ ཨང་གྲངས་ཀྱི་ཨང་གྲངས་དེ་ ཨང་གྲངས་ཀྱི་ཨང་གྲངས་དེ་ ཨང་གྲངས་ཀྱི་ཨང་གྲངས་དེ་ ཨང་གྲངས་
+    """"""
+","    lis = list()
+    for i in s.split(' '):
+        if i.isdigit():
+            lis.append(int(i))
+    return n - sum(lis)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""5 apples and 6 oranges"",19) == 8
+    assert candidate(""5 apples and 6 oranges"",21) == 10
+    assert candidate(""0 apples and 1 oranges"",3) == 2
+    assert candidate(""1 apples and 0 oranges"",3) == 2
+    assert candidate(""2 apples and 3 oranges"",100) == 95
+    assert candidate(""2 apples and 3 oranges"",5) == 0
+    assert candidate(""1 apples and 100 oranges"",120) == 19
+"
+"
+def pluck(arr):
+    """"""
+    ཁྱོད་ཀྱིས་ཨེ་རེ་འདི་ཨེ་རེ་གཞན་དང་མ་འདྲ་བའི་ཨང་གྲངས་ཀྱི་ཨང་གྲངས་ཚུ་ཡོད་པའི་ཤིང་སྡོང་གི་ཡན་ལག་ཅིག་ལུ་ངོ་ཚབ་འབདཝ་ཨིན་པ་ཅིན་ ཁྱོད་ཀྱི་ལཱ་འདི་ ཨེ་རེ་གཅིག་བཏོན་ཏེ་ལོག་གཏང་ནི་དེ་ཨིན། ཨེ་རེ་འདི་ཨེ་རེ་ཆུང་ཤོས་དང་ ཨང་གྲངས་ཆ་མཉམ་ཡོད་པའི་ཨང་གྲངས་སྦེ་ལོག་གཏང་དགོ། ཨེ་རེ་ཆུང་ཤོས་དང་ ཨང་གྲངས་ཆ་མཉམ་ཡོད་པའི་ཨང་གྲངས་ཚུ་ཐོབ་པ་ཅིན་ ཨེ་རེ་ཆུང་ཤོས་དང་ ཨང་གྲངས་ཆ་མཉམ་ཡོད་པའི་ཨང་གྲངས་དེ་ལོག་གཏང་དགོ། ཨེ་རེ་འདི་ཐོ་ཡིག་ནང་ལོག་གཏང་དགོ། [smallest_value, its index] ཨེ་རེ་ནང་ཨང་གྲངས་ཆ་མཉམ་མེད་པ་ཅིན་ ཨེ་རེ་དེ་ལོག་གཏང་། དཔེར་ན་: ༡། ཨེན་པུཊི་: [༤,༢,༣] ཨོཊི་: [༢,༡] འགྲེལ་བཤད་: ༢་ལུ་ ཨེ་རེ་ཆུང་ཤོས་དང་ ཨང་གྲངས་ཆ་མཉམ་ཡོད་པའི་ཨང་གྲངས་
+    """"""
+","    if(len(arr) == 0): return []
+    evens = list(filter(lambda x: x%2 == 0, arr))
+    if(evens == []): return []
+    return [min(evens), arr.index(min(evens))]
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([4,2,3]) == [2, 1], ""Error""
+    assert candidate([1,2,3]) == [2, 1], ""Error""
+    assert candidate([]) == [], ""Error""
+    assert candidate([5, 0, 3, 0, 4, 2]) == [0, 1], ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([1, 2, 3, 0, 5, 3]) == [0, 3], ""Error""
+    assert candidate([5, 4, 8, 4 ,8]) == [4, 1], ""Error""
+    assert candidate([7, 6, 7, 1]) == [6, 1], ""Error""
+    assert candidate([7, 9, 7, 1]) == [], ""Error""
+
+"
+"
+def search(lst):
+    '''
+    You are given a non-empty list of positive integers. Return the greatest integer that is greater than 
+    zero, and has a frequency greater than or equal to the value of the integer itself. 
+    The frequency of an integer is the number of times it appears in the list.
+    If no such a value exist, return -1.
+    Examples:
+        search([4, 1, 2, 2, 3, 1]) == 2
+        search([1, 2, 2, 3, 3, 3, 4, 4, 4]) == 3
+        search([5, 5, 4, 4, 4]) == -1
+    '''
+","    frq = [0] * (max(lst) + 1)
+    for i in lst:
+        frq[i] += 1;
+
+    ans = -1
+    for i in range(1, len(frq)):
+        if frq[i] >= i:
+            ans = i
+    
+    return ans
+","def check(candidate):
+
+    # manually generated tests
+    assert candidate([5, 5, 5, 5, 1]) == 1
+    assert candidate([4, 1, 4, 1, 4, 4]) == 4
+    assert candidate([3, 3]) == -1
+    assert candidate([8, 8, 8, 8, 8, 8, 8, 8]) == 8
+    assert candidate([2, 3, 3, 2, 2]) == 2
+
+    # automatically generated tests
+    assert candidate([2, 7, 8, 8, 4, 8, 7, 3, 9, 6, 5, 10, 4, 3, 6, 7, 1, 7, 4, 10, 8, 1]) == 1
+    assert candidate([3, 2, 8, 2]) == 2
+    assert candidate([6, 7, 1, 8, 8, 10, 5, 8, 5, 3, 10]) == 1
+    assert candidate([8, 8, 3, 6, 5, 6, 4]) == -1
+    assert candidate([6, 9, 6, 7, 1, 4, 7, 1, 8, 8, 9, 8, 10, 10, 8, 4, 10, 4, 10, 1, 2, 9, 5, 7, 9]) == 1
+    assert candidate([1, 9, 10, 1, 3]) == 1
+    assert candidate([6, 9, 7, 5, 8, 7, 5, 3, 7, 5, 10, 10, 3, 6, 10, 2, 8, 6, 5, 4, 9, 5, 3, 10]) == 5
+    assert candidate([1]) == 1
+    assert candidate([8, 8, 10, 6, 4, 3, 5, 8, 2, 4, 2, 8, 4, 6, 10, 4, 2, 1, 10, 2, 1, 1, 5]) == 4
+    assert candidate([2, 10, 4, 8, 2, 10, 5, 1, 2, 9, 5, 5, 6, 3, 8, 6, 4, 10]) == 2
+    assert candidate([1, 6, 10, 1, 6, 9, 10, 8, 6, 8, 7, 3]) == 1
+    assert candidate([9, 2, 4, 1, 5, 1, 5, 2, 5, 7, 7, 7, 3, 10, 1, 5, 4, 2, 8, 4, 1, 9, 10, 7, 10, 2, 8, 10, 9, 4]) == 4
+    assert candidate([2, 6, 4, 2, 8, 7, 5, 6, 4, 10, 4, 6, 3, 7, 8, 8, 3, 1, 4, 2, 2, 10, 7]) == 4
+    assert candidate([9, 8, 6, 10, 2, 6, 10, 2, 7, 8, 10, 3, 8, 2, 6, 2, 3, 1]) == 2
+    assert candidate([5, 5, 3, 9, 5, 6, 3, 2, 8, 5, 6, 10, 10, 6, 8, 4, 10, 7, 7, 10, 8]) == -1
+    assert candidate([10]) == -1
+    assert candidate([9, 7, 7, 2, 4, 7, 2, 10, 9, 7, 5, 7, 2]) == 2
+    assert candidate([5, 4, 10, 2, 1, 1, 10, 3, 6, 1, 8]) == 1
+    assert candidate([7, 9, 9, 9, 3, 4, 1, 5, 9, 1, 2, 1, 1, 10, 7, 5, 6, 7, 6, 7, 7, 6]) == 1
+    assert candidate([3, 10, 10, 9, 2]) == -1
+
+"
+"
+def strange_sort_list(lst):
+    '''
+    Given list of integers, return list in strange order.
+    Strange sorting, is when you start with the minimum value,
+    then maximum of the remaining integers, then minimum and so on.
+
+    Examples:
+    strange_sort_list([1, 2, 3, 4]) == [1, 4, 2, 3]
+    strange_sort_list([5, 5, 5, 5]) == [5, 5, 5, 5]
+    strange_sort_list([]) == []
+    '''
+","    res, switch = [], True
+    while lst:
+        res.append(min(lst) if switch else max(lst))
+        lst.remove(res[-1])
+        switch = not switch
+    return res
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1, 2, 3, 4]) == [1, 4, 2, 3]
+    assert candidate([5, 6, 7, 8, 9]) == [5, 9, 6, 8, 7]
+    assert candidate([1, 2, 3, 4, 5]) == [1, 5, 2, 4, 3]
+    assert candidate([5, 6, 7, 8, 9, 1]) == [1, 9, 5, 8, 6, 7]
+    assert candidate([5, 5, 5, 5]) == [5, 5, 5, 5]
+    assert candidate([]) == []
+    assert candidate([1,2,3,4,5,6,7,8]) == [1, 8, 2, 7, 3, 6, 4, 5]
+    assert candidate([0,2,2,2,5,5,-5,-5]) == [-5, 5, -5, 5, 0, 2, 2, 2]
+    assert candidate([111111]) == [111111]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def triangle_area(a, b, c):
+    '''
+    Given the lengths of the three sides of a triangle. Return the area of
+    the triangle rounded to 2 decimal points if the three sides form a valid triangle. 
+    Otherwise return -1
+    Three sides make a valid triangle when the sum of any two sides is greater 
+    than the third side.
+    Example:
+    triangle_area(3, 4, 5) == 6.00
+    triangle_area(1, 2, 10) == -1
+    '''
+","    if a + b <= c or a + c <= b or b + c <= a:
+        return -1 
+    s = (a + b + c)/2    
+    area = (s * (s - a) * (s - b) * (s - c)) ** 0.5
+    area = round(area, 2)
+    return area
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(3, 4, 5) == 6.00, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(1, 2, 10) == -1
+    assert candidate(4, 8, 5) == 8.18
+    assert candidate(2, 2, 2) == 1.73
+    assert candidate(1, 2, 3) == -1
+    assert candidate(10, 5, 7) == 16.25
+    assert candidate(2, 6, 3) == -1
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1, 1, 1) == 0.43, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(2, 2, 10) == -1
+
+"
+"
+def will_it_fly(q,w):
+    '''
+    Write a function that returns True if the object q will fly, and False otherwise.
+    The object q will fly if it's balanced (it is a palindromic list) and the sum of its elements is less than or equal the maximum possible weight w.
+
+    Example:
+    will_it_fly([1, 2], 5) â -> False 
+    # 1+2 is less than the maximum possible weight, but it's unbalanced.
+
+    will_it_fly([3, 2, 3], 1) â -> False
+    # it's balanced, but 3+2+3 is more than the maximum possible weight.
+
+    will_it_fly([3, 2, 3], 9) â -> True
+    # 3+2+3 is less than the maximum possible weight, and it's balanced.
+
+    will_it_fly([3], 5) â -> True
+    # 3 is less than the maximum possible weight, and it's balanced.
+    '''
+","    if sum(q) > w:
+        return False
+
+    i, j = 0, len(q)-1
+    while i<j:
+        if q[i] != q[j]:
+            return False
+        i+=1
+        j-=1
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([3, 2, 3], 9) is True
+    assert candidate([1, 2], 5) is False
+    assert candidate([3], 5) is True
+    assert candidate([3, 2, 3], 1) is False
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1, 2, 3], 6) is False
+    assert candidate([5], 5) is True
+
+"
+"
+def smallest_change(arr):
+    """"""
+    ཨེ་རེ་ཨར་རེ་ནང་ ཨང་གྲངས་ཧྲིལ་བུམ་ཡོད་པ་ཅིན་ ཨེ་རེ་དེ་ པཱ་ལིན་ཌོརམིསི་སྦེ་བཟོ་བའི་དོན་ལུ་ བསྒྱུར་བཅོས་འབད་དགོཔ་ཨིན་པའི་ ཨེ་རེ་ཉུང་ཤོས་དེ་འཚོལ་དགོ། པཱ་ལིན་ཌོརམིསི་ ཨེ་རེ་དེ་ ཨེ་རེ་ཅིག་ཨིན་པའི་ཁར་ ཨེ་རེ་དེ་ ཤུལ་ལས་དང་ཧེ་མ་གཉིས་ཆ་ར་ལུ་ བསྒྱུར་བཅོས་འབད་ཚུགས། བསྒྱུར་བཅོས་གཅིག་གི་སྐབས་ལུ་ ཨེ་རེ་གཅིག་ལས་ ཨེ་རེ་གཞན་ཅིག་ལུ་ བསྒྱུར་བཅོས་འབད་ཚུགས། དཔེར་ན་: smallest_change (([1,2,3,5,4,7,9,6]) == 4 smallest_change (([1, 2, 3, 4, 3, 2, 2]) == 1 smallest_change (([1, 2, 3, 2, 1]) == 0
+    """"""
+","    ans = 0
+    for i in range(len(arr) // 2):
+        if arr[i] != arr[len(arr) - i - 1]:
+            ans += 1
+    return ans
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,2,3,5,4,7,9,6]) == 4
+    assert candidate([1, 2, 3, 4, 3, 2, 2]) == 1
+    assert candidate([1, 4, 2]) == 1
+    assert candidate([1, 4, 4, 2]) == 1
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1, 2, 3, 2, 1]) == 0
+    assert candidate([3, 1, 1, 3]) == 0
+    assert candidate([1]) == 0
+    assert candidate([0, 1]) == 1
+
+"
+"
+def total_match(lst1, lst2):
+    '''
+    Write a function that accepts two lists of strings and returns the list that has 
+    total number of chars in the all strings of the list less than the other list.
+
+    if the two lists have the same number of chars, return the first list.
+
+    Examples
+    total_match([], []) â -> []
+    total_match(['hi', 'admin'], ['hI', 'Hi']) â -> ['hI', 'Hi']
+    total_match(['hi', 'admin'], ['hi', 'hi', 'admin', 'project']) â -> ['hi', 'admin']
+    total_match(['hi', 'admin'], ['hI', 'hi', 'hi']) â -> ['hI', 'hi', 'hi']
+    total_match(['4'], ['1', '2', '3', '4', '5']) â -> ['4']
+    '''
+","    l1 = 0
+    for st in lst1:
+        l1 += len(st)
+    
+    l2 = 0
+    for st in lst2:
+        l2 += len(st)
+    
+    if l1 <= l2:
+        return lst1
+    else:
+        return lst2
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([], []) == []
+    assert candidate(['hi', 'admin'], ['hi', 'hi']) == ['hi', 'hi']
+    assert candidate(['hi', 'admin'], ['hi', 'hi', 'admin', 'project']) == ['hi', 'admin']
+    assert candidate(['4'], ['1', '2', '3', '4', '5']) == ['4']
+    assert candidate(['hi', 'admin'], ['hI', 'Hi']) == ['hI', 'Hi']
+    assert candidate(['hi', 'admin'], ['hI', 'hi', 'hi']) == ['hI', 'hi', 'hi']
+    assert candidate(['hi', 'admin'], ['hI', 'hi', 'hii']) == ['hi', 'admin']
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([], ['this']) == []
+    assert candidate(['this'], []) == []
+
+"
+"
+def is_multiply_prime(a):
+    """"""ཨང་གྲངས་འདི་ ཨང་གྲངས་ངོ་མ་༣ གྱི་གྱངས་ཁ་དང་ ཨང་གྲངས་གཞན་ཚུ་ཤོམ་པ་ཅིན་ ཨིན་ཟེར་ལོག་གཏང་མི་ལས་འགན་ཅིག་འབྲི་དགོ། དཔེར་ན་: is_multiply_prime (༣༠) == ཨིན་པུཊི་ ༣༠ = ༢*༣*༥
+    """"""
+","    def is_prime(n):
+        for j in range(2,n):
+            if n%j == 0:
+                return False
+        return True
+
+    for i in range(2,101):
+        if not is_prime(i): continue
+        for j in range(2,101):
+            if not is_prime(j): continue
+            for k in range(2,101):
+                if not is_prime(k): continue
+                if i*j*k == a: return True
+    return False
+","def check(candidate):
+
+    assert candidate(5) == False
+    assert candidate(30) == True
+    assert candidate(8) == True
+    assert candidate(10) == False
+    assert candidate(125) == True
+    assert candidate(3 * 5 * 7) == True
+    assert candidate(3 * 6 * 7) == False
+    assert candidate(9 * 9 * 9) == False
+    assert candidate(11 * 9 * 9) == False
+    assert candidate(11 * 13 * 7) == True
+
+"
+"
+def is_simple_power(x, n):
+    """"""ཁྱོད་ཀྱི་ལཱ་འདི་ གྲངས་སུ་ཅིག་ x འདི་ n གི་ཤུགས་ཅིག་ཨིན་པ་ཅིན་ true དང་ གཞན་གནས་སྟངས་གཞན་ནང་ལུ་ false སླར་ལོག་འབད་ནིའི་འགན་ཁུར་འདི་ཨིན། x འདི་ n གི་ཤུགས་ཅིག་ཨིན་པ་ཅིན་ x འདི་ཨིན། དཔེར་ན་: is_simple_power (_simple_power) {1, 4) => true is_simple_power (_simple_power) {2, 2) => true is_simple_power (_simple_power) {8, 2) => true is_simple_power (_simple_power) {3, 2) => false is_simple_power (_simple_power) {3, 1) => false is_simple_power (_simple_power) {5, 3) => false
+    """"""
+","    if (n == 1): 
+        return (x == 1) 
+    power = 1
+    while (power < x): 
+        power = power * n 
+    return (power == x) 
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(16, 2)== True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(143214, 16)== False, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(4, 2)==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(9, 3)==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(16, 4)==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(24, 2)==False, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(128, 4)==False, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(12, 6)==False, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1, 1)==True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(1, 12)==True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def iscube(a):
+    '''
+    Write a function that takes an integer a and returns True 
+    if this ingeger is a cube of some integer number.
+    Note: you may assume the input is always valid.
+    Examples:
+    iscube(1) ==> True
+    iscube(2) ==> False
+    iscube(-1) ==> True
+    iscube(64) ==> True
+    iscube(0) ==> True
+    iscube(180) ==> False
+    '''
+","    a = abs(a)
+    return int(round(a ** (1. / 3))) ** 3 == a
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(1) == True, ""First test error: "" + str(candidate(1))
+    assert candidate(2) == False, ""Second test error: "" + str(candidate(2))
+    assert candidate(-1) == True, ""Third test error: "" + str(candidate(-1))
+    assert candidate(64) == True, ""Fourth test error: "" + str(candidate(64))
+    assert candidate(180) == False, ""Fifth test error: "" + str(candidate(180))
+    assert candidate(1000) == True, ""Sixth test error: "" + str(candidate(1000))
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(0) == True, ""1st edge test error: "" + str(candidate(0))
+    assert candidate(1729) == False, ""2nd edge test error: "" + str(candidate(1728))
+
+"
+"
+def hex_key(num):
+    """"""ཁྱོད་ཀྱིས་ཧེ་ཀ་ཌེ་སི་མཱལ་ཨང་གྲངས་ཚུ་ ཀེར་ཐིག་སྦེ་ལེན་ཏེ་ ཧེ་ཀ་ཌེ་སི་མཱལ་ཨང་གྲངས་ཚུ་རྩིས་སྟོན་འབད་ནིའི་འགན་ཁུར་ཐོབ་ཡོདཔ་དང་ འདི་ཡང་ ཨང་གྲངས་ཚུའི་གྲངས་སུ་རྩིས་སྟོན་འབད་ (ཨང་གྲངས་ཚུའི་གྲངས་སུ་རྩིས་སྟོན་འབད་མི་དེ་ རང་བཞིན་ཨང་གྲངས་ ༡ ལས་སྦོམ་ནི་ཨིནམ་དང་ འདི་ཡང་ ཆུང་ཤོས་ཨང་གྲངས་གཉིས་ལས་ཐོན་མི་གྲངས་སུ་རྩིས་སྟོན་འབདཝ་ཨིན།) ཧེ་ཀ་ཌེ་སི་མཱལ་ཨང་གྲངས་ཚུ་ ༠, ༡, ༢, ༣, ༤, ༥, ༦, ༧, ༨, ༩, A, B, C, D, E, F ཨིན་པས། ཨང་གྲངས་ཚུའི་གྲངས་སུ་རྩིས་སྟོན་འབད་དགོ་པའི་ཨང་གྲངས་ཚུ་འདི་ ༢, ༣, ༥, ༧, ༡༡, ༡༣, ༡༧,...ཨིན། འདི་འབདཝ་ལས་ ཁྱོད་ཀྱིས་ འོག་གི་ཨང་གྲངས་ཚུ་ངེས་འཛིན་འབད་དགོཔ་ཨིན། ༢, ༣, ༥, ༧
+    """"""
+","    primes = ('2', '3', '5', '7', 'B', 'D')
+    total = 0
+    for i in range(0, len(num)):
+        if num[i] in primes:
+            total += 1
+    return total
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""AB"") == 1, ""First test error: "" + str(candidate(""AB""))      
+    assert candidate(""1077E"") == 2, ""Second test error: "" + str(candidate(""1077E""))  
+    assert candidate(""ABED1A33"") == 4, ""Third test error: "" + str(candidate(""ABED1A33""))      
+    assert candidate(""2020"") == 2, ""Fourth test error: "" + str(candidate(""2020""))  
+    assert candidate(""123456789ABCDEF0"") == 6, ""Fifth test error: "" + str(candidate(""123456789ABCDEF0""))      
+    assert candidate(""112233445566778899AABBCCDDEEFF00"") == 12, ""Sixth test error: "" + str(candidate(""112233445566778899AABBCCDDEEFF00""))  
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([]) == 0
+
+"
+"
+def decimal_to_binary(decimal):
+    """"""ཁྱོད་ཀྱིས་ཨང་གྲངས་འདི་ ཨང་གྲངས་བཅུ་པའི་ཐོག་ལས་བཟོ་སྟེ་ཡོད་པ་ཅིན་ ཁྱོད་ཀྱིས་ཨང་གྲངས་འདི་ གཉིས་ལྡན་གྱི་ཐོག་ལས་བཟོ་དགོ། ལས་འགན་འདི་གིས་ ཀེར་ཐིག་ཅིག་སླར་ལོག་འབད་དགོཔ་ཨིན་ ཀེར་ཐིག་རེ་རེ་གིས་ གཉིས་ལྡན་གྱི་ཨང་གྲངས་ངོ་ཚབ་འབདཝ་ཨིན། ཀེར་ཐིག་རེ་རེ་ནང་ ཀེར་ཐིག་རེ་རེ་ལུ་ ༠ ཡང་ན་ ༡ ཨིན། ཀེར་ཐིག་གི་འགོ་དང་མཇུག་ལུ་ ཀེར་ཐིག་གཉིས་ལྡན་ 'db' ཅིག་ལྷག་སྟེ་ཡོད་འོང་། ཀེར་ཐིག་གཉིས་ལྡན་ཚུ་ སྒྲིག་བཀོད་ལུ་ཕན་ཐོགས་པའི་དོན་ལུ་ཨིན། དཔེ་འབད་བ་ཅིན་: decimal_to_binary (༡༥) # གིས་ ""db1111db"" སླར་ལོག་འབདཝ་ཨིན། decimal_to_binary (༣༢) # གིས་ ""db100000db"" སླར་ལོག་འབདཝ་ཨིན།
+    """"""
+","    return ""db"" + bin(decimal)[2:] + ""db""
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(0) == ""db0db""
+    assert candidate(32) == ""db100000db""
+    assert candidate(103) == ""db1100111db""
+    assert candidate(15) == ""db1111db"", ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def is_happy(s):
+    """"""ཁྱོད་ལུ་ string s ཅིག་བྱིན་ཡོདཔ་ཨིན། ཁྱོད་ཀྱི་ལཱ་འདི་ string འདི་དགའ་སྐྱིད་ཅན་ཨིན་ན་མེན་ན་བརྟག་དཔྱད་འབད་དགོ འདི་ཡང་ string འདི་དགའ་སྐྱིད་ཅན་ཨིན་པ་ཅིན་ དེའི་རིང་ཚད་དེ་ཉུང་ཤོས་རང་ 3 དང་ཤུལ་མམ་གྱི་ཡིག་འབྲུ་ 3 པོ་ཆ་ར་སོ་སོ་ཨིན། དཔེར་ན་: is_happy (a) => False is_happy (aa) => False is_happy (abcd) => True is_happy (aabb) => False is_happy (adb) => True is_happy (xyy) => False
+    """"""
+","    if len(s) < 3:
+      return False
+
+    for i in range(len(s) - 2):
+      
+      if s[i] == s[i+1] or s[i+1] == s[i+2] or s[i] == s[i+2]:
+        return False
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""a"") == False , ""a""
+    assert candidate(""aa"") == False , ""aa""
+    assert candidate(""abcd"") == True , ""abcd""
+    assert candidate(""aabb"") == False , ""aabb""
+    assert candidate(""adb"") == True , ""adb""
+    assert candidate(""xyy"") == False , ""xyy""
+    assert candidate(""iopaxpoi"") == True , ""iopaxpoi""
+    assert candidate(""iopaxioi"") == False , ""iopaxioi""
+"
+"
+def numerical_letter_grade(grades):
+    """"""སློབ་རིམ་མཇུག་གི་ བདུན་ཕྲག་འདི་ཨིནམ་ལས་ སློབ་དཔོན་གྱིས་ སློབ་ཕྲུག་ཚུ་ལུ་ ཨང་བཏགས་དགོཔ་ཨིན། སློབ་དཔོན་གྱིས་ ཨང་བཏགས་ནིའི་ ཨལ་གོར་ཇི་མཱིས་དེ་ ཁོ་རང་གིས་བཟོ་སྟེ་འདུག། དཀའ་ངལ་འདི་ ཁོ་གིས་ ཨང་བཏགས་ནིའི་དོན་ལས་ ལག་ལེན་འཐབ་མི་ ཨང་བཏགས་ཐོ་བཀོད་དེ་ བྱང་སྟེ་འདུག། ཁོ་གིས་ སློབ་ཕྲུག་ལ་ལོ་ཅིག་ལུ་ ཨང་བཏགས་ཐོ་བཀོད་ཅིག་བྱིན་ཏེ་ཡོདཔ་ལས་ ཁྱོད་ཀྱིས་ ཨང་བཏགས་ཐོ་བཀོད་དེ་ ཨང་བཏགས་ཐོ་བཀོད་ཅིག་འབྲི་དགོཔ་ཨིན། ཨང་བཏགས་ཐོ་བཀོད་དེ་ ཨང་བཏགས་ཐོ་བཀོད་ཨིན། ཨང་བཏགས་ཐོ་བཀོད་དེ་ ཨང་བཏགས་ཐོ་བཀོད་དེ་ ཨང་བཏགས་ཐོ་བཀོད་དེ་ ཨང་བཏགས་ཐོ་བཀོད་དེ་ ཨང་བཏགས་ཐོ་བཀོད་དེ་ ཨང་བཏགས་ཐོ་བཀོད་དེ་ ཨང་བཏགས་ཐོ་བཀོད་དེ་ ཨང་བཏགས་ཐོ་བཀོད་དེ་ ཨང་བཏགས་ཐོ་བཀོད་དེ་ ཨང་བཏགས་ཐོ་བཀོད་
+    """"""
+","
+   
+    letter_grade = []
+    for gpa in grades:
+        if gpa == 4.0:
+            letter_grade.append(""A+"")
+        elif gpa > 3.7:
+            letter_grade.append(""A"")
+        elif gpa > 3.3:
+            letter_grade.append(""A-"")
+        elif gpa > 3.0:
+            letter_grade.append(""B+"")
+        elif gpa > 2.7:
+            letter_grade.append(""B"")
+        elif gpa > 2.3:
+            letter_grade.append(""B-"")
+        elif gpa > 2.0:
+            letter_grade.append(""C+"")
+        elif gpa > 1.7:
+            letter_grade.append(""C"")
+        elif gpa > 1.3:
+            letter_grade.append(""C-"")
+        elif gpa > 1.0:
+            letter_grade.append(""D+"")
+        elif gpa > 0.7:
+            letter_grade.append(""D"")
+        elif gpa > 0.0:
+            letter_grade.append(""D-"")
+        else:
+            letter_grade.append(""E"")
+    return letter_grade
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([4.0, 3, 1.7, 2, 3.5]) == ['A+', 'B', 'C-', 'C', 'A-']
+    assert candidate([1.2]) == ['D+']
+    assert candidate([0.5]) == ['D-']
+    assert candidate([0.0]) == ['E']
+    assert candidate([1, 0.3, 1.5, 2.8, 3.3]) == ['D', 'D-', 'C-', 'B', 'B+']
+    assert candidate([0, 0.7]) == ['E', 'D-']
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def prime_length(string):
+    """"""string དང་འབྲེལ་བའི་ལས་འགན་ཅིག་འབྲི་ཞིནམ་ལས་ string གི་རིང་ཚད་དེ་ prime number ཅིག་ཨིན་པ་ཅིན་ True ཡང་ན་ False སླར་ལོག་འབདཝ་ཨིན། དཔེ་འབད་བ་ཅིན་ prime_length (_) == true prime_length (_) == abcdcba (_) == true prime_length (_) == kittens (_) == true prime_length (_) == false
+    """"""
+","    l = len(string)
+    if l == 0 or l == 1:
+        return False
+    for i in range(2, l):
+        if l % i == 0:
+            return False
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('Hello') == True
+    assert candidate('abcdcba') == True
+    assert candidate('kittens') == True
+    assert candidate('orange') == False
+    assert candidate('wow') == True
+    assert candidate('world') == True
+    assert candidate('MadaM') == True
+    assert candidate('Wow') == True
+    assert candidate('') == False
+    assert candidate('HI') == True
+    assert candidate('go') == True
+    assert candidate('gogo') == False
+    assert candidate('aaaaaaaaaaaaaaa') == False
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('Madam') == True
+    assert candidate('M') == False
+    assert candidate('0') == False
+
+"
+"
+def starts_one_ends(n):
+    """"""
+    ཨང་གྲངས་ཚངམ་སྦེ་ཡོད་མི་འདི་ལས་ ཨང་གྲངས་ཚངམ་སྦེ་ཡོད་མི་འདི་ལས་ ཨང་གྲངས་ཚངམ་སྦེ་ཡོད་མི་འདི་ཚུ་སླར་ལོག་འབདཝ་ཨིན།
+    """"""
+","    if n == 1: return 1
+    return 18 * (10 ** (n - 2))
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(1) == 1
+    assert candidate(2) == 18
+    assert candidate(3) == 180
+    assert candidate(4) == 1800
+    assert candidate(5) == 18000
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def solve(N):
+    """"""ཨང་གྲངས་ཧྲིལ་བུམ་ཚུའི་དོན་ལས་ ཨང་གྲངས་ཧྲིལ་བུམ་ཚུ་ གཉིས་ལྡན་གྱི་ཐོག་ལས་ལོག་གཏང་། དཔེ་འབད་བ་ཅིན་ ཨང་གྲངས་ N = ༡༠༠༠ གི་དོན་ལས་ ཨང་གྲངས་བསྡོམས་དེ་ ༡ ཨིནམ་ལས་ ཨང་གྲངས་ཐོན་སྐྱེད་དེ་ ༡ སྦེ་འཐོན་འོང་། ཨང་གྲངས་ N = ༡༥༠ གི་དོན་ལས་ ཨང་གྲངས་བསྡོམས་དེ་ ༦ ཨིནམ་ལས་ ཨང་གྲངས་ཐོན་སྐྱེད་དེ་ ༡༡༠ སྦེ་འཐོན་འོང་། ཨང་གྲངས་ N = ༡༤༧ གི་དོན་ལས་ ཨང་གྲངས་བསྡོམས་དེ་ ༡༢ ཨིནམ་ལས་ ཨང་གྲངས་ཐོན་སྐྱེད་དེ་ ༡༡༠༠ སྦེ་འཐོན་འོང་། འགྱུར་བ་: @N ཨང་གྲངས་ཧྲིལ་བུམ་ཚུའི་དོན་ལས་: ༠ ‰¤ N ‰¤ ༡༠༠༠༠ ཨིན། ཨང་གྲངས་ཐོན་སྐྱེད་: ཨང་གྲངས་གཉིས་ལྡན་གྱི་ཐིག་ཁྲམ་ཅིག་ཨིན།
+    """"""
+","    return bin(sum(int(i) for i in str(N)))[2:]
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(1000) == ""1"", ""Error""
+    assert candidate(150) == ""110"", ""Error""
+    assert candidate(147) == ""1100"", ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(333) == ""1001"", ""Error""
+    assert candidate(963) == ""10010"", ""Error""
+
+"
+"
+def add(lst):
+    """"""ཨང་གྲངས་ཧྲིལ་བུ་མེད་མི་ཐོ་ཡིག་ཅིག་བྱིན་པ་ཅིན་ ཨང་གྲངས་ཧྲིལ་བུ་ཡོད་མི་ཚུ་ ཨང་གྲངས་ཧྲིལ་བུ་སྦེ་བསྡོམས་དགོ། དཔེར་ན་: add (([4, 2, 6, 7]) ==> 2 
+    """"""
+","    return sum([lst[i] for i in range(1, len(lst), 2) if lst[i]%2 == 0])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([4, 88]) == 88
+    assert candidate([4, 5, 6, 7, 2, 122]) == 122
+    assert candidate([4, 0, 6, 7]) == 0
+    assert candidate([4, 4, 6, 8]) == 12
+
+    # Check some edge cases that are easy to work out by hand.
+    
+"
+"
+def anti_shuffle(s):
+    """"""
+    string གི་རིམ་སྒྲིག་ཅན་གྱི་རྣམ་པ་འདི་ string གི་རིམ་སྒྲིག་ཅན་གྱི་རྣམ་པ་འདི་ཨིན། ཚིག་ཡིག་ཆ་མཉམ་ (བར་སྟོང་གིས་སོ་སོར་བཟོ་སྟེ་) འདི་ ཚིག་ཡིག་གསརཔ་གིས་ཚབ་བཙུགས་ཏེ་ཡོདཔ་དང་ འདི་ནང་ཡིག་འབྲུ་ཆ་མཉམ་ ascii གནས་གོང་ལུ་གཞི་བཞག་སྟེ་ཡར་སེང་རིམ་སྒྲིག་འབདཝ་ཨིན། དྲན་པ་བཟོ་དགོ: ཁྱོད་ཀྱིས་ཚིག་ཡིག་དང་ བར་སྟོང་གི་རིམ་སྒྲིག་འདི་ ཚིག་ཡིག་ནང་བཞག་དགོ། དཔེར་ན་: anti_shuffle ((('Hi') གིས་ 'Hi' anti_shuffle ((('hello') གིས་ 'ehllo' anti_shuffle ((('Hello World!!!') གིས་ 'Hello!!!Wdlor' སླར་ལོག་འབདཝ་ཨིན།
+    """"""
+","    return ' '.join([''.join(sorted(list(i))) for i in s.split(' ')])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('Hi') == 'Hi'
+    assert candidate('hello') == 'ehllo'
+    assert candidate('number') == 'bemnru'
+    assert candidate('abcd') == 'abcd'
+    assert candidate('Hello World!!!') == 'Hello !!!Wdlor'
+    assert candidate('') == ''
+    assert candidate('Hi. My name is Mister Robot. How are you?') == '.Hi My aemn is Meirst .Rboot How aer ?ouy'
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def get_row(lst, x):
+    """"""
+    ཁྱོད་ཀྱིས་ཚད་གཉིས་ཅན་གྱི་ཡིག་སྣོད་ཅིག་ཐོབ་སྟེ་ འདི་ཡང་ matrix དང་འདྲ་བ་ཨིན། ཨིན་རུང་ matrix དང་མ་འདྲ་བར་ ཐིག་ཁྲམ་རེ་ནང་ ཀེར་ཐིག་གི་གྱངས་ཁ་མ་འདྲཝ་ཡོདཔ་ཨིན། lst དང་ཨང་གྲངས་ཧྲིལ་ x བྱིན་པ་ཅིན་ ཐིག་ཁྲམ་ནང་ལུ་ ཨང་གྲངས་ཧྲིལ་ x འཚོལ་ཞིནམ་ལས་ ཀེར་ཐིག་གི་ཐོ་ཡིག་སླར་ལོག་འབད་ [(x1, y1), (x2, y2)...] འདི་བཟུམ་སྦེ་ ཀེར་ཐིག་རེ་རེ་འདི་ ཀོར་ཌི་ནེཊི་ - (གྲལ་ཐིག་ ཀེར་ཐིག་) སྦེ་ འགོ་བཙུགས་ཏེ་ ༠ ཨིན། ཀོར་ཌི་ནེཊི་ཚུ་རིམ་པ་ཡར་སེང་གི་ཐོག་ལས་ འགོ་ཐོག་ལུ་དབྱེ་ཞིབ་འབད་ དེ་ལས་ ཀེར་ཐིག་གི་ ཀེར་ཐིག་ཚུ་རིམ་པ་མར་འབབ་གི་ཐོག་ལས་དབྱེ་ཞིབ་འབད་ དཔེར་ན་: get_row [1,2,3,4,5,6], [1,2,3,4,1,6], [1,2,3,4,5,1],
+    """"""
+","    coords = [(i, j) for i in range(len(lst)) for j in range(len(lst[i])) if lst[i][j] == x]
+    return sorted(sorted(coords, key=lambda x: x[1], reverse=True), key=lambda x: x[0])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([
+        [1,2,3,4,5,6],
+        [1,2,3,4,1,6],
+        [1,2,3,4,5,1]
+    ], 1) == [(0, 0), (1, 4), (1, 0), (2, 5), (2, 0)]
+    assert candidate([
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6]
+    ], 2) == [(0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (5, 1)]
+    assert candidate([
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,1,3,4,5,6],
+        [1,2,1,4,5,6],
+        [1,2,3,1,5,6],
+        [1,2,3,4,1,6],
+        [1,2,3,4,5,1]
+    ], 1) == [(0, 0), (1, 0), (2, 1), (2, 0), (3, 2), (3, 0), (4, 3), (4, 0), (5, 4), (5, 0), (6, 5), (6, 0)]
+    assert candidate([], 1) == []
+    assert candidate([[1]], 2) == []
+    assert candidate([[], [1], [1, 2, 3]], 3) == [(2, 2)]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def sort_array(array):
+    """"""
+    ཨང་གྲངས་ཆ་མེད་མེན་པའི་ཨེ་རེ་ཅིག་བྱིན་པ་ཅིན་ དབྱེ་བ་ཕྱེ་ཚར་བའི་ཤུལ་ལས་ ཨང་གྲངས་ཆ་མེད་དེ་སླར་ལོག་འབད་འོང་། ཁྱོད་ཀྱིས་ ཨང་གྲངས་ཆ་མེད་དེ་ཡར་འཕར་གྱི་རིམ་པ་ལུ་དབྱེ་བ་ཕྱེ་ནི་ཨིན་པ་ཅིན་ ཨང་གྲངས་བསྡོམས་ ༼ དང་པ་བརྡ་སྟོན་གོང་ཚད་དང་ མཇུག་གི་བརྡ་སྟོན་གོང་ཚད་༽འདི་ གྱངས་ཁ་མ་རྐྱང་པ་ ཡང་ན་ ཨང་གྲངས་ཆ་མེད་དེ་ཡར་འཕར་གྱི་རིམ་པ་ལུ་དབྱེ་བ་ཕྱེ་ནི་ཨིན་པ་ཅིན་ ཨང་གྲངས་བསྡོམས་ ༼ དང་པ་བརྡ་སྟོན་གོང་ཚད་དང་ མཇུག་གི་བརྡ་སྟོན་གོང་ཚད་༽འདི་ཆ་སྙོམས་ཨིན། དྲན་པ་: * ཁྱོད་ཀྱིས་ཨང་གྲངས་ཆ་མེད་དེ་མ་སོར་དགོ། དཔེ་འབད་བ་ཅིན་: * sort_array[(]) => [] * sort_array[[5]) => [5] * sort_array[2, 4, 3, 0, 1, 5]) => [0, 1, 2, 3, 4, 5] * sort_array[2, 4, 3, 0, 1, 5, 6])
+    """"""
+","    return [] if len(array) == 0 else sorted(array, reverse= (array[0]+array[-1]) % 2 == 0) 
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([]) == [], ""Error""
+    assert candidate([5]) == [5], ""Error""
+    assert candidate([2, 4, 3, 0, 1, 5]) == [0, 1, 2, 3, 4, 5], ""Error""
+    assert candidate([2, 4, 3, 0, 1, 5, 6]) == [6, 5, 4, 3, 2, 1, 0], ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([2, 1]) == [1, 2], ""Error""
+    assert candidate([15, 42, 87, 32 ,11, 0]) == [0, 11, 15, 32, 42, 87], ""Error""
+    assert candidate([21, 14, 23, 11]) == [23, 21, 14, 11], ""Error""
+
+"
+"
+def encrypt(s):
+    """"""ཨེ་རེ་འདི་ ཨེ་རེ་སྒྲོམ་སྦེ་ལེན་ཏེ་ ཨེ་རེ་སྒྲོམ་ཅིག་སླར་ལོག་འབད་ནིའི་དོན་ལུ་ ཨེ་རེ་སྒྲོམ་འདི་ ལྡེ་མིག་སྦེ་བསྒྱུར་གཏང་དགོ། ཨེ་རེ་སྒྲོམ་འདི་ ཨང་ཡིག་གཉིས་ལས་ས་སྒོ་གཉིས་ལུ་ སྤོ་བཤུད་འབད་དོ་བཟུམ་སྦེ་ ལྡེ་མིག་བསྒྱུར་གཏང་དགོ། དཔེར་ན་: ཨེ་རེ་སྒྲོམ་ (_hi) གིས་ ཨེ་རེ་སྒྲོམ་ (_lm) སླར་ལོག་འབདཝ་ཨིན། ཨེ་རེ་སྒྲོམ་ (_asdfghjkl) གིས་ ཨེ་རེ་སྒྲོམ་ (_ewhjklnop) སླར་ལོག་འབདཝ་ཨིན། ཨེ་རེ་སྒྲོམ་ (_gf) གིས་ ཨེ་རེ་སྒྲོམ་ (_kj) སླར་ལོག་འབདཝ་ཨིན། ཨེ་རེ་སྒྲོམ་ (_et) གིས་ ཨེ་རེ་སྒྲོམ་ (_ix) སླར་ལོག་འབདཝ་ཨིན།
+    """"""
+","    d = 'abcdefghijklmnopqrstuvwxyz'
+    out = ''
+    for c in s:
+        if c in d:
+            out += d[(d.index(c)+2*2) % 26]
+        else:
+            out += c
+    return out
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('hi') == 'lm', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('asdfghjkl') == 'ewhjklnop', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('gf') == 'kj', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('et') == 'ix', ""This prints if this assert fails 1 (good for debugging!)""
+
+    assert candidate('faewfawefaewg')=='jeiajeaijeiak', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('hellomyfriend')=='lippsqcjvmirh', ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate('dxzdlmnilfuhmilufhlihufnmlimnufhlimnufhfucufh')=='hbdhpqrmpjylqmpyjlpmlyjrqpmqryjlpmqryjljygyjl', ""This prints if this assert fails 3 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('a')=='e', ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def next_smallest(lst):
+    """"""
+    ཁྱོད་ཀྱིས་ ཨང་གྲངས་ཧྲིལ་བུམ་གྱི་ཐོ་ཅིག་ཐོབ་ཡོདཔ་ཨིན། ཁྱོད་ཀྱིས་ function next_smallest () དེ་བཙུགསཔ་ད་ ཨང་གྲངས་ཀྱི་ཐོ་ནང་ ཨང་གྲངས་ཆུང་ཤོས་གཉིས་པ་སླར་ལོག་འབདཝ་ཨིན། ཨང་གྲངས་དེ་མེད་པ་ཅིན་ ཨང་གྲངས་མེད་དེ་སླར་ལོག་འབདཝ་ཨིན། next_smallest () [1, 2, 3, 4, 5]) == 2 next_smallest () [5, 1, 4, 3, 2]) == 2 next_smallest () []) == next_smallest () [1, 1]) == None
+    """"""
+","    lst = sorted(set(lst))
+    return None if len(lst) < 2 else lst[1]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1, 2, 3, 4, 5]) == 2
+    assert candidate([5, 1, 4, 3, 2]) == 2
+    assert candidate([]) == None
+    assert candidate([1, 1]) == None
+    assert candidate([1,1,1,1,0]) == 1
+    assert candidate([1, 0**0]) == None
+    assert candidate([-35, 34, 12, -45]) == -35
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def is_bored(S):
+    """"""
+    ཁྱོད་ཀྱིས་ཚིག་ཡིག་གི་ཐིག་ཁྲམ་ཅིག་ཐོབ་སྟེ་ ཁྱོད་ཀྱི་ལཱ་འདི་ བཀྲམ་སྟོན་འབད་ཡོད་པའི་གྱངས་ཁ་འདི་རྩིས་ནི་དེ་ཨིན། བཀྲམ་སྟོན་འབད་ཡོད་པའི་ཚིག་ཡིག་འདི་ ""I"" སྦེ་འགོ་བཙུགསཔ་ཨིན། ཚིག་ཡིག་འདི་ '.', '?' ཡང་ན་ '!' ཚུ་དང་གཅིག་ཁར་ དབྱེ་སེལ་འབདཝ་ཨིན། དཔེར་ན་:
+    >>> is_bored(""Hello world"")
+    0
+    >>> is_bored(""The sky is blue. The sun is shining. I love this weather"")
+    1
+    """"""
+","    import re
+    sentences = re.split(r'[.?!]\s*', S)
+    return sum(sentence[0:2] == 'I ' for sentence in sentences)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""Hello world"") == 0, ""Test 1""
+    assert candidate(""Is the sky blue?"") == 0, ""Test 2""
+    assert candidate(""I love It !"") == 1, ""Test 3""
+    assert candidate(""bIt"") == 0, ""Test 4""
+    assert candidate(""I feel good today. I will be productive. will kill It"") == 2, ""Test 5""
+    assert candidate(""You and I are going for a walk"") == 0, ""Test 6""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def any_int(x, y, z):
+    '''
+    Create a function that takes 3 numbers.
+    Returns true if one of the numbers is equal to the sum of the other two, and all numbers are integers.
+    Returns false in any other cases.
+    
+    Examples
+    any_int(5, 2, 7) â -> True
+    
+    any_int(3, 2, 2) â -> False
+
+    any_int(3, -2, 1) â -> True
+    
+    any_int(3.6, -2.2, 2) â -> False
+  
+
+    
+    '''
+","    
+    if isinstance(x,int) and isinstance(y,int) and isinstance(z,int):
+        if (x+y==z) or (x+z==y) or (y+z==x):
+            return True
+        return False
+    return False
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(2, 3, 1)==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(2.5, 2, 3)==False, ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate(1.5, 5, 3.5)==False, ""This prints if this assert fails 3 (good for debugging!)""
+    assert candidate(2, 6, 2)==False, ""This prints if this assert fails 4 (good for debugging!)""
+    assert candidate(4, 2, 2)==True, ""This prints if this assert fails 5 (good for debugging!)""
+    assert candidate(2.2, 2.2, 2.2)==False, ""This prints if this assert fails 6 (good for debugging!)""
+    assert candidate(-4, 6, 2)==True, ""This prints if this assert fails 7 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(2,1,1)==True, ""This prints if this assert fails 8 (also good for debugging!)""
+    assert candidate(3,4,7)==True, ""This prints if this assert fails 9 (also good for debugging!)""
+    assert candidate(3.0,4,7)==False, ""This prints if this assert fails 10 (also good for debugging!)""
+
+"
+"
+def encode(message):
+    """"""
+    བརྡ་འཕྲིན་ཅིག་ལེན་ཏེ་ ཨང་བཏགས་ནི་ནང་ལུ་ ཨང་ཡིག་ཆ་མཉམ་ལུ་ ཆེ་ཆུང་གི་ཚབ་བཙུགས་ནི་དང་ བརྡ་འཕྲིན་ནང་གི་ ཨང་ཡིག་ཆ་མཉམ་ལུ་ ཨང་ཡིག་གི་ཧེ་མ་ ཨང་ཡིག་གཉིས་ཡོད་པའི་ ཨང་ཡིག་གི་ཚབ་བཙུགས་དགོ། ཨང་ཡིག་ཚུ་རྐྱངམ་ཅིག་ལེན་དགོ། དཔེ་གཞི་:
+    >>> encode('test')
+    'TGST'
+    >>> encode('This is a message')
+    'tHKS KS C MGSSCGG'
+    """"""
+","    vowels = ""aeiouAEIOU""
+    vowels_replace = dict([(i, chr(ord(i) + 2)) for i in vowels])
+    message = message.swapcase()
+    return ''.join([vowels_replace[i] if i in vowels else i for i in message])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('TEST') == 'tgst', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('Mudasir') == 'mWDCSKR', ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate('YES') == 'ygs', ""This prints if this assert fails 3 (good for debugging!)""
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('This is a message') == 'tHKS KS C MGSSCGG', ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(""I DoNt KnOw WhAt tO WrItE"") == 'k dQnT kNqW wHcT Tq wRkTg', ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+
+def skjkasdkd(lst):
+    """"""ཁྱོད་ཀྱིས་ ཨང་གྲངས་ཧྲིལ་བུའི་ཐོ་ཡིག་ཐོབ་ཡོདཔ་ཨིན། ཁྱོད་ཀྱིས་ སྦོམ་ཤོས་ཨང་གྲངས་ཨང་གྲངས་འཚོལ་དགོཔ་དང་ ཨང་གྲངས་ཀྱི་བསྡོམས་ལོག་གཏང་དགོཔ་ཨིན། དཔེ་འབད་བ་ཅིན་: ཇི་ཨེས་ = [༠,༣,༢,༡,༣,༥,༤,༥,༥,༡༨༡,༣༢,༤,༣༢,༣༢,༤,༣] ཐོན་སྐྱེད་འདི་ ༡༠ ཇི་ཨེས་ = [༡,༠,༡,༨༢,༤༥༩༧,༢,༡,༣༠,༡,༢,༡,༢,༤,༢,༥,༡] ཐོན་སྐྱེད་འདི་ ༢༥ ཇི་ཨེས་ = [༡,༣,༡,༣༢,༥༡༠༧,༣༤,༨༣༢༧༨༠༩,༡༦༣,༢༣༣,༣༠,༡,༩༣] ཐོན་སྐྱེད་འདི་ ༡༣ ཇི་ཨེས་ = [༠,༧༢,༣
+    """"""
+","    def isPrime(n):
+        for i in range(2,int(n**0.5)+1):
+            if n%i==0:
+                return False
+
+        return True
+    maxx = 0
+    i = 0
+    while i < len(lst):
+        if(lst[i] > maxx and isPrime(lst[i])):
+            maxx = lst[i]
+        i+=1
+    result = sum(int(digit) for digit in str(maxx))
+    return result
+
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([0,3,2,1,3,5,7,4,5,5,5,2,181,32,4,32,3,2,32,324,4,3]) == 10, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1,0,1,8,2,4597,2,1,3,40,1,2,1,2,4,2,5,1]) == 25, ""This prints if this assert fails 2 (also good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1,3,1,32,5107,34,83278,109,163,23,2323,32,30,1,9,3]) == 13, ""This prints if this assert fails 3 (also good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([0,724,32,71,99,32,6,0,5,91,83,0,5,6]) == 11, ""This prints if this assert fails 4 (also good for debugging!)""
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([0,81,12,3,1,21]) == 3, ""This prints if this assert fails 5 (also good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([0,8,1,2,1,7]) == 7, ""This prints if this assert fails 6 (also good for debugging!)""
+
+    assert candidate([8191]) == 19, ""This prints if this assert fails 7 (also good for debugging!)""
+    assert candidate([8191, 123456, 127, 7]) == 19, ""This prints if this assert fails 8 (also good for debugging!)""
+    assert candidate([127, 97, 8192]) == 10, ""This prints if this assert fails 9 (also good for debugging!)""
+"
+"
+def check_dict_case(dict):
+    """"""
+    ཚིག་མཛོད་ཅིག་བྱིན་པ་ཅིན་ True སླར་ལོག་འབད་དགོ་པ་ཅིན་ ཀི་བིསི་ཆ་མཉམ་ཡིག་འབྲུ་ཆུང་བ་ ཡང་ན་ ཀི་བིསི་ཆ་མཉམ་ཡིག་འབྲུ་སྦོམ་པ་ཨིན་པ་ཅིན་ False སླར་ལོག་འབད་དགོ་འོང་། ལས་འགན་གྱིས་ False སླར་ལོག་འབད་དགོ་པ་ཅིན་ ཚིག་མཛོད་འདི་སྟོངམ་ཨིན། དཔེར་ན་: check_dict_case{""a"":""apple"", ""b"":""banana""}) གིས་ True སླར་ལོག་འབད་དགོ་འོང་། check_dict_case{""a"":""apple"", ""A"":""banana"", ""B"":""banana""}) གིས་ False སླར་ལོག་འབད་དགོ་འོང་། check_dict_case{""a"":""apple"", 8:""banana"", ""a"":""apple""}) གིས་ False སླར་ལོག་འབད་དགོ་འོང་། check_dict_case{""Name"":""John"", ""Age"":""36"", ""City
+    """"""
+","    if len(dict.keys()) == 0:
+        return False
+    else:
+        state = ""start""
+        for key in dict.keys():
+
+            if isinstance(key, str) == False:
+                state = ""mixed""
+                break
+            if state == ""start"":
+                if key.isupper():
+                    state = ""upper""
+                elif key.islower():
+                    state = ""lower""
+                else:
+                    break
+            elif (state == ""upper"" and not key.isupper()) or (state == ""lower"" and not key.islower()):
+                    state = ""mixed""
+                    break
+            else:
+                break
+        return state == ""upper"" or state == ""lower"" 
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate({""p"":""pineapple"", ""b"":""banana""}) == True, ""First test error: "" + str(candidate({""p"":""pineapple"", ""b"":""banana""}))
+    assert candidate({""p"":""pineapple"", ""A"":""banana"", ""B"":""banana""}) == False, ""Second test error: "" + str(candidate({""p"":""pineapple"", ""A"":""banana"", ""B"":""banana""}))
+    assert candidate({""p"":""pineapple"", 5:""banana"", ""a"":""apple""}) == False, ""Third test error: "" + str(candidate({""p"":""pineapple"", 5:""banana"", ""a"":""apple""}))
+    assert candidate({""Name"":""John"", ""Age"":""36"", ""City"":""Houston""}) == False, ""Fourth test error: "" + str(candidate({""Name"":""John"", ""Age"":""36"", ""City"":""Houston""}))
+    assert candidate({""STATE"":""NC"", ""ZIP"":""12345"" }) == True, ""Fifth test error: "" + str(candidate({""STATE"":""NC"", ""ZIP"":""12345"" }))      
+    assert candidate({""fruit"":""Orange"", ""taste"":""Sweet"" }) == True, ""Fourth test error: "" + str(candidate({""fruit"":""Orange"", ""taste"":""Sweet"" }))      
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate({}) == False, ""1st edge test error: "" + str(candidate({}))
+
+"
+"
+def count_up_to(n):
+    """"""ལས་འགན་ཅིག་ལག་ལེན་འཐབ་ད་ ནུས་མེད་ཨང་གྲངས་ཆ་མཉམ་ལེན་ཏེ་ ཨང་གྲངས་དང་པོ་ n གི་ཨང་གྲངས་ཚུའི་རིམ་པ་སླར་ལོག་འབདཝ་ཨིན། དཔེར་ན་: count_up_to(5) => [2,3] count_up_to(11) => [2,3,5,7] count_up_to(0) => [] count_up_to(20) => [2,3,5,7,11,13,17,19] count_up_to(1) => [] count_up_to(18) => [2,3,5,7,11,13,17]
+    """"""
+","    primes = []
+    for i in range(2, n):
+        is_prime = True
+        for j in range(2, i):
+            if i % j == 0:
+                is_prime = False
+                break
+        if is_prime:
+            primes.append(i)
+    return primes
+
+","def check(candidate):
+
+    assert candidate(5) == [2,3]
+    assert candidate(6) == [2,3,5]
+    assert candidate(7) == [2,3,5]
+    assert candidate(10) == [2,3,5,7]
+    assert candidate(0) == []
+    assert candidate(22) == [2,3,5,7,11,13,17,19]
+    assert candidate(1) == []
+    assert candidate(18) == [2,3,5,7,11,13,17]
+    assert candidate(47) == [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43]
+    assert candidate(101) == [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]
+
+"
+"
+def multiply(a, b):
+    """"""ཨང་གྲངས་ཆ་མཉམ་གཉིས་ལེན་ཏེ་ ཨང་གྲངས་ཆ་མཉམ་གྱི་ཨང་གྲངས་ཚུ་སླར་ལོག་འབད་ནིའི་ལས་འགན་འདི་ཚངམ་སྦེ་བཀོལ་དགོ། ཨང་གྲངས་འདི་རྟག་བུ་རང་ ཆ་གནས་སྦེ་རང་སྡོད་འོང་ཟེར་མནོ་དགོ། དཔེར་ན་ མཉམ་པ་ (༡༤༨,༤༡༢) གིས་ ༡༦ སླར་ལོག་འབད་དགོཔ་ཨིན། མཉམ་པ་ (༡༩,༢༨) གིས་ ༧༢ སླར་ལོག་འབད་དགོཔ་ཨིན། མཉམ་པ་ (༢༠༢༠,༡༨༥༡) གིས་ ༠ སླར་ལོག་འབད་དགོཔ་ཨིན། མཉམ་པ་ (༡༤,༡༥) གིས་ ༢༠ སླར་ལོག་འབད་དགོཔ་ཨིན།
+    """"""
+","    return abs(a % 10) * abs(b % 10)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(148, 412) == 16, ""First test error: "" + str(candidate(148, 412))                    
+    assert candidate(19, 28) == 72, ""Second test error: "" + str(candidate(19, 28))           
+    assert candidate(2020, 1851) == 0, ""Third test error: "" + str(candidate(2020, 1851))
+    assert candidate(14,-15) == 20, ""Fourth test error: "" + str(candidate(14,-15))      
+    assert candidate(76, 67) == 42, ""Fifth test error: "" + str(candidate(76, 67))      
+    assert candidate(17, 27) == 49, ""Sixth test error: "" + str(candidate(17, 27))      
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(0, 1) == 0, ""1st edge test error: "" + str(candidate(0, 1))
+    assert candidate(0, 0) == 0, ""2nd edge test error: "" + str(candidate(0, 0))
+
+"
+"
+def count_upper(s):
+    """"""
+    string s ཅིག་བྱིན་པ་ཅིན་ ཕྲ་རིང་སྦོམ་ཤོས་ཀྱི་གྱངས་ཁ་རྩིས་སྟོནམ་ཨིན། དཔེར་ན་: count_upper (('aBCdEf') གིས་ 1 count_upper (('abcdefg') གིས་ 0 count_upper (('dBBE') གིས་ 0 སླར་ལོག་འབདཝ་ཨིན།
+    """"""
+","    count = 0
+    for i in range(0,len(s),2):
+        if s[i] in ""AEIOU"":
+            count += 1
+    return count
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('aBCdEf')  == 1
+    assert candidate('abcdefg') == 0
+    assert candidate('dBBE') == 0
+    assert candidate('B')  == 0
+    assert candidate('U')  == 1
+    assert candidate('') == 0
+    assert candidate('EEEE') == 2
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def closest_integer(value):
+    '''
+    Create a function that takes a value (string) representing a number
+    and returns the closest integer to it. If the number is equidistant
+    from two integers, round it away from zero.
+
+    Examples
+    >>> closest_integer(""10"")
+    10
+    >>> closest_integer(""15.3"")
+    15
+
+    Note:
+    Rounding away from zero means that if the given number is equidistant
+    from two integers, the one you should return is the one that is the
+    farthest from zero. For Exampleclosest_integer(""14.5"") should
+    return 15 and closest_integer(""-14.5"") should return -15.
+    '''
+","    from math import floor, ceil
+
+    if value.count('.') == 1:
+        # remove trailing zeros
+        while (value[-1] == '0'):
+            value = value[:-1]
+
+    num = float(value)
+    if value[-2:] == '.5':
+        if num > 0:
+            res = ceil(num)
+        else:
+            res = floor(num)
+    elif len(value) > 0:
+        res = int(round(num))
+    else:
+        res = 0
+
+    return res
+
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""10"") == 10, ""Test 1""
+    assert candidate(""14.5"") == 15, ""Test 2""
+    assert candidate(""-15.5"") == -16, ""Test 3""
+    assert candidate(""15.3"") == 15, ""Test 3""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""0"") == 0, ""Test 0""
+
+"
+"
+def make_a_pile(n):
+    """"""
+    ཁྱོད་ཀྱིས་ ནུས་ལྡན་ཨང་གྲངས་ n བྱིན་པ་ཅིན་ ཁྱོད་ཀྱིས་ རྡོ་གི་གནས་ཚད་ n འབད་མི་རྡོ་བསྡམ་དགོཔ་ཨིན། གནས་ཚད་དང་པ་ལུ་ རྡོ་ n ཡོདཔ་ཨིན། གནས་ཚད་ཤུལ་མམ་གྱི་ རྡོ་གི་གྱངས་ཁ་འདི་: - n འདི་རྣམ་རྟོག་ཨིན་པ་ཅིན་ ཤུལ་མམ་གྱི་གྱངས་ཁ་འདི་ གྱངས་ཁ་མ་ཚངམ་ཨིན་པ་ཅིན་ - n འདི་ཆ་སྙོམས་ཨིན་པ་ཅིན་ ཤུལ་མམ་གྱི་གྱངས་ཁ་འདི་ཆ་སྙོམས་ཨིན། གནས་ཚད་རེ་རེ་ནང་ རྡོ་གི་གྱངས་ཁ་དེ་ཐོ་ཡིག་ནང་ལུ་སླར་ལོག་འབད། གནས་ཚད་ i ནང་ལུ་ཡོད་པའི་ཆ་ཤས་འདི་ གནས་ཚད་ (i+1) ནང་ རྡོ་གི་གྱངས་ཁ་འདི་ངོ་ཚབ་འབདཝ་ཨིན། དཔེ་གཞི་:
+    >>> make_a_pile(3)
+    [3, 5, 7]
+    """"""
+","    return [n + 2*i for i in range(n)]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(3) == [3, 5, 7], ""Test 3""
+    assert candidate(4) == [4,6,8,10], ""Test 4""
+    assert candidate(5) == [5, 7, 9, 11, 13]
+    assert candidate(6) == [6, 8, 10, 12, 14, 16]
+    assert candidate(8) == [8, 10, 12, 14, 16, 18, 20, 22]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def words_string(s):
+    """"""
+    ཁྱོད་ཀྱིས་ཚིག་ཡིག་ཐིག་ཅིག་བྱིན་ནི་ཨིན་པ་ཅིན་ ཀམ་ཡང་ན་ བར་སྟོང་གིས་སོ་སོ་སྦེ་བཞག་འོང་། ཁྱོད་ཀྱི་ལཱ་འདི་ ཚིག་ཡིག་ཐིག་འདི་ ཚིག་ཡིག་སྦེ་ཁ་ཕྱེ་སྟེ་ ཚིག་ཡིག་གི་རིམ་པ་ཅིག་ལོག་གཏང་ནི་དེ་ཨིན། དཔེར་ན་: words_string (ངེའི་མིང་འདི་ ཇོན་ཨིན།) == [""Hi"", ""my"", ""name"", ""is"", ""John""] words_string (ངེའི་མིང་འདི་ ཇོན་ཨིན།) == [""One, two, three, four, five, six"") == [""One"", ""two"", ""three"", ""four"", ""five"", ""six""]
+    """"""
+","    if not s:
+        return []
+
+    s_list = []
+
+    for letter in s:
+        if letter == ',':
+            s_list.append(' ')
+        else:
+            s_list.append(letter)
+
+    s_list = """".join(s_list)
+    return s_list.split()
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(""Hi, my name is John"") == [""Hi"", ""my"", ""name"", ""is"", ""John""]
+    assert candidate(""One, two, three, four, five, six"") == [""One"", ""two"", ""three"", ""four"", ""five"", ""six""]
+    assert candidate(""Hi, my name"") == [""Hi"", ""my"", ""name""]
+    assert candidate(""One,, two, three, four, five, six,"") == [""One"", ""two"", ""three"", ""four"", ""five"", ""six""]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate("""") == []
+    assert candidate(""ahmed     , gamal"") == [""ahmed"", ""gamal""]
+
+"
+"
+def choose_num(x, y):
+    """"""འ་ནི་ལས་འགན་འདི་ ནུས་ལྡན་ཨང་གྲངས་ x དང་ y གཉིས་ལེན་ཏེ་ [x, y] ནང་ཡོད་པའི་ཨང་གྲངས་ཆ་མཉམ་སྦོམ་ཤོས་ཅིག་སླར་ལོག་འབདཝ་ཨིན། གལ་སྲིད་ འདི་བཟུམ་གྱི་ཨང་གྲངས་མེད་པ་ཅིན་ ལས་འགན་འདི་གིས་ -1 སླར་ལོག་འབད་ནི་ཨིན། དཔེར་ན་: choose_num(12, 15) = 14 choose_num(13, 12) = -1
+    """"""
+","    if x > y:
+        return -1
+    if y % 2 == 0:
+        return y
+    if x == y:
+        return -1
+    return y - 1
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(12, 15) == 14
+    assert candidate(13, 12) == -1
+    assert candidate(33, 12354) == 12354
+    assert candidate(5234, 5233) == -1
+    assert candidate(6, 29) == 28
+    assert candidate(27, 10) == -1
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(7, 7) == -1
+    assert candidate(546, 546) == 546
+
+"
+"
+def rounded_avg(n, m):
+    """"""ཁྱོད་ཀྱིས་ ནུས་ལྡན་ཨང་གྲངས་གཉིས་ n དང་ m བྱིན་ཡོདཔ་ད་ ཁྱོད་ཀྱི་ལཱ་འདི་ n ལས་ m ཚུན་གྱི་ཨང་གྲངས་ཆ་སྙོམས་རྩིས་རྐྱབ་ནི་ཨིན། ཨང་གྲངས་འདི་ སྦོ་ལོགས་ཁར་ཡོད་པའི་ཨང་གྲངས་ལུ་བསྡུ་སྟེ་ གཉིས་ལྡན་ལུ་བསྒྱུར་དགོ། n འདི་ m ལས་སྦོམ་ཡོད་པ་ཅིན་ -1 སླར་ལོག་འབད། དཔེ་འབད་བ་ཅིན་: rounded_avg(1, 5) => ""0b11"" rounded_avg(7, 5) => -1 rounded_avg(10, 20) => ""0b1111"" rounded_avg(20, 33) => ""0b11010""
+    """"""
+","    if m < n:
+        return -1
+    summation = 0
+    for i in range(n, m+1):
+        summation += i
+    return bin(round(summation/(m - n + 1)))
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(1, 5) == ""0b11""
+    assert candidate(7, 13) == ""0b1010""
+    assert candidate(964,977) == ""0b1111001010""
+    assert candidate(996,997) == ""0b1111100100""
+    assert candidate(560,851) == ""0b1011000010""
+    assert candidate(185,546) == ""0b101101110""
+    assert candidate(362,496) == ""0b110101101""
+    assert candidate(350,902) == ""0b1001110010""
+    assert candidate(197,233) == ""0b11010111""
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(7, 5) == -1
+    assert candidate(5, 1) == -1
+    assert candidate(5, 5) == ""0b101""
+
+"
+"
+def unique_digits(x):
+    """"""ཨང་གྲངས་ཆ་མཉམ་ x གི་ཐོ་ཡིག་ཅིག་བྱིན་པ་ཅིན་ ཨང་གྲངས་ཆ་མཉམ་གྱི་ཐོ་ཡིག་ཅིག་སླར་ལོག་འབདཝ་ཨིན།
+    >>> unique_digits([15, 33, 1422, 1])
+    [1, 15, 33]
+    >>> unique_digits([152, 323, 1422, 10])
+    []
+    """"""
+","    odd_digit_elements = []
+    for i in x:
+        if all (int(c) % 2 == 1 for c in str(i)):
+            odd_digit_elements.append(i)
+    return sorted(odd_digit_elements)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([15, 33, 1422, 1]) == [1, 15, 33]
+    assert candidate([152, 323, 1422, 10]) == []
+    assert candidate([12345, 2033, 111, 151]) == [111, 151]
+    assert candidate([135, 103, 31]) == [31, 135]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def by_length(arr):
+    """"""
+    ཨང་གྲངས་ཧྲིལ་བུམ་གྱི་གྲལ་རིམ་ཅིག་བྱིན་པ་ཅིན་ ཨང་གྲངས་ཧྲིལ་བུམ་ཚུ་ ༡ དང་ ༩ གི་བར་ན་ཡོད་པའི་གྲལ་རིམ་ཚུ་དབྱེ་བ་ཕྱེ་སྟེ་ གྲུབ་འབྲས་གྲལ་རིམ་འདི་བསྒྱུར་བཅོས་འབད་ དེ་ལས་ཨང་གྲངས་རེ་རེ་གི་ཚབ་ལུ་ ""གཅིག་"", ""གཉིས་"", ""གསུམ་"", ""བཞི་"", ""ལྔ་"", ""དྲུག་"", ""བདུན་"", ""བརྒྱད་"", ""དགུ་"" ཚུ་དང་བསྟུན་པའི་མིང་བཏགས་དགོ། དཔེར་ན་: arr = [༢,༡,༡,༤,༥,༨,༢,༣] -> དབྱེ་བ་ཕྱེ་ arr -> [༡,༡,༡,༤,༥,༨] -> དབྱེ་བ་ཕྱེ་ arr -> [༨,༥,༤,༣,༢,༡,༡] return [""བརྒྱད་"", ""བཞི་"", ""གསུམ་"", ""གཉིས་"", ""གཉིས་"", ""གཅིག་"", ""གཅིག་""] གལ་སྲིད་གྲལ་རིམ་འདི་སྟོངམ་ཡོད་པ་ཅིན་ གྲལ་ཐིག་ཅིག་ལོག་གཏང་: arr = [] return []
+    """"""
+","    dic = {
+        1: ""One"",
+        2: ""Two"",
+        3: ""Three"",
+        4: ""Four"",
+        5: ""Five"",
+        6: ""Six"",
+        7: ""Seven"",
+        8: ""Eight"",
+        9: ""Nine"",
+    }
+    sorted_arr = sorted(arr, reverse=True)
+    new_arr = []
+    for var in sorted_arr:
+        try:
+            new_arr.append(dic[var])
+        except:
+            pass
+    return new_arr
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([2, 1, 1, 4, 5, 8, 2, 3]) == [""Eight"", ""Five"", ""Four"", ""Three"", ""Two"", ""Two"", ""One"", ""One""], ""Error""
+    assert candidate([]) == [], ""Error""
+    assert candidate([1, -1 , 55]) == ['One'], ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([1, -1, 3, 2]) == [""Three"", ""Two"", ""One""]
+    assert candidate([9, 4, 8]) == [""Nine"", ""Eight"", ""Four""]
+
+"
+"
+def f(n):
+    """""" ལས་འགན་ f འདི་ n འདི་ཚད་འཛིན་སྦེ་ལེན་ཏེ་ n སྦོམ་ཡོད་པའི་ཐོ་ཡིག་ཅིག་ལོག་བྱིན་ཏེ་ དེ་བཟུམ་འབད་བ་ཅིན་ གནས་གོང་ i འདི་ i གི་གནས་གོང་དང་ ཡང་ན་ i ལས་ 1 ལས་ i ཚུན་གྱི་ཨང་གྲངས་ཚུ་བསྡོམས་ཏེ་ཡོད་པ་ཅིན་ i གི་གནས་གོང་དེ་ 1 ལས་འགོ་བཙུགསཔ་ཨིན། i གི་གནས་གོང་དེ་ 1 ལས་ i ཚུན་གྱི་ཨང་གྲངས་ཚུ་སྤེལ་བ་ཨིན། (1 * 2 *... * i) དཔེ་འབད་བ་ཅིན་ f (n) = 5 == [1, 2, 6, 24, 15]
+    """"""
+","    ret = []
+    for i in range(1,n+1):
+        if i%2 == 0:
+            x = 1
+            for j in range(1,i+1): x *= j
+            ret += [x]
+        else:
+            x = 0
+            for j in range(1,i+1): x += j
+            ret += [x]
+    return ret
+","def check(candidate):
+
+    assert candidate(5) == [1, 2, 6, 24, 15]
+    assert candidate(7) == [1, 2, 6, 24, 15, 720, 28]
+    assert candidate(1) == [1]
+    assert candidate(3) == [1, 2, 6]
+"
+"
+def even_odd_palindrome(n):
+    """"""
+    ཨང་གྲངས་ཚངམ་ n བྱིན་པ་ཅིན་ ཚད་འཛིན་གྱི་ནང་འཁོད་ལུ་ཡོད་པའི་ཆ་མཉམ་དང་ཆ་མཉམ་མེད་པའི་ཨང་གྲངས་ palindromes ཚུ་ཡོད་པའི་ tuple སླར་ལོག་འབདཝ་ཨིན། དཔེ་གཞི་༡: ནང་བསྐྱོད་: 3 ཐོན་སྐྱེད་: (1, 2) འགྲེལ་བཤད་: ཨང་གྲངས་ palindromes ཚུ་ 1, 2, 3. གཅིག་འདི་ཆ་མཉམ་དང་གཉིས་འདི་ཆ་མཉམ་ཨིན། དཔེ་གཞི་༢: ནང་བསྐྱོད་: 12 ཐོན་སྐྱེད་: (4, 6) འགྲེལ་བཤད་: ཨང་གྲངས་ palindromes འདི་ 1, 2, 3, 4, 5, 6, 7, 8, 9, 11. བཞི་འདི་ཆ་མཉམ་དང་དྲུག་འདི་ཆ་མཉམ་ཨིན། དྲན་པ་: ༡. ༡ <= n <= 10^3 2. tuple གིས་ ཚད་འཛིན་གྱི་ནང་ཡོད་པའི་ཆ་མཉམ་དང་ཆ་མཉམ་མེད་པའི་ཨང་གྲངས་ palindromes ཚུ་ལོག་འབདཝ་ཨིན།
+    """"""
+","    def is_palindrome(n):
+        return str(n) == str(n)[::-1]
+
+    even_palindrome_count = 0
+    odd_palindrome_count = 0
+
+    for i in range(1, n+1):
+        if i%2 == 1 and is_palindrome(i):
+                odd_palindrome_count += 1
+        elif i%2 == 0 and is_palindrome(i):
+            even_palindrome_count += 1
+    return (even_palindrome_count, odd_palindrome_count)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(123) == (8, 13)
+    assert candidate(12) == (4, 6)
+    assert candidate(3) == (1, 2)
+    assert candidate(63) == (6, 8)
+    assert candidate(25) == (5, 6)
+    assert candidate(19) == (4, 6)
+    assert candidate(9) == (4, 5), ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1) == (0, 1), ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def count_nums(arr):
+    """"""
+    གྲངས་སུ་རྩིས་_ཨང་འདི་ ཨང་གྲངས་ཆ་མཉམ་གྱི་རིམ་པ་ཅིག་ལེན་ཏེ་ ཨང་གྲངས་ཚུའི་བསྡོམས་ > ༠ ཡོད་པའི་ཆ་ཤས་ཚུ་གི་གྱངས་ཁ་ལོག་སྤྲོད་དེ་འབྲི་དགོ། ཨང་གྲངས་འདི་ ནེ་གཱཊི་ཨིན་པ་ཅིན་ ཨང་གྲངས་དང་པ་ལུ་ ཨང་ཡིག་ཚུའི་རྟགས་བཀལ་ཡོད་མི་འདི་ ནེ་གཱཊི་འོང་ནི་ཨིནམ་དང་ དཔེར་ན་ -༡༢༣ ལུ་ ཨང་ཡིག་ -༡,༢ དང་༣ ཚུ་ཡོད།
+    >>> count_nums([]) == 0
+    >>> count_nums([-1, 11, -11]) == 1
+    >>> count_nums([1, 1, 2]) == 3
+    """"""
+","    def digits_sum(n):
+        neg = 1
+        if n < 0: n, neg = -1 * n, -1 
+        n = [int(i) for i in str(n)]
+        n[0] = n[0] * neg
+        return sum(n)
+    return len(list(filter(lambda x: x > 0, [digits_sum(i) for i in arr])))
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([]) == 0
+    assert candidate([-1, -2, 0]) == 0
+    assert candidate([1, 1, 2, -2, 3, 4, 5]) == 6
+    assert candidate([1, 6, 9, -6, 0, 1, 5]) == 5
+    assert candidate([1, 100, 98, -7, 1, -1]) == 4
+    assert candidate([12, 23, 34, -45, -56, 0]) == 5
+    assert candidate([-0, 1**0]) == 1
+    assert candidate([1]) == 1
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def move_one_ball(arr):
+    """"""ང་བཅས་ནང་ལུ་ ཨེ་རེ་ 'arr' འདི་ ཨང་གྲངས་ N ཡོངས་བསྡོམས་ arr[1], arr[2],..., arr[N] ཚུ་ཡོད་ ཨེ་རེ་ནང་གི་ཨང་གྲངས་ཚུ་ སྟབས་བདེ་ཏོག་ཏོ་སྦེ་རིམ་སྒྲིག་འབད་འོང་། ཁྱོད་ཀྱི་ལཱ་འདི་ ཨེ་རེ་འདི་ མར་འབབ་འགྱོ་ནི་མེད་པའི་རིམ་སྒྲིག་ནང་ ཐོབ་ཚུགས་ག་འདི་ངེས་འཛིན་འབད་དགོ འདི་གི་དོན་ལུ་ ཁྱོད་ཀྱིས་ ཨེ་རེ་འདི་ནང་ལུ་ ཚར་གྲངས་ཚུ་ ཕྲང་སྒྲིག་འབད་བཏུབ། ཨེ་རེ་གི་ཆ་ཤས་ཆ་མཉམ་ ཕྲང་སྒྲིག་འབད་བཏངམ་ད་ ཕྲང་སྒྲིག་འབད་བཏངམ་ད་ ཕྲང་སྒྲིག་འབད་བཏངམ་ད་ ཕྲང་སྒྲིག་འབད་བཏངམ་ད་ ཨེ་རེ་གི་ཆ་ཤས་ཆ་མཉམ་ ཕྲང་སྒྲིག་འབད་བཏངམ་ད་ ཕྲང་སྒྲིག་འབད་བཏངམ་ད་ ཨེ་རེ་གི་ཆ་ཤས་མཇུག་དེ་ ཨེ་རེ་ནང་ འགོ་བཙུགས་པའི་ས་སྒོ་ལུ་ སྤོ་བཤུད་འབད་བཏངམ་ཨིན། ཨེ་རེ་དེ་གི་ཆ་ཤས་མཇུག་འདི་ ཨེ་རེ་གི་ཨང་གྲངས་ ༠ པ་ཨིན། ག་དེམ་ཅིག་
+                
+    """"""
+","    if len(arr)==0:
+      return True
+    sorted_array=sorted(arr)
+    my_arr=[]
+    
+    min_value=min(arr)
+    min_index=arr.index(min_value)
+    my_arr=arr[min_index:]+arr[0:min_index]
+    for i in range(len(arr)):
+      if my_arr[i]!=sorted_array[i]:
+        return False
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([3, 4, 5, 1, 2])==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([3, 5, 10, 1, 2])==True
+    assert candidate([4, 3, 1, 2])==False
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([3, 5, 4, 1, 2])==False, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([])==True
+"
+"
+def exchange(lst1, lst2):
+    """"""འ་ནི་དཀའ་ངལ་འདི་ནང་ལུ་ ཁྱོད་ཀྱིས་གྲངས་ཐོ་གཉིས་ལེན་ཏེ་ དེ་ཚུ་གི་བར་ན་ཆ་ཤས་ཚུ་བརྗེ་སོར་འབད་ཚུགས་ག་འདི་ ངེས་གཏན་བཟོ་ནི་ཨིན་པ་ཅིན་ lst1 དང་ lst2 གྱི་བར་ན་ཆ་ཤས་བརྗེ་སོར་འབད་ནིའི་ཚད་གཞི་མེདཔ་ཨིན། lst1 དང་ lst2 གྱི་ཆ་ཤས་ཆ་ཤས་ཆ་ཤས་ཆ་ཤས་ཚུ་བརྗེ་སོར་འབད་ཚུགས་པ་ཅིན་ ""YES"" སླར་ལོག་འབདཝ་ཨིན། དེ་མེན་པ་ཅིན་ ""NO"" སླར་ལོག་འབདཝ་ཨིན། དཔེར་ན་: exchange[(1, 2, 3, 4], [1, 2, 3, 4]) => ""YES"" exchange[(1, 2, 3, 4], [1, 5, 3, 4]) => ""NO"" ནང་བསྐྱོད་ཐོ་ཚུ་སྟོངམ་མེན་པའི་གྲངས་སུ་བཞག་ཡོདཔ་ཨིན།
+    """"""
+","    odd = 0
+    even = 0
+    for i in lst1:
+        if i%2 == 1:
+            odd += 1
+    for i in lst2:
+        if i%2 == 0:
+            even += 1
+    if even >= odd:
+        return ""YES""
+    return ""NO""
+            
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1, 2, 3, 4], [1, 2, 3, 4]) == ""YES""
+    assert candidate([1, 2, 3, 4], [1, 5, 3, 4]) == ""NO""
+    assert candidate([1, 2, 3, 4], [2, 1, 4, 3]) == ""YES"" 
+    assert candidate([5, 7, 3], [2, 6, 4]) == ""YES""
+    assert candidate([5, 7, 3], [2, 6, 3]) == ""NO"" 
+    assert candidate([3, 2, 6, 1, 8, 9], [3, 5, 5, 1, 1, 1]) == ""NO""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([100, 200], [200, 200]) == ""YES""
+
+"
+"
+def histogram(test):
+    """"""བར་སྟོང་སོ་སོ་སྦེ་ཡོད་མི་ཡིག་འབྲུ་ཆུང་བ་ཚུ་ངོ་ཚབ་འབད་ཡོད་པའི་ཐིག་ཁྲམ་ཅིག་བྱིན་པ་ཅིན་ ཚིག་ཡིག་ལོག་བསྐྱར་དང་བསྟུན་ཏེ་ ཚིག་ཡིག་ལོག་གཏང་། ཚིག་ཡིག་ལེ་ཤ་ཅིག་རང་ འབྱུང་པ་ཅིན་ དེ་ཚུ་ག་ར་ལོག་གཏང་། དཔེ་འབད་བ་ཅིན་ ཧིསི་ཊོ་གརམ ((('a b c') == {'a': 1, 'b': 1, 'c': 1} ཧིསི་ཊོ་གརམ ((('a b b a') == {'a': 2, 'b': 2} ཧིསི་ཊོ་གརམ ((('a b c a b') == {'a': 2, 'b': 2} ཧིསི་ཊོ་གརམ ((('b b a b') == {'b 4}': ཧིསི་ཊོ་གརམ (('a') == {'b 4}:
+
+    """"""
+","    dict1={}
+    list1=test.split("" "")
+    t=0
+
+    for i in list1:
+        if(list1.count(i)>t) and i!='':
+            t=list1.count(i)
+    if t>0:
+        for i in list1:
+            if(list1.count(i)==t):
+                
+                dict1[i]=t
+    return dict1
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('a b b a') == {'a':2,'b': 2}, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('a b c a b') == {'a': 2, 'b': 2}, ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate('a b c d g') == {'a': 1, 'b': 1, 'c': 1, 'd': 1, 'g': 1}, ""This prints if this assert fails 3 (good for debugging!)""
+    assert candidate('r t g') == {'r': 1,'t': 1,'g': 1}, ""This prints if this assert fails 4 (good for debugging!)""
+    assert candidate('b b b b a') == {'b': 4}, ""This prints if this assert fails 5 (good for debugging!)""
+    assert candidate('r t g') == {'r': 1,'t': 1,'g': 1}, ""This prints if this assert fails 6 (good for debugging!)""
+    
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('') == {}, ""This prints if this assert fails 7 (also good for debugging!)""
+    assert candidate('a') == {'a': 1}, ""This prints if this assert fails 8 (also good for debugging!)""
+
+"
+"
+def reverse_delete(s,c):
+    """"""ལས་འགན་ལུ་ ཀེར་ཐིག་ s དང་ c གཉིས་བྱིན་ཡོདཔ་ད་ ཁྱོད་ཀྱིས་ ཀེར་ཐིག་ s ནང་གི་ཡིག་འབྲུ་ཆ་མཉམ་འདི་ ཀེར་ཐིག་ c ནང་གི་ཡིག་འབྲུ་ཆ་མཉམ་དང་འདྲན་འདྲ་སྦེ་ཡོད་མི་ཚུ་ བཏོན་གཏང་དགོ་ དེ་ལས་ གྲུབ་འབྲས་ ཀེར་ཐིག་དེ་ ཚད་ལྡན་ཨིནམ་སྦེ་བརྟག་དཔྱད་འབད་དགོ་ ཀེར་ཐིག་འདི་ ཚད་ལྡན་ཨིནམ་སྦེ་སླབ་པ་ཅིན་ ཤུལ་ལས་ལོག་འགྱོ་མི་དང་ ཧེ་མ་འགྱོ་མི་གཉིས་ཆ་ར་གཅིག་སྦེ་ལྷག་འོང་། ཁྱོད་ཀྱིས་ གྲུབ་འབྲས་ ཀེར་ཐིག་དང་ བདེན་/རྫུས་མ་ཡོད་མི་ཚུ་ཡོད་པའི་ ཀེར་ཐིག་ཅིག་ལོག་གཏང་དགོ། དཔེ་འབད་བ་ཅིན་ s = ""abcde"", c = ""ae"", གྲུབ་འབྲས་འདི་ ('bcd',False) ཨིནམ་འོང་ s = ""abcdef"", c = ""b"" གྲུབ་འབྲས་འདི་ ('acdef',False) ཨིནམ་འོང་ s = ""abcdedcba"", c = ""ab"", གྲུབ་འབྲས་འདི་ ('
+    """"""
+","    s = ''.join([char for char in s if char not in c])
+    return (s,s[::-1] == s)
+","def check(candidate):
+
+    assert candidate(""abcde"",""ae"") == ('bcd',False)
+    assert candidate(""abcdef"", ""b"") == ('acdef',False)
+    assert candidate(""abcdedcba"",""ab"") == ('cdedc',True)
+    assert candidate(""dwik"",""w"") == ('dik',False)
+    assert candidate(""a"",""a"") == ('',True)
+    assert candidate(""abcdedcba"","""") == ('abcdedcba',True)
+    assert candidate(""abcdedcba"",""v"") == ('abcdedcba',True)
+    assert candidate(""vabba"",""v"") == ('abba',True)
+    assert candidate(""mamma"", ""mia"") == ("""", True)
+"
+"
+def odd_count(lst):
+    """"""string གི་ཐོ་ཡིག་ཅིག་བྱིནམ་ད་ string རེ་རེ་ནང་ཨང་གྲངས་རྐྱངམ་ཅིག་ཡོདཔ་ལས་ ཚིག་ཡིག་ཅིག་ལོག་གཏང་། ཨང་གྲངས་ཐོན་པའི་ཆ་ཤས་རེ་རེ་ i འདི་ ""input གི་ string i ནང་གི་རྣམ་གྲངས་མེད་པའི་ཆ་ཤས་ཚུ་གི་གྱངས་ཁ་"" ཨིནམ་ད་ i ཚུ་ཆ་ཤས་ i པའི་ནང་རྣམ་གྲངས་མེད་པའི་ཨང་གྲངས་ཚུ་དང་ཚབ་རྐྱབ་དགོ།
+
+    >>> odd_count(['1234567'])
+    [""the number of odd elements 4n the str4ng 4 of the 4nput.""]
+    >>> odd_count(['3',""11111111""])
+    [""the number of odd elements 1n the str1ng 1 of the 1nput."",
+     ""the number of odd elements 8n the str8ng 8 of the 8nput.""]
+    """"""
+","    res = []
+    for arr in lst:
+        n = sum(int(d)%2==1 for d in arr)
+        res.append(""the number of odd elements "" + str(n) + ""n the str""+ str(n) +""ng ""+ str(n) +"" of the ""+ str(n) +""nput."")
+    return res
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(['1234567']) == [""the number of odd elements 4n the str4ng 4 of the 4nput.""], ""Test 1""
+    assert candidate(['3',""11111111""]) == [""the number of odd elements 1n the str1ng 1 of the 1nput."", ""the number of odd elements 8n the str8ng 8 of the 8nput.""], ""Test 2""
+    assert candidate(['271', '137', '314']) == [
+        'the number of odd elements 2n the str2ng 2 of the 2nput.',
+        'the number of odd elements 3n the str3ng 3 of the 3nput.',
+        'the number of odd elements 2n the str2ng 2 of the 2nput.'
+    ]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def minSubArraySum(nums):
+    """"""
+    ཨང་གྲངས་ཧྲིལ་བུམ་ཨེ་རེ་ཅིག་བྱིན་པ་ཅིན་ ཨང་གྲངས་ཧྲིལ་བུམ་མེན་པའི་ཨེ་རེ་ཆུང་ཤོས་ཅིག་གི་བསྡོམས་དེ་འཚོལ་དགོ། དཔེ་འབད་བ་ཅིན་ minSubArraySum (([2, 3, 4, 1, 2, 4]) == 1 minSubArraySum (([-1, -2, -3]) == -6
+    """"""
+","    max_sum = 0
+    s = 0
+    for num in nums:
+        s += -num
+        if (s < 0):
+            s = 0
+        max_sum = max(s, max_sum)
+    if max_sum == 0:
+        max_sum = max(-i for i in nums)
+    min_sum = -max_sum
+    return min_sum
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([2, 3, 4, 1, 2, 4]) == 1, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([-1, -2, -3]) == -6
+    assert candidate([-1, -2, -3, 2, -10]) == -14
+    assert candidate([-9999999999999999]) == -9999999999999999
+    assert candidate([0, 10, 20, 1000000]) == 0
+    assert candidate([-1, -2, -3, 10, -5]) == -6
+    assert candidate([100, -1, -2, -3, 10, -5]) == -6
+    assert candidate([10, 11, 13, 8, 3, 4]) == 3
+    assert candidate([100, -33, 32, -1, 0, -2]) == -33
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([-10]) == -10, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([7]) == 7
+    assert candidate([1, -1]) == -1
+"
+"
+def max_fill(grid, capacity):
+    import math
+    """"""
+    ཁྱོད་ཀྱིས་ཆུ་རྐ་གི་དབྱིབས་འདི་ ཕྲང་ཟུར་སྦེ་བཟོ་ཡོདཔ་ཨིན། ལྡེ་མིག་རེ་རེ་གིས་ཆུ་རྐ་གཅིག་དང་ ལྡེ་མིག་རེ་རེ་གིས་ཆུ་གི་ཚད་གཅིག་འདི་མཚོན་ཆ་ཨིན། ཆུ་རྐ་རེ་རེ་ནང་ཆུ་བཏོན་ནིའི་དོན་ལུ་ ཆུ་རྫིང་གཅིག་ཡོདཔ་དང་ ཆུ་རྫིང་ག་ར་ནང་ཆུ་གི་ཚད་གཅིག་རང་ཡོདཔ་ཨིན། ཁྱོད་ཀྱི་ལཱ་འདི་ ཆུ་རྫིང་འདི་ཆུ་རྫིང་ཚུ་སྟོངམ་བཟོ་ནི་དེ་ཨིན། ཆུ་རྫིང་ཚུ་མར་ཕབ་འབད་དགོ་པའི་གྱངས་ཁ་འདི་ཨེབ་གཏང་འབད། དཔེ་གཞི་ ༡: ནང་བསྐྱོད་: grid: [[0,0,1,0], [0,1,0,0], [1,1,1,1]] bucket_capacity: 1 ཐོན་སྐྱེད་: དཔེ་གཞི་ ༢: ནང་བསྐྱོད་: grid: [[0,0,1,1], [0,0,0,0], [1,1,1], [0,1,1]] bucket_capacity: 2 ཐོན་སྐྱེད་: 5 དཔེ་གཞི་ ༣: ནང་བསྐྱོད་: [[0,0,0], [0,
+    """"""
+","    return sum([math.ceil(sum(arr)/capacity) for arr in grid])
+","def check(candidate):
+
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([[0,0,1,0], [0,1,0,0], [1,1,1,1]], 1) == 6, ""Error""
+    assert candidate([[0,0,1,1], [0,0,0,0], [1,1,1,1], [0,1,1,1]], 2) == 5, ""Error""
+    assert candidate([[0,0,0], [0,0,0]], 5) == 0, ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([[1,1,1,1], [1,1,1,1]], 2) == 4, ""Error""
+    assert candidate([[1,1,1,1], [1,1,1,1]], 9) == 2, ""Error""
+
+"
+"
+def sort_array(arr):
+    """"""
+    འ་ནི་ཀཱད་ལུ་ ཁྱོད་ཀྱིས་ ནུས་མེད་ཨང་གྲངས་ཚུ་ གྱངས་ཁ་ཡར་སེང་གི་རིམ་པ་ལུ་ གཞི་བཞག་སྟེ་ གཉིས་ལྡན་གྱི་གྲངས་སུ་ གཅིག་སྦེ་དབྱེ་བ་ཕྱེ་དགོ། ཨང་གྲངས་གཅིག་སྦེ་ཡོད་མི་ཚུ་ གྱངས་ཁ་ཡར་སེང་གི་རིམ་པ་ལུ་ གཞི་བཞག་སྟེ་དབྱེ་བ་ཕྱེ་དགོ། འདི་བཟུམ་སྦེ་ལག་ལེན་འཐབ་དགོཔ་ཨིན།
+    >>> sort_array([1, 5, 2, 3, 4]) == [1, 2, 3, 4, 5]
+    >>> sort_array([-2, -3, -4, -5, -6]) == [-6, -5, -4, -3, -2]
+    >>> sort_array([1, 0, 2, 3, 4]) [0, 1, 2, 3, 4]
+    """"""
+","    return sorted(sorted(arr), key=lambda x: bin(x)[2:].count('1'))
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1,5,2,3,4]) == [1, 2, 4, 3, 5]
+    assert candidate([-2,-3,-4,-5,-6]) == [-4, -2, -6, -5, -3]
+    assert candidate([1,0,2,3,4]) == [0, 1, 2, 4, 3]
+    assert candidate([]) == []
+    assert candidate([2,5,77,4,5,3,5,7,2,3,4]) == [2, 2, 4, 4, 3, 3, 5, 5, 5, 7, 77]
+    assert candidate([3,6,44,12,32,5]) == [32, 3, 5, 6, 12, 44]
+    assert candidate([2,4,8,16,32]) == [2, 4, 8, 16, 32]
+    assert candidate([2,4,8,16,32]) == [2, 4, 8, 16, 32]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def select_words(s, n):
+    """"""string s དང་ རང་བཞིན་ཨང་གྲངས་ n བྱིན་པ་ཅིན་ ཁྱོད་ཀྱིས་ string s ལས་ ཚིག་ཡིག་ཆ་མཉམ་གྱི་ཐོ་འདི་སླར་ལོག་འབད་ནིའི་འགན་ཁུར་ཐོབ་ཡོདཔ་དང་ འདི་ནང་ ཚིག་ཡིག་ཆ་མཉམ་ནང་ མན་ངག་ n ཡོད་མི་ལུ་བརྟེན་ ཚིག་ཡིག་འདི་ string s ནང་མཐོང་འོང་། string s དེ་སྟོངམ་ཨིན་པ་ཅིན་ ལས་འགན་འདི་གིས་ སྟོང་པའི་ཐོ་འདི་སླར་ལོག་འབད་འོང་། དྲན་པ་བཟོ་ནི། ཁྱོད་ཀྱིས་འཛུལ་ཞུགས་ཀྱི་ string འདི་ནང་ལུ་ ཡིག་འབྲུ་དང་ བར་སྟོང་རྐྱངམ་ཅིག་ཡོད་ཟེར་སླབ་འོང་། དཔེ་འབད་བ་ཅིན་: select_words ""Mary had a little lamb"", 4) ==> [""little""] select_words ""Mary had a little lamb"", 3) ==> [""Mary"", ""lamb""] select_words ""simple white space"", 2) ==> [] select_words ""Hello world"", 4) ==> [""world""] select_words ""Uncle sam"", 3) ==> [""Uncle""]
+    """"""
+","    result = []
+    for word in s.split():
+        n_consonants = 0
+        for i in range(0, len(word)):
+            if word[i].lower() not in [""a"",""e"",""i"",""o"",""u""]:
+                n_consonants += 1 
+        if n_consonants == n:
+            result.append(word)
+    return result
+
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""Mary had a little lamb"", 4) == [""little""], ""First test error: "" + str(candidate(""Mary had a little lamb"", 4))      
+    assert candidate(""Mary had a little lamb"", 3) == [""Mary"", ""lamb""], ""Second test error: "" + str(candidate(""Mary had a little lamb"", 3))  
+    assert candidate(""simple white space"", 2) == [], ""Third test error: "" + str(candidate(""simple white space"", 2))      
+    assert candidate(""Hello world"", 4) == [""world""], ""Fourth test error: "" + str(candidate(""Hello world"", 4))  
+    assert candidate(""Uncle sam"", 3) == [""Uncle""], ""Fifth test error: "" + str(candidate(""Uncle sam"", 3))
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate("""", 4) == [], ""1st edge test error: "" + str(candidate("""", 4))
+    assert candidate(""a b c d e f"", 1) == [""b"", ""c"", ""d"", ""f""], ""2nd edge test error: "" + str(candidate(""a b c d e f"", 1))
+
+"
+"
+def get_closest_vowel(word):
+    """"""ཁྱོད་ཀྱིས་ཚིག་ཅིག་ཐོབ་ཡོདཔ་ཨིན། ཁྱོད་ཀྱི་ལཱ་འདི་ ཚིག་གི་གཡས་ཁ་ཐུག་ལས་ ཟུར་སྒྲོམ་གཉིས་ཀྱི་བར་ན་ཡོད་མི་ ཕྲ་རིང་འདི་འཚོལ་ནི་དེ་ཨིན། འགོ་བཙུགས་དང་མཇུག་གི་ཕྲ་རིང་ཚུ་རྩིས་མི་བཏུབ། ཁྱོད་ཀྱིས་ཕྲ་རིང་ཅིག་མ་ཐོབ་པ་ཅིན་ སྟོངམ་ཐིག་ཁྲམ་ཅིག་ལོག་གཏང་། ཁྱོད་ཀྱིས་བྱིན་ཡོད་པའི་ཐིག་ཁྲམ་ནང་ལུ་ ཨིང་ལིཤ་ཡི་གུ་རྐྱངམ་གཅིག་ཡོད་ཟེར་ཆ་བཞག་འོང་། དཔེ་འབད་བ་ཅིན་: get_closest_vowel (((""yogurt"") ==> ""u"" get_closest_vowel (((""F"") ==> ""UULL"" get_closest_vowel (((""quick"") ==> """" get_closest_vowel"" (((ab"") ==> """"
+    """"""
+","    if len(word) < 3:
+        return """"
+
+    vowels = {""a"", ""e"", ""i"", ""o"", ""u"", ""A"", ""E"", 'O', 'U', 'I'}
+    for i in range(len(word)-2, 0, -1):
+        if word[i] in vowels:
+            if (word[i+1] not in vowels) and (word[i-1] not in vowels):
+                return word[i]
+    return """"
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""yogurt"") == ""u""
+    assert candidate(""full"") == ""u""
+    assert candidate(""easy"") == """"
+    assert candidate(""eAsy"") == """"
+    assert candidate(""ali"") == """"
+    assert candidate(""bad"") == ""a""
+    assert candidate(""most"") == ""o""
+    assert candidate(""ab"") == """"
+    assert candidate(""ba"") == """"
+    assert candidate(""quick"") == """"
+    assert candidate(""anime"") == ""i""
+    assert candidate(""Asia"") == """"
+    assert candidate(""Above"") == ""o""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def match_parens(lst):
+    '''
+    You are given a list of two strings, both strings consist of open
+    parentheses '(' or close parentheses ')' only.
+    Your job is to check if it is possible to concatenate the two strings in
+    some order, that the resulting string will be good.
+    A string S is considered to be good if and only if all parentheses in S
+    are balanced. For example: the string '(())()' is good, while the string
+    '())' is not.
+    Return 'Yes' if there's a way to make a good string, and return 'No' otherwise.
+
+    Examples:
+    match_parens(['()(', ')']) == 'Yes'
+    match_parens([')', ')']) == 'No'
+    '''
+","    def check(s):
+        val = 0
+        for i in s:
+            if i == '(':
+                val = val + 1
+            else:
+                val = val - 1
+            if val < 0:
+                return False
+        return True if val == 0 else False
+
+    S1 = lst[0] + lst[1]
+    S2 = lst[1] + lst[0]
+    return 'Yes' if check(S1) or check(S2) else 'No'
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(['()(', ')']) == 'Yes'
+    assert candidate([')', ')']) == 'No'
+    assert candidate(['(()(())', '())())']) == 'No'
+    assert candidate([')())', '(()()(']) == 'Yes'
+    assert candidate(['(())))', '(()())((']) == 'Yes'
+    assert candidate(['()', '())']) == 'No'
+    assert candidate(['(()(', '()))()']) == 'Yes'
+    assert candidate(['((((', '((())']) == 'No'
+    assert candidate([')(()', '(()(']) == 'No'
+    assert candidate([')(', ')(']) == 'No'
+    
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(['(', ')']) == 'Yes'
+    assert candidate([')', '(']) == 'Yes' 
+
+"
+"
+def maximum(arr, k):
+    """"""
+    ཨེ་རེ་ arr འདི་ ཨང་གྲངས་ཧྲིལ་བུམ་དང་ ནུས་པ་ཅན་ཨང་གྲངས་ k ཨིནམ་སྦེ་བྱིན་པ་ཅིན་ ཨེ་རེ་ནང་གི་ཨང་གྲངས་ k ཚུ་དང་གཅིག་ཁར་ ཚེ་རིང་སྒྲིག་ཡོད་པའི་ཐོ་ཡིག་ཅིག་ལོག་གཏང་། དཔེ་གཞི་༡: ཨེ་རེ་ནང་བཙུགས་: arr = [-3, -4, 5], k = 3 ཐོན་སྐྱེད་: [-4, -3, 5] དཔེ་གཞི་༢: ཨེ་རེ་ནང་བཙུགས་: arr = [4, -4, 4], k = 2 ཐོན་སྐྱེད་: [4, 4] དཔེ་གཞི་༣: ཨེ་རེ་ནང་བཙུགས་: arr = [-3, 2, 1, 2, -1, -2, 1], k = 1 ཐོན་སྐྱེད་: [2] དྲན་གསོ། ༡: ཨེ་རེ་གི་རིང་ཚད་དེ་ [1, 1000] གི་བར་ན་ལུ་འོང་ནི་ཨིན། ༢: ཨེ་རེ་ནང་ཡོད་པའི་ཆ་ཤས་ཚུ་ [-1000, 1000] གི་བར་ན་ལུ་འོང་ནི་ཨིན། ༣: ༠ <= k <= len ((arr)
+    """"""
+","    if k == 0:
+        return []
+    arr.sort()
+    ans = arr[-k:]
+    return ans
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([-3, -4, 5], 3) == [-4, -3, 5]
+    assert candidate([4, -4, 4], 2) == [4, 4]
+    assert candidate([-3, 2, 1, 2, -1, -2, 1], 1) == [2]
+    assert candidate([123, -123, 20, 0 , 1, 2, -3], 3) == [2, 20, 123]
+    assert candidate([-123, 20, 0 , 1, 2, -3], 4) == [0, 1, 2, 20]
+    assert candidate([5, 15, 0, 3, -13, -8, 0], 7) == [-13, -8, 0, 0, 3, 5, 15]
+    assert candidate([-1, 0, 2, 5, 3, -10], 2) == [3, 5]
+    assert candidate([1, 0, 5, -7], 1) == [5]
+    assert candidate([4, -4], 2) == [-4, 4]
+    assert candidate([-10, 10], 2) == [-10, 10]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1, 2, 3, -23, 243, -400, 0], 0) == []
+
+"
+"
+def solution(lst):
+    """"""ཨང་གྲངས་ཆ་མཉམ་གྱི་ཐོ་ཡིག་སྟོངམ་མེན་པའི་སྐབས་ གྱངས་ཁ་ཆ་མཉམ་ནང་ཡོད་པའི་ཆ་མཉམ་གྱི་ཆ་མཉམ་གྱི་བསྡོམས་སླར་ལོག་འབདཝ་ཨིན། དཔེར་ན་ ཐབས་ལམ་ (([5, 8, 7, 1]) ==> 12 ཐབས་ལམ་ (([3, 3, 3, 3, 3]) ==> 9 ཐབས་ལམ་ (([30, 13, 24, 321]) ==>0
+    """"""
+","    return sum([x for idx, x in enumerate(lst) if idx%2==0 and x%2==1])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([5, 8, 7, 1])    == 12
+    assert candidate([3, 3, 3, 3, 3]) == 9
+    assert candidate([30, 13, 24, 321]) == 0
+    assert candidate([5, 9]) == 5
+    assert candidate([2, 4, 8]) == 0
+    assert candidate([30, 13, 23, 32]) == 23
+    assert candidate([3, 13, 2, 9]) == 3
+
+    # Check some edge cases that are easy to work out by hand.
+
+"
+"
+def add_elements(arr, k):
+    """"""
+    ཨང་གྲངས་མཐའ་དག་ arr དང་ ཨང་གྲངས་མཐའ་དག་ k ཚུ་ཡོད་པའི་ ཨེ་རེ་མེད་ཅིག་བྱིན་པ་ཅིན་ ཨེ་རེ་གི་ཨང་གྲངས་མཐའ་དག་ k གི་ཨང་གྲངས་ལས་ཨང་གྲངས་གཉིས་ལས་ལྷག་སྟེ་མེད་མི་ཚུ་སླར་ལོག་འབདཝ་ཨིན། དཔེ་གཞི་: ཨེན་པུཊི་: arr = [111,21,3,4000,5,6,7,8,9], k = 4 ཨེན་པུཊི་: 24 # sum of 21 + 3 Constraints: 1. 1 <= lenarr) <= 100 2. 1 <= k <= lenarr)
+    """"""
+","    return sum(elem for elem in arr[:k] if len(str(elem)) <= 2)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,-2,-3,41,57,76,87,88,99], 3) == -4
+    assert candidate([111,121,3,4000,5,6], 2) == 0
+    assert candidate([11,21,3,90,5,6,7,8,9], 4) == 125
+    assert candidate([111,21,3,4000,5,6,7,8,9], 4) == 24, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1], 1) == 1, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def get_odd_collatz(n):
+    """"""
+    གྲུབ་འབྲས་འདི་ ནུས་ལྡན་ཨང་གྲངས་ n བྱིན་པ་ཅིན་ ཨང་གྲངས་རྣམ་རྟོག་ཚུ་ཡོད་པའི་ཐོ་ཡིག་ཅིག་ལོག་གཏང་། ཀོ་ལ་ཊ་ཛར་གྱི་དཔེར་བརྗོད་འདི་ རྩིས་རིག་ནང་ལུ་ དཔེར་བརྗོད་ཅིག་ཨིནམ་ད་ འདི་ཡང་ འོག་གི་བཟུམ་སྦེ་གསལ་བཀོད་འབད་ཡོད་པའི་རིམ་པ་ཅིག་ལུ་གནད་དོན་ཡོད། ནུས་ལྡན་ཨང་གྲངས་ n ལས་འགོ་བཙུགསཔ་ཨིན། དེ་ལས་རིམ་པ་རེ་འདི་ ཧེ་མའི་རིམ་པ་ལས་ཐོབ་ཨིན། གལ་སྲིད་ ཧེ་མའི་རིམ་པ་འདི་ཆ་སྙོམས་ཨིན་པ་ཅིན་ རྗེས་ཀྱི་རིམ་པ་འདི་ ཧེ་མའི་རིམ་པ་ཕྱེད་ཀ་ཨིན། གལ་སྲིད་ ཧེ་མའི་རིམ་པ་འདི་ དབྱེ་བ་ཨིན་པ་ཅིན་ རྗེས་ཀྱི་རིམ་པ་འདི་ ཧེ་མའི་རིམ་པ་ལས་ 3 ཚར་དང་ 1 སྦེ་ཐོབ་ཨིན། དཔེར་བརྗོད་འདི་ n གི་གནས་གོང་ག་དེ་ཅིག་ཨིན་རུང་རིམ་པ་འདི་ ཨ་རྟག་ར་ 1 ལུ་ལྷོད་འོང་། དྲན་པ་: 1. ཀོ་ལ་ཊ་ཛར་ (༡) འདི་ [1]ཨིན། 2.ལོག་གཏང་མི་ཐོ་ཡིག་འདི་ཡར་སེང་རིམ་
+    """"""
+","    if n%2==0:
+        odd_collatz = [] 
+    else:
+        odd_collatz = [n]
+    while n > 1:
+        if n % 2 == 0:
+            n = n/2
+        else:
+            n = n*3 + 1
+            
+        if n%2 == 1:
+            odd_collatz.append(int(n))
+
+    return sorted(odd_collatz)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(14) == [1, 5, 7, 11, 13, 17]
+    assert candidate(5) == [1, 5]
+    assert candidate(12) == [1, 3, 5], ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1) == [1], ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def valid_date(date):
+    """"""ཁྱོད་ཀྱིས་ལས་འགན་ཅིག་འབྲི་དགོཔ་ཨིན་ དེ་གིས་ཚེས་གྲངས་ཐིག་ཁྲམ་ཅིག་ལུ་ ཆ་གནས་འབད་ཞིནམ་ལས་ ཚེས་གྲངས་དེ་ ཆ་གནས་ཡོད་པ་ཅིན་ True སླར་ལོག་འབདཝ་ཨིན། དེ་མེན་པ་ཅིན་ False འོག་གི་བཀོད་རྒྱ་ཚུ་ཆ་མཉམ་ར་ཆ་བཞག་པ་ཅིན་ ཚེས་གྲངས་དེ་ ཆ་གནས་འབདཝ་ཨིན། ༡. ཚེས་གྲངས་ཐིག་ཁྲམ་དེ་ སྟོངམ་མེདཔ་ཨིན། ༢. ཚེས་གྲངས་ཀྱི་གྱངས་ཁ་དེ་ ཟླཝ་ ༡,༣,༥,༧,༨,༡༠,༡༢ གི་དོན་ལུ་ ༡ ལས་ཉུང་ ཡང་ན་ ༣༡ ལས་ལྷག་སྟེ་མེདཔ་ཨིན། དེ་ལས་ཉིནམ་གི་གྱངས་ཁ་དེ་ ཟླཝ་ ༤,༦,༩,༡༡ གི་དོན་ལུ་ ༡ ལས་ཉུང་ ཡང་ན་ ༣༠ ལས་ལྷག་སྟེ་མེདཔ་ཨིན། དེ་ལས་ཉིནམ་གི་གྱངས་ཁ་དེ་ ཟླཝ་ ༢ གི་དོན་ལུ་ ༢༩ ལས་ཉུང་ ཡང་ན་ ༡ ལས་ལྷག་སྟེ་མེདཔ་ཨིན། ༣. ཟླཝ་དེ་ ༡ ལས་ཉུང་ ཡང་ན་ ༡༢ ལས་ལྷག་སྟེ་མེདཔ་ཨིན། ༤. ཚེས་གྲངས་དེ་ མན་ངག་ནང་ཡོད་དགོཔ་ཨིན། དཔེར་
+    """"""
+","    try:
+        date = date.strip()
+        month, day, year = date.split('-')
+        month, day, year = int(month), int(day), int(year)
+        if month < 1 or month > 12:
+            return False
+        if month in [1,3,5,7,8,10,12] and day < 1 or day > 31:
+            return False
+        if month in [4,6,9,11] and day < 1 or day > 30:
+            return False
+        if month == 2 and day < 1 or day > 29:
+            return False
+    except:
+        return False
+
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('03-11-2000') == True
+
+    assert candidate('15-01-2012') == False
+
+    assert candidate('04-0-2040') == False
+
+    assert candidate('06-04-2020') == True
+
+    assert candidate('01-01-2007') == True
+
+    assert candidate('03-32-2011') == False
+
+    assert candidate('') == False
+
+    assert candidate('04-31-3000') == False
+
+    assert candidate('06-06-2005') == True
+
+    assert candidate('21-31-2000') == False
+
+    assert candidate('04-12-2003') == True
+
+    assert candidate('04122003') == False
+
+    assert candidate('20030412') == False
+
+    assert candidate('2003-04') == False
+
+    assert candidate('2003-04-12') == False
+
+    assert candidate('04-2003') == False
+"
+"
+def split_words(txt):
+    '''
+    Given a string of words, return a list of words split on whitespace, if no whitespaces exists in the text you
+    should split on commas ',' if no commas exists you should return the number of lower-case letters with odd order in the
+    alphabet, ord('a') = 0, ord('b') = 1, ... ord('z') = 25
+    Examples
+    split_words(""Hello world!"") â -> [""Hello"", ""world!""]
+    split_words(""Hello,world!"") â -> [""Hello"", ""world!""]
+    split_words(""abcdef"") == 3 
+    '''
+","    if "" "" in txt:
+        return txt.split()
+    elif "","" in txt:
+        return txt.replace(',',' ').split()
+    else:
+        return len([i for i in txt if i.islower() and ord(i)%2 == 0])
+","def check(candidate):
+
+    assert candidate(""Hello world!"") == [""Hello"",""world!""]
+    assert candidate(""Hello,world!"") == [""Hello"",""world!""]
+    assert candidate(""Hello world,!"") == [""Hello"",""world,!""]
+    assert candidate(""Hello,Hello,world !"") == [""Hello,Hello,world"",""!""]
+    assert candidate(""abcdef"") == 3
+    assert candidate(""aaabb"") == 2
+    assert candidate(""aaaBb"") == 1
+    assert candidate("""") == 0
+"
+"
+def is_sorted(lst):
+    '''
+    Given a list of numbers, return whether or not they are sorted
+    in ascending order. If list has more than 1 duplicate of the same
+    number, return False. Assume no negative numbers and only integers.
+
+    Examples
+    is_sorted([5]) â -> True
+    is_sorted([1, 2, 3, 4, 5]) â -> True
+    is_sorted([1, 3, 2, 4, 5]) â -> False
+    is_sorted([1, 2, 3, 4, 5, 6]) â -> True
+    is_sorted([1, 2, 3, 4, 5, 6, 7]) â -> True
+    is_sorted([1, 3, 2, 4, 5, 6, 7]) â -> False
+    is_sorted([1, 2, 2, 3, 3, 4]) â -> True
+    is_sorted([1, 2, 2, 2, 3, 4]) â -> False
+    '''
+","    count_digit = dict([(i, 0) for i in lst])
+    for i in lst:
+        count_digit[i]+=1 
+    if any(count_digit[i] > 2 for i in lst):
+        return False
+    if all(lst[i-1] <= lst[i] for i in range(1, len(lst))):
+        return True
+    else:
+        return False
+    
+    
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([5]) == True
+    assert candidate([1, 2, 3, 4, 5]) == True
+    assert candidate([1, 3, 2, 4, 5]) == False
+    assert candidate([1, 2, 3, 4, 5, 6]) == True
+    assert candidate([1, 2, 3, 4, 5, 6, 7]) == True
+    assert candidate([1, 3, 2, 4, 5, 6, 7]) == False, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([]) == True, ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate([1]) == True, ""This prints if this assert fails 3 (good for debugging!)""
+    assert candidate([3, 2, 1]) == False, ""This prints if this assert fails 4 (good for debugging!)""
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1, 2, 2, 2, 3, 4]) == False, ""This prints if this assert fails 5 (good for debugging!)""
+    assert candidate([1, 2, 3, 3, 3, 4]) == False, ""This prints if this assert fails 6 (good for debugging!)""
+    assert candidate([1, 2, 2, 3, 3, 4]) == True, ""This prints if this assert fails 7 (good for debugging!)""
+    assert candidate([1, 2, 3, 4]) == True, ""This prints if this assert fails 8 (good for debugging!)""
+
+"
+"
+def intersection(interval1, interval2):
+    """"""ཁྱོད་ཀྱིས་བར་སྟོང་གཉིས་ཐོབ་ཡོདཔ་དང་ འདི་ནང་ལུ་བར་སྟོང་རེ་རེ་ནི་ཨང་གྲངས་ཆ་མཉམ་ཨིན། དཔེར་ན་ བར་སྟོང་ = (འགོ་བཙུགས་,མཇུག་) = (1, 2) ཟེར་ཡོདཔ་ཨིན། བར་སྟོང་འདི་བསྡམས་ཡོདཔ་ལས་ བར་སྟོང་ (འགོ་བཙུགས་,མཇུག་) འདི་ འགོ་བཙུགས་དང་མཇུག་གཉིས་ཆ་ར་ཚུད་དེ་ཡོདཔ་ཨིན། བར་སྟོང་རེ་རེ་ལུ་ འདི་གི་འགོ་འདི་ཉུང་བ་ ཡང་ན་མཇུག་དང་འདྲན་འདྲ་སྦེ་ར་ཆ་བཞག་ཡོདཔ་ཨིན། ཁྱོད་ཀྱི་ལཱ་འདི་ བར་སྟོང་གཉིས་ཀྱི་བར་སྟོང་གི་ཕྲང་ཚད་དེ་ ཨང་གྲངས་ངོ་མ་ཅིག་ཨིན་ན་མེན་ན་བརྟག་དཔྱད་འབད་དགོཔ་དེ་ཨིན། དཔེར་ན་ བར་སྟོང་ (1, 3), (2, 4) གི་བར་སྟོང་གི་ཕྲང་ཚད་འདི་ (2, 3) འདི་ཡང་ བར་སྟོང་གི་ཕྲང་ཚད་དེ་ 1ཨིནམ་དང་ འདི་ཡང་ བར་སྟོང་གི་ཕྲང་ཚད་མེན་ན། གལ་སྲིད་བར་སྟོང་གི་ཕྲང་ཚད་དེ་ ཨང་གྲངས་ངོ་མ་ཅིག་ཨིན་པ་ཅིན་ ""YES""ལོག་གཏང་། དེ་མེན་པ་ཅིན་ ""NO""ལོག་གཏང་། གལ་སྲིད་བར་སྟོང་གཉིས་དེ་ཅིག་ཁར་མ་བསྡོམས་པ་ཅིན་ ""NO""ལོག་གཏང་། [
+    """"""
+","    def is_prime(num):
+        if num == 1 or num == 0:
+            return False
+        if num == 2:
+            return True
+        for i in range(2, num):
+            if num%i == 0:
+                return False
+        return True
+
+    l = max(interval1[0], interval2[0])
+    r = min(interval1[1], interval2[1])
+    length = r - l
+    if length > 0 and is_prime(length):
+        return ""YES""
+    return ""NO""
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate((1, 2), (2, 3)) == ""NO""
+    assert candidate((-1, 1), (0, 4)) == ""NO""
+    assert candidate((-3, -1), (-5, 5)) == ""YES""
+    assert candidate((-2, 2), (-4, 0)) == ""YES""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate((-11, 2), (-1, -1)) == ""NO""
+    assert candidate((1, 2), (3, 5)) == ""NO""
+    assert candidate((1, 2), (1, 2)) == ""NO""
+    assert candidate((-2, -2), (-3, -2)) == ""NO""
+
+"
+"
+def prod_signs(arr):
+    """"""
+    ཁྱོད་ཀྱིས་ ཨང་གྲངས་ཆ་མཉམ་གྱི་རིམ་པ་ཅིག་ཐོབ་སྟེ་ ཁྱོད་ཀྱིས་ ཨང་གྲངས་ཆ་མཉམ་གྱི་ཚད་གཞི་ཚུ་དང་ གྱངས་ཁ་ཚུ་སླར་ལོག་འབད་དགོ་པའི་སྐབས་ ཨང་གྲངས་ཆ་མཉམ་གྱི་རྟགས་ཚུ་དང་བསྡོམས་ཏེ་ ཨང་གྲངས་ཆ་མཉམ་གྱི་རིམ་པ་ནང་ 1, -1 ཡང་ན་ 0 སྦེ་ངོ་ཚབ་འབད་འོང་། དྲན་པ་བཟོ་ནི། སྟོང་པ་སྦེ་ཡོད་པའི་རིམ་པ་གི་དོན་ལུ་སླར་ལོག་འབད་མི་ཅིག་སླར་ལོག་འབདཝ་ཨིན། དཔེ་འབད་བ་ཅིན་:
+    >>> prod_signs([1, 2, 2, -4]) == -9
+    >>> prod_signs([0, 1]) == 0
+    >>> prod_signs([]) == None
+    """"""
+","    if not arr: return None
+    prod = 0 if 0 in arr else (-1) ** len(list(filter(lambda x: x < 0, arr)))
+    return prod * sum([abs(i) for i in arr])
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1, 2, 2, -4]) == -9
+    assert candidate([0, 1]) == 0
+    assert candidate([1, 1, 1, 2, 3, -1, 1]) == -10
+    assert candidate([]) == None
+    assert candidate([2, 4,1, 2, -1, -1, 9]) == 20
+    assert candidate([-1, 1, -1, 1]) == 4
+    assert candidate([-1, 1, 1, 1]) == -4
+    assert candidate([-1, 1, 1, 0]) == 0
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def minPath(grid, k):
+    """"""
+    གྲལ་ཐིག་ནང་གྲལ་ཐིག་དང་ཐིག་ཁྲམ་ (N >=2) དང་ ནུས་པ་ཅན་གྱི་ཨང་གྲངས་ k ཡོད་པའི་སྐབས་ གྲལ་ཐིག་གི་སྒོ་སྒྲིག་རེ་རེ་ནང་ གནས་གོང་ཅིག་ཡོདཔ་ཨིན། [༡, N * N] ནང་ཡོད་པའི་ཨང་གྲངས་ཆ་མཉམ་གྱིས་ གྲལ་ཐིག་གི་སྒོ་སྒྲིག་ནང་ལུ་ ཚར་གཅིག་རང་མཐོང་འོང་། ཁྱོད་ཀྱིས་ གྲལ་ཐིག་ནང་རིང་ཚད་ k གི་ཉུང་མཐའ་ལམ་འདི་འཚོལ་དགོཔ་ཨིན། ཁྱོད་ཀྱིས་སྒོ་སྒྲིག་གང་རུང་ལས་འགོ་བཙུགསཔ་ཨིན། དེ་ལས་རིམ་པ་རེ་ནང་ ཁྱོད་ཀྱིས་ སྦོ་ལོགས་ཁར་ཡོད་པའི་སྒོ་སྒྲིག་གང་རུང་ལུ་འགྱོ་ཚུགས། གཞན་སྐད་ཅིག་ནང་འབད་བ་ཅིན་ ཁྱོད་ཀྱིས་ ཕྲ་རིང་ k གི་ལམ་འདི་ ཀ་མིག་ (ཁག་ཆེཝ་སྦེ་མི་ཁྱད་པར་ཅན་) ཚུ་བལྟ་ནི་ཨིནམ་སྦེ་དྲན་གསོ་འབད། ཁྱོད་ཀྱིས་ གྲལ་ཐིག་ནང་ལས་འཐོན་མི་ཚུགས། ལམ་རིམ་ A (རིང་ཚད་ k) འདི་ལམ་རིམ་ B (རིང་ཚད་ k) ལས་ཆུང་བའི་གྲངས་སུ་རྩིས་སྟོནམ་ཨིན། གལ་སྲིད་ A དང་ B ལུ་ཡོད་པའི་གནས་གོང་ཚུ་རིམ་སྒྲིག་འབད་བའི་
+    """"""
+","    n = len(grid)
+    val = n * n + 1
+    for i in range(n):
+        for j in range(n):
+            if grid[i][j] == 1:
+                temp = []
+                if i != 0:
+                    temp.append(grid[i - 1][j])
+
+                if j != 0:
+                    temp.append(grid[i][j - 1])
+
+                if i != n - 1:
+                    temp.append(grid[i + 1][j])
+
+                if j != n - 1:
+                    temp.append(grid[i][j + 1])
+
+                val = min(temp)
+
+    ans = []
+    for i in range(k):
+        if i % 2 == 0:
+            ans.append(1)
+        else:
+            ans.append(val)
+    return ans
+","def check(candidate):
+
+    # Check some simple cases
+    print
+    assert candidate([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 3) == [1, 2, 1]
+    assert candidate([[5, 9, 3], [4, 1, 6], [7, 8, 2]], 1) == [1]
+    assert candidate([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]], 4) == [1, 2, 1, 2]
+    assert candidate([[6, 4, 13, 10], [5, 7, 12, 1], [3, 16, 11, 15], [8, 14, 9, 2]], 7) == [1, 10, 1, 10, 1, 10, 1]
+    assert candidate([[8, 14, 9, 2], [6, 4, 13, 15], [5, 7, 1, 12], [3, 10, 11, 16]], 5) == [1, 7, 1, 7, 1]
+    assert candidate([[11, 8, 7, 2], [5, 16, 14, 4], [9, 3, 15, 6], [12, 13, 10, 1]], 9) == [1, 6, 1, 6, 1, 6, 1, 6, 1]
+    assert candidate([[12, 13, 10, 1], [9, 3, 15, 6], [5, 16, 14, 4], [11, 8, 7, 2]], 12) == [1, 6, 1, 6, 1, 6, 1, 6, 1, 6, 1, 6]
+    assert candidate([[2, 7, 4], [3, 1, 5], [6, 8, 9]], 8) == [1, 3, 1, 3, 1, 3, 1, 3]
+    assert candidate([[6, 1, 5], [3, 8, 9], [2, 7, 4]], 8) == [1, 5, 1, 5, 1, 5, 1, 5]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([[1, 2], [3, 4]], 10) == [1, 2, 1, 2, 1, 2, 1, 2, 1, 2]
+    assert candidate([[1, 3], [3, 2]], 10) == [1, 3, 1, 3, 1, 3, 1, 3, 1, 3]
+
+"
+"
+def tri(n):
+    """"""རྩིས་རིག་པ་ཚུ་གིས་ དུས་རབས་གཉིས་དང་པའི་ནང་ ཕི་བོ་ན་ཅིའི་རིམ་པ་ལུ་ ཡོན་ཏན་ཡོདཔ་ཨིན་རུང་ མི་སེར་ཚུ་གིས་ མ་ཤེས་མི་དེ་ ཏིརི་བོ་ན་ཅིའི་རིམ་པ་ཨིནམ་ད་ ཏིརི་བོ་ན་ཅིའི་རིམ་པ་འདི་ གྱངས་ཁ་སྦེ་ར་ གསལ་བཀོད་འབད་ཡོདཔ་ད་ དཔེར་ན་ ཏིརི་བོ་ན་ཅིའི་རིམ་པ་ནང་ ཨང་གྲངས་དང་པོ་ཨང་གྲངས་དང་པ་དང་པ་དང་གཉིས་པ་ ཨང་གྲངས་སོ་སོ་ཨིན། དཔེར་ན་ ཏིརི་བོ་ན་ཅིའི་རིམ་པ་ནང་ ཨང་གྲངས་དང་པོ་ཨང་གྲངས་སོ་སོ་ཨིན། དཔེར་ན་ ཏིརི་བོ་ན་ཅིའི་རིམ་པ་ནང་ ཨང་གྲངས་དང་པོ་ཨང་གྲངས་དང་གཉིས་པ་ ཨང་གྲངས་སོ་སོ་ཨིན། དཔེར་ན་ ཏིརི་བོ་ན་ཅིའི་རིམ་པ་ནང་ ཨང་གྲངས་དང་པོ་ཨང་གྲངས་དང་གསུམ་པ་ ཨང་གྲངས་སོ་སོ་ཨིན།
+    """"""
+","    if n == 0:
+        return [1]
+    my_tri = [1, 3]
+    for i in range(2, n + 1):
+        if i % 2 == 0:
+            my_tri.append(i / 2 + 1)
+        else:
+            my_tri.append(my_tri[i - 1] + my_tri[i - 2] + (i + 3) / 2)
+    return my_tri
+","def check(candidate):
+
+    # Check some simple cases
+    
+    assert candidate(3) == [1, 3, 2.0, 8.0]
+    assert candidate(4) == [1, 3, 2.0, 8.0, 3.0]
+    assert candidate(5) == [1, 3, 2.0, 8.0, 3.0, 15.0]
+    assert candidate(6) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0]
+    assert candidate(7) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0, 24.0]
+    assert candidate(8) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0, 24.0, 5.0]
+    assert candidate(9) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0, 24.0, 5.0, 35.0]
+    assert candidate(20) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0, 24.0, 5.0, 35.0, 6.0, 48.0, 7.0, 63.0, 8.0, 80.0, 9.0, 99.0, 10.0, 120.0, 11.0]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(0) == [1]
+    assert candidate(1) == [1, 3]
+"
+"
+def digits(n):
+    """"""ཨང་གྲངས་ཚངམ་ཅིག་ཐོབ་པ་ཅིན་ ཨང་གྲངས་ཆ་མཉམ་གྱི་ཨང་གྲངས་ཚུ་སླར་ལོག་འབདཝ་ཨིན། ཨང་གྲངས་ཆ་མཉམ་འདི་ཆ་མཉམ་ཨིན་པ་ཅིན་ ༠ སླར་ལོག་འབདཝ་ཨིན། དཔེར་ན་:ཨང་གྲངས་༡ (༡) == ཨང་གྲངས་༡ (༤) == ཨང་གྲངས་༠ (༢༣༥) == ༡༥
+    """"""
+","    product = 1
+    odd_count = 0
+    for digit in str(n):
+        int_digit = int(digit)
+        if int_digit%2 == 1:
+            product= product*int_digit
+            odd_count+=1
+    if odd_count ==0:
+        return 0
+    else:
+        return product
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(5) == 5
+    assert candidate(54) == 5
+    assert candidate(120) ==1
+    assert candidate(5014) == 5
+    assert candidate(98765) == 315
+    assert candidate(5576543) == 2625
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(2468) == 0
+
+"
+"
+def is_nested(string):
+    '''
+    Create a function that takes a string as input which contains only square brackets.
+    The function should return True if and only if there is a valid subsequence of brackets 
+    where at least one bracket in the subsequence is nested.
+
+    is_nested('[[]]') â -> True
+    is_nested('[]]]]]]][[[[[]') â -> False
+    is_nested('[][]') â -> False
+    is_nested('[]') â -> False
+    is_nested('[[][]]') â -> True
+    is_nested('[[]][[') â -> True
+    '''
+","    opening_bracket_index = []
+    closing_bracket_index = []
+    for i in range(len(string)):
+        if string[i] == '[':
+            opening_bracket_index.append(i)
+        else:
+            closing_bracket_index.append(i)
+    closing_bracket_index.reverse()
+    cnt = 0
+    i = 0
+    l = len(closing_bracket_index)
+    for idx in opening_bracket_index:
+        if i < l and idx < closing_bracket_index[i]:
+            cnt += 1
+            i += 1
+    return cnt >= 2
+
+    
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('[[]]') == True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('[]]]]]]][[[[[]') == False
+    assert candidate('[][]') == False
+    assert candidate(('[]')) == False
+    assert candidate('[[[[]]]]') == True
+    assert candidate('[]]]]]]]]]]') == False
+    assert candidate('[][][[]]') == True
+    assert candidate('[[]') == False
+    assert candidate('[]]') == False
+    assert candidate('[[]][[') == True
+    assert candidate('[[][]]') == True
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('') == False, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate('[[[[[[[[') == False
+    assert candidate(']]]]]]]]') == False
+
+"
+"
+
+def sum_squares(lst):
+    """"""ཁྱོད་ཀྱིས་ཨང་གྲངས་ཀྱི་ཐོ་ཅིག་ཐོབ་ཡོདཔ་ཨིན། ཁྱོད་ཀྱིས་ཐོ་ནང་ཡོད་པའི་ཨང་གྲངས་ཀྱི་གྲུ་བཞི་བསྡོམས་དེ་ལོག་གཏང་དགོཔ་དང་ དང་པ་རང་ཐིག་ཁྲམ་ནང་གི་ཆ་ཤས་རེ་རེ་ལུ་ཡར་མཐོ་སའི་ int{\displaystyle \in}} སྦེ་འཁོར་གཏང་དགོཔ་དེ་གལ་ཆེ། དཔེ་འབད་བ་ཅིན་: lst = [1,2,3] ཕྱིར་ཐོན་འདི་ ༡༤ ཨིན། lst = [1,4,9] ཕྱིར་ཐོན་འདི་ ༩༨ ཨིན། lst = [1,3,5,7] ཕྱིར་ཐོན་འདི་ ༨༤ ཨིན། lst = [1.4,4.2,0] ཕྱིར་ཐོན་འདི་ ༢༩ ཨིན། lst = [-2.4,1,1] ཕྱིར་ཐོན་འདི་ ༦ ཨིན།
+    
+
+    """"""
+","    import math
+    squared = 0
+    for i in lst:
+        squared += math.ceil(i)**2
+    return squared
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,2,3])==14, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1.0,2,3])==14, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1,3,5,7])==84, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1.4,4.2,0])==29, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([-2.4,1,1])==6, ""This prints if this assert fails 1 (good for debugging!)""
+
+    assert candidate([100,1,15,2])==10230, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([10000,10000])==200000000, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([-1.4,4.6,6.3])==75, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([-1.4,17.9,18.9,19.9])==1086, ""This prints if this assert fails 1 (good for debugging!)""
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([0])==0, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([-1])==1, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([-1,1,0])==2, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def check_if_last_char_is_a_letter(txt):
+    '''
+    Create a function that returns True if the last character
+    of a given string is an alphabetical character and is not
+    a part of a word, and False otherwise.
+    Note: ""word"" is a group of characters separated by space.
+
+    Examples:
+    check_if_last_char_is_a_letter(""apple pie"") â -> False
+    check_if_last_char_is_a_letter(""apple pi e"") â -> True
+    check_if_last_char_is_a_letter(""apple pi e "") â -> False
+    check_if_last_char_is_a_letter("""") â -> False 
+    '''
+"," 
+    check = txt.split(' ')[-1]
+    return True if len(check) == 1 and (97 <= ord(check.lower()) <= 122) else False
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""apple"") == False
+    assert candidate(""apple pi e"") == True
+    assert candidate(""eeeee"") == False
+    assert candidate(""A"") == True
+    assert candidate(""Pumpkin pie "") == False
+    assert candidate(""Pumpkin pie 1"") == False
+    assert candidate("""") == False
+    assert candidate(""eeeee e "") == False
+    assert candidate(""apple pie"") == False
+    assert candidate(""apple pi e "") == False
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def can_arrange(arr):
+    """"""རྩ་སྒྲིག་ཅིག་བཟོ་སྟེ་ དེ་གི་ནང་དོན་འདི་ སྦོམ་ཤོས་ཅིག་སླར་ལོག་འབདཝ་ཨིན། རྩ་སྒྲིག་དེ་ སྔོན་སྒྲིག་དེ་དང་འདྲན་འདྲ་ ཡང་ན་སྦོམ་ཤོས་ཅིག་མེན་པ་ཅིན་ -༡ སླར་ལོག་འབདཝ་ཨིན། རྩ་སྒྲིག་དེ་ནང་ འདྲ་མཚུངས་ཅན་གྱི་གནས་གོང་ཚུ་མི་ཚུད་འོང་། དཔེར་ན་ can_arrange ([1,2,4,3,5]) = 3 can_arrange ([1,2,3]) = -1
+    """"""
+","    ind=-1
+    i=1
+    while i<len(arr):
+      if arr[i]<arr[i-1]:
+        ind=i
+      i+=1
+    return ind
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,2,4,3,5])==3
+    assert candidate([1,2,4,5])==-1
+    assert candidate([1,4,2,5,6,7,8,9,10])==2
+    assert candidate([4,8,5,7,3])==4
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([])==-1
+
+"
+"
+def largest_smallest_integers(lst):
+    '''
+    Create a function that returns a tuple (a, b), where 'a' is
+    the largest of negative integers, and 'b' is the smallest
+    of positive integers in a list.
+    If there is no negative or positive integers, return them as None.
+
+    Examples:
+    largest_smallest_integers([2, 4, 1, 3, 5, 7]) == (None, 1)
+    largest_smallest_integers([]) == (None, None)
+    largest_smallest_integers([0]) == (None, None)
+    '''
+","    smallest = list(filter(lambda x: x < 0, lst))
+    largest = list(filter(lambda x: x > 0, lst))
+    return (max(smallest) if smallest else None, min(largest) if largest else None)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([2, 4, 1, 3, 5, 7]) == (None, 1)
+    assert candidate([2, 4, 1, 3, 5, 7, 0]) == (None, 1)
+    assert candidate([1, 3, 2, 4, 5, 6, -2]) == (-2, 1)
+    assert candidate([4, 5, 3, 6, 2, 7, -7]) == (-7, 2)
+    assert candidate([7, 3, 8, 4, 9, 2, 5, -9]) == (-9, 2)
+    assert candidate([]) == (None, None)
+    assert candidate([0]) == (None, None)
+    assert candidate([-1, -3, -5, -6]) == (-1, None)
+    assert candidate([-1, -3, -5, -6, 0]) == (-1, None)
+    assert candidate([-6, -4, -4, -3, 1]) == (-3, 1)
+    assert candidate([-6, -4, -4, -3, -100, 1]) == (-3, 1)
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+"
+"
+def compare_one(a, b):
+    """"""
+    ལས་འགན་ཅིག་བཟོ་ཞིནམ་ལས་ ཨང་གྲངས་ཧྲིལ་བུམ་དང་ floats ཡང་ན་ string གིས་ཨང་གྲངས་ངོ་མ་འདི་ངོ་ཚབ་འབད་ཞིནམ་ལས་ སྦོམ་ཤོས་དེ་སླར་ལོག་འབདཝ་ཨིན། གནས་གོང་ཚུ་འདྲན་འདྲ་ཡོད་པ་ཅིན་ None སླར་ལོག་འབདཝ་ཨིན། དྲན་པ་བཟོ་ནི། ཨང་གྲངས་ངོ་མ་ཅིག་ string སྦེ་ངོ་ཚབ་འབད་བ་ཅིན་ འཁྱིལ་འགྱོ་བའི་གནས་གོང་འདི་. ཡང་ན་, compare_one (༡,༢.༥) â -> ༢.༥ compare_one (༡,༢.༣) â -> ""༢,༣ compare_one (༡,༥,༡"", ""༦"") â -> ""༦"" compare_one (༡,༡) â -> None
+    """"""
+","    temp_a, temp_b = a, b
+    if isinstance(temp_a, str): temp_a = temp_a.replace(',','.')
+    if isinstance(temp_b, str): temp_b = temp_b.replace(',','.')
+    if float(temp_a) == float(temp_b): return None
+    return a if float(temp_a) > float(temp_b) else b 
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(1, 2) == 2
+    assert candidate(1, 2.5) == 2.5
+    assert candidate(2, 3) == 3
+    assert candidate(5, 6) == 6
+    assert candidate(1, ""2,3"") == ""2,3""
+    assert candidate(""5,1"", ""6"") == ""6""
+    assert candidate(""1"", ""2"") == ""2""
+    assert candidate(""1"", 1) == None
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def is_equal_to_sum_even(n):
+    """"""དཔེ་གཞི་འདི་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_ཆ་མཉམ་_
+    """"""
+","    return n%2 == 0 and n >= 8
+","def check(candidate):
+    assert candidate(4) == False
+    assert candidate(6) == False
+    assert candidate(8) == True
+    assert candidate(10) == True
+    assert candidate(11) == False
+    assert candidate(12) == True
+    assert candidate(13) == False
+    assert candidate(16) == True
+"
+"
+def special_factorial(n):
+    """"""Brazil གི་གནས་གོང་འདི་ brazilian_factorial ((n) = n! * (n-1)! * (n-2)! *... * 1! འདི་ནང་ལུ་ n > 0 དཔེར་ན་:
+    >>> special_factorial(4)
+    288
+
+    The function will receive an integer as input and should return the special
+    factorial of this integer.
+    """"""
+","    fact_i = 1
+    special_fact = 1
+    for i in range(1, n+1):
+        fact_i *= i
+        special_fact *= fact_i
+    return special_fact
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(4) == 288, ""Test 4""
+    assert candidate(5) == 34560, ""Test 5""
+    assert candidate(7) == 125411328000, ""Test 7""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1) == 1, ""Test 1""
+
+"
+"
+def fix_spaces(text):
+    """"""
+    ཚིག་ཡིག་ཡིག་སྣོད་ཅིག་བྱིན་པ་ཅིན་ ནང་འཁོད་ས་སྒོ་ག་ར་ འོག་ལུ་ཡོད་མི་ཡིག་འབྲུ་ཚུ་དང་ཚབ་བཙུགས། དེ་ལས་ ཚིག་ཡིག་སྣོད་ཅིག་ནང་ ཤུལ་མམ་གྱི་ས་སྒོ་གཉིས་ལས་ལྷག་སྟེ་ཡོད་པ་ཅིན་ ཤུལ་མམ་གྱི་ས་སྒོ་ག་ར་ - fix_spaces (((""དཔེ་གཞི་"") == ""དཔེ་གཞི་"" fix_spaces (((""དཔེ་གཞི་1"") == ""དཔེ་གཞི་_1"" fix_spaces (((""དཔེ་གཞི་2"") == ""_དཔེ་གཞི་_2"" fix_spaces (((""དཔེ་གཞི་ 3"") == ""_དཔེ་གཞི་-3""
+    """"""
+","    new_text = """"
+    i = 0
+    start, end = 0, 0
+    while i < len(text):
+        if text[i] == "" "":
+            end += 1
+        else:
+            if end - start > 2:
+                new_text += ""-""+text[i]
+            elif end - start > 0:
+                new_text += ""_""*(end - start)+text[i]
+            else:
+                new_text += text[i]
+            start, end = i+1, i+1
+        i+=1
+    if end - start > 2:
+        new_text += ""-""
+    elif end - start > 0:
+        new_text += ""_""
+    return new_text
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""Example"") == ""Example"", ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(""Mudasir Hanif "") == ""Mudasir_Hanif_"", ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate(""Yellow Yellow  Dirty  Fellow"") == ""Yellow_Yellow__Dirty__Fellow"", ""This prints if this assert fails 3 (good for debugging!)""
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""Exa   mple"") == ""Exa-mple"", ""This prints if this assert fails 4 (good for debugging!)""
+    assert candidate(""   Exa 1 2 2 mple"") == ""-Exa_1_2_2_mple"", ""This prints if this assert fails 4 (good for debugging!)""
+
+"
+"
+def file_name_check(file_name):
+    """"""ཡིག་སྣོད་མིང་འདི་ འོས་ལྡན་ཨིན་པ་ཅིན་ ཡིག་སྣོད་མིང་འདི་ ལེན་ཞིནམ་ལས་ ལེན་གཏང་ནི་དང་ གཞན་འབད་བ་ཅིན་ ལེན་གཏང་མི་བཏུབ་ཟེར་ལོག་གཏང་མི་ལས་འགན་ཅིག་བཟོ་དགོ། ཡིག་སྣོད་མིང་འདི་ འོས་ལྡན་སྦེ་བརྩི་ནི་ཨིན་པ་ཅིན་ འོག་གི་གནས་སྟངས་ཚུ་ཆ་མཉམ་ནང་ འོས་ལྡན་སྦེ་བརྩི་དགོ། - ཡིག་སྣོད་མིང་ནང་ ཨང་གྲངས་གསུམ་ལས་བརྒལ་མི་བཏུབ་ ('0'-'9') - ཡིག་སྣོད་མིང་ནང་ གནད་སྡུད་གཅིག་རང་ཡོད་ '.' - གནད་སྡུད་ཀྱི་ཧེ་མ་ཡོད་པའི་ཡིག་སྣོད་དེ་ སྟོངམ་མ་བཞག་དགོཔ་མ་ཚད་ ཨང་ཡིག་འདི་ ལི་ཊེན་ཨལ་ཕ་ཊི་ཡིག་འབྲུ་ ('a'-'z' དང་ 'A'Z') ལས་འགོ་བཙུགས་དགོ། - གནད་སྡུད་ཀྱི་ཤུལ་ལས་ཡོད་པའི་ཡིག་སྣོད་འདི་ འོག་གི་ཡིག་འབྲུ་ཚུ་ནང་ལས་ གཅིག་འབད་དགོཔ་ཨིན། དཔེར་ན་: ['txt', 'exe', 'lld'] དཔེ་གཞི་: file_name_check""{""
+    """"""
+","    suf = ['txt', 'exe', 'dll']
+    lst = file_name.split(sep='.')
+    if len(lst) != 2:
+        return 'No'
+    if not lst[1] in suf:
+        return 'No'
+    if len(lst[0]) == 0:
+        return 'No'
+    if not lst[0][0].isalpha():
+        return 'No'
+    t = len([x for x in lst[0] if x.isdigit()])
+    if t > 3:
+        return 'No'
+    return 'Yes'
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""example.txt"") == 'Yes'
+    assert candidate(""1example.dll"") == 'No'
+    assert candidate('s1sdf3.asd') == 'No'
+    assert candidate('K.dll') == 'Yes'
+    assert candidate('MY16FILE3.exe') == 'Yes'
+    assert candidate('His12FILE94.exe') == 'No'
+    assert candidate('_Y.txt') == 'No'
+    assert candidate('?aREYA.exe') == 'No'
+    assert candidate('/this_is_valid.dll') == 'No'
+    assert candidate('this_is_valid.wow') == 'No'
+    assert candidate('this_is_valid.txt') == 'Yes'
+    assert candidate('this_is_valid.txtexe') == 'No'
+    assert candidate('#this2_i4s_5valid.ten') == 'No'
+    assert candidate('@this1_is6_valid.exe') == 'No'
+    assert candidate('this_is_12valid.6exe4.txt') == 'No'
+    assert candidate('all.exe.txt') == 'No'
+    assert candidate('I563_No.exe') == 'Yes'
+    assert candidate('Is3youfault.txt') == 'Yes'
+    assert candidate('no_one#knows.dll') == 'Yes'
+    assert candidate('1I563_Yes3.exe') == 'No'
+    assert candidate('I563_Yes3.txtt') == 'No'
+    assert candidate('final..txt') == 'No'
+    assert candidate('final132') == 'No'
+    assert candidate('_f4indsartal132.') == 'No'
+    
+        
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('.txt') == 'No'
+    assert candidate('s.') == 'No'
+
+"
+"
+
+
+def sum_squares(lst):
+    """"""""འ་ནི་ལས་ཀ་འདི་གིས་ ཨང་གྲངས་ཧྲིལ་བུམ་གྱི་ཐོ་ཡིག་ཅིག་ འཐོབ་འོང་། ཐོ་ཡིག་ནང་གི་ཡིག་སྣོད་ག་ར་གི་དོན་ལུ་ ཨང་གྲངས་ཧྲིལ་བུམ་གྱི་ཐོ་ཡིག་འདི་ གྱངས་ཁ་གསུམ་ལས་མང་པ་ཅིན་ ཆ་སྙོམས་བཟོ་འོང་། དེ་ལས་ ཨང་གྲངས་ཧྲིལ་བུམ་གྱི་ཐོ་ཡིག་འདི་ ཨང་གྲངས་བཞི་ལས་མང་བ་འབད་བ་ཅིན་ ཟུར་བཟོ་འོང་། ཐོ་ཡིག་དེ་ ཨང་གྲངས་གསུམ་ལས་མང་བ་འབད་བ་ཅིན་ ལས་འགན་འདི་ བསྒྱུར་བཅོས་མི་འབད་འོང་། དེ་ལས་ ལས་འགན་འདི་གིས་ ཨང་གྲངས་ཧྲིལ་བུམ་གྱི་ཐོ་ཡིག་འདི་ འཐོབ་འོང་། དཔེར་ན་: lst = [1,2,3] ཕྱིར་འཐོན་འདི་ ༦ ཨིན། lst = [] ཕྱིར་ཐོན་འདི་ ༠ ཨིན། lst = [-1,-5,2,-1,-5] ཕྱིར་ཐོན་འདི་ -126
+    """"""
+","    result =[]
+    for i in range(len(lst)):
+        if i %3 == 0:
+            result.append(lst[i]**2)
+        elif i % 4 == 0 and i%3 != 0:
+            result.append(lst[i]**3)
+        else:
+            result.append(lst[i])
+    return sum(result)
+","def check(candidate):
+
+    # Check some simple cases
+    
+    assert candidate([1,2,3]) == 6
+    assert candidate([1,4,9]) == 14
+    assert candidate([]) == 0
+    assert candidate([1,1,1,1,1,1,1,1,1]) == 9
+    assert candidate([-1,-1,-1,-1,-1,-1,-1,-1,-1]) == -3
+    assert candidate([0]) == 0
+    assert candidate([-1,-5,2,-1,-5]) == -126
+    assert candidate([-56,-99,1,0,-2]) == 3030
+    assert candidate([-1,0,0,0,0,0,0,0,-1]) == 0
+    assert candidate([-16, -9, -2, 36, 36, 26, -20, 25, -40, 20, -4, 12, -26, 35, 37]) == -14196
+    assert candidate([-1, -3, 17, -1, -15, 13, -1, 14, -14, -12, -5, 14, -14, 6, 13, 11, 16, 16, 4, 10]) == -1448
+    
+    
+    # Don't remove this line:
+"
+"
+def words_in_sentence(sentence):
+    """"""
+    ཁྱོད་ཀྱིས་ཚིག་ཡིག་ཅིག་ངོ་ཚབ་འབད་ཡོད་པའི་ string ཅིག་ཐོབ་པ་ཅིན་ ཚིག་ཡིག་དེ་ནང་ལུ་ བར་སྟོང་གིས་སོ་སོར་འབད་མི་ཚིག་ཚུ་ཡོདཔ་དང་ ཁྱོད་ཀྱིས་ ཚིག་ཡིག་འདི་ནང་ ཚིག་ཡིག་ཚུ་ཡོད་པའི་ string འདི་སླར་ལོག་འབད་དགོཔ་ཨིན། འདི་ཡང་ ཚིག་ཡིག་འདི་ནང་ ཚིག་ཡིག་ཚུ་ཡོད་པའི་ ཚིག་ཡིག་འདི་ ཚིག་ཡིག་གསརཔ་ནང་ཡོད་པའི་ ཚིག་ཡིག་གི་རིམ་པ་ཚུ་ དང་ཕུའི་ཡིག་འབྲུ་དང་མཚུངས་པ་སྦེ་དགོཔ་ཨིན། དཔེ་གཞི་ ༡: ནང་བསྐྱོད་: ཚིག་ཡིག་ = ""This is a test"" ཕྱི་ཐོན་: ""is"" དཔེ་གཞི་ ༢: ནང་བསྐྱོད་: ཚིག་ཡིག་ = ""lets go for swimming"" ཕྱི་ཐོན་: ""go for"" བཀག་འཛིན་: * ༡ <= len(sentence) <= ༡༠༠ * ཚིག་ཡིག་ནང་ ཡིག་འབྲུ་རྐྱངམ་གཅིག་འདུག
+    """"""
+","    new_lst = []
+    for word in sentence.split():
+        flg = 0
+        if len(word) == 1:
+            flg = 1
+        for i in range(2, len(word)):
+            if len(word)%i == 0:
+                flg = 1
+        if flg == 0 or len(word) == 2:
+            new_lst.append(word)
+    return "" "".join(new_lst)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""This is a test"") == ""is""
+    assert candidate(""lets go for swimming"") == ""go for""
+    assert candidate(""there is no place available here"") == ""there is no place""
+    assert candidate(""Hi I am Hussein"") == ""Hi am Hussein""
+    assert candidate(""go for it"") == ""go for it""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""here"") == """"
+    assert candidate(""here is"") == ""is""
+
+"
+"
+def simplify(x, n):
+    """"""ཁྱོད་ཀྱི་ལཱ་འདི་ x * n འདི་ཡིག་འབྲུ་ཕྲ་ཏིག་སྦེ་བཟོ་མི་ལས་འགན་ཅིག་བཟོ་ནི་ཨིན། གལ་སྲིད་ x * n འདི་ཧྲིལ་ཨང་ཅིག་སྦེ་འཐོན་པ་ཅིན་ ལས་འགན་འདི་གིས་ True སླར་ལོག་འབདཝ་ཨིན། དེ་མེན་པ་ཅིན་ False སླར་ལོག་འབདཝ་ཨིན། x དང་ n གཉིས་ཆ་ར་ལུ་ ཨང་གྲངས་ཀྱི་ཐིག་ཁྲམ་སྦེ་བཟོ་སྟེ་ འ་ནི་རྣམ་པ་འདི་ཡོདཔ་ཨིན། <numerator>/<denominator> འདི་ནང་ལུ་ ཨང་གྲངས་དང་མིང་བཏགས་གཉིས་ཆ་ར་ ནུས་པ་ཅན་གྱི་ཨང་གྲངས་ཚུ་ཨིན། ཁྱོད་ཀྱིས་ x དང་ n འདི་ ཆ་གནས་ཅན་གྱི་ཨང་གྲངས་ཚུ་ཨིནམ་དང་ མིང་བཏགས་འདི་ ༠ སྦེ་མེདཔ་སྦེ་བཟོཝ་ཨིན། simplify "" 1/5"", ""5/1"") = True simplify "" 1/6"", ""2/1"") = False simplify "" 7/10"", ""10/2"") = False
+    """"""
+","    a, b = x.split(""/"")
+    c, d = n.split(""/"")
+    numerator = int(a) * int(c)
+    denom = int(b) * int(d)
+    if (numerator/denom == int(numerator/denom)):
+        return True
+    return False
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""1/5"", ""5/1"") == True, 'test1'
+    assert candidate(""1/6"", ""2/1"") == False, 'test2'
+    assert candidate(""5/1"", ""3/1"") == True, 'test3'
+    assert candidate(""7/10"", ""10/2"") == False, 'test4'
+    assert candidate(""2/10"", ""50/10"") == True, 'test5'
+    assert candidate(""7/2"", ""4/2"") == True, 'test6'
+    assert candidate(""11/6"", ""6/1"") == True, 'test7'
+    assert candidate(""2/3"", ""5/2"") == False, 'test8'
+    assert candidate(""5/2"", ""3/5"") == False, 'test9'
+    assert candidate(""2/4"", ""8/4"") == True, 'test10'
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""2/4"", ""4/2"") == True, 'test11'
+    assert candidate(""1/5"", ""5/1"") == True, 'test12'
+    assert candidate(""1/5"", ""1/5"") == False, 'test13'
+
+"
+"
+def order_by_points(nums):
+    """"""
+    ཨང་གྲངས་ཚུའི་ཐོ་ཡིག་འདི་ ཨང་གྲངས་ཚུ་ཡར་འཕར་འགྱོ་བའི་རིམ་པ་ལུ་གཞི་བཞག་སྟེ་ དབྱེ་བ་ཕྱེ་ནིའི་འགན་ཡིག་ཅིག་འབྲི་དགོ། དཔེར་ན་ ཨང་གྲངས་ཚུའི་ཐོ་ཡིག་ནང་ ཨང་གྲངས་ཚུའི་བསྡོམས་འདྲ་མཉམ་ཡོད་མི་ ཨང་གྲངས་ལེ་ཤ་ཡོད་པ་ཅིན་ ཨང་གྲངས་ཚུ་ ཨང་གྲངས་ཐོག་མའི་ཐོ་ཡིག་ནང་གཞི་བསྟུན་ཏེ་ དབྱེ་བ་ཕྱེ་དགོ། དཔེར་ན་:
+    >>> order_by_points([1, 11, -1, -11, -12]) == [-1, -11, 1, -12, 11]
+    >>> order_by_points([]) == []
+    """"""
+","    def digits_sum(n):
+        neg = 1
+        if n < 0: n, neg = -1 * n, -1 
+        n = [int(i) for i in str(n)]
+        n[0] = n[0] * neg
+        return sum(n)
+    return sorted(nums, key=digits_sum)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1, 11, -1, -11, -12]) == [-1, -11, 1, -12, 11]
+    assert candidate([1234,423,463,145,2,423,423,53,6,37,3457,3,56,0,46]) == [0, 2, 3, 6, 53, 423, 423, 423, 1234, 145, 37, 46, 56, 463, 3457]
+    assert candidate([]) == []
+    assert candidate([1, -11, -32, 43, 54, -98, 2, -3]) == [-3, -32, -98, -11, 1, 2, 43, 54]
+    assert candidate([1,2,3,4,5,6,7,8,9,10,11]) == [1, 10, 2, 11, 3, 4, 5, 6, 7, 8, 9]
+    assert candidate([0,6,6,-76,-21,23,4]) == [-76, -21, 0, 4, 23, 6, 6]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def specialFilter(nums):
+    """"""ཨང་གྲངས་ཚུ་ནང་ ཨེ་རེ་ཅིག་བཙུགས་ཏེ་ ཨང་གྲངས་ ༡༠ ལས་སྦོམ་པའི་ ཨེ་རེ་ནང་ཡོད་པའི་ཡན་ལག་གི་གྱངས་ཁ་སླར་ལོག་འབད་ནིའི་འགན་ཡིག་ཅིག་འབྲི་དགོ། ཨང་གྲངས་ཀྱི་ཨང་གྲངས་དང་པ་དང་མཇུག་གཉིས་ཆ་ར་ ཨང་གྲངས་རྐྱང་པ་ (1, 3, 5, 7, 9) ཨིན། དཔེར་ན་: specialFilter (([༡༥, -༧༣, ༡༤, -༡༥]) => 1 specialFilter (([33, -༢, -༣, ༤༥, ༢༡, ༡༠༩]) => ༢
+    """"""
+","    
+    count = 0
+    for num in nums:
+        if num > 10:
+            odd_digits = (1, 3, 5, 7, 9)
+            number_as_string = str(num)
+            if int(number_as_string[0]) in odd_digits and int(number_as_string[-1]) in odd_digits:
+                count += 1
+        
+    return count 
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([5, -2, 1, -5]) == 0  
+    assert candidate([15, -73, 14, -15]) == 1
+    assert candidate([33, -2, -3, 45, 21, 109]) == 2
+    assert candidate([43, -12, 93, 125, 121, 109]) == 4
+    assert candidate([71, -2, -33, 75, 21, 19]) == 3
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1]) == 0              
+    assert candidate([]) == 0                   
+
+"
+"
+def get_max_triples(n):
+    """"""
+    ཁྱོད་ཀྱིས་ ནུས་ལྡན་ཨང་གྲངས་ nཐོབ་ཨིན། ཁྱོད་ཀྱིས་ ཨང་གྲངས་ཧྲིལ་བུམ་ a ཡན་ལག་ n བཟོ་དགོཔ་ཨིན། i (1 ‰¤ i ‰¤ n) གི་དོན་ལུ་ a[i] = i * i - i + 1 གི་གནས་གོང་དེ་སླར་ལོག་འབདཝ་ཨིན། a (i, a, a, a) གྱི་ triple གི་གྱངས་ཁ་དེ་སླར་ལོག་འབདཝ་ཨིན། i < j < k དང་ a[i] + a[j] + a[k] འདི་ 3 གི་གྱངས་ཁ་ཨིན། དཔེ་འབད་བ་ཅིན་ ནང་བསྐྱོད་: n = 5 ཕྱི་ཐོན་: 1 འགྲེལ་བཤད་: a = [1, 3, 7, 13, 21] གསུམ་ཆ་གཅིག་གནས་གོང་དེ་ (1, 7, 13) ཨིན།
+    """"""
+","    A = [i*i - i + 1 for i in range(1,n+1)]
+    ans = []
+    for i in range(n):
+        for j in range(i+1,n):
+            for k in range(j+1,n):
+                if (A[i]+A[j]+A[k])%3 == 0:
+                    ans += [(A[i],A[j],A[k])]
+    return len(ans)
+","def check(candidate):
+
+    assert candidate(5) == 1
+    assert candidate(6) == 4
+    assert candidate(10) == 36
+    assert candidate(100) == 53361
+"
+"
+def bf(planet1, planet2):
+    '''
+    There are eight planets in our solar system: the closerst to the Sun 
+    is Mercury, the next one is Venus, then Earth, Mars, Jupiter, Saturn, 
+    Uranus, Neptune.
+    Write a function that takes two planet names as strings planet1 and planet2. 
+    The function should return a tuple containing all planets whose orbits are 
+    located between the orbit of planet1 and the orbit of planet2, sorted by 
+    the proximity to the sun. 
+    The function should return an empty tuple if planet1 or planet2
+    are not correct planet names. 
+    Examples
+    bf(""Jupiter"", ""Neptune"") ==> (""Saturn"", ""Uranus"")
+    bf(""Earth"", ""Mercury"") ==> (""Venus"")
+    bf(""Mercury"", ""Uranus"") ==> (""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn"")
+    '''
+","    planet_names = (""Mercury"", ""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn"", ""Uranus"", ""Neptune"")
+    if planet1 not in planet_names or planet2 not in planet_names or planet1 == planet2:
+        return ()
+    planet1_index = planet_names.index(planet1)
+    planet2_index = planet_names.index(planet2)
+    if planet1_index < planet2_index:
+        return (planet_names[planet1_index + 1: planet2_index])
+    else:
+        return (planet_names[planet2_index + 1 : planet1_index])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""Jupiter"", ""Neptune"") == (""Saturn"", ""Uranus""), ""First test error: "" + str(len(candidate(""Jupiter"", ""Neptune"")))      
+    assert candidate(""Earth"", ""Mercury"") == (""Venus"",), ""Second test error: "" + str(candidate(""Earth"", ""Mercury""))  
+    assert candidate(""Mercury"", ""Uranus"") == (""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn""), ""Third test error: "" + str(candidate(""Mercury"", ""Uranus""))      
+    assert candidate(""Neptune"", ""Venus"") == (""Earth"", ""Mars"", ""Jupiter"", ""Saturn"", ""Uranus""), ""Fourth test error: "" + str(candidate(""Neptune"", ""Venus""))  
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""Earth"", ""Earth"") == ()
+    assert candidate(""Mars"", ""Earth"") == ()
+    assert candidate(""Jupiter"", ""Makemake"") == ()
+
+"
+"
+def sorted_list_sum(lst):
+    """"""ཚིག་ཡིག་གི་ཐོ་ཡིག་ཅིག་ལུ་ ཆ་བཞག་ཡོད་པའི་ལས་འགན་ཅིག་འབྲི་དགོ། ཚིག་ཡིག་གི་ཐོ་ཡིག་འདི་ ཚར་གཅིག་དང་ ཚར་གཅིག་བར་ཆད་མེད་པའི་ ཚིག་ཡིག་ཚུ་སེལ་འཐུ་འབད་ཞིནམ་ལས་ གྲུབ་འབྲས་ཀྱི་ཐོ་ཡིག་འདི་ རིམ་སྒྲིག་ཐོག་ལས་ལོག་གཏང་འོང་། ཐོ་བཀོད་དེ་ ཨ་རྟག་རང་ ཚིག་ཡིག་གི་ཐོ་ཡིག་ཅིག་མ་གཏོགས་ ཨང་གྲངས་ཀྱི་རིམ་པ་ཅིག་མེན་པའི་ཁར་ དེ་ནང་ཡང་ ཚིག་ཡིག་གཉིས་ཡང་ འཐོབ་ནི་ཡོད། ཐོ་བཀོད་དེ་གི་རིམ་པ་འདི་ ཚིག་ཡིག་རེ་རེ་བཞིན་དུ་ ཚར་གཅིག་དང་ ཚར་གཅིག་བར་ཆད་མེད་པར་ ཡར་འཕར་འགྱོ་དགོཔ་ད་ ཁྱོད་ཀྱིས་ཐོ་ཡིག་དེ་དེ་གི་ཐོག་ལས་ རིམ་སྒྲིག་འབད་ཡོད་པའི་ལོག་གཏང་དགོ། ཚིག་ཡིག་གཉིས་ཆ་མཉམ་ནང་ ཚིག་ཡིག་ཅིག་ཡོད་པ་ཅིན་ ཚིག་ཡིག་གི་རིམ་པ་དང་འཁྲིལ་ཏེ་ རིམ་སྒྲིག་འབད་དགོ། ལས་འགན་འདི་གིས་ ཚིག་ཡིག་ཆ་མཉམ་ རིམ་སྒྲིག་འབད་དེ་ལོག་གཏང་དགོ། ཁྱོད་ཀྱིས་ ཚིག་ཡིག་ཆ་མཉམ་ནང་ ཚིག་ཡིག་ཆ་མཉམ་ནང་ ཚིག་ཡིག་གཅིག་དང་ ཚར་
+    """"""
+","    lst.sort()
+    new_lst = []
+    for i in lst:
+        if len(i)%2 == 0:
+            new_lst.append(i)
+    return sorted(new_lst, key=len)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([""aa"", ""a"", ""aaa""]) == [""aa""]
+    assert candidate([""school"", ""AI"", ""asdf"", ""b""]) == [""AI"", ""asdf"", ""school""]
+    assert candidate([""d"", ""b"", ""c"", ""a""]) == []
+    assert candidate([""d"", ""dcba"", ""abcd"", ""a""]) == [""abcd"", ""dcba""]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([""AI"", ""ai"", ""au""]) == [""AI"", ""ai"", ""au""]
+    assert candidate([""a"", ""b"", ""b"", ""c"", ""c"", ""a""]) == []
+    assert candidate(['aaaa', 'bbbb', 'dd', 'cc']) == [""cc"", ""dd"", ""aaaa"", ""bbbb""]
+
+"
+"
+def x_or_y(n, x, y):
+    """"""གྲུབ་འབྲས་འདི་ x_or_y (n) འདི་ཨང་གྲངས་ངོ་མ་ཅིག་ཨིན་པ་ཅིན་ x གི་གནས་གོང་ལོག་བྱིན་དགོཔ་ཨིན་ དེ་ལས་གཞན་འབད་བ་ཅིན་ y གི་གནས་གོང་ལོག་བྱིན་དགོཔ་ཨིན། དཔེར་ན་ x_or_y (7, 34, 12) == 34 for x_or_y (n) == 15, 8, 5) == 5
+    
+    """"""
+","    if n == 1:
+        return y
+    for i in range(2, n):
+        if n % i == 0:
+            return y
+            break
+    else:
+        return x
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(7, 34, 12) == 34
+    assert candidate(15, 8, 5) == 5
+    assert candidate(3, 33, 5212) == 33
+    assert candidate(1259, 3, 52) == 3
+    assert candidate(7919, -1, 12) == -1
+    assert candidate(3609, 1245, 583) == 583
+    assert candidate(91, 56, 129) == 129
+    assert candidate(6, 34, 1234) == 1234
+    
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1, 2, 0) == 0
+    assert candidate(2, 2, 0) == 2
+
+"
+"
+def double_the_difference(lst):
+    '''
+    Given a list of numbers, return the sum of squares of the numbers
+    in the list that are odd. Ignore numbers that are negative or not integers.
+    
+    double_the_difference([1, 3, 2, 0]) == 1 + 9 + 0 + 0 = 10
+    double_the_difference([-1, -2, 0]) == 0
+    double_the_difference([9, -2]) == 81
+    double_the_difference([0]) == 0  
+   
+    If the input list is empty, return 0.
+    '''
+","    return sum([i**2 for i in lst if i > 0 and i%2!=0 and ""."" not in str(i)])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([]) == 0 , ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([5, 4]) == 25 , ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate([0.1, 0.2, 0.3]) == 0 , ""This prints if this assert fails 3 (good for debugging!)""
+    assert candidate([-10, -20, -30]) == 0 , ""This prints if this assert fails 4 (good for debugging!)""
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([-1, -2, 8]) == 0, ""This prints if this assert fails 5 (also good for debugging!)""
+    assert candidate([0.2, 3, 5]) == 34, ""This prints if this assert fails 6 (also good for debugging!)""
+    lst = list(range(-99, 100, 2))
+    odd_sum = sum([i**2 for i in lst if i%2!=0 and i > 0])
+    assert candidate(lst) == odd_sum , ""This prints if this assert fails 7 (good for debugging!)""
+
+"
+"
+def compare(game,guess):
+    """"""ང་བཅས་ག་ར་གིས་ དྲན་པ་ཡོད་རང་ཨིན་ ག་ཅི་སྨོ་ཟེར་བ་ཅིན་ དུས་ཡུན་རིངམ་ཅིག་གི་རིང་ལུ་ བྱུང་རྐྱེན་ཅིག་ལུ་བརྟེན་ གྲུབ་འབྲས་འདི་ ཤེས་ཚུགས་པའི་སྐབས་ལུ་ཨིན། དེ་བསྒང་ལུ་ ང་བཅས་རང་གི་སེམས་ཁར་བྱུང་མི་ཚོར་སྣང་དང་བསམ་བློ་ཚུ་ ཐད་རི་བ་རི་བཀོད་དེ་བསྡུར་འབད་དགོཔ་ཨིན། ཁྱོད་ཀྱི་ལཱ་འདི་ མི་གཅིག་གིས་ གྲུབ་འབྲས་ཚུ་ཀྲིག་ཀྲི་སྦེ་ར་ ཧ་གོ་ཡོདཔ་ཨིན་ན་དང་ མཉམ་བསྡུར་འབད་དགོཔ་ཨིན་ན་ཚུ་ དབྱེ་ཞིབ་འབད་དགོཔ་ཨིན། ཁྱོད་ལུ་ ཨང་གྲངས་དང་ཚོད་དཔག་ཚད་འདྲ་མཉམ་འབད་མི་ ཨང་གྲངས་ཐིག་ཁྲམ་གཉིས་གནང་ཡོདཔ་དང་ འདི་ནང་ བརྡ་བཀོད་རེ་རེ་གི་ནང་ མཉམ་བསྡུར་འབད་ཡོད་པའི་ བརྡ་སྟོན་འབདཝ་ཨིན། ཨང་གྲངས་ཐིག་ཁྲམ་གཅིག་རང་ཡོད་མི་འདི་ ཨང་གྲངས་སོ་སོ་ག་དེམ་ཅིག་ཁར་ཡོདཔ་ཨིན་ན་ཚུ་སླར་ལོག་འབདཝ་ཨིན། གལ་སྲིད་ ཨང་གྲངས་དེ་ཀྲིག་ཀྲི་སྦེ་ར་ ཧ་གོ་ཡོདཔ་ཨིན་པ་ཅིན་ གནས་གོང་འདི་ ༠ དང་མེན་པ་ཅིན་ གནས་གོང་དེ་ ཨང་གྲངས་དང་ཚོད་དཔག་དང་ ཨང་གྲངས་ཀྱི་བར་ན་ ཁྱད་པར་ངོ་མ་ཨིན། དཔེར་ན་: ((([1,
+    """"""
+","    return [abs(x-y) for x,y in zip(game,guess)]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,2,3,4,5,1],[1,2,3,4,2,-2])==[0,0,0,0,3,3], ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([0,0,0,0,0,0],[0,0,0,0,0,0])==[0,0,0,0,0,0], ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1,2,3],[-1,-2,-3])==[2,4,6], ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1,2,3,5],[-1,2,3,4])==[2,0,0,1], ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def Strongest_Extension(class_name, extensions):
+    """"""ཁྱོད་ཀྱིས་དབྱེ་རིམ་ (ཐིག་ཁྲམ་) དང་ ཁྱབ་ཚད་ཀྱི་ཐོ་ཡིག་ཐོབ་འོང་། ཁྱབ་ཚད་ཚུ་ སློབ་རིམ་ནང་ ཁ་སྐོང་སློབ་ཚན་ཚུ་ འབག་ནི་ལུ་ ལག་ལེན་འཐབ་འོང་། ཁྱབ་ཚད་ཀྱི་ཤུགས་འདི་ འོག་གི་བཟུམ་སྦེ་ཨིན། CAPདེ་ ཁྱབ་ཚད་ཀྱི་མིང་ནང་ལུ་ ཡི་གུ་སྦོམ་ཤོས་ཀྱི་གྱངས་ཁ་དང་ SMདེ་ ཁྱབ་ཚད་ཀྱི་མིང་ནང་ལུ་ ཡི་གུ་ཆུང་ཤོས་ཀྱི་གྱངས་ཁ་ཨིནམ་སྦེ་བཞག་པ་ཅིན་ ཁྱབ་ཚད་དེ་ CAP - SM བཅའ་ཡིག་གིས་བྱིན་འོང་། ཁྱོད་ཀྱིས་ ཁྱབ་ཚད་ཤུགས་ཅན་ཅིག་འཚོལ་ཏེ་ string འདི་ནང་བཟོ་རྣམ་འདི་སླར་ལོག་འབད་དགོ ClassName.StrongestExtensionName. ག་དེམ་ཅིག་སྦེ་ ཁྱབ་ཚད་འདྲ་མཉམ་འབད་མི་ ཁྱབ་ཚད་གཉིས་ཡང་ན་དེ་ལས་མང་ཡོད་པ་ཅིན་ ཁྱོད་ཀྱིས་ཐོ་ཡིག་ནང་ དང་པ་ཐོན་མི་དེ་ གདམ་ཁ་རྐྱབ་དགོ། དཔེར་ན་ ཁྱོད་ཀྱིས་ ""Slices"" འདི་ སློབ་ཚན་དང་ ཁྱབ་ཚད་ཀྱི་ཐོ་ཡིག་ཅིག་ཨིན་པ་ཅིན་ ['SEviRNGSliCes', 'Cheese', 'StuFfed'] ཁྱོད་ཀྱིས་ 'Slices.SEviRNG
+    """"""
+","    strong = extensions[0]
+    my_val = len([x for x in extensions[0] if x.isalpha() and x.isupper()]) - len([x for x in extensions[0] if x.isalpha() and x.islower()])
+    for s in extensions:
+        val = len([x for x in s if x.isalpha() and x.isupper()]) - len([x for x in s if x.isalpha() and x.islower()])
+        if val > my_val:
+            strong = s
+            my_val = val
+
+    ans = class_name + ""."" + strong
+    return ans
+
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('Watashi', ['tEN', 'niNE', 'eIGHt8OKe']) == 'Watashi.eIGHt8OKe'
+    assert candidate('Boku123', ['nani', 'NazeDa', 'YEs.WeCaNe', '32145tggg']) == 'Boku123.YEs.WeCaNe'
+    assert candidate('__YESIMHERE', ['t', 'eMptY', 'nothing', 'zeR00', 'NuLl__', '123NoooneB321']) == '__YESIMHERE.NuLl__'
+    assert candidate('K', ['Ta', 'TAR', 't234An', 'cosSo']) == 'K.TAR'
+    assert candidate('__HAHA', ['Tab', '123', '781345', '-_-']) == '__HAHA.123'
+    assert candidate('YameRore', ['HhAas', 'okIWILL123', 'WorkOut', 'Fails', '-_-']) == 'YameRore.okIWILL123'
+    assert candidate('finNNalLLly', ['Die', 'NowW', 'Wow', 'WoW']) == 'finNNalLLly.WoW'
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('_', ['Bb', '91245']) == '_.Bb'
+    assert candidate('Sp', ['671235', 'Bb']) == 'Sp.671235'
+    
+"
+"
+def cycpattern_check(a , b):
+    """"""ཁྱོད་ཀྱིས་ཚིག་གཉིས་ཐོབ་ཡོདཔ་ཨིན། ཁྱོད་ཀྱིས་ཚིག་གཉིས་པ་ཡང་ན་ འདི་གི་འཁོར་ལོའི་གྲལ་རིམ་ཚུ་ ཚིག་དང་པ་ནང་ལུ་ ནང་ཐིག་སྦེ་ཡོད་པ་ཅིན་ ཁྱོད་ཀྱིས་བདེན་པ་ལོག་གཏང་དགོཔ་ཨིན། cycpattern_check(""abcd"",""abd"") => false cycpattern_check(""hello"",""ell"") => true cycpattern_check (((""whassup"",""psus"") => false cycpattern_check""abab"",""baa"") => true cycpattern_check (((""efef"",""eeff"") => false cycpattern_check"" ((hims"",""simen"") => true
+
+    """"""
+","    l = len(b)
+    pat = b + b
+    for i in range(len(a) - l + 1):
+        for j in range(l + 1):
+            if a[i:i+l] == pat[j:j+l]:
+                return True
+    return False
+","def check(candidate):
+
+    # Check some simple cases
+    #assert True, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    #assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert  candidate(""xyzw"",""xyw"") == False , ""test #0""
+    assert  candidate(""yello"",""ell"") == True , ""test #1""
+    assert  candidate(""whattup"",""ptut"") == False , ""test #2""
+    assert  candidate(""efef"",""fee"") == True , ""test #3""
+    assert  candidate(""abab"",""aabb"") == False , ""test #4""
+    assert  candidate(""winemtt"",""tinem"") == True , ""test #5""
+
+"
+"
+def even_odd_count(num):
+    """"""ཨང་གྲངས་ཧྲིལ་བུམ་ཅིག་བྱིན་པ་ཅིན་ ཨང་གྲངས་ཆ་མཉམ་དང་ཆ་མཉམ་མེད་པའི་ཨང་གྲངས་ཚུ་ཡོད་མིའི་ཨང་གྲངས་ལོག་གཏང་། དཔེ་འབད་བ་ཅིན་: even_odd_count(-12) ==> (1, 1) even_odd_count(123) ==> (1, 2)
+    """"""
+","    even_count = 0
+    odd_count = 0
+    for i in str(abs(num)):
+        if int(i)%2==0:
+            even_count +=1
+        else:
+            odd_count +=1
+    return (even_count, odd_count)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(7) == (0, 1)
+    assert candidate(-78) == (1, 1)
+    assert candidate(3452) == (2, 2)
+    assert candidate(346211) == (3, 3)
+    assert candidate(-345821) == (3, 3)
+    assert candidate(-2) == (1, 0)
+    assert candidate(-45347) == (2, 3)
+    assert candidate(0) == (1, 0)
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def int_to_mini_roman(number):
+    """"""
+    ཨང་གྲངས་ཧྲིལ་བུམ་ཅིག་ཐོབ་པ་ཅིན་ རོ་མཱན་ཨང་གྲངས་ནང་ ཕྲ་རིང་ཅིག་སྦེ་ཐོབ་ཞིནམ་ལས་ ཡིག་འབྲུ་ཆུང་བ་སྦེ་ལོག་གཏང་། ངེས་འཛིན་: ༡ <= num <= ༡༠༠༠ དཔེ་གཞི་:
+    >>> int_to_mini_roman(19) == 'xix'
+    >>> int_to_mini_roman(152) == 'clii'
+    >>> int_to_mini_roman(426) == 'cdxxvi'
+    """"""
+","    num = [1, 4, 5, 9, 10, 40, 50, 90,  
+           100, 400, 500, 900, 1000] 
+    sym = [""I"", ""IV"", ""V"", ""IX"", ""X"", ""XL"",  
+           ""L"", ""XC"", ""C"", ""CD"", ""D"", ""CM"", ""M""] 
+    i = 12
+    res = ''
+    while number: 
+        div = number // num[i] 
+        number %= num[i] 
+        while div: 
+            res += sym[i] 
+            div -= 1
+        i -= 1
+    return res.lower()
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(19) == 'xix'
+    assert candidate(152) == 'clii'
+    assert candidate(251) == 'ccli'
+    assert candidate(426) == 'cdxxvi'
+    assert candidate(500) == 'd'
+    assert candidate(1) == 'i'
+    assert candidate(4) == 'iv'
+    assert candidate(43) == 'xliii'
+    assert candidate(90) == 'xc'
+    assert candidate(94) == 'xciv'
+    assert candidate(532) == 'dxxxii'
+    assert candidate(900) == 'cm'
+    assert candidate(994) == 'cmxciv'
+    assert candidate(1000) == 'm'
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def right_angle_triangle(a, b, c):
+    '''
+    Given the lengths of the three sides of a triangle. Return True if the three
+    sides form a right-angled triangle, False otherwise.
+    A right-angled triangle is a triangle in which one angle is right angle or 
+    90 degree.
+    Example:
+    right_angle_triangle(3, 4, 5) == True
+    right_angle_triangle(1, 2, 3) == False
+    '''
+","    return a*a == b*b + c*c or b*b == a*a + c*c or c*c == a*a + b*b
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(3, 4, 5) == True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(1, 2, 3) == False
+    assert candidate(10, 6, 8) == True
+    assert candidate(2, 2, 2) == False
+    assert candidate(7, 24, 25) == True
+    assert candidate(10, 5, 7) == False
+    assert candidate(5, 12, 13) == True
+    assert candidate(15, 8, 17) == True
+    assert candidate(48, 55, 73) == True
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1, 1, 1) == False, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(2, 2, 10) == False
+
+"
+"
+def find_max(words):
+    """"""string གི་ཐོ་ཡིག་ཅིག་ལེན་མི་ལས་འགན་ཅིག་འབྲི་དགོ། མིང་ཐོ་ནང་ཚིག་མ་འདྲཝ་ཚུ་ཡོདཔ་ཨིན། ཚིག་འདི་ཨང་གྲངས་མཐའ་མ་ཡོད་པའི་ཡིག་འབྲུ་ཚུ་ལོག་གཏང་། གལ་སྲིད་ string མང་ཤོས་ཅིག་ནང་ཨང་གྲངས་མཐའ་མ་ཡོད་པའི་ཡིག་འབྲུ་ཚུ་ཡོད་པ་ཅིན་ ཚིག་ཡིག་གི་རིམ་པ་ལས་ དང་པ་འཐོན་མི་ཅིག་ལོག་གཏང་། find_max ((([""name"", ""of"", ""string""]) == ""string"" find_max (([""name"", ""enam"", ""game""]) == ""enam"" find_max (([""aaaaaaa"", ""bb"", ""cc""]) == """"aaaaaaa""
+    """"""
+","    return sorted(words, key = lambda x: (-len(set(x)), x))[0]
+","def check(candidate):
+
+    # Check some simple cases
+    assert (candidate([""name"", ""of"", ""string""]) == ""string""), ""t1""
+    assert (candidate([""name"", ""enam"", ""game""]) == ""enam""), 't2'
+    assert (candidate([""aaaaaaa"", ""bb"", ""cc""]) == ""aaaaaaa""), 't3'
+    assert (candidate([""abc"", ""cba""]) == ""abc""), 't4'
+    assert (candidate([""play"", ""this"", ""game"", ""of"",""footbott""]) == ""footbott""), 't5'
+    assert (candidate([""we"", ""are"", ""gonna"", ""rock""]) == ""gonna""), 't6'
+    assert (candidate([""we"", ""are"", ""a"", ""mad"", ""nation""]) == ""nation""), 't7'
+    assert (candidate([""this"", ""is"", ""a"", ""prrk""]) == ""this""), 't8'
+
+    # Check some edge cases that are easy to work out by hand.
+    assert (candidate([""b""]) == ""b""), 't9'
+    assert (candidate([""play"", ""play"", ""play""]) == ""play""), 't10'
+
+"
+"
+def eat(number, need, remaining):
+    """"""
+    ཁྱོད་ལྟོཝ་བཀྱེས་པའི་བེ་ལུད་ཨིནམ་ལས་ ཁྱོད་ཀྱིས་ གུ་རམ་དག་པ་ཅིག་ཟ་ཚར་ཡོད་རུང་ ད་རེས་ནངས་པར་ ཁྱོད་ཀྱིས་ ཉིནམ་གཅིག་གི་བཞེས་སྒོ་ཚུ་ ཟ་དགོ་པ་ཅིན་ གུ་རམ་ཚུ་ལོག་བྱིན་དགོ། ཁྱོད་ཀྱིས་ གུ་རམ་མ་ལང་པ་ཅིན་ ལྷག་ལུས་ གུ་རམ་ག་ར་ཟ་རུང་ ལྟོཝ་བཀྱེས་སྡོད་འོང་། དཔེ་འབད་བ་ཅིན་ *ཟ་(5, 6, 10) -> [11, 4] *ཟ་(4, 8, 9) -> [12, 1] *ཟ་(1, 10, 10) -> [11, 0] *ཟ་(2, 11, 5) -> [7, 0] འགྱུར་ཅན་: @number: ཁྱོད་ཀྱིས་ཟ་ཚར་མི་ གུ་རམ་དག་པ་ཅིག་ཟ་དགོ། @need: ཁྱོད་ཀྱིས་ཟ་དགོ་པའི་ གུ་རམ་དག་པ་ཅིག་ཟ་དགོ། @remaining: ཚོད་བསྲེ་ནང་ ལྷག་ལུས་པའི་ གུ་རམ་དག་པ་ཅིག་ཟ་དགོ། Constrain: *0= <= 1000 *0= <= 1000 *0= <= 1000 དགོས་མཁོ་ཡོད་པ། =
+    """"""
+","    if(need <= remaining):
+        return [ number + need , remaining-need ]
+    else:
+        return [ number + remaining , 0]
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(5, 6, 10) == [11, 4], ""Error""
+    assert candidate(4, 8, 9) == [12, 1], ""Error""
+    assert candidate(1, 10, 10) == [11, 0], ""Error""
+    assert candidate(2, 11, 5) == [7, 0], ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(4, 5, 7) == [9, 2], ""Error""
+    assert candidate(4, 5, 1) == [5, 0], ""Error""
+
+"
+"
+def do_algebra(operator, operand):
+    """"""
+    ཨང་གྲངས་དང་པའི་ཐོ་ནང་ལུ་ གཞི་རྟེན་ཨེལ་ཇི་བཱར་ལཱ་ཚུ་དང་ ཨང་གྲངས་གཉིས་པ་ནང་ལུ་ ཨང་གྲངས་ཧྲིལ་བུམ་གྱི་ཐོ་འདི་ཡོདཔ་ཨིན། ཨང་གྲངས་དང་པའི་ཐོ་ནང་ལུ་ གཞི་རྟེན་ཨེལ་ཇི་བཱར་ལཱ་ཚུ་ཡོདཔ་དང་ ཨང་གྲངས་གཉིས་པ་ནང་ལུ་ ཨེལ་ཇི་བཱར་ཚིག་ཡིག་འདི་བཟོཝ་ཨིན། ཨང་གྲངས་དང་པའི་ཐོ་འདི་ལག་ལེན་འཐབ་སྟེ་ ཨང་གྲངས་འདི་སླར་ལོག་འབདཝ་ཨིན། གཞི་རྟེན་ཨེལ་ཇི་བཱར་ལཱ་ཚུ་འདི་: ཁ་སྐོང་ (+) མར་ཕབ་ (- ) མང་ཐབས་ (*) དབྱེ་བ་ (/) ཨང་གྲངས་རྩིས་ (**) དཔེ་འབད་བ་ཅིན་: ཨང་གྲངས་['+', '*', '-'] གྲལ་ཐིག་ = [2, 3, 4, 5] གྲུབ་འབྲས་ = 2 + 3 * 4 - 5 => གྲུབ་འབྲས་ = 9 དྲན་པ་: ཨང་གྲངས་ཀྱི་ཐོ་འདི་ ཨང་གྲངས་དང་པའི་ཐོ་ལས་ ༡ ཕྱིར་བཏོན་འབད་མི་འདི་ཨིན། ཨ
+
+    """"""
+","    expression = str(operand[0])
+    for oprt, oprn in zip(operator, operand[1:]):
+        expression+= oprt + str(oprn)
+    return eval(expression)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(['**', '*', '+'], [2, 3, 4, 5]) == 37
+    assert candidate(['+', '*', '-'], [2, 3, 4, 5]) == 9
+    assert candidate(['//', '*'], [7, 3, 4]) == 8, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def solve(s):
+    """"""ཁྱོད་ཀྱིས་ string s.ཐོབ་པ་ཅིན་ s[i]འདི་ཡིག་འབྲུ་ཅིག་ཨིན་པ་ཅིན་ དེའི་ཡིག་གཟུགས་འདི་ འོག་ལས་གོང་ལུ་ ཡང་ན་ ཕྱོགས་གཞན་ཁ་ལུ་བསྒྱུར་གཏང་། དེ་མེན་པ་ཅིན་ འདི་བཟུམ་སྦེ་རང་བཞག་དགོ། string འདི་ནང་ཡིག་འབྲུ་མེདཔ་ཨིན་པ་ཅིན་ string འདི་ཁ་བསྒྱུར་གཏང་། ལས་འགན་འདི་གིས་ string སླར་ལོག་འབད་དགོཔ་ཨིན། དཔེ་འབད་བ་ཅིན་ solve ((""1234"") = ""4321"" solve ((""ab"") = ""AB"" solve ((""#a@C"") = ""#A@c""
+    """"""
+","    flg = 0
+    idx = 0
+    new_str = list(s)
+    for i in s:
+        if i.isalpha():
+            new_str[idx] = i.swapcase()
+            flg = 1
+        idx += 1
+    s = """"
+    for i in new_str:
+        s += i
+    if flg == 0:
+        return s[len(s)::-1]
+    return s
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""AsDf"") == ""aSdF""
+    assert candidate(""1234"") == ""4321""
+    assert candidate(""ab"") == ""AB""
+    assert candidate(""#a@C"") == ""#A@c""
+    assert candidate(""#AsdfW^45"") == ""#aSDFw^45""
+    assert candidate(""#6@2"") == ""2@6#""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""#$a^D"") == ""#$A^d""
+    assert candidate(""#ccc"") == ""#CCC""
+
+    # Don't remove this line:
+"
+"
+def string_to_md5(text):
+    """"""
+    string 'text' བྱིན་པ་ཅིན་ md5 ཧེཤི་ འདྲ་མཉམ་གྱི་ཐིག་ཁྲམ་སླར་ལོག་འབད། གལ་སྲིད་ 'text' འདི་ སྟོངམ་ཐིག་ཁྲམ་ཨིན་པ་ཅིན་ None སླར་ལོག་འབད།
+
+    >>> string_to_md5('Hello world') == '3e25960a79dbc69b674cd4ec67a72c62'
+    """"""
+","    import hashlib
+    return hashlib.md5(text.encode('ascii')).hexdigest() if text else None
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('Hello world') == '3e25960a79dbc69b674cd4ec67a72c62'
+    assert candidate('') == None
+    assert candidate('A B C') == '0ef78513b0cb8cef12743f5aeb35f888'
+    assert candidate('password') == '5f4dcc3b5aa765d61d8327deb882cf99'
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def generate_integers(a, b):
+    """"""
+    ཨང་གྲངས་ཆ་མཉམ་ a དང་ b གཉིས་ཐོབ་པ་ཅིན་ ཨང་གྲངས་ཆ་མཉམ་ a དང་ b གི་བར་ན་ཡོད་པའི་ཨང་གྲངས་ཆ་མཉམ་དེ་ཡར་སེང་གི་རིམ་པ་ལུ་ལོག་གཏང་། དཔེར་ན་: generate_integers ((2, 8) => [2, 4, 6, 8] generate_integers ((8, 2) => [2, 4, 6, 8] generate_integers ((10, 14) => []
+    """"""
+","    lower = max(2, min(a, b))
+    upper = min(8, max(a, b))
+
+    return [i for i in range(lower, upper+1) if i % 2 == 0]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(2, 10) == [2, 4, 6, 8], ""Test 1""
+    assert candidate(10, 2) == [2, 4, 6, 8], ""Test 2""
+    assert candidate(132, 2) == [2, 4, 6, 8], ""Test 3""
+    assert candidate(17,89) == [], ""Test 4""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"

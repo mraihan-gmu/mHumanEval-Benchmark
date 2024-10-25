@@ -1,0 +1,4615 @@
+prompt,canonical_solution,test
+"from typing import List
+
+
+def has_close_elements(numbers: List[float], threshold: float) -> bool:
+    """""" ກວດເບິ່ງວ່າໃນບັນຊີເລກທີ່ໃຫ້ໄວ້, ມີສອງເລກໃດທີ່ໃກ້ຊິດກັນກ່ວາຂອບທີ່ໃຫ້ໄວ້. ຕົວຢ່າງ:
+    >>> has_close_elements([1.0, 2.0, 3.0], 0.5)
+    False
+    >>> has_close_elements([1.0, 2.8, 3.0, 4.0, 5.0, 2.0], 0.3)
+    True
+    """"""
+","for idx, elem in enumerate(numbers):
+    for idx2, elem2 in enumerate(numbers):
+        if idx != idx2:
+            distance = abs(elem - elem2)
+            if distance < threshold:
+                return True
+return False
+","def check(candidate):
+    assert candidate([1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.3) == True
+    assert candidate([1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.05) == False
+    assert candidate([1.0, 2.0, 5.9, 4.0, 5.0], 0.95) == True
+    assert candidate([1.0, 2.0, 5.9, 4.0, 5.0], 0.8) == False
+    assert candidate([1.0, 2.0, 3.0, 4.0, 5.0, 2.0], 0.1) == True
+    assert candidate([1.1, 2.2, 3.1, 4.1, 5.1], 1.0) == True
+    assert candidate([1.1, 2.2, 3.1, 4.1, 5.1], 0.5) == False
+
+"
+"from typing import List
+
+
+def separate_paren_groups(paren_string: str) -> List[str]:
+    """""" ການປ້ອນເຂົ້າໃນຟັງຊັນນີ້ແມ່ນສາຍທີ່ມີຫລາຍກຸ່ມຂອງແຖວແຖວທີ່ຖືກກວມເອົາ. ເປົ້າຫມາຍຂອງທ່ານແມ່ນເພື່ອແຍກກຸ່ມເຫລົ່ານັ້ນອອກເປັນສາຍແຍກຕ່າງຫາກແລະສົ່ງຄືນລາຍຊື່ຂອງພວກນັ້ນ. ກຸ່ມແຍກຕ່າງຫາກແມ່ນມີຄວາມສົມດຸນ (ແຕ່ລະແຖວເປີດຖືກປິດຢ່າງຖືກຕ້ອງ) ແລະບໍ່ໄດ້ກວມໃສ່ກັນໃນແຕ່ລະອັນ. ຍົກເວັ້ນຊ່ອງຫວ່າງໃດໆໃນສາຍການປ້ອນເຂົ້າ. ຕົວຢ່າງ:
+    >>> separate_paren_groups('( ) (( )) (( )( ))')
+    ['()', '(())', '(()())']
+    """"""
+","    result = []
+    current_string = []
+    current_depth = 0
+
+    for c in paren_string:
+        if c == '(':
+            current_depth += 1
+            current_string.append(c)
+        elif c == ')':
+            current_depth -= 1
+            current_string.append(c)
+
+            if current_depth == 0:
+                result.append(''.join(current_string))
+                current_string.clear()
+
+    return result
+","def check(candidate):
+    assert candidate('(()()) ((())) () ((())()())') == [
+        '(()())', '((()))', '()', '((())()())'
+    ]
+    assert candidate('() (()) ((())) (((())))') == [
+        '()', '(())', '((()))', '(((())))'
+    ]
+    assert candidate('(()(())((())))') == [
+        '(()(())((())))'
+    ]
+    assert candidate('( ) (( )) (( )( ))') == ['()', '(())', '(()())']
+"
+"
+
+def truncate_number(number: float) -> float:
+    """""" ໂດຍໃຫ້ຕົວເລກຈຸດລອຍບວກ, ມັນສາມາດຖືກແບ່ງອອກເປັນສ່ວນເຕັມ (ຕົວເລກເຕັມທີ່ໃຫຍ່ທີ່ສຸດທີ່ນ້ອຍກວ່າຕົວເລກທີ່ໃຫ້) ແລະສ່ວນປະລິມານ (ສ່ວນທີ່ເຫຼືອແມ່ນນ້ອຍກວ່າ 1 ສະເຫມີ).
+    >>> truncate_number(3.5)
+    0.5
+    """"""
+","    return number % 1.0
+","def check(candidate):
+    assert candidate(3.5) == 0.5
+    assert abs(candidate(1.33) - 0.33) < 1e-6
+    assert abs(candidate(123.456) - 0.456) < 1e-6
+"
+"from typing import List
+
+
+def below_zero(operations: List[int]) -> bool:
+    """""" ທ່ານໄດ້ຮັບບັນຊີລາຍຊື່ຂອງການຝາກເງິນ ແລະ ການຖອນເງິນໃນບັນຊີທະນາຄານທີ່ເລີ່ມຕົ້ນດ້ວຍຄວາມສົມດຸນທີ່ບໍ່ມີ. ຫນ້າ ທີ່ຂອງທ່ານແມ່ນເພື່ອກວດພົບວ່າໃນຈຸດໃດທີ່ຄວາມສົມດຸນຂອງບັນຊີຫຼຸດລົງຕໍ່າກວ່າ 0 ແລະໃນຈຸດນັ້ນ ຫນ້າ ທີ່ຄວນກັບຄືນ True. ຖ້າບໍ່ດັ່ງນັ້ນມັນຄວນກັບຄືນ False. ຕົວຢ່າງ:
+    >>> below_zero([1, 2, 3])
+    False
+    >>> below_zero([1, 2, -4, 5])
+    True
+    """"""
+","    balance = 0
+
+    for op in operations:
+        balance += op
+        if balance < 0:
+            return True
+
+    return False
+","def check(candidate):
+    assert candidate([]) == False
+    assert candidate([1, 2, -3, 1, 2, -3]) == False
+    assert candidate([1, 2, -4, 5, 6]) == True
+    assert candidate([1, -1, 2, -2, 5, -5, 4, -4]) == False
+    assert candidate([1, -1, 2, -2, 5, -5, 4, -5]) == True
+    assert candidate([1, -2, 2, -2, 5, -5, 4, -4]) == True
+"
+"from typing import List
+
+
+def mean_absolute_deviation(numbers: List[float]) -> float:
+    """""" ສໍາລັບບັນຊີລາຍຊື່ຂອງຕົວເລກການປ້ອນຂໍ້ມູນທີ່ຖືກມອບໃຫ້, ຄິດໄລ່ Mean Absolute Deviation ປະມານຕົວເລກສະເລ່ຍຂອງຊຸດຂໍ້ມູນນີ້. Mean Absolute Deviation ແມ່ນຄວາມແຕກຕ່າງສະເລ່ຍທີ່ສົມບູນລະຫວ່າງແຕ່ລະອົງປະກອບແລະຈຸດສູນກາງ (ໃນກໍລະນີນີ້): MAD = ສະເລ່ຍ. x - x_mean. ຕົວຢ່າງ:
+    >>> mean_absolute_deviation([1.0, 2.0, 3.0, 4.0])
+    1.0
+    """"""
+","    mean = sum(numbers) / len(numbers)
+    return sum(abs(x - mean) for x in numbers) / len(numbers)
+","def check(candidate):
+    assert abs(candidate([1.0, 2.0, 3.0]) - 2.0/3.0) < 1e-6
+    assert abs(candidate([1.0, 2.0, 3.0, 4.0]) - 1.0) < 1e-6
+    assert abs(candidate([1.0, 2.0, 3.0, 4.0, 5.0]) - 6.0/5.0) < 1e-6
+
+"
+"from typing import List
+
+
+def intersperse(numbers: List[int], delimeter: int) -> List[int]:
+    """""" ໃສ່ຕົວເລກ ""delimeter"" ລະຫວ່າງທຸກໆສອງອົງປະກອບຕິດຕໍ່ກັນຂອງບັນຊີລາຍຊື່ຂໍ້ມູນເຂົ້າ `numbers""
+    >>> intersperse([], 4)
+    []
+    >>> intersperse([1, 2, 3], 4)
+    [1, 4, 2, 4, 3]
+    """"""
+","    if not numbers:
+        return []
+
+    result = []
+
+    for n in numbers[:-1]:
+        result.append(n)
+        result.append(delimeter)
+
+    result.append(numbers[-1])
+
+    return result
+","def check(candidate):
+    assert candidate([], 7) == []
+    assert candidate([5, 6, 3, 2], 8) == [5, 8, 6, 8, 3, 8, 2]
+    assert candidate([2, 2, 2], 2) == [2, 2, 2, 2, 2]
+"
+"from typing import List
+
+
+def parse_nested_parens(paren_string: str) -> List[int]:
+    """""" ການປ້ອນຂໍ້ມູນເຂົ້າໃນຟັງຊັນນີ້ແມ່ນສາຍທີ່ສະແດງໃຫ້ເຫັນຫລາຍກຸ່ມ ສໍາ ລັບແຖວແຖວທີ່ຖືກແຊ່ແຍກດ້ວຍຊ່ອງຫວ່າງ. ສໍາ ລັບແຕ່ລະກຸ່ມ, ສົ່ງອອກລະດັບແຊ່ເລິກທີ່ສຸດຂອງແຖວແຖວ. ຕົວຢ່າງ (() (()) ມີລະດັບແຊ່ສູງສຸດສອງລະດັບໃນຂະນະທີ່ ((())) ມີສາມ.
+
+    >>> parse_nested_parens('(()()) ((())) () ((())()())')
+    [2, 3, 1, 3]
+    """"""
+","    def parse_paren_group(s):
+        depth = 0
+        max_depth = 0
+        for c in s:
+            if c == '(':
+                depth += 1
+                max_depth = max(depth, max_depth)
+            else:
+                depth -= 1
+
+        return max_depth
+
+    return [parse_paren_group(x) for x in paren_string.split(' ') if x]
+","def check(candidate):
+    assert candidate('(()()) ((())) () ((())()())') == [2, 3, 1, 3]
+    assert candidate('() (()) ((())) (((())))') == [1, 2, 3, 4]
+    assert candidate('(()(())((())))') == [4]
+"
+"from typing import List
+
+
+def filter_by_substring(strings: List[str], substring: str) -> List[str]:
+    """""" ການກັ່ນຕອງບັນຊີລາຍຊື່ຂອງສາຍທີ່ໃສ່ພຽງແຕ່ສໍາລັບຜູ້ທີ່ປະກອບ substring ທີ່ຖືກມອບໃຫ້
+    >>> filter_by_substring([], 'a')
+    []
+    >>> filter_by_substring(['abc', 'bacd', 'cde', 'array'], 'a')
+    ['abc', 'bacd', 'array']
+    """"""
+","    return [x for x in strings if substring in x]
+","def check(candidate):
+    assert candidate([], 'john') == []
+    assert candidate(['xxx', 'asd', 'xxy', 'john doe', 'xxxAAA', 'xxx'], 'xxx') == ['xxx', 'xxxAAA', 'xxx']
+    assert candidate(['xxx', 'asd', 'aaaxxy', 'john doe', 'xxxAAA', 'xxx'], 'xx') == ['xxx', 'aaaxxy', 'xxxAAA', 'xxx']
+    assert candidate(['grunt', 'trumpet', 'prune', 'gruesome'], 'run') == ['grunt', 'prune']
+"
+"from typing import List, Tuple
+
+
+def sum_product(numbers: List[int]) -> Tuple[int, int]:
+    """""" ສໍາລັບບັນຊີລາຍຊື່ຂອງຕົວເລກເຕັມທີ່ໃຫ້, ກັບຄືນ tuple ປະກອບດ້ວຍຈໍານວນແລະຜົນຜະລິດຂອງຕົວເລກເຕັມທັງຫມົດໃນບັນຊີລາຍຊື່. ຈໍານວນຫວ່າງຄວນຈະເທົ່າກັບ 0 ແລະຜົນຜະລິດຫວ່າງຄວນຈະເທົ່າກັບ 1.
+    >>> sum_product([])
+    (0, 1)
+    >>> sum_product([1, 2, 3, 4])
+    (10, 24)
+    """"""
+","    sum_value = 0
+    prod_value = 1
+
+    for n in numbers:
+        sum_value += n
+        prod_value *= n
+    return sum_value, prod_value
+","def check(candidate):
+    assert candidate([]) == (0, 1)
+    assert candidate([1, 1, 1]) == (3, 1)
+    assert candidate([100, 0]) == (100, 0)
+    assert candidate([3, 5, 7]) == (3 + 5 + 7, 3 * 5 * 7)
+    assert candidate([10]) == (10, 10)
+"
+"from typing import List, Tuple
+
+
+def rolling_max(numbers: List[int]) -> List[int]:
+    """""" ຈາກບັນຊີລາຍຊື່ຂອງຕົວເລກເຕັມທີ່ໃຫ້, ສ້າງບັນຊີລາຍຊື່ຂອງອົງປະກອບສູງສຸດທີ່ພົບເຫັນຈົນເຖິງເວລາທີ່ໃຫ້ໃນລໍາດັບ.
+    >>> rolling_max([1, 2, 3, 2, 3, 4, 2])
+    [1, 2, 3, 3, 3, 4, 4]
+    """"""
+","    running_max = None
+    result = []
+
+    for n in numbers:
+        if running_max is None:
+            running_max = n
+        else:
+            running_max = max(running_max, n)
+
+        result.append(running_max)
+
+    return result
+","def check(candidate):
+    assert candidate([]) == []
+    assert candidate([1, 2, 3, 4]) == [1, 2, 3, 4]
+    assert candidate([4, 3, 2, 1]) == [4, 4, 4, 4]
+    assert candidate([3, 2, 3, 100, 3]) == [3, 3, 3, 100, 100]
+"
+"
+
+def is_palindrome(string: str) -> bool:
+    """""" ການທົດສອບຖ້າວ່າສາຍທີ່ໃຫ້ແມ່ນ palindrome """"""
+    return string == string[::-1]
+
+
+def make_palindrome(string: str) -> str:
+    """""" Find the shortest palindrome that begins with a supplied string.
+    Algorithm idea is simple:
+    - Find the longest postfix of supplied string that is a palindrome.
+    - Append to the end of the string reverse of a string prefix that comes before the palindromic suffix.
+    >>> make_palindrome('')
+    ''
+    >>> make_palindrome('cat')
+    'catac'
+    >>> make_palindrome('cata')
+    'catac'
+    """"""
+","    if not string:
+        return ''
+
+    beginning_of_suffix = 0
+
+    while not is_palindrome(string[beginning_of_suffix:]):
+        beginning_of_suffix += 1
+
+    return string + string[:beginning_of_suffix][::-1]
+","def check(candidate):
+    assert candidate('') == ''
+    assert candidate('x') == 'x'
+    assert candidate('xyz') == 'xyzyx'
+    assert candidate('xyx') == 'xyx'
+    assert candidate('jerry') == 'jerryrrej'
+"
+"from typing import List
+
+
+def string_xor(a: str, b: str) -> str:
+    """""" ການປ້ອນຂໍ້ມູນແມ່ນສອງສາຍ a ແລະ b ປະກອບດ້ວຍ 1 ແລະ 0 ເທົ່ານັ້ນ. ປະຕິບັດ XOR ແບບ binary ໃນຂໍ້ມູນເຫຼົ່ານີ້ແລະສົ່ງຜົນກັບມາເປັນສາຍ.
+    >>> string_xor('010', '110')
+    '100'
+    """"""
+","    def xor(i, j):
+        if i == j:
+            return '0'
+        else:
+            return '1'
+
+    return ''.join(xor(x, y) for x, y in zip(a, b))
+","def check(candidate):
+    assert candidate('111000', '101010') == '010010'
+    assert candidate('1', '1') == '0'
+    assert candidate('0101', '0000') == '0101'
+"
+"from typing import List, Optional
+
+
+def longest(strings: List[str]) -> Optional[str]:
+    """""" ຈາກບັນຊີລາຍຊື່ຂອງສາຍ, ກັບຄືນທີ່ຍາວທີ່ສຸດ. ກັບຄືນທີ່ທໍາອິດໃນກໍລະນີຂອງສາຍຫຼາຍຂອງຄວາມຍາວດຽວກັນ. ກັບຄືນບໍ່ມີໃນກໍລະນີທີ່ບັນຊີລາຍຊື່ການປ້ອນຂໍ້ມູນແມ່ນເປົ່າ.
+    >>> longest([])
+
+    >>> longest(['a', 'b', 'c'])
+    'a'
+    >>> longest(['a', 'bb', 'ccc'])
+    'ccc'
+    """"""
+","    if not strings:
+        return None
+
+    maxlen = max(len(x) for x in strings)
+    for s in strings:
+        if len(s) == maxlen:
+            return s
+","def check(candidate):
+    assert candidate([]) == None
+    assert candidate(['x', 'y', 'z']) == 'x'
+    assert candidate(['x', 'yyy', 'zzzz', 'www', 'kkkk', 'abc']) == 'zzzz'
+"
+"
+
+def greatest_common_divisor(a: int, b: int) -> int:
+    """""" ກັບຄືນເປັນຜູ້ແບ່ງປັນລວມທີ່ໃຫຍ່ທີ່ສຸດຂອງສອງຕົວເລກເຕັມ a ແລະ b
+    >>> greatest_common_divisor(3, 5)
+    1
+    >>> greatest_common_divisor(25, 15)
+    5
+    """"""
+","    while b:
+        a, b = b, a % b
+    return a
+","def check(candidate):
+    assert candidate(3, 7) == 1
+    assert candidate(10, 15) == 5
+    assert candidate(49, 14) == 7
+    assert candidate(144, 60) == 12
+"
+"from typing import List
+
+
+def all_prefixes(string: str) -> List[str]:
+    """""" ລາຍຊື່ການກັບຄືນຂອງ prefixes ທັງຫມົດຈາກສັ້ນທີ່ສຸດເພື່ອຍາວທີ່ສຸດຂອງ string ເຂົ້າ
+    >>> all_prefixes('abc')
+    ['a', 'ab', 'abc']
+    """"""
+","    result = []
+
+    for i in range(len(string)):
+        result.append(string[:i+1])
+    return result
+","def check(candidate):
+    assert candidate('') == []
+    assert candidate('asdfgh') == ['a', 'as', 'asd', 'asdf', 'asdfg', 'asdfgh']
+    assert candidate('WWW') == ['W', 'WW', 'WWW']
+"
+"
+
+def string_sequence(n: int) -> str:
+    """""" ກັບຄືນສາຍທີ່ມີຕົວເລກທີ່ຖືກ ຈໍາ ກັດໂດຍພື້ນທີ່ເລີ່ມຕົ້ນຈາກ 0 ເຖິງ n ລວມ.
+    >>> string_sequence(0)
+    '0'
+    >>> string_sequence(5)
+    '0 1 2 3 4 5'
+    """"""
+","    return ' '.join([str(x) for x in range(n + 1)])
+","def check(candidate):
+    assert candidate(0) == '0'
+    assert candidate(3) == '0 1 2 3'
+    assert candidate(10) == '0 1 2 3 4 5 6 7 8 9 10'
+"
+"
+
+def count_distinct_characters(string: str) -> int:
+    """""" ໃຫ້ string, ຊອກຫາວ່າມີຕົວອັກສອນທີ່ແຕກຕ່າງກັນຫຼາຍປານໃດ (ບໍ່ວ່າຈະເປັນຕົວອັກສອນໃຫຍ່) ມັນປະກອບດ້ວຍ
+    >>> count_distinct_characters('xyzXYZ')
+    3
+    >>> count_distinct_characters('Jerry')
+    4
+    """"""
+","    return len(set(string.lower()))
+","def check(candidate):
+    assert candidate('') == 0
+    assert candidate('abcde') == 5
+    assert candidate('abcde' + 'cade' + 'CADE') == 5
+    assert candidate('aaaaAAAAaaaa') == 1
+    assert candidate('Jerry jERRY JeRRRY') == 5
+"
+"from typing import List
+
+
+def parse_music(music_string: str) -> List[int]:
+    """""" ການປ້ອນຂໍ້ມູນເຂົ້າໃນຟັງຊັນນີ້ແມ່ນສາຍທີ່ສະແດງໃຫ້ເຫັນວ່າດົນຕີໃນຮູບແບບ ASCII ພິເສດ. ວຽກງານຂອງທ່ານແມ່ນເພື່ອ parse ສາຍນີ້ແລະກັບຄືນບັນຊີລາຍຊື່ຂອງ integer ທີ່ກົງກັບຈໍານວນຫຼາຍຂອງ beats ແຕ່ລະບໍ່ໃຊ້ເວລາ. ນີ້ແມ່ນ legend ເປັນ: 'o' - ເຕັມຂໍ້ຄວາມ, ໃຊ້ເວລາສີ່ beats 'o"" - ເຄິ່ງຂໍ້ຄວາມ, ໃຊ້ເວລາສອງ beats '. "" - quater ຂໍ້ຄວາມ, ໃຊ້ເວລາຫນຶ່ງ beat
+
+    >>> parse_music('o o| .| o| o| .| .| .| .| o o')
+    [4, 2, 1, 2, 2, 1, 1, 1, 1, 4, 4]
+    """"""
+","    note_map = {'o': 4, 'o|': 2, '.|': 1}
+    return [note_map[x] for x in music_string.split(' ') if x]
+","def check(candidate):
+    assert candidate('') == []
+    assert candidate('o o o o') == [4, 4, 4, 4]
+    assert candidate('.| .| .| .|') == [1, 1, 1, 1]
+    assert candidate('o| o| .| .| o o o o') == [2, 2, 1, 1, 4, 4, 4, 4]
+    assert candidate('o| .| o| .| o o| o o|') == [2, 1, 2, 1, 4, 2, 4, 2]
+"
+"
+
+def how_many_times(string: str, substring: str) -> int:
+    """""" ຊອກຫາວ່າ ຈໍາ ນວນເທົ່າໃດທີ່ສາຍຍ່ອຍທີ່ໃຫ້ໄວ້ສາມາດພົບໄດ້ໃນສາຍຕົ້ນສະບັບ. ນັບກໍລະນີທີ່ຊ້ ໍາ ກັນ.
+    >>> how_many_times('', 'a')
+    0
+    >>> how_many_times('aaa', 'a')
+    3
+    >>> how_many_times('aaaa', 'aa')
+    3
+    """"""
+","    times = 0
+
+    for i in range(len(string) - len(substring) + 1):
+        if string[i:i+len(substring)] == substring:
+            times += 1
+
+    return times
+","def check(candidate):
+    assert candidate('', 'x') == 0
+    assert candidate('xyxyxyx', 'x') == 4
+    assert candidate('cacacacac', 'cac') == 4
+    assert candidate('john doe', 'john') == 1
+"
+"from typing import List
+
+
+def sort_numbers(numbers: str) -> str:
+    """""" ການປ້ອນຂໍ້ມູນແມ່ນ string ທີ່ຖືກກໍານົດດ້ວຍພື້ນທີ່ຂອງຕົວເລກຈາກ 'zero' ຫາ 'nine'. ທາງເລືອກທີ່ຖືກຕ້ອງແມ່ນ 'zero', 'one', 'two', 'three', 'four', 'five','six','seven', 'eight' ແລະ 'nine'. ສົ່ງຄືນ string ທີ່ມີຕົວເລກທີ່ຈັດລຽງຈາກນ້ອຍທີ່ສຸດໄປຫາໃຫຍ່ທີ່ສຸດ
+    >>> sort_numbers('three one five')
+    'one three five'
+    """"""
+","    value_map = {
+        'zero': 0,
+        'one': 1,
+        'two': 2,
+        'three': 3,
+        'four': 4,
+        'five': 5,
+        'six': 6,
+        'seven': 7,
+        'eight': 8,
+        'nine': 9
+    }
+    return ' '.join(sorted([x for x in numbers.split(' ') if x], key=lambda x: value_map[x]))
+","def check(candidate):
+    assert candidate('') == ''
+    assert candidate('three') == 'three'
+    assert candidate('three five nine') == 'three five nine'
+    assert candidate('five zero four seven nine eight') == 'zero four five seven eight nine'
+    assert candidate('six five four three two one zero') == 'zero one two three four five six'
+"
+"from typing import List, Tuple
+
+
+def find_closest_elements(numbers: List[float]) -> Tuple[float, float]:
+    """""" ຈາກບັນຊີລາຍຊື່ທີ່ສະ ຫນອງ ໃຫ້ (ຄວາມຍາວຢ່າງ ຫນ້ອຍ ສອງ) ເລືອກແລະສົ່ງສອງອັນທີ່ໃກ້ຊິດທີ່ສຸດແລະສົ່ງໃຫ້ພວກເຂົາຕາມ ລໍາ ດັບ (ຕົວເລກນ້ອຍກວ່າ, ຕົວເລກໃຫຍ່ກວ່າ).
+    >>> find_closest_elements([1.0, 2.0, 3.0, 4.0, 5.0, 2.2])
+    (2.0, 2.2)
+    >>> find_closest_elements([1.0, 2.0, 3.0, 4.0, 5.0, 2.0])
+    (2.0, 2.0)
+    """"""
+","    closest_pair = None
+    distance = None
+
+    for idx, elem in enumerate(numbers):
+        for idx2, elem2 in enumerate(numbers):
+            if idx != idx2:
+                if distance is None:
+                    distance = abs(elem - elem2)
+                    closest_pair = tuple(sorted([elem, elem2]))
+                else:
+                    new_distance = abs(elem - elem2)
+                    if new_distance < distance:
+                        distance = new_distance
+                        closest_pair = tuple(sorted([elem, elem2]))
+
+    return closest_pair
+","def check(candidate):
+    assert candidate([1.0, 2.0, 3.9, 4.0, 5.0, 2.2]) == (3.9, 4.0)
+    assert candidate([1.0, 2.0, 5.9, 4.0, 5.0]) == (5.0, 5.9)
+    assert candidate([1.0, 2.0, 3.0, 4.0, 5.0, 2.2]) == (2.0, 2.2)
+    assert candidate([1.0, 2.0, 3.0, 4.0, 5.0, 2.0]) == (2.0, 2.0)
+    assert candidate([1.1, 2.2, 3.1, 4.1, 5.1]) == (2.2, 3.1)
+
+"
+"from typing import List
+
+
+def rescale_to_unit(numbers: List[float]) -> List[float]:
+    """""" ໃຫ້ບັນຊີລາຍຊື່ຂອງຕົວເລກ (ຂອງຢ່າງຫນ້ອຍສອງອົງປະກອບ), ນໍາໃຊ້ການປ່ຽນເສັ້ນຕໍ່ບັນຊີລາຍຊື່ນັ້ນ, ດັ່ງນັ້ນຕົວເລກນ້ອຍທີ່ສຸດຈະກາຍເປັນ 0 ແລະຕົວເລກໃຫຍ່ທີ່ສຸດຈະກາຍເປັນ 1
+    >>> rescale_to_unit([1.0, 2.0, 3.0, 4.0, 5.0])
+    [0.0, 0.25, 0.5, 0.75, 1.0]
+    """"""
+","    min_number = min(numbers)
+    max_number = max(numbers)
+    return [(x - min_number) / (max_number - min_number) for x in numbers]
+","def check(candidate):
+    assert candidate([2.0, 49.9]) == [0.0, 1.0]
+    assert candidate([100.0, 49.9]) == [1.0, 0.0]
+    assert candidate([1.0, 2.0, 3.0, 4.0, 5.0]) == [0.0, 0.25, 0.5, 0.75, 1.0]
+    assert candidate([2.0, 1.0, 5.0, 3.0, 4.0]) == [0.25, 0.0, 1.0, 0.5, 0.75]
+    assert candidate([12.0, 11.0, 15.0, 13.0, 14.0]) == [0.25, 0.0, 1.0, 0.5, 0.75]
+"
+"from typing import List, Any
+
+
+def filter_integers(values: List[Any]) -> List[int]:
+    """""" ການກັ່ນຕອງບັນຊີທີ່ໃຫ້ຂອງຄ່າ python ໃດໆ ສໍາ ລັບຕົວເລກເຕັມເທົ່ານັ້ນ
+    >>> filter_integers(['a', 3.14, 5])
+    [5]
+    >>> filter_integers([1, 2, 3, 'abc', {}, []])
+    [1, 2, 3]
+    """"""
+","    return [x for x in values if isinstance(x, int)]
+","def check(candidate):
+    assert candidate([]) == []
+    assert candidate([4, {}, [], 23.2, 9, 'adasd']) == [4, 9]
+    assert candidate([3, 'c', 3, 3, 'a', 'b']) == [3, 3, 3]
+"
+"
+
+def strlen(string: str) -> int:
+    """""" ຄວາມຍາວກັບຄືນຂອງ string ທີ່ໄດ້ຮັບ
+    >>> strlen('')
+    0
+    >>> strlen('abc')
+    3
+    """"""
+","    return len(string)
+","def check(candidate):
+    assert candidate('') == 0
+    assert candidate('x') == 1
+    assert candidate('asdasnakj') == 9
+"
+"
+
+def largest_divisor(n: int) -> int:
+    """""" ສໍາລັບຈໍານວນ n ທີ່ໄດ້ຮັບ, ຊອກຫາຈໍານວນທີ່ໃຫຍ່ທີ່ສຸດທີ່ແບ່ງ n ຢ່າງເທົ່າທຽມ, ນ້ອຍກວ່າ n
+    >>> largest_divisor(15)
+    5
+    """"""
+","    for i in reversed(range(n)):
+        if n % i == 0:
+            return i
+","def check(candidate):
+    assert candidate(3) == 1
+    assert candidate(7) == 1
+    assert candidate(10) == 5
+    assert candidate(100) == 50
+    assert candidate(49) == 7
+"
+"from typing import List
+
+
+def factorize(n: int) -> List[int]:
+    """""" Return list of prime factors of given integer in order from smallest to largest. ແຕ່ລະປັດໄຈຄວນຖືກລະບຸຈໍານວນຄັ້ງທີ່ສອດຄ່ອງກັບຈໍານວນຄັ້ງທີ່ມັນປາກົດຢູ່ໃນ factorization. ຈໍານວນການປ້ອນຂໍ້ມູນຄວນເທົ່າກັບຜົນຜະລິດຂອງປັດໄຈທັງ ຫມົດ
+    >>> factorize(8)
+    [2, 2, 2]
+    >>> factorize(25)
+    [5, 5]
+    >>> factorize(70)
+    [2, 5, 7]
+    """"""
+","    import math
+    fact = []
+    i = 2
+    while i <= int(math.sqrt(n) + 1):
+        if n % i == 0:
+            fact.append(i)
+            n //= i
+        else:
+            i += 1
+
+    if n > 1:
+        fact.append(n)
+    return fact
+","def check(candidate):
+    assert candidate(2) == [2]
+    assert candidate(4) == [2, 2]
+    assert candidate(8) == [2, 2, 2]
+    assert candidate(3 * 19) == [3, 19]
+    assert candidate(3 * 19 * 3 * 19) == [3, 3, 19, 19]
+    assert candidate(3 * 19 * 3 * 19 * 3 * 19) == [3, 3, 3, 19, 19, 19]
+    assert candidate(3 * 19 * 19 * 19) == [3, 19, 19, 19]
+    assert candidate(3 * 2 * 3) == [2, 3, 3]
+"
+"from typing import List
+
+
+def remove_duplicates(numbers: List[int]) -> List[int]:
+    """""" ຈາກບັນຊີລາຍຊື່ຂອງຕົວເລກເຕັມ, ລົບລາຍການທັງ ຫມົດ ທີ່ເກີດຂື້ນຫຼາຍກ່ວາ ຫນຶ່ງ ຄັ້ງ. ຮັກສາ ລໍາ ດັບຂອງອົງປະກອບທີ່ຍັງເຫຼືອຄືກັນກັບການເຂົ້າ.
+    >>> remove_duplicates([1, 2, 3, 2, 4])
+    [1, 3, 4]
+    """"""
+","    import collections
+    c = collections.Counter(numbers)
+    return [n for n in numbers if c[n] <= 1]
+","def check(candidate):
+    assert candidate([]) == []
+    assert candidate([1, 2, 3, 4]) == [1, 2, 3, 4]
+    assert candidate([1, 2, 3, 2, 4, 3, 5]) == [1, 4, 5]
+"
+"
+
+def flip_case(string: str) -> str:
+    """""" ສໍາລັບສາຍທີ່ໃຫ້, ປ່ຽນຕົວອັກສອນຂະຫນາດນ້ອຍເປັນຕົວອັກສອນໃຫຍ່ ແລະ ຕົວອັກສອນໃຫຍ່ເປັນຕົວອັກສອນນ້ອຍ.
+    >>> flip_case('Hello')
+    'hELLO'
+    """"""
+","    return string.swapcase()
+","def check(candidate):
+    assert candidate('') == ''
+    assert candidate('Hello!') == 'hELLO!'
+    assert candidate('These violent delights have violent ends') == 'tHESE VIOLENT DELIGHTS HAVE VIOLENT ENDS'
+"
+"from typing import List
+
+
+def concatenate(strings: List[str]) -> str:
+    """""" Concatenate ບັນຊີລາຍຊື່ຂອງສາຍໃນສາຍດຽວ
+    >>> concatenate([])
+    ''
+    >>> concatenate(['a', 'b', 'c'])
+    'abc'
+    """"""
+","    return ''.join(strings)
+","def check(candidate):
+    assert candidate([]) == ''
+    assert candidate(['x', 'y', 'z']) == 'xyz'
+    assert candidate(['x', 'y', 'z', 'w', 'k']) == 'xyzwk'
+"
+"from typing import List
+
+
+def filter_by_prefix(strings: List[str], prefix: str) -> List[str]:
+    """""" ການກັ່ນຕອງລາຍຊື່ການເຂົ້າຂອງສາຍພຽງແຕ່ສໍາລັບຜູ້ທີ່ເລີ່ມຕົ້ນດ້ວຍ prefix ທີ່ໃຫ້.
+    >>> filter_by_prefix([], 'a')
+    []
+    >>> filter_by_prefix(['abc', 'bcd', 'cde', 'array'], 'a')
+    ['abc', 'array']
+    """"""
+","    return [x for x in strings if x.startswith(prefix)]
+","def check(candidate):
+    assert candidate([], 'john') == []
+    assert candidate(['xxx', 'asd', 'xxy', 'john doe', 'xxxAAA', 'xxx'], 'xxx') == ['xxx', 'xxxAAA', 'xxx']
+"
+"
+
+def get_positive(l: list):
+    """"""ກັບຄືນພຽງແຕ່ຕົວເລກບວກໃນບັນຊີລາຍຊື່.
+    >>> get_positive([-1, 2, -4, 5, 6])
+    [2, 5, 6]
+    >>> get_positive([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])
+    [5, 3, 2, 3, 9, 123, 1]
+    """"""
+","    return [e for e in l if e > 0]
+","def check(candidate):
+    assert candidate([-1, -2, 4, 5, 6]) == [4, 5, 6]
+    assert candidate([5, 3, -5, 2, 3, 3, 9, 0, 123, 1, -10]) == [5, 3, 2, 3, 3, 9, 123, 1]
+    assert candidate([-1, -2]) == []
+    assert candidate([]) == []
+
+"
+"
+
+def is_prime(n):
+    """"""ກັບຄືນຄວາມຈິງຖ້າຕົວເລກທີ່ໃຫ້ແມ່ນຕົວເລກຕົ້ນ, ແລະຜິດຖ້າບໍ່ດັ່ງນັ້ນ.
+    >>> is_prime(6)
+    False
+    >>> is_prime(101)
+    True
+    >>> is_prime(11)
+    True
+    >>> is_prime(13441)
+    True
+    >>> is_prime(61)
+    True
+    >>> is_prime(4)
+    False
+    >>> is_prime(1)
+    False
+    """"""
+","    if n < 2:
+        return False
+    for k in range(2, n - 1):
+        if n % k == 0:
+            return False
+    return True
+","def check(candidate):
+    assert candidate(6) == False
+    assert candidate(101) == True
+    assert candidate(11) == True
+    assert candidate(13441) == True
+    assert candidate(61) == True
+    assert candidate(4) == False
+    assert candidate(1) == False
+    assert candidate(5) == True
+    assert candidate(11) == True
+    assert candidate(17) == True
+    assert candidate(5 * 17) == False
+    assert candidate(11 * 7) == False
+    assert candidate(13441 * 19) == False
+
+"
+"import math
+
+
+def poly(xs: list, x: float):
+    """"""
+    ປະເມີນໂພລີໂນມທີ່ມີຕົວປະສິດທິຜົນ xs ຢູ່ຈຸດ x. ກັບຄືນ xs[0] + xs[1] * x + xs[1] * x^2 +.... xs[n] * x^n
+    """"""
+    return sum([coeff * math.pow(x, i) for i, coeff in enumerate(xs)])
+
+
+def find_zero(xs: list):
+    """""" xs are coefficients of a polynomial.
+    find_zero find x such that poly(x) = 0.
+    find_zero returns only only zero point, even if there are many.
+    Moreover, find_zero only takes list xs having even number of coefficients
+    and largest non zero coefficient as it guarantees
+    a solution.
+    >>> round(find_zero([1, 2]), 2) # f(x) = 1 + 2x
+    -0.5
+    >>> round(find_zero([-6, 11, -6, 1]), 2) # (x - 1) * (x - 2) * (x - 3) = -6 + 11x - 6x^2 + x^3
+    1.0
+    """"""
+","    begin, end = -1., 1.
+    while poly(xs, begin) * poly(xs, end) > 0:
+        begin *= 2.0
+        end *= 2.0
+    while end - begin > 1e-10:
+        center = (begin + end) / 2.0
+        if poly(xs, center) * poly(xs, begin) > 0:
+            begin = center
+        else:
+            end = center
+    return begin
+","def check(candidate):
+    import math
+    import random
+    rng = random.Random(42)
+    import copy
+    for _ in range(100):
+        ncoeff = 2 * rng.randint(1, 4)
+        coeffs = []
+        for _ in range(ncoeff):
+            coeff = rng.randint(-10, 10)
+            if coeff == 0:
+                coeff = 1
+            coeffs.append(coeff)
+        solution = candidate(copy.deepcopy(coeffs))
+        assert math.fabs(poly(coeffs, solution)) < 1e-4
+
+"
+"
+
+def sort_third(l: list):
+    """"""ຫນ້າ ທີ່ນີ້ເອົາບັນຊີລາຍຊື່ l ແລະສົ່ງຄືນບັນຊີລາຍຊື່ l' ເຊັ່ນວ່າ l' ແມ່ນຄືກັນກັບ l ໃນຕົວຊີ້ວັດທີ່ບໍ່ສາມາດແບ່ງອອກໄດ້ໂດຍສາມ, ໃນຂະນະທີ່ຄ່າຂອງມັນຢູ່ຕົວຊີ້ວັດທີ່ສາມາດແບ່ງອອກໄດ້ໂດຍສາມແມ່ນເທົ່າກັບຄ່າຂອງຕົວຊີ້ວັດທີ່ສອດຄ່ອງຂອງ l, ແຕ່ຈັດລຽງ.
+    >>> sort_third([1, 2, 3])
+    [1, 2, 3]
+    >>> sort_third([5, 6, 3, 4, 8, 9, 2])
+    [2, 6, 3, 4, 8, 9, 5]
+    """"""
+","    l = list(l)
+    l[::3] = sorted(l[::3])
+    return l
+","def check(candidate):
+    assert tuple(candidate([1, 2, 3])) == tuple(sort_third([1, 2, 3]))
+    assert tuple(candidate([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])) == tuple(sort_third([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10]))
+    assert tuple(candidate([5, 8, -12, 4, 23, 2, 3, 11, 12, -10])) == tuple(sort_third([5, 8, -12, 4, 23, 2, 3, 11, 12, -10]))
+    assert tuple(candidate([5, 6, 3, 4, 8, 9, 2])) == tuple([2, 6, 3, 4, 8, 9, 5])
+    assert tuple(candidate([5, 8, 3, 4, 6, 9, 2])) == tuple([2, 8, 3, 4, 6, 9, 5])
+    assert tuple(candidate([5, 6, 9, 4, 8, 3, 2])) == tuple([2, 6, 9, 4, 8, 3, 5])
+    assert tuple(candidate([5, 6, 3, 4, 8, 9, 2, 1])) == tuple([2, 6, 3, 4, 8, 9, 5, 1])
+
+"
+"
+
+def unique(l: list):
+    """"""ກັບຄືນອົງປະກອບທີ່ເປັນເອກະລັກທີ່ຈັດລຽງໄວ້ໃນບັນຊີ
+    >>> unique([5, 3, 5, 2, 3, 3, 9, 0, 123])
+    [0, 2, 3, 5, 9, 123]
+    """"""
+","    return sorted(list(set(l)))
+","def check(candidate):
+    assert candidate([5, 3, 5, 2, 3, 3, 9, 0, 123]) == [0, 2, 3, 5, 9, 123]
+
+"
+"
+
+def max_element(l: list):
+    """"""ກັບຄືນອົງປະກອບສູງສຸດໃນບັນຊີລາຍຊື່.
+    >>> max_element([1, 2, 3])
+    3
+    >>> max_element([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])
+    123
+    """"""
+","    m = l[0]
+    for e in l:
+        if e > m:
+            m = e
+    return m
+","def check(candidate):
+    assert candidate([1, 2, 3]) == 3
+    assert candidate([5, 3, -5, 2, -3, 3, 9, 0, 124, 1, -10]) == 124
+"
+"
+
+def fizz_buzz(n: int):
+    """"""ກັບຄືນຈໍານວນຄັ້ງທີ່ຕົວເລກ 7 ປາກົດຢູ່ໃນຕົວເລກເຕັມທີ່ນ້ອຍກວ່າ n ທີ່ແບ່ງອອກໂດຍ 11 ຫຼື 13.
+    >>> fizz_buzz(50)
+    0
+    >>> fizz_buzz(78)
+    2
+    >>> fizz_buzz(79)
+    3
+    """"""
+","    ns = []
+    for i in range(n):
+        if i % 11 == 0 or i % 13 == 0:
+            ns.append(i)
+    s = ''.join(list(map(str, ns)))
+    ans = 0
+    for c in s:
+        ans += (c == '7')
+    return ans
+","def check(candidate):
+    assert candidate(50) == 0
+    assert candidate(78) == 2
+    assert candidate(79) == 3
+    assert candidate(100) == 3
+    assert candidate(200) == 6
+    assert candidate(4000) == 192
+    assert candidate(10000) == 639
+    assert candidate(100000) == 8026
+
+"
+"
+
+def sort_even(l: list):
+    """"""ຫນ້າ ທີ່ນີ້ເອົາບັນຊີ l ແລະສົ່ງຄືນບັນຊີ l' ເຊັ່ນວ່າ l' ແມ່ນຄືກັນກັບ l ໃນຕົວເລກທີ່ແປກ, ໃນຂະນະທີ່ຄ່າຂອງມັນໃນຕົວເລກທີ່ເທົ່າທຽມກັນແມ່ນເທົ່າກັບຄ່າຂອງຕົວເລກທີ່ເທົ່າທຽມກັນຂອງ l, ແຕ່ຈັດລຽງ.
+    >>> sort_even([1, 2, 3])
+    [1, 2, 3]
+    >>> sort_even([5, 6, 3, 4])
+    [3, 6, 5, 4]
+    """"""
+","    evens = l[::2]
+    odds = l[1::2]
+    evens.sort()
+    ans = []
+    for e, o in zip(evens, odds):
+        ans.extend([e, o])
+    if len(evens) > len(odds):
+        ans.append(evens[-1])
+    return ans
+","def check(candidate):
+    assert tuple(candidate([1, 2, 3])) == tuple([1, 2, 3])
+    assert tuple(candidate([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])) == tuple([-10, 3, -5, 2, -3, 3, 5, 0, 9, 1, 123])
+    assert tuple(candidate([5, 8, -12, 4, 23, 2, 3, 11, 12, -10])) == tuple([-12, 8, 3, 4, 5, 2, 12, 11, 23, -10])
+
+"
+"
+
+def encode_cyclic(s: str):
+    """"""
+    ກັບຄືນສາຍທີ່ເຂົ້າລະຫັດໂດຍກຸ່ມວົງຈອນຂອງສາມຕົວອັກສອນ.
+    """"""
+    # split string to groups. Each of length 3.
+    groups = [s[(3 * i):min((3 * i + 3), len(s))] for i in range((len(s) + 2) // 3)]
+    # cycle elements in each group. Unless group has fewer elements than 3.
+    groups = [(group[1:] + group[0]) if len(group) == 3 else group for group in groups]
+    return """".join(groups)
+
+
+def decode_cyclic(s: str):
+    """"""
+    takes as input string encoded with encode_cyclic function. Returns decoded string.
+    """"""
+","    return encode_cyclic(encode_cyclic(s))
+","def check(candidate):
+    from random import randint, choice
+    import string
+
+    letters = string.ascii_lowercase
+    for _ in range(100):
+        str = ''.join(choice(letters) for i in range(randint(10, 20)))
+        encoded_str = encode_cyclic(str)
+        assert candidate(encoded_str) == str
+
+"
+"
+
+def prime_fib(n: int):
+    """"""
+    prime_fib ກັບຄືນເລກທີ n ທີ່ເປັນເລກ Fibonacci ແລະ ມັນຍັງເປັນເລກຕົ້ນ.
+    >>> prime_fib(1)
+    2
+    >>> prime_fib(2)
+    3
+    >>> prime_fib(3)
+    5
+    >>> prime_fib(4)
+    13
+    >>> prime_fib(5)
+    89
+    """"""
+","    import math
+
+    def is_prime(p):
+        if p < 2:
+            return False
+        for k in range(2, min(int(math.sqrt(p)) + 1, p - 1)):
+            if p % k == 0:
+                return False
+        return True
+    f = [0, 1]
+    while True:
+        f.append(f[-1] + f[-2])
+        if is_prime(f[-1]):
+            n -= 1
+        if n == 0:
+            return f[-1]
+","def check(candidate):
+    assert candidate(1) == 2
+    assert candidate(2) == 3
+    assert candidate(3) == 5
+    assert candidate(4) == 13
+    assert candidate(5) == 89
+    assert candidate(6) == 233
+    assert candidate(7) == 1597
+    assert candidate(8) == 28657
+    assert candidate(9) == 514229
+    assert candidate(10) == 433494437
+
+"
+"
+
+def triples_sum_to_zero(l: list):
+    """"""
+    triples_sum_to_zero ໃຊ້ບັນຊີລາຍຊື່ຂອງຕົວເລກເຕັມເປັນຂໍ້ມູນ. ມັນຈະສົ່ງຄືນ True ຖ້າມີສາມອົງປະກອບທີ່ແຕກຕ່າງກັນໃນບັນຊີລາຍຊື່ທີ່ລວມເປັນ 0 ແລະ False ຖ້າບໍ່ດັ່ງນັ້ນ.
+
+    >>> triples_sum_to_zero([1, 3, 5, 0])
+    False
+    >>> triples_sum_to_zero([1, 3, -2, 1])
+    True
+    >>> triples_sum_to_zero([1, 2, 3, 7])
+    False
+    >>> triples_sum_to_zero([2, 4, -5, 3, 9, 7])
+    True
+    >>> triples_sum_to_zero([1])
+    False
+    """"""
+","    for i in range(len(l)):
+        for j in range(i + 1, len(l)):
+            for k in range(j + 1, len(l)):
+                if l[i] + l[j] + l[k] == 0:
+                    return True
+    return False
+","def check(candidate):
+    assert candidate([1, 3, 5, 0]) == False
+    assert candidate([1, 3, 5, -1]) == False
+    assert candidate([1, 3, -2, 1]) == True
+    assert candidate([1, 2, 3, 7]) == False
+    assert candidate([1, 2, 5, 7]) == False
+    assert candidate([2, 4, -5, 3, 9, 7]) == True
+    assert candidate([1]) == False
+    assert candidate([1, 3, 5, -100]) == False
+    assert candidate([100, 3, 5, -100]) == False
+
+"
+"
+
+def car_race_collision(n: int):
+    """"""
+    ຈິນຕະນາການວ່າເສັ້ນທາງແມ່ນເສັ້ນຍາວໂດຍບໍ່ມີຂອບເຂດ. ລົດ n ຂັບໄປຈາກຊ້າຍໄປຂວາ; ພ້ອມກັນນັ້ນ, ລົດ n ຊຸດທີ່ແຕກຕ່າງກັນຂັບໄປຈາກຂວາໄປຊ້າຍ. ລົດສອງຊຸດເລີ່ມຕົ້ນຢູ່ຫ່າງໄກຈາກກັນ. ລົດທັງ ຫມົດ ເຄື່ອນໄຫວດ້ວຍຄວາມໄວດຽວກັນ. ລົດສອງຄັນຖືກກ່າວວ່າຈະປະທະກັນເມື່ອລົດທີ່ເຄື່ອນໄຫວຈາກຊ້າຍໄປຂວາຂັບລົດທີ່ເຄື່ອນໄຫວຈາກຂວາໄປຊ້າຍ. ເຖິງຢ່າງໃດກໍ່ຕາມ, ລົດແມ່ນແຂງແຮງແລະແຂງແຮງຢ່າງບໍ່ມີຂອບເຂດ; ຜົນໄດ້ຮັບ, ພວກເຂົາສືບຕໍ່ເຄື່ອນໄຫວໃນເສັ້ນທາງຂອງພວກເຂົາຄືກັບວ່າພວກເຂົາບໍ່ໄດ້ປະທະກັນ. ຫນ້າ ທີ່ນີ້ອອກຜົນການປະທະກັນດັ່ງກ່າວ.
+    """"""
+","    return n**2
+","def check(candidate):
+    assert candidate(2) == 4
+    assert candidate(3) == 9
+    assert candidate(4) == 16
+    assert candidate(8) == 64
+    assert candidate(10) == 100
+
+"
+"
+
+def incr_list(l: list):
+    """"""ລາຍຊື່ກັບຄືນດ້ວຍອົງປະກອບທີ່ເພີ່ມຂື້ນໂດຍ 1.
+    >>> incr_list([1, 2, 3])
+    [2, 3, 4]
+    >>> incr_list([5, 3, 5, 2, 3, 3, 9, 0, 123])
+    [6, 4, 6, 3, 4, 4, 10, 1, 124]
+    """"""
+","    return [(e + 1) for e in l]
+","def check(candidate):
+    assert candidate([]) == []
+    assert candidate([3, 2, 1]) == [4, 3, 2]
+    assert candidate([5, 2, 5, 2, 3, 3, 9, 0, 123]) == [6, 3, 6, 3, 4, 4, 10, 1, 124]
+
+"
+"
+
+def pairs_sum_to_zero(l):
+    """"""
+    pairs_sum_to_zero ໃຊ້ບັນຊີລາຍຊື່ຂອງຕົວເລກເຕັມເປັນຂໍ້ມູນ. ມັນຈະສົ່ງຄືນ True ຖ້າມີສອງອົງປະກອບທີ່ແຕກຕ່າງກັນໃນບັນຊີລາຍຊື່ທີ່ລວມເປັນ 0 ແລະ False ຖ້າບໍ່ດັ່ງນັ້ນ.
+    >>> pairs_sum_to_zero([1, 3, 5, 0])
+    False
+    >>> pairs_sum_to_zero([1, 3, -2, 1])
+    False
+    >>> pairs_sum_to_zero([1, 2, 3, 7])
+    False
+    >>> pairs_sum_to_zero([2, 4, -5, 3, 5, 7])
+    True
+    >>> pairs_sum_to_zero([1])
+    False
+    """"""
+","    for i, l1 in enumerate(l):
+        for j in range(i + 1, len(l)):
+            if l1 + l[j] == 0:
+                return True
+    return False
+","def check(candidate):
+    assert candidate([1, 3, 5, 0]) == False
+    assert candidate([1, 3, -2, 1]) == False
+    assert candidate([1, 2, 3, 7]) == False
+    assert candidate([2, 4, -5, 3, 5, 7]) == True
+    assert candidate([1]) == False
+
+    assert candidate([-3, 9, -1, 3, 2, 30]) == True
+    assert candidate([-3, 9, -1, 3, 2, 31]) == True
+    assert candidate([-3, 9, -1, 4, 2, 30]) == False
+    assert candidate([-3, 9, -1, 4, 2, 31]) == False
+
+"
+"
+
+def change_base(x: int, base: int):
+    """"""ປ່ຽນພື້ນຖານຕົວເລກຂອງຕົວເລກການປ້ອນຂໍ້ມູນ x ເປັນພື້ນຖານ. ການສະແດງສາຍການສົ່ງຄືນຫຼັງຈາກການປ່ຽນ. ຕົວເລກພື້ນຖານແມ່ນ ຫນ້ອຍ ກວ່າ 10.
+    >>> change_base(8, 3)
+    '22'
+    >>> change_base(8, 2)
+    '1000'
+    >>> change_base(7, 2)
+    '111'
+    """"""
+","    ret = """"
+    while x > 0:
+        ret = str(x % base) + ret
+        x //= base
+    return ret
+","def check(candidate):
+    assert candidate(8, 3) == ""22""
+    assert candidate(9, 3) == ""100""
+    assert candidate(234, 2) == ""11101010""
+    assert candidate(16, 2) == ""10000""
+    assert candidate(8, 2) == ""1000""
+    assert candidate(7, 2) == ""111""
+    for x in range(2, 8):
+        assert candidate(x, x + 1) == str(x)
+
+"
+"
+
+def triangle_area(a, h):
+    """"""ໃຫ້ຄວາມຍາວຂອງຂ້າງແລະພື້ນທີ່ກັບຄືນສູງ ສໍາ ລັບສາມຫຼ່ຽມ.
+    >>> triangle_area(5, 3)
+    7.5
+    """"""
+","    return a * h / 2.0
+","def check(candidate):
+    assert candidate(5, 3) == 7.5
+    assert candidate(2, 2) == 2.0
+    assert candidate(10, 8) == 40.0
+
+"
+"
+
+def fib4(n: int):
+    """"""ລໍາດັບເລກ Fib4 ແມ່ນລໍາດັບທີ່ຄ້າຍຄືກັນກັບລໍາດັບ Fibbonacci ທີ່ຖືກ ກໍາ ນົດດັ່ງຕໍ່ໄປນີ້: fib4(0) -> 0 fib4(1) -> 0 fib4(2) -> 2 fib4(3) -> 0 fib4(n) -> fib4(n-1) + fib4(n-2) + fib4(n-3) + fib4(n-4). ກະລຸນາຂຽນຟັງຊັນເພື່ອຄິດໄລ່ອົງປະກອບ n-th ຂອງລໍາດັບເລກ fib4. ຢ່າໃຊ້ການຟື້ນຕົວ.
+    >>> fib4(5)
+    4
+    >>> fib4(6)
+    8
+    >>> fib4(7)
+    14
+    """"""
+","    results = [0, 0, 2, 0]
+    if n < 4:
+        return results[n]
+
+    for _ in range(4, n + 1):
+        results.append(results[-1] + results[-2] + results[-3] + results[-4])
+        results.pop(0)
+
+    return results[-1]
+","def check(candidate):
+    assert candidate(5) == 4
+    assert candidate(8) == 28
+    assert candidate(10) == 104
+    assert candidate(12) == 386
+
+"
+"
+
+def median(l: list):
+    """"""ກັບຄືນ median ຂອງອົງປະກອບໃນບັນຊີລາຍຊື່ l.
+    >>> median([3, 1, 2, 4, 5])
+    3
+    >>> median([-10, 4, 6, 1000, 10, 20])
+    15.0
+    """"""
+","    l = sorted(l)
+    if len(l) % 2 == 1:
+        return l[len(l) // 2]
+    else:
+        return (l[len(l) // 2 - 1] + l[len(l) // 2]) / 2.0
+","def check(candidate):
+    assert candidate([3, 1, 2, 4, 5]) == 3
+    assert candidate([-10, 4, 6, 1000, 10, 20]) == 8.0
+    assert candidate([5]) == 5
+    assert candidate([6, 5]) == 5.5
+    assert candidate([8, 1, 3, 9, 9, 2, 7]) == 7 
+
+"
+"
+
+def is_palindrome(text: str):
+    """"""
+    ກວດສອບວ່າສາຍທີ່ໃຫ້ແມ່ນ palindrome
+    >>> is_palindrome('')
+    True
+    >>> is_palindrome('aba')
+    True
+    >>> is_palindrome('aaaaa')
+    True
+    >>> is_palindrome('zbcd')
+    False
+    """"""
+","    for i in range(len(text)):
+        if text[i] != text[len(text) - 1 - i]:
+            return False
+    return True
+","def check(candidate):
+    assert candidate('') == True
+    assert candidate('aba') == True
+    assert candidate('aaaaa') == True
+    assert candidate('zbcd') == False
+    assert candidate('xywyx') == True
+    assert candidate('xywyz') == False
+    assert candidate('xywzx') == False
+
+"
+"
+
+def modp(n: int, p: int):
+    """"""ກັບຄືນ 2^n ໂມດູນ p (ຈົ່ງຮັບຮູ້ຕົວເລກ).
+    >>> modp(3, 5)
+    3
+    >>> modp(1101, 101)
+    2
+    >>> modp(0, 101)
+    1
+    >>> modp(3, 11)
+    8
+    >>> modp(100, 101)
+    1
+    """"""
+","    ret = 1
+    for i in range(n):
+        ret = (2 * ret) % p
+    return ret
+","def check(candidate):
+    assert candidate(3, 5) == 3
+    assert candidate(1101, 101) == 2
+    assert candidate(0, 101) == 1
+    assert candidate(3, 11) == 8
+    assert candidate(100, 101) == 1
+    assert candidate(30, 5) == 4
+    assert candidate(31, 5) == 3
+
+"
+"
+
+def encode_shift(s: str):
+    """"""
+    ກັບຄືນສາຍທີ່ເຂົ້າລະຫັດໂດຍການປ່ຽນທຸກຕົວອັກສອນໂດຍ 5 ໃນຕົວອັກສອນ.
+    """"""
+    return """".join([chr(((ord(ch) + 5 - ord(""a"")) % 26) + ord(""a"")) for ch in s])
+
+
+def decode_shift(s: str):
+    """"""
+    takes as input string encoded with encode_shift function. Returns decoded string.
+    """"""
+","    return """".join([chr(((ord(ch) - 5 - ord(""a"")) % 26) + ord(""a"")) for ch in s])
+","def check(candidate):
+    from random import randint, choice
+    import copy
+    import string
+
+    letters = string.ascii_lowercase
+    for _ in range(100):
+        str = ''.join(choice(letters) for i in range(randint(10, 20)))
+        encoded_str = encode_shift(str)
+        assert candidate(copy.deepcopy(encoded_str)) == str
+
+"
+"
+
+def remove_vowels(text):
+    """"""
+    remove_vowels ເປັນຟັງຊັນທີ່ເອົາ string ແລະສົ່ງ string ກັບມາໂດຍບໍ່ມີ vowels.
+    >>> remove_vowels('')
+    ''
+    >>> remove_vowels(""abcdef\nghijklm"")
+    'bcdf\nghjklm'
+    >>> remove_vowels('abcdef')
+    'bcdf'
+    >>> remove_vowels('aaaaa')
+    ''
+    >>> remove_vowels('aaBAA')
+    'B'
+    >>> remove_vowels('zbcd')
+    'zbcd'
+    """"""
+","    return """".join([s for s in text if s.lower() not in [""a"", ""e"", ""i"", ""o"", ""u""]])
+","def check(candidate):
+    assert candidate('') == ''
+    assert candidate(""abcdef\nghijklm"") == 'bcdf\nghjklm'
+    assert candidate('fedcba') == 'fdcb'
+    assert candidate('eeeee') == ''
+    assert candidate('acBAA') == 'cB'
+    assert candidate('EcBOO') == 'cB'
+    assert candidate('ybcd') == 'ybcd'
+
+"
+"
+
+def below_threshold(l: list, t: int):
+    """"""ກັບຄືນ True ຖ້າຕົວເລກທັງ ຫມົດ ໃນບັນຊີ l ແມ່ນຕ່ ໍາ ກວ່າຂອບເຂດ t.
+    >>> below_threshold([1, 2, 4, 10], 100)
+    True
+    >>> below_threshold([1, 20, 4, 10], 5)
+    False
+    """"""
+","    for e in l:
+        if e >= t:
+            return False
+    return True
+","def check(candidate):
+    assert candidate([1, 2, 4, 10], 100)
+    assert not candidate([1, 20, 4, 10], 5)
+    assert candidate([1, 20, 4, 10], 21)
+    assert candidate([1, 20, 4, 10], 22)
+    assert candidate([1, 8, 4, 10], 11)
+    assert not candidate([1, 8, 4, 10], 10)
+
+"
+"
+
+def add(x: int, y: int):
+    """"""ເພີ່ມສອງຕົວເລກ x ແລະ y
+    >>> add(2, 3)
+    5
+    >>> add(5, 7)
+    12
+    """"""
+","    return x + y
+","def check(candidate):
+    import random
+
+    assert candidate(0, 1) == 1
+    assert candidate(1, 0) == 1
+    assert candidate(2, 3) == 5
+    assert candidate(5, 7) == 12
+    assert candidate(7, 5) == 12
+
+    for i in range(100):
+        x, y = random.randint(0, 1000), random.randint(0, 1000)
+        assert candidate(x, y) == x + y
+
+"
+"
+
+def same_chars(s0: str, s1: str):
+    """"""
+    ກວດເບິ່ງວ່າສອງຄໍາມີຕົວອັກສອນຄືກັນຫຼືບໍ່.
+    >>> same_chars('eabcdzzzz', 'dddzzzzzzzddeddabc')
+    True
+    >>> same_chars('abcd', 'dddddddabc')
+    True
+    >>> same_chars('dddddddabc', 'abcd')
+    True
+    >>> same_chars('eabcd', 'dddddddabc')
+    False
+    >>> same_chars('abcd', 'dddddddabce')
+    False
+    >>> same_chars('eabcdzzzz', 'dddzzzzzzzddddabc')
+    False
+    """"""
+","    return set(s0) == set(s1)
+","def check(candidate):
+    assert candidate('eabcdzzzz', 'dddzzzzzzzddeddabc') == True
+    assert candidate('abcd', 'dddddddabc') == True
+    assert candidate('dddddddabc', 'abcd') == True
+    assert candidate('eabcd', 'dddddddabc') == False
+    assert candidate('abcd', 'dddddddabcf') == False
+    assert candidate('eabcdzzzz', 'dddzzzzzzzddddabc') == False
+    assert candidate('aabb', 'aaccc') == False
+
+"
+"
+
+def fib(n: int):
+    """"""ກັບຄືນເລກ n-th Fibonacci.
+    >>> fib(10)
+    55
+    >>> fib(1)
+    1
+    >>> fib(8)
+    21
+    """"""
+","    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+    return fib(n - 1) + fib(n - 2)
+","def check(candidate):
+    assert candidate(10) == 55
+    assert candidate(1) == 1
+    assert candidate(8) == 21
+    assert candidate(11) == 89
+    assert candidate(12) == 144
+
+"
+"
+
+def correct_bracketing(brackets: str):
+    """""" brackets ແມ່ນສາຍຂອງ ""<"" ແລະ "">"". return True ຖ້າແຕ່ລະ bracket ເປີດມີ bracket ປິດທີ່ສອດຄ່ອງ.
+
+    >>> correct_bracketing(""<"")
+    False
+    >>> correct_bracketing(""<>"")
+    True
+    >>> correct_bracketing(""<<><>>"")
+    True
+    >>> correct_bracketing(""><<>"")
+    False
+    """"""
+","    depth = 0
+    for b in brackets:
+        if b == ""<"":
+            depth += 1
+        else:
+            depth -= 1
+        if depth < 0:
+            return False
+    return depth == 0
+","def check(candidate):
+    assert candidate(""<>"")
+    assert candidate(""<<><>>"")
+    assert candidate(""<><><<><>><>"")
+    assert candidate(""<><><<<><><>><>><<><><<>>>"")
+    assert not candidate(""<<<><>>>>"")
+    assert not candidate(""><<>"")
+    assert not candidate(""<"")
+    assert not candidate(""<<<<"")
+    assert not candidate("">"")
+    assert not candidate(""<<>"")
+    assert not candidate(""<><><<><>><>><<>"")
+    assert not candidate(""<><><<><>><>>><>"")
+
+"
+"
+
+def monotonic(l: list):
+    """"""Return True ແມ່ນລາຍຊື່ອົງປະກອບແມ່ນ monotonically ເພີ່ມຂຶ້ນຫຼືຫຼຸດລົງ.
+    >>> monotonic([1, 2, 4, 20])
+    True
+    >>> monotonic([1, 20, 4, 10])
+    False
+    >>> monotonic([4, 1, 0, -10])
+    True
+    """"""
+","    if l == sorted(l) or l == sorted(l, reverse=True):
+        return True
+    return False
+","def check(candidate):
+    assert candidate([1, 2, 4, 10]) == True
+    assert candidate([1, 2, 4, 20]) == True
+    assert candidate([1, 20, 4, 10]) == False
+    assert candidate([4, 1, 0, -10]) == True
+    assert candidate([4, 1, 1, 0]) == True
+    assert candidate([1, 2, 3, 2, 5, 60]) == False
+    assert candidate([1, 2, 3, 4, 5, 60]) == True
+    assert candidate([9, 9, 9, 9]) == True
+
+"
+"
+
+def common(l1: list, l2: list):
+    """"""ກັບຄືນອົງປະກອບທົ່ວໄປທີ່ເປັນເອກະລັກທີ່ຈັດລຽງ ສໍາ ລັບສອງລາຍຊື່.
+    >>> common([1, 4, 3, 34, 653, 2, 5], [5, 7, 1, 5, 9, 653, 121])
+    [1, 5, 653]
+    >>> common([5, 3, 2, 8], [3, 2])
+    [2, 3]
+
+    """"""
+","    ret = set()
+    for e1 in l1:
+        for e2 in l2:
+            if e1 == e2:
+                ret.add(e1)
+    return sorted(list(ret))
+","def check(candidate):
+    assert candidate([1, 4, 3, 34, 653, 2, 5], [5, 7, 1, 5, 9, 653, 121]) == [1, 5, 653]
+    assert candidate([5, 3, 2, 8], [3, 2]) == [2, 3]
+    assert candidate([4, 3, 2, 8], [3, 2, 4]) == [2, 3, 4]
+    assert candidate([4, 3, 2, 8], []) == []
+
+"
+"
+
+def largest_prime_factor(n: int):
+    """"""ກັບຄືນຕົວແປຕົ້ນຕໍທີ່ໃຫຍ່ທີ່ສຸດຂອງ n. ສົມມຸດວ່າ n > 1 ແລະບໍ່ແມ່ນຕົວເລກຕົ້ນຕໍ.
+    >>> largest_prime_factor(13195)
+    29
+    >>> largest_prime_factor(2048)
+    2
+    """"""
+","    def is_prime(k):
+        if k < 2:
+            return False
+        for i in range(2, k - 1):
+            if k % i == 0:
+                return False
+        return True
+    largest = 1
+    for j in range(2, n + 1):
+        if n % j == 0 and is_prime(j):
+            largest = max(largest, j)
+    return largest
+","def check(candidate):
+    assert candidate(15) == 5
+    assert candidate(27) == 3
+    assert candidate(63) == 7
+    assert candidate(330) == 11
+    assert candidate(13195) == 29
+
+"
+"
+
+def sum_to_n(n: int):
+    """"""sum_to_n ແມ່ນຟັງຊັນທີ່ລວມຕົວເລກຈາກ 1 ຫາ n.
+    >>> sum_to_n(30)
+    465
+    >>> sum_to_n(100)
+    5050
+    >>> sum_to_n(5)
+    15
+    >>> sum_to_n(10)
+    55
+    >>> sum_to_n(1)
+    1
+    """"""
+","    return sum(range(n + 1))
+","def check(candidate):
+    assert candidate(1) == 1
+    assert candidate(6) == 21
+    assert candidate(11) == 66
+    assert candidate(30) == 465
+    assert candidate(100) == 5050
+
+"
+"
+
+def correct_bracketing(brackets: str):
+    """""" brackets ແມ່ນສາຍຂອງ ""("" ແລະ """". return True ຖ້າແຕ່ລະ bracket ເປີດມີ bracket ປິດທີ່ສອດຄ່ອງ.
+
+    >>> correct_bracketing(""("")
+    False
+    >>> correct_bracketing(""()"")
+    True
+    >>> correct_bracketing(""(()())"")
+    True
+    >>> correct_bracketing("")(()"")
+    False
+    """"""
+","    depth = 0
+    for b in brackets:
+        if b == ""("":
+            depth += 1
+        else:
+            depth -= 1
+        if depth < 0:
+            return False
+    return depth == 0
+","def check(candidate):
+    assert candidate(""()"")
+    assert candidate(""(()())"")
+    assert candidate(""()()(()())()"")
+    assert candidate(""()()((()()())())(()()(()))"")
+    assert not candidate(""((()())))"")
+    assert not candidate("")(()"")
+    assert not candidate(""("")
+    assert not candidate(""(((("")
+    assert not candidate("")"")
+    assert not candidate(""(()"")
+    assert not candidate(""()()(()())())(()"")
+    assert not candidate(""()()(()())()))()"")
+
+"
+"
+
+def derivative(xs: list):
+    """""" xs ເປັນຕົວແທນຂອງຕົວເລກຂອງຫຼາຍພາລາມ. xs[0] + xs[1] * x + xs[2] * x^2 +.... ກັບຄືນຜົນ مشتقຂອງຫຼາຍພາລາມນີ້ໃນຮູບແບບດຽວກັນ.
+    >>> derivative([3, 1, 2, 4, 5])
+    [1, 4, 12, 20]
+    >>> derivative([1, 2, 3])
+    [2, 6]
+    """"""
+","    return [(i * x) for i, x in enumerate(xs)][1:]
+","def check(candidate):
+    assert candidate([3, 1, 2, 4, 5]) == [1, 4, 12, 20]
+    assert candidate([1, 2, 3]) == [2, 6]
+    assert candidate([3, 2, 1]) == [2, 2]
+    assert candidate([3, 2, 1, 0, 4]) == [2, 2, 0, 16]
+    assert candidate([1]) == []
+
+"
+"
+
+def fibfib(n: int):
+    """"""ລໍາດັບເລກ FibFib ແມ່ນລໍາດັບທີ່ຄ້າຍຄືກັນກັບລໍາດັບ Fibbonacci ທີ່ຖືກ ກໍາ ນົດດັ່ງຕໍ່ໄປນີ້: fibfib(0) == 0 fibfib(1) == 0 fibfib(2) == 1 fibfib(n) == fibfib(n-1) + fibfib(n-2) + fibfib(n-3). ກະລຸນາຂຽນ ຫນ້າ ທີ່ເພື່ອຄິດໄລ່ອົງປະກອບ n ຂອງລໍາດັບເລກ fibfib.
+    >>> fibfib(1)
+    0
+    >>> fibfib(5)
+    4
+    >>> fibfib(8)
+    24
+    """"""
+","    if n == 0:
+        return 0
+    if n == 1:
+        return 0
+    if n == 2:
+        return 1
+    return fibfib(n - 1) + fibfib(n - 2) + fibfib(n - 3)
+","def check(candidate):
+    assert candidate(2) == 1
+    assert candidate(1) == 0
+    assert candidate(5) == 4
+    assert candidate(8) == 24
+    assert candidate(10) == 81
+    assert candidate(12) == 274
+    assert candidate(14) == 927
+
+"
+"
+FIX = """"""
+ເພີ່ມກໍລະນີທົດລອງຕື່ມ.
+""""""
+
+def vowels_count(s):
+    """"""Write a function vowels_count which takes a string representing
+    a word as input and returns the number of vowels in the string.
+    Vowels in this case are 'a', 'e', 'i', 'o', 'u'. Here, 'y' is also a
+    vowel, but only when it is at the end of the given word.
+
+    Example:
+    >>> vowels_count(""abcde"")
+    2
+    >>> vowels_count(""ACEDY"")
+    3
+    """"""
+","    vowels = ""aeiouAEIOU""
+    n_vowels = sum(c in vowels for c in s)
+    if s[-1] == 'y' or s[-1] == 'Y':
+        n_vowels += 1
+    return n_vowels
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""abcde"") == 2, ""Test 1""
+    assert candidate(""Alone"") == 3, ""Test 2""
+    assert candidate(""key"") == 2, ""Test 3""
+    assert candidate(""bye"") == 1, ""Test 4""
+    assert candidate(""keY"") == 2, ""Test 5""
+    assert candidate(""bYe"") == 1, ""Test 6""
+    assert candidate(""ACEDY"") == 3, ""Test 7""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def circular_shift(x, shift):
+    """"""ການເຄື່ອນຍ້າຍວົງຈອນຂອງຕົວເລກເຕັມ x, ການເຄື່ອນຍ້າຍຕົວເລກໄປທາງຂວາໂດຍການເຄື່ອນຍ້າຍແລະສົ່ງຜົນເປັນສາຍ. ຖ້າ shift > ຈໍາ ນວນຕົວເລກ, ການສົ່ງຄືນຕົວເລກທີ່ປ່ຽນກັນ.
+    >>> circular_shift(12, 1)
+    ""21""
+    >>> circular_shift(12, 2)
+    ""12""
+    """"""
+","    s = str(x)
+    if shift > len(s):
+        return s[::-1]
+    else:
+        return s[len(s) - shift:] + s[:len(s) - shift]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(100, 2) == ""001""
+    assert candidate(12, 2) == ""12""
+    assert candidate(97, 8) == ""79""
+    assert candidate(12, 1) == ""21"", ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(11, 101) == ""11"", ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def digitSum(s):
+    """"""ຫນ້າທີ່ ຂຽນຟັງຊັນທີ່ເອົາສາຍເປັນຂໍ້ມູນແລະສົ່ງຄືນຜົນລວມຂອງຕົວອັກສອນເທິງເທົ່ານັ້ນ' ລະຫັດ ASCII ຕົວຢ່າງ: digitSum("""") => 0 digitSum(""abAB"") => 131 digitSum(""abcCd"") => 67 digitSum(""helloE"") => 69 digitSum(""woArBld"") => 131 digitSum(""aAaaaXa"") => 153
+    """"""
+","    if s == """": return 0
+    return sum(ord(char) if char.isupper() else 0 for char in s)
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate("""") == 0, ""Error""
+    assert candidate(""abAB"") == 131, ""Error""
+    assert candidate(""abcCd"") == 67, ""Error""
+    assert candidate(""helloE"") == 69, ""Error""
+    assert candidate(""woArBld"") == 131, ""Error""
+    assert candidate(""aAaaaXa"") == 153, ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate("" How are yOu?"") == 151, ""Error""
+    assert candidate(""You arE Very Smart"") == 327, ""Error""
+
+"
+"
+def fruit_distribution(s,n):
+    """"""
+    ໃນວຽກງານນີ້, ທ່ານຈະໄດ້ຮັບສາຍທີ່ສະແດງໃຫ້ເຫັນຈໍານວນຂອງ apples ແລະ oranges ທີ່ຖືກແຈກຢາຍໃນກະຕ່າຂອງຫມາກໄມ້ກະຕ່ານີ້ມີ apples, oranges, ແລະຫມາກໄມ້ mango. ໃຫ້ສາຍທີ່ສະແດງໃຫ້ເຫັນຈໍານວນທັງຫມົດຂອງຫມາກມ່ວງແລະ apples ແລະເປັນຈໍານວນເຕັມທີ່ສະແດງໃຫ້ເຫັນຈໍານວນທັງຫມົດຂອງຫມາກໄມ້ໃນກະຕ່າກັບຄືນຈໍານວນຂອງຫມາກໄມ້ mango ໃນກະຕ່າ. ສໍາລັບຕົວຢ່າງ: fruit_distribution""5(apples ແລະ 6 oranges"", 19) -> 19 - 5 - 6 = 8 fruit_distribution""0 apples ແລະ 1 oranges"",3) -> 3 - 0 - 1 = 2 fruit_distribution""2 apples ແລະ 3 oranges"", 100) -> 100 - 2 - 3 = 95 fruit_distribution""100 apples ແລະ 1 oranges"",1 -> 120 - 100 - 1 = 19
+    """"""
+","    lis = list()
+    for i in s.split(' '):
+        if i.isdigit():
+            lis.append(int(i))
+    return n - sum(lis)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""5 apples and 6 oranges"",19) == 8
+    assert candidate(""5 apples and 6 oranges"",21) == 10
+    assert candidate(""0 apples and 1 oranges"",3) == 2
+    assert candidate(""1 apples and 0 oranges"",3) == 2
+    assert candidate(""2 apples and 3 oranges"",100) == 95
+    assert candidate(""2 apples and 3 oranges"",5) == 0
+    assert candidate(""1 apples and 100 oranges"",120) == 19
+"
+"
+def pluck(arr):
+    """"""
+    ""ໃຫ້ເປັນແຖວທີ່ສະແດງໃຫ້ເຫັນສາຂາຂອງຕົ້ນໄມ້ທີ່ມີຂໍ້ບວກທີ່ບໍ່ແມ່ນລົບ, ຫນ້າ ທີ່ຂອງທ່ານແມ່ນເພື່ອເອົາຂໍ້ບວກແລະສົ່ງຄືນ. ຂໍ້ບວກຄວນຈະເປັນຂໍ້ທີ່ມີຄ່າແຖວນ້ອຍທີ່ສຸດ. ຖ້າພົບເຫັນຫຼາຍຂໍ້ທີ່ມີຄ່າແຖວນ້ອຍທີ່ສຸດດຽວກັນສົ່ງຄືນຂໍ້ບວກທີ່ມີດັດຊະນີນ້ອຍທີ່ສຸດ. ຂໍ້ບວກທີ່ຖືກເອົາອອກຄວນຖືກສົ່ງຄືນໃນບັນຊີລາຍຊື່, [small_value, its index ], ຖ້າບໍ່ມີຄ່າແຖວຫລືແຖວທີ່ຖືກມອບໃຫ້ແມ່ນເປົ່າ, ສົ່ງຄືນ []. ຕົວຢ່າງ 1: Input: [4,2,3] Output: [2, 1] ຄໍາອະທິບາຍ: 2 ມີຄ່າແຖວນ້ອຍທີ່ສຸດ, ແລະ 2 ມີດັດຊະນີນ້ອຍທີ່ສຸດ. ຕົວຢ່າງ 2: Input: [1,2,3] Output: [2, 1] ຄໍາອະທິບາຍ: 2 ມີຄ່າແຖວນ້ອຍ
+    """"""
+","    if(len(arr) == 0): return []
+    evens = list(filter(lambda x: x%2 == 0, arr))
+    if(evens == []): return []
+    return [min(evens), arr.index(min(evens))]
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([4,2,3]) == [2, 1], ""Error""
+    assert candidate([1,2,3]) == [2, 1], ""Error""
+    assert candidate([]) == [], ""Error""
+    assert candidate([5, 0, 3, 0, 4, 2]) == [0, 1], ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([1, 2, 3, 0, 5, 3]) == [0, 3], ""Error""
+    assert candidate([5, 4, 8, 4 ,8]) == [4, 1], ""Error""
+    assert candidate([7, 6, 7, 1]) == [6, 1], ""Error""
+    assert candidate([7, 9, 7, 1]) == [], ""Error""
+
+"
+"
+def search(lst):
+    '''
+    You are given a non-empty list of positive integers. Return the greatest integer that is greater than 
+    zero, and has a frequency greater than or equal to the value of the integer itself. 
+    The frequency of an integer is the number of times it appears in the list.
+    If no such a value exist, return -1.
+    Examples:
+        search([4, 1, 2, 2, 3, 1]) == 2
+        search([1, 2, 2, 3, 3, 3, 4, 4, 4]) == 3
+        search([5, 5, 4, 4, 4]) == -1
+    '''
+","    frq = [0] * (max(lst) + 1)
+    for i in lst:
+        frq[i] += 1;
+
+    ans = -1
+    for i in range(1, len(frq)):
+        if frq[i] >= i:
+            ans = i
+    
+    return ans
+","def check(candidate):
+
+    # manually generated tests
+    assert candidate([5, 5, 5, 5, 1]) == 1
+    assert candidate([4, 1, 4, 1, 4, 4]) == 4
+    assert candidate([3, 3]) == -1
+    assert candidate([8, 8, 8, 8, 8, 8, 8, 8]) == 8
+    assert candidate([2, 3, 3, 2, 2]) == 2
+
+    # automatically generated tests
+    assert candidate([2, 7, 8, 8, 4, 8, 7, 3, 9, 6, 5, 10, 4, 3, 6, 7, 1, 7, 4, 10, 8, 1]) == 1
+    assert candidate([3, 2, 8, 2]) == 2
+    assert candidate([6, 7, 1, 8, 8, 10, 5, 8, 5, 3, 10]) == 1
+    assert candidate([8, 8, 3, 6, 5, 6, 4]) == -1
+    assert candidate([6, 9, 6, 7, 1, 4, 7, 1, 8, 8, 9, 8, 10, 10, 8, 4, 10, 4, 10, 1, 2, 9, 5, 7, 9]) == 1
+    assert candidate([1, 9, 10, 1, 3]) == 1
+    assert candidate([6, 9, 7, 5, 8, 7, 5, 3, 7, 5, 10, 10, 3, 6, 10, 2, 8, 6, 5, 4, 9, 5, 3, 10]) == 5
+    assert candidate([1]) == 1
+    assert candidate([8, 8, 10, 6, 4, 3, 5, 8, 2, 4, 2, 8, 4, 6, 10, 4, 2, 1, 10, 2, 1, 1, 5]) == 4
+    assert candidate([2, 10, 4, 8, 2, 10, 5, 1, 2, 9, 5, 5, 6, 3, 8, 6, 4, 10]) == 2
+    assert candidate([1, 6, 10, 1, 6, 9, 10, 8, 6, 8, 7, 3]) == 1
+    assert candidate([9, 2, 4, 1, 5, 1, 5, 2, 5, 7, 7, 7, 3, 10, 1, 5, 4, 2, 8, 4, 1, 9, 10, 7, 10, 2, 8, 10, 9, 4]) == 4
+    assert candidate([2, 6, 4, 2, 8, 7, 5, 6, 4, 10, 4, 6, 3, 7, 8, 8, 3, 1, 4, 2, 2, 10, 7]) == 4
+    assert candidate([9, 8, 6, 10, 2, 6, 10, 2, 7, 8, 10, 3, 8, 2, 6, 2, 3, 1]) == 2
+    assert candidate([5, 5, 3, 9, 5, 6, 3, 2, 8, 5, 6, 10, 10, 6, 8, 4, 10, 7, 7, 10, 8]) == -1
+    assert candidate([10]) == -1
+    assert candidate([9, 7, 7, 2, 4, 7, 2, 10, 9, 7, 5, 7, 2]) == 2
+    assert candidate([5, 4, 10, 2, 1, 1, 10, 3, 6, 1, 8]) == 1
+    assert candidate([7, 9, 9, 9, 3, 4, 1, 5, 9, 1, 2, 1, 1, 10, 7, 5, 6, 7, 6, 7, 7, 6]) == 1
+    assert candidate([3, 10, 10, 9, 2]) == -1
+
+"
+"
+def strange_sort_list(lst):
+    '''
+    Given list of integers, return list in strange order.
+    Strange sorting, is when you start with the minimum value,
+    then maximum of the remaining integers, then minimum and so on.
+
+    Examples:
+    strange_sort_list([1, 2, 3, 4]) == [1, 4, 2, 3]
+    strange_sort_list([5, 5, 5, 5]) == [5, 5, 5, 5]
+    strange_sort_list([]) == []
+    '''
+","    res, switch = [], True
+    while lst:
+        res.append(min(lst) if switch else max(lst))
+        lst.remove(res[-1])
+        switch = not switch
+    return res
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1, 2, 3, 4]) == [1, 4, 2, 3]
+    assert candidate([5, 6, 7, 8, 9]) == [5, 9, 6, 8, 7]
+    assert candidate([1, 2, 3, 4, 5]) == [1, 5, 2, 4, 3]
+    assert candidate([5, 6, 7, 8, 9, 1]) == [1, 9, 5, 8, 6, 7]
+    assert candidate([5, 5, 5, 5]) == [5, 5, 5, 5]
+    assert candidate([]) == []
+    assert candidate([1,2,3,4,5,6,7,8]) == [1, 8, 2, 7, 3, 6, 4, 5]
+    assert candidate([0,2,2,2,5,5,-5,-5]) == [-5, 5, -5, 5, 0, 2, 2, 2]
+    assert candidate([111111]) == [111111]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def triangle_area(a, b, c):
+    '''
+    Given the lengths of the three sides of a triangle. Return the area of
+    the triangle rounded to 2 decimal points if the three sides form a valid triangle. 
+    Otherwise return -1
+    Three sides make a valid triangle when the sum of any two sides is greater 
+    than the third side.
+    Example:
+    triangle_area(3, 4, 5) == 6.00
+    triangle_area(1, 2, 10) == -1
+    '''
+","    if a + b <= c or a + c <= b or b + c <= a:
+        return -1 
+    s = (a + b + c)/2    
+    area = (s * (s - a) * (s - b) * (s - c)) ** 0.5
+    area = round(area, 2)
+    return area
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(3, 4, 5) == 6.00, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(1, 2, 10) == -1
+    assert candidate(4, 8, 5) == 8.18
+    assert candidate(2, 2, 2) == 1.73
+    assert candidate(1, 2, 3) == -1
+    assert candidate(10, 5, 7) == 16.25
+    assert candidate(2, 6, 3) == -1
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1, 1, 1) == 0.43, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(2, 2, 10) == -1
+
+"
+"
+def will_it_fly(q,w):
+    '''
+    Write a function that returns True if the object q will fly, and False otherwise.
+    The object q will fly if it's balanced (it is a palindromic list) and the sum of its elements is less than or equal the maximum possible weight w.
+
+    Example:
+    will_it_fly([1, 2], 5) â -> False 
+    # 1+2 is less than the maximum possible weight, but it's unbalanced.
+
+    will_it_fly([3, 2, 3], 1) â -> False
+    # it's balanced, but 3+2+3 is more than the maximum possible weight.
+
+    will_it_fly([3, 2, 3], 9) â -> True
+    # 3+2+3 is less than the maximum possible weight, and it's balanced.
+
+    will_it_fly([3], 5) â -> True
+    # 3 is less than the maximum possible weight, and it's balanced.
+    '''
+","    if sum(q) > w:
+        return False
+
+    i, j = 0, len(q)-1
+    while i<j:
+        if q[i] != q[j]:
+            return False
+        i+=1
+        j-=1
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([3, 2, 3], 9) is True
+    assert candidate([1, 2], 5) is False
+    assert candidate([3], 5) is True
+    assert candidate([3, 2, 3], 1) is False
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1, 2, 3], 6) is False
+    assert candidate([5], 5) is True
+
+"
+"
+def smallest_change(arr):
+    """"""
+    ໂດຍໃຫ້ເປັນ array ຂອງຕົວເລກເຕັມ, ຊອກຫາຈໍານວນຕ່ໍາສຸດຂອງອົງປະກອບທີ່ຕ້ອງຖືກປ່ຽນແປງເພື່ອເຮັດໃຫ້ array ເປັນ palindromic. array palindromic ແມ່ນ array ທີ່ອ່ານຄືກັນກັບກັບຄືນໄປບ່ອນແລະຕໍ່ຫນ້າ. ໃນການປ່ຽນແປງຫນຶ່ງ, ທ່ານສາມາດປ່ຽນອົງປະກອບຫນຶ່ງກັບອົງປະກອບອື່ນໃດ. ຕົວຢ່າງ: smallest_change (([1,2,3,5,4,7,9,6]) == 4 smallest_change (([1, 2, 3, 4, 3, 2, 2]) == 1 smallest_change (([1, 2, 3, 2, 1]) == 0
+    """"""
+","    ans = 0
+    for i in range(len(arr) // 2):
+        if arr[i] != arr[len(arr) - i - 1]:
+            ans += 1
+    return ans
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,2,3,5,4,7,9,6]) == 4
+    assert candidate([1, 2, 3, 4, 3, 2, 2]) == 1
+    assert candidate([1, 4, 2]) == 1
+    assert candidate([1, 4, 4, 2]) == 1
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1, 2, 3, 2, 1]) == 0
+    assert candidate([3, 1, 1, 3]) == 0
+    assert candidate([1]) == 0
+    assert candidate([0, 1]) == 1
+
+"
+"
+def total_match(lst1, lst2):
+    '''
+    Write a function that accepts two lists of strings and returns the list that has 
+    total number of chars in the all strings of the list less than the other list.
+
+    if the two lists have the same number of chars, return the first list.
+
+    Examples
+    total_match([], []) â -> []
+    total_match(['hi', 'admin'], ['hI', 'Hi']) â -> ['hI', 'Hi']
+    total_match(['hi', 'admin'], ['hi', 'hi', 'admin', 'project']) â -> ['hi', 'admin']
+    total_match(['hi', 'admin'], ['hI', 'hi', 'hi']) â -> ['hI', 'hi', 'hi']
+    total_match(['4'], ['1', '2', '3', '4', '5']) â -> ['4']
+    '''
+","    l1 = 0
+    for st in lst1:
+        l1 += len(st)
+    
+    l2 = 0
+    for st in lst2:
+        l2 += len(st)
+    
+    if l1 <= l2:
+        return lst1
+    else:
+        return lst2
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([], []) == []
+    assert candidate(['hi', 'admin'], ['hi', 'hi']) == ['hi', 'hi']
+    assert candidate(['hi', 'admin'], ['hi', 'hi', 'admin', 'project']) == ['hi', 'admin']
+    assert candidate(['4'], ['1', '2', '3', '4', '5']) == ['4']
+    assert candidate(['hi', 'admin'], ['hI', 'Hi']) == ['hI', 'Hi']
+    assert candidate(['hi', 'admin'], ['hI', 'hi', 'hi']) == ['hI', 'hi', 'hi']
+    assert candidate(['hi', 'admin'], ['hI', 'hi', 'hii']) == ['hi', 'admin']
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([], ['this']) == []
+    assert candidate(['this'], []) == []
+
+"
+"
+def is_multiply_prime(a):
+    """"""ຂຽນຟັງຊັນທີ່ຕອບແທນວ່າ true ຖ້າຕົວເລກທີ່ໃຫ້ແມ່ນການຄູນຂອງ 3 ຕົວເລກຕົ້ນແລະ false ຖ້າບໍ່ດັ່ງນັ້ນ. ຮູ້ວ່າ (a) ແມ່ນຫນ້ອຍກວ່າ 100. ຕົວຢ່າງ: is_multiply_prime(30) == True 30 = 2 * 3 * 5
+    """"""
+","    def is_prime(n):
+        for j in range(2,n):
+            if n%j == 0:
+                return False
+        return True
+
+    for i in range(2,101):
+        if not is_prime(i): continue
+        for j in range(2,101):
+            if not is_prime(j): continue
+            for k in range(2,101):
+                if not is_prime(k): continue
+                if i*j*k == a: return True
+    return False
+","def check(candidate):
+
+    assert candidate(5) == False
+    assert candidate(30) == True
+    assert candidate(8) == True
+    assert candidate(10) == False
+    assert candidate(125) == True
+    assert candidate(3 * 5 * 7) == True
+    assert candidate(3 * 6 * 7) == False
+    assert candidate(9 * 9 * 9) == False
+    assert candidate(11 * 9 * 9) == False
+    assert candidate(11 * 13 * 7) == True
+
+"
+"
+def is_simple_power(x, n):
+    """"""ຫນ້າທີ່ຂອງທ່ານແມ່ນຂຽນຟັງຊັນທີ່ສົ່ງຄືນຄວາມຈິງຖ້າຕົວເລກ x ແມ່ນພະລັງງານງ່າຍໆຂອງ n ແລະຜິດໃນກໍລະນີອື່ນໆ. x ແມ່ນພະລັງງານງ່າຍໆຂອງ n ຖ້າ n**int=x ຕົວຢ່າງ: is_simple_power(1, 4) => true is_simple_power(2, 2) => true is_simple_power(8, 2) => true is_simple_power(3, 2) => false is_simple_power(3, 1) false => is_simple_power(5, 3) => false
+    """"""
+","    if (n == 1): 
+        return (x == 1) 
+    power = 1
+    while (power < x): 
+        power = power * n 
+    return (power == x) 
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(16, 2)== True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(143214, 16)== False, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(4, 2)==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(9, 3)==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(16, 4)==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(24, 2)==False, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(128, 4)==False, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(12, 6)==False, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1, 1)==True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(1, 12)==True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def iscube(a):
+    '''
+    Write a function that takes an integer a and returns True 
+    if this ingeger is a cube of some integer number.
+    Note: you may assume the input is always valid.
+    Examples:
+    iscube(1) ==> True
+    iscube(2) ==> False
+    iscube(-1) ==> True
+    iscube(64) ==> True
+    iscube(0) ==> True
+    iscube(180) ==> False
+    '''
+","    a = abs(a)
+    return int(round(a ** (1. / 3))) ** 3 == a
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(1) == True, ""First test error: "" + str(candidate(1))
+    assert candidate(2) == False, ""Second test error: "" + str(candidate(2))
+    assert candidate(-1) == True, ""Third test error: "" + str(candidate(-1))
+    assert candidate(64) == True, ""Fourth test error: "" + str(candidate(64))
+    assert candidate(180) == False, ""Fifth test error: "" + str(candidate(180))
+    assert candidate(1000) == True, ""Sixth test error: "" + str(candidate(1000))
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(0) == True, ""1st edge test error: "" + str(candidate(0))
+    assert candidate(1729) == False, ""2nd edge test error: "" + str(candidate(1728))
+
+"
+"
+def hex_key(num):
+    """"""ທ່ານໄດ້ຖືກມອບຫມາຍໃຫ້ຂຽນຟັງຊັນທີ່ໄດ້ຮັບເລກ hexadecimal ເປັນສາຍແລະນັບ ຈໍາ ນວນຕົວເລກ hexadecimal ທີ່ເປັນຕົວເລກ ທໍາ ມະດາ (ຕົວເລກ ທໍາ ມະດາ, ຫຼືຕົວເລກ ທໍາ ມະດາ, ແມ່ນຕົວເລກ ທໍາ ມະຊາດທີ່ໃຫຍ່ກວ່າ 1 ເຊິ່ງບໍ່ແມ່ນຜົນຜະລິດຂອງສອງຕົວເລກ ທໍາ ມະຊາດທີ່ນ້ອຍກວ່າ). ຕົວເລກ hexadecimal ແມ່ນ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F. ຕົວເລກ ທໍາ ມະດາແມ່ນ 2, 3, 5, 7, 11, 13, 17,... ດັ່ງນັ້ນທ່ານຕ້ອງ ກໍາ ນົດ ຈໍາ ນວນຕົວເລກຕໍ່ໄປນີ້: 2, 3, 5, 7, B (= decimal 11), D (= decimal 13). ຫມາຍ ເຫດ: ທ່ານອາດຈະຖືວ່າການປ້ອນຂໍ້ມູນແມ່ນຖືກຕ້ອງສະ ເຫມີ ຫຼືບໍ່ຖືກຕ້ອງ, ແລະສັນຍາລັກ A,B,C,D,E,F ແມ່ນສະ ເຫມີ ຕົວເລກໃຫຍ່. ຕົວຢ່າງ: ສໍາ ລັບ num ""AB
+    """"""
+","    primes = ('2', '3', '5', '7', 'B', 'D')
+    total = 0
+    for i in range(0, len(num)):
+        if num[i] in primes:
+            total += 1
+    return total
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""AB"") == 1, ""First test error: "" + str(candidate(""AB""))      
+    assert candidate(""1077E"") == 2, ""Second test error: "" + str(candidate(""1077E""))  
+    assert candidate(""ABED1A33"") == 4, ""Third test error: "" + str(candidate(""ABED1A33""))      
+    assert candidate(""2020"") == 2, ""Fourth test error: "" + str(candidate(""2020""))  
+    assert candidate(""123456789ABCDEF0"") == 6, ""Fifth test error: "" + str(candidate(""123456789ABCDEF0""))      
+    assert candidate(""112233445566778899AABBCCDDEEFF00"") == 12, ""Sixth test error: "" + str(candidate(""112233445566778899AABBCCDDEEFF00""))  
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([]) == 0
+
+"
+"
+def decimal_to_binary(decimal):
+    """"""ທ່ານຈະໄດ້ຮັບຕົວເລກໃນຮູບແບບສິບແລະຫນ້າທີ່ຂອງທ່ານແມ່ນເພື່ອປ່ຽນມັນເປັນຮູບແບບສອງຕົວ. ຫນ້າ ທີ່ຄວນຈະກັບຄືນສາຍ, ໂດຍມີແຕ່ລະຕົວອັກສອນເປັນຕົວເລກສອງຕົວ. ແຕ່ລະຕົວອັກສອນໃນສາຍຈະແມ່ນ '0' ຫຼື '1'. ຈະມີຕົວອັກສອນເພີ່ມເຕີມ 'db' ໃນຕອນເລີ່ມຕົ້ນແລະໃນຕອນທ້າຍຂອງສາຍ. ຕົວອັກສອນເພີ່ມເຕີມແມ່ນເພື່ອຊ່ວຍໃນການຈັດຮູບແບບ. ຕົວຢ່າງ: decimal_to_binary ((15) # ກັບຄືນ ""db1111db"" decimal_to_binary32) # ກັບຄືນ ""db100000db""
+    """"""
+","    return ""db"" + bin(decimal)[2:] + ""db""
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(0) == ""db0db""
+    assert candidate(32) == ""db100000db""
+    assert candidate(103) == ""db1100111db""
+    assert candidate(15) == ""db1111db"", ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def is_happy(s):
+    """"""ທ່ານໄດ້ຮັບ string s. ຫນ້າທີ່ຂອງທ່ານແມ່ນເພື່ອກວດເບິ່ງວ່າ string ແມ່ນມີຄວາມສຸກຫຼືບໍ່. string ແມ່ນມີຄວາມສຸກຖ້າຄວາມຍາວຂອງມັນມີຢ່າງ ຫນ້ອຍ 3 ແລະທຸກໆ 3 ຕົວອັກສອນລຽນຕິດແມ່ນແຕກຕ່າງກັນຕົວຢ່າງ: is_happy ((a) => False is_happy ((aa) => False is_happy ((abcd) => True is_happy ((aabb) => False is_happy ((adb) => True is_happy ((xyy) => False
+    """"""
+","    if len(s) < 3:
+      return False
+
+    for i in range(len(s) - 2):
+      
+      if s[i] == s[i+1] or s[i+1] == s[i+2] or s[i] == s[i+2]:
+        return False
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""a"") == False , ""a""
+    assert candidate(""aa"") == False , ""aa""
+    assert candidate(""abcd"") == True , ""abcd""
+    assert candidate(""aabb"") == False , ""aabb""
+    assert candidate(""adb"") == True , ""adb""
+    assert candidate(""xyy"") == False , ""xyy""
+    assert candidate(""iopaxpoi"") == True , ""iopaxpoi""
+    assert candidate(""iopaxioi"") == False , ""iopaxioi""
+"
+"
+def numerical_letter_grade(grades):
+    """"""ມັນເປັນອາທິດສຸດທ້າຍຂອງລະດູຮຽນແລະຄູສອນຕ້ອງໃຫ້ຄະແນນໃຫ້ກັບນັກຮຽນ. ຄູສອນໄດ້ສ້າງ algorithm ຂອງຕົນເອງສໍາລັບການປະລິນຍາ. ບັນຫາພຽງແຕ່ແມ່ນ, ນາງໄດ້ສູນເສຍລະຫັດທີ່ນາງໄດ້ນໍາໃຊ້ສໍາລັບການປະລິນຍາ. ນາງໄດ້ໃຫ້ທ່ານບັນຊີລາຍຊື່ຂອງ GPA ສໍາລັບນັກຮຽນບາງຄົນແລະທ່ານຕ້ອງຂຽນພາລະບົດບາດທີ່ສາມາດຜະລິດບັນຊີລາຍຊື່ຂອງຄະແນນຈົດຫມາຍໂດຍໃຊ້ຕາຕະລາງຕໍ່ໄປນີ້: GPA.
+    """"""
+","
+   
+    letter_grade = []
+    for gpa in grades:
+        if gpa == 4.0:
+            letter_grade.append(""A+"")
+        elif gpa > 3.7:
+            letter_grade.append(""A"")
+        elif gpa > 3.3:
+            letter_grade.append(""A-"")
+        elif gpa > 3.0:
+            letter_grade.append(""B+"")
+        elif gpa > 2.7:
+            letter_grade.append(""B"")
+        elif gpa > 2.3:
+            letter_grade.append(""B-"")
+        elif gpa > 2.0:
+            letter_grade.append(""C+"")
+        elif gpa > 1.7:
+            letter_grade.append(""C"")
+        elif gpa > 1.3:
+            letter_grade.append(""C-"")
+        elif gpa > 1.0:
+            letter_grade.append(""D+"")
+        elif gpa > 0.7:
+            letter_grade.append(""D"")
+        elif gpa > 0.0:
+            letter_grade.append(""D-"")
+        else:
+            letter_grade.append(""E"")
+    return letter_grade
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([4.0, 3, 1.7, 2, 3.5]) == ['A+', 'B', 'C-', 'C', 'A-']
+    assert candidate([1.2]) == ['D+']
+    assert candidate([0.5]) == ['D-']
+    assert candidate([0.0]) == ['E']
+    assert candidate([1, 0.3, 1.5, 2.8, 3.3]) == ['D', 'D-', 'C-', 'B', 'B+']
+    assert candidate([0, 0.7]) == ['E', 'D-']
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def prime_length(string):
+    """"""ຂຽນຟັງຊັນທີ່ເອົາສາຍແລະສົ່ງຄືນຄວາມຈິງຖ້າຄວາມຍາວຂອງສາຍແມ່ນຕົວເລກຕົ້ນຫລື False ຖ້າບໍ່ດັ່ງນັ້ນຕົວຢ່າງ prime_length (('Hello') == True prime_length (('abcdcba') == True prime_length (('kittens') == True prime_length (('orange') == False
+    """"""
+","    l = len(string)
+    if l == 0 or l == 1:
+        return False
+    for i in range(2, l):
+        if l % i == 0:
+            return False
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('Hello') == True
+    assert candidate('abcdcba') == True
+    assert candidate('kittens') == True
+    assert candidate('orange') == False
+    assert candidate('wow') == True
+    assert candidate('world') == True
+    assert candidate('MadaM') == True
+    assert candidate('Wow') == True
+    assert candidate('') == False
+    assert candidate('HI') == True
+    assert candidate('go') == True
+    assert candidate('gogo') == False
+    assert candidate('aaaaaaaaaaaaaaa') == False
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('Madam') == True
+    assert candidate('M') == False
+    assert candidate('0') == False
+
+"
+"
+def starts_one_ends(n):
+    """"""
+    ໃຫ້ເປັນເລກເຕັມບວກ n, ໃຫ້ກັບຄືນຈໍານວນຂອງເລກເຕັມບວກ n-digit ທີ່ເລີ່ມຕົ້ນຫຼືສິ້ນສຸດດ້ວຍ 1.
+    """"""
+","    if n == 1: return 1
+    return 18 * (10 ** (n - 2))
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(1) == 1
+    assert candidate(2) == 18
+    assert candidate(3) == 180
+    assert candidate(4) == 1800
+    assert candidate(5) == 18000
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def solve(N):
+    """"""ໃຫ້ຕົວເລກເຕັມບວກ N, ສົ່ງຄືນຜົນລວມຂອງຕົວເລກໃນຕົວເລກບາໄນເຣັດ. ຕົວຢ່າງ ສໍາລັບ N = 1000, ຜົນລວມຂອງຕົວເລກຈະແມ່ນ 1 ຜົນຜະລິດຈະແມ່ນ ""1"". ສໍາລັບ N = 150, ຜົນລວມຂອງຕົວເລກຈະແມ່ນ 6 ຜົນຜະລິດຈະແມ່ນ ""110"". ສໍາລັບ N = 147, ຜົນລວມຂອງຕົວເລກຈະແມ່ນ 12 ຜົນຜະລິດຈະແມ່ນ ""1100"". ຕົວແປ: @N integer Constraints: 0 â‰¤ N â‰¤ 10000. ຜົນຜະລິດ: string of binary number
+    """"""
+","    return bin(sum(int(i) for i in str(N)))[2:]
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(1000) == ""1"", ""Error""
+    assert candidate(150) == ""110"", ""Error""
+    assert candidate(147) == ""1100"", ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(333) == ""1001"", ""Error""
+    assert candidate(963) == ""10010"", ""Error""
+
+"
+"
+def add(lst):
+    """"""ໂດຍໃຫ້ບັນຊີລາຍຊື່ຂອງຕົວເລກເຕັມທີ່ບໍ່ແມ່ນເປົ່າ lst. ເພີ່ມອົງປະກອບແຖວທີ່ຢູ່ໃນດັດຊະນີແປກ.. ຕົວຢ່າງ: ເພີ່ມ (([4, 2, 6, 7]) ==> 2 
+    """"""
+","    return sum([lst[i] for i in range(1, len(lst), 2) if lst[i]%2 == 0])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([4, 88]) == 88
+    assert candidate([4, 5, 6, 7, 2, 122]) == 122
+    assert candidate([4, 0, 6, 7]) == 0
+    assert candidate([4, 4, 6, 8]) == 12
+
+    # Check some edge cases that are easy to work out by hand.
+    
+"
+"
+def anti_shuffle(s):
+    """"""
+    ຂຽນຟັງຊັນທີ່ເອົາສາຍແລະສົ່ງຄືນລຸ້ນທີ່ຖືກຈັດລຽງ. ລຸ້ນທີ່ຖືກຈັດລຽງຂອງສາຍ, ແມ່ນສາຍທີ່ ຄໍາ ສັບທັງ ຫມົດ (ແຍກອອກດ້ວຍຊ່ອງຫວ່າງ) ຖືກທົດແທນໂດຍ ຄໍາ ສັບ ໃຫມ່ ທີ່ຕົວອັກສອນທັງ ຫມົດ ຖືກຈັດລຽງຕາມ ລໍາ ດັບເພີ່ມຂື້ນໂດຍອີງໃສ່ຄ່າ ascii. ຫມາຍ ເຫດ: ທ່ານຄວນຮັກສາ ລໍາ ດັບຂອງ ຄໍາ ສັບແລະຊ່ອງຫວ່າງຫວ່າງໃນປະໂຫຍກ. ຕົວຢ່າງ: anti_shuffle ((('Hi') ສົ່ງຄືນ 'Hi' anti_shuffle ((('hello') ສົ່ງຄືນ 'ehllo' anti_shuffle (('Hello World!!!') ສົ່ງຄືນ 'Hello!!!Wdlor'
+    """"""
+","    return ' '.join([''.join(sorted(list(i))) for i in s.split(' ')])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('Hi') == 'Hi'
+    assert candidate('hello') == 'ehllo'
+    assert candidate('number') == 'bemnru'
+    assert candidate('abcd') == 'abcd'
+    assert candidate('Hello World!!!') == 'Hello !!!Wdlor'
+    assert candidate('') == ''
+    assert candidate('Hi. My name is Mister Robot. How are you?') == '.Hi My aemn is Meirst .Rboot How aer ?ouy'
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def get_row(lst, x):
+    """"""
+    ທ່ານໄດ້ຮັບຂໍ້ມູນ 2 ມິຕິ, ເປັນລາຍຊື່ທີ່ຖືກກວມເອົາ, ເຊິ່ງຄ້າຍຄືກັບເມດຣິກ, ແຕ່ບໍ່ຄືກັບເມດຣິກ, ແຕ່ລະແຖວອາດຈະມີຖັນທີ່ແຕກຕ່າງກັນ. ໂດຍໃຫ້ lst, ແລະ integer x, ຊອກຫາຕົວເລກເຕັມ x ໃນບັນຊີ, ແລະສົ່ງຄືນລາຍຊື່ຂອງ tuples, [(x1, y1), (x2, y2)...] ເຊັ່ນວ່າແຕ່ລະ tuple ແມ່ນປະສານງານ - (ແຖວ, ເສັ້ນ), ເລີ່ມຕົ້ນດ້ວຍ 0. ຈັດສັນປະສານງານໃນເບື້ອງຕົ້ນໂດຍແຖວຕາມ ລໍາ ດັບເພີ່ມຂື້ນ. ນອກນັ້ນ, ຈັດສັນປະສານງານຂອງແຖວໂດຍເສົາຕາມ ລໍາ ດັບຫຼຸດລົງ. ຕົວຢ່າງ: get_row [1,2,3,4,5,6], [1,2,3,4,1,6], [1,2,3,4,5,1], 1) == [0, 0, 0, 0, 1, 4], 0 (1, 4), (2, 5
+    """"""
+","    coords = [(i, j) for i in range(len(lst)) for j in range(len(lst[i])) if lst[i][j] == x]
+    return sorted(sorted(coords, key=lambda x: x[1], reverse=True), key=lambda x: x[0])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([
+        [1,2,3,4,5,6],
+        [1,2,3,4,1,6],
+        [1,2,3,4,5,1]
+    ], 1) == [(0, 0), (1, 4), (1, 0), (2, 5), (2, 0)]
+    assert candidate([
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6]
+    ], 2) == [(0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (5, 1)]
+    assert candidate([
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,1,3,4,5,6],
+        [1,2,1,4,5,6],
+        [1,2,3,1,5,6],
+        [1,2,3,4,1,6],
+        [1,2,3,4,5,1]
+    ], 1) == [(0, 0), (1, 0), (2, 1), (2, 0), (3, 2), (3, 0), (4, 3), (4, 0), (5, 4), (5, 0), (6, 5), (6, 0)]
+    assert candidate([], 1) == []
+    assert candidate([[1]], 2) == []
+    assert candidate([[], [1], [1, 2, 3]], 3) == [(2, 2)]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def sort_array(array):
+    """"""
+    ໃຫ້ເປັນແຖວຂອງຕົວເລກເຕັມທີ່ບໍ່ແມ່ນລົບ, ສົ່ງຄືນ ສໍາ ເນົາຂອງແຖວທີ່ໃຫ້ຫຼັງຈາກຈັດລຽງ, ທ່ານຈະຈັດລຽງແຖວທີ່ໃຫ້ໄວ້ຕາມ ລໍາ ດັບເພີ່ມຂື້ນຖ້າຜົນລວມ ((ມູນຄ່າດັດຊະນີ ທໍາ ອິດ, ມູນຄ່າດັດຊະນີສຸດທ້າຍ) ແມ່ນແປກ, ຫຼືຈັດລຽງມັນຕາມ ລໍາ ດັບຫຼຸດລົງຖ້າຜົນລວມ ((ມູນຄ່າດັດຊະນີ ທໍາ ອິດ, ມູນຄ່າດັດຊະນີສຸດທ້າຍ) ແມ່ນແຖວ. ຫມາຍ ເຫດ: * ຢ່າປ່ຽນແຖວທີ່ໃຫ້ໄວ້. ຕົວຢ່າງ: * sort_array[(]) => [] * sort_array[5]) => [5] * sort_array[2, 4, 3, 0, 1, 5]) => [0, 1, 2, 3, 4, 5] * sort_array[2, 4, 3, 0, 1, 5, 6]) => [6, 5, 4, 3, 2, 1, 6]
+    """"""
+","    return [] if len(array) == 0 else sorted(array, reverse= (array[0]+array[-1]) % 2 == 0) 
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([]) == [], ""Error""
+    assert candidate([5]) == [5], ""Error""
+    assert candidate([2, 4, 3, 0, 1, 5]) == [0, 1, 2, 3, 4, 5], ""Error""
+    assert candidate([2, 4, 3, 0, 1, 5, 6]) == [6, 5, 4, 3, 2, 1, 0], ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([2, 1]) == [1, 2], ""Error""
+    assert candidate([15, 42, 87, 32 ,11, 0]) == [0, 11, 15, 32, 42, 87], ""Error""
+    assert candidate([21, 14, 23, 11]) == [23, 21, 14, 11], ""Error""
+
+"
+"
+def encrypt(s):
+    """"""ສ້າງຟັງຊັນ encrypt ທີ່ໃຊ້ string ເປັນອາກຣູມ ແລະສົ່ງຄືນ string ທີ່ຖືກເຂົ້າລະຫັດດ້ວຍອັກສອນທີ່ຖືກຫມູນວຽນ. ອັກສອນຄວນຖືກຫມູນວຽນໃນແບບທີ່ຕົວອັກສອນຈະເລື່ອນລົງສອງເທົ່າເທົ່າສອງບ່ອນ. ຕົວຢ່າງ: encrypt (('hi') ສົ່ງຄືນ 'lm' encrypt (('asdfghjkl') ສົ່ງຄືນ 'ewhjklnop' encrypt (('gf') ສົ່ງຄືນ 'kj' encrypt (('et') ສົ່ງຄືນ 'ix'
+    """"""
+","    d = 'abcdefghijklmnopqrstuvwxyz'
+    out = ''
+    for c in s:
+        if c in d:
+            out += d[(d.index(c)+2*2) % 26]
+        else:
+            out += c
+    return out
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('hi') == 'lm', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('asdfghjkl') == 'ewhjklnop', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('gf') == 'kj', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('et') == 'ix', ""This prints if this assert fails 1 (good for debugging!)""
+
+    assert candidate('faewfawefaewg')=='jeiajeaijeiak', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('hellomyfriend')=='lippsqcjvmirh', ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate('dxzdlmnilfuhmilufhlihufnmlimnufhlimnufhfucufh')=='hbdhpqrmpjylqmpyjlpmlyjrqpmqryjlpmqryjljygyjl', ""This prints if this assert fails 3 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('a')=='e', ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def next_smallest(lst):
+    """"""
+    ທ່ານໄດ້ຮັບບັນຊີລາຍຊື່ຂອງຕົວເລກເຕັມ. ຂຽນຟັງຊັນ next_smallest (() ທີ່ສົ່ງຄືນອົງປະກອບທີ່ນ້ອຍທີ່ສຸດອັນດັບ 2 ຂອງບັນຊີລາຍຊື່. ສົ່ງຄືນ None ຖ້າບໍ່ມີອົງປະກອບດັ່ງກ່າວ. next_smallest (([1, 2, 3, 4, 5]) == 2 next_smallest (([5, 1, 4, 3, 2]) == 2 next_smallest (([]) == None next_smallest (([1, 1]) == None
+    """"""
+","    lst = sorted(set(lst))
+    return None if len(lst) < 2 else lst[1]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1, 2, 3, 4, 5]) == 2
+    assert candidate([5, 1, 4, 3, 2]) == 2
+    assert candidate([]) == None
+    assert candidate([1, 1]) == None
+    assert candidate([1,1,1,1,0]) == 1
+    assert candidate([1, 0**0]) == None
+    assert candidate([-35, 34, 12, -45]) == -35
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def is_bored(S):
+    """"""
+    ທ່ານຈະໄດ້ຮັບສາຍຂອງຄໍາສັບ, ແລະ ຫນ້າທີ່ຂອງທ່ານແມ່ນເພື່ອນັບ ຈໍາ ນວນຄວາມເບື່ອຫນ່າຍ. ຄວາມເບື່ອຫນ່າຍແມ່ນປະໂຫຍກທີ່ເລີ່ມຕົ້ນດ້ວຍ ຄໍາ ວ່າ ""I"". ປະໂຫຍກຖືກ ຈໍາ ກັດໂດຍ '.', '?' ຫຼື '!'. ຕົວຢ່າງ:
+    >>> is_bored(""Hello world"")
+    0
+    >>> is_bored(""The sky is blue. The sun is shining. I love this weather"")
+    1
+    """"""
+","    import re
+    sentences = re.split(r'[.?!]\s*', S)
+    return sum(sentence[0:2] == 'I ' for sentence in sentences)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""Hello world"") == 0, ""Test 1""
+    assert candidate(""Is the sky blue?"") == 0, ""Test 2""
+    assert candidate(""I love It !"") == 1, ""Test 3""
+    assert candidate(""bIt"") == 0, ""Test 4""
+    assert candidate(""I feel good today. I will be productive. will kill It"") == 2, ""Test 5""
+    assert candidate(""You and I are going for a walk"") == 0, ""Test 6""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def any_int(x, y, z):
+    '''
+    Create a function that takes 3 numbers.
+    Returns true if one of the numbers is equal to the sum of the other two, and all numbers are integers.
+    Returns false in any other cases.
+    
+    Examples
+    any_int(5, 2, 7) â -> True
+    
+    any_int(3, 2, 2) â -> False
+
+    any_int(3, -2, 1) â -> True
+    
+    any_int(3.6, -2.2, 2) â -> False
+  
+
+    
+    '''
+","    
+    if isinstance(x,int) and isinstance(y,int) and isinstance(z,int):
+        if (x+y==z) or (x+z==y) or (y+z==x):
+            return True
+        return False
+    return False
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(2, 3, 1)==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(2.5, 2, 3)==False, ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate(1.5, 5, 3.5)==False, ""This prints if this assert fails 3 (good for debugging!)""
+    assert candidate(2, 6, 2)==False, ""This prints if this assert fails 4 (good for debugging!)""
+    assert candidate(4, 2, 2)==True, ""This prints if this assert fails 5 (good for debugging!)""
+    assert candidate(2.2, 2.2, 2.2)==False, ""This prints if this assert fails 6 (good for debugging!)""
+    assert candidate(-4, 6, 2)==True, ""This prints if this assert fails 7 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(2,1,1)==True, ""This prints if this assert fails 8 (also good for debugging!)""
+    assert candidate(3,4,7)==True, ""This prints if this assert fails 9 (also good for debugging!)""
+    assert candidate(3.0,4,7)==False, ""This prints if this assert fails 10 (also good for debugging!)""
+
+"
+"
+def encode(message):
+    """"""
+    ຂຽນຟັງຊັນທີ່ເອົາຂໍ້ຄວາມ, ແລະເຂົ້າລະຫັດໃນວິທີທີ່ມັນແລກປ່ຽນຕົວອັກສອນຂອງຕົວອັກສອນທັງ ຫມົດ, ປ່ຽນຕົວອັກສອນທັງ ຫມົດ ໃນຂໍ້ຄວາມດ້ວຍຕົວອັກສອນທີ່ປາກົດຢູ່ 2 ສະຖານທີ່ຕໍ່ ຫນ້າ ຕົວອັກສອນນັ້ນໃນອັກສອນອັງກິດ. ສົມມຸດວ່າມີຕົວອັກສອນເທົ່ານັ້ນ. ຕົວຢ່າງ:
+    >>> encode('test')
+    'TGST'
+    >>> encode('This is a message')
+    'tHKS KS C MGSSCGG'
+    """"""
+","    vowels = ""aeiouAEIOU""
+    vowels_replace = dict([(i, chr(ord(i) + 2)) for i in vowels])
+    message = message.swapcase()
+    return ''.join([vowels_replace[i] if i in vowels else i for i in message])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('TEST') == 'tgst', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('Mudasir') == 'mWDCSKR', ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate('YES') == 'ygs', ""This prints if this assert fails 3 (good for debugging!)""
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('This is a message') == 'tHKS KS C MGSSCGG', ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(""I DoNt KnOw WhAt tO WrItE"") == 'k dQnT kNqW wHcT Tq wRkTg', ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+
+def skjkasdkd(lst):
+    """"""ທ່ານໄດ້ຮັບບັນຊີລາຍຊື່ຂອງຕົວເລກເຕັມ. ທ່ານຕ້ອງຊອກຫາຄ່າຫຼັກທີ່ໃຫຍ່ທີ່ສຸດແລະສົ່ງຄືນຜົນລວມຂອງຕົວເລກຂອງມັນ. ຕົວຢ່າງ: ສໍາ ລັບ lst = [0,3,2,1,3,5,7,4,5,5,5,2,181,32,4,32,3,2,32,324,4,3] ຜົນຜະລິດຄວນເປັນ 10 ສໍາ ລັບ lst = [1,0,1,8,2,4597,2,1,3,40,1,2,1,2,4,2,5,1] ຜົນຜະລິດຄວນເປັນ 25 ສໍາ ລັບ lst = [1,3,1,32,5107,34,83278,109,163,23,2323,32,30,1,9,3] ຜົນຜະລິດຄວນເປັນ 13 ສໍາ ລັບ lst = [0,724,32,71,99,32,6,0,5,91,83,0,5,6] ຜົນຜະລິດຄວນເປັນ 11 ສໍາ ລັບ lst = [0,81,12,31,21] ຜົນຜະລິດຄວນເປັນ 3 ສໍາ ລັບ lst = [0,
+    """"""
+","    def isPrime(n):
+        for i in range(2,int(n**0.5)+1):
+            if n%i==0:
+                return False
+
+        return True
+    maxx = 0
+    i = 0
+    while i < len(lst):
+        if(lst[i] > maxx and isPrime(lst[i])):
+            maxx = lst[i]
+        i+=1
+    result = sum(int(digit) for digit in str(maxx))
+    return result
+
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([0,3,2,1,3,5,7,4,5,5,5,2,181,32,4,32,3,2,32,324,4,3]) == 10, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1,0,1,8,2,4597,2,1,3,40,1,2,1,2,4,2,5,1]) == 25, ""This prints if this assert fails 2 (also good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1,3,1,32,5107,34,83278,109,163,23,2323,32,30,1,9,3]) == 13, ""This prints if this assert fails 3 (also good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([0,724,32,71,99,32,6,0,5,91,83,0,5,6]) == 11, ""This prints if this assert fails 4 (also good for debugging!)""
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([0,81,12,3,1,21]) == 3, ""This prints if this assert fails 5 (also good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([0,8,1,2,1,7]) == 7, ""This prints if this assert fails 6 (also good for debugging!)""
+
+    assert candidate([8191]) == 19, ""This prints if this assert fails 7 (also good for debugging!)""
+    assert candidate([8191, 123456, 127, 7]) == 19, ""This prints if this assert fails 8 (also good for debugging!)""
+    assert candidate([127, 97, 8192]) == 10, ""This prints if this assert fails 9 (also good for debugging!)""
+"
+"
+def check_dict_case(dict):
+    """"""
+    ຖ້າໃຫ້ມີບັນທຶກຄໍາສັບ, ໃຫ້ກັບ True ຖ້າວ່າຄີທັງ ຫມົດ ແມ່ນສາຍໃນຕົວອັກສອນນ້ອຍຫຼືຄີທັງ ຫມົດ ແມ່ນສາຍໃນຕົວອັກສອນໃຫຍ່, ຖ້າບໍ່ດັ່ງນັ້ນໃຫ້ກັບ False. ຫນ້າທີ່ຄວນກັບ False ແມ່ນບັນທຶກຄໍາສັບທີ່ໃຫ້ແມ່ນເປົ່າ. ຕົວຢ່າງ: check_dict_case{""a"":""apple"", ""b"":""banana""}) ຄວນກັບ True. check_dict_case{""a"":""apple"", ""A"":""banana"", ""B"":""banana""}) ຄວນກັບ False. check_dict_case{""a"":""apple"", 8:""banana"", ""a"":""apple""}) ຄວນກັບ False. check_dict_case{""Name"":""John"", ""Age"":""36"", ""City"":""Houston""}) False ຄວນ
+    """"""
+","    if len(dict.keys()) == 0:
+        return False
+    else:
+        state = ""start""
+        for key in dict.keys():
+
+            if isinstance(key, str) == False:
+                state = ""mixed""
+                break
+            if state == ""start"":
+                if key.isupper():
+                    state = ""upper""
+                elif key.islower():
+                    state = ""lower""
+                else:
+                    break
+            elif (state == ""upper"" and not key.isupper()) or (state == ""lower"" and not key.islower()):
+                    state = ""mixed""
+                    break
+            else:
+                break
+        return state == ""upper"" or state == ""lower"" 
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate({""p"":""pineapple"", ""b"":""banana""}) == True, ""First test error: "" + str(candidate({""p"":""pineapple"", ""b"":""banana""}))
+    assert candidate({""p"":""pineapple"", ""A"":""banana"", ""B"":""banana""}) == False, ""Second test error: "" + str(candidate({""p"":""pineapple"", ""A"":""banana"", ""B"":""banana""}))
+    assert candidate({""p"":""pineapple"", 5:""banana"", ""a"":""apple""}) == False, ""Third test error: "" + str(candidate({""p"":""pineapple"", 5:""banana"", ""a"":""apple""}))
+    assert candidate({""Name"":""John"", ""Age"":""36"", ""City"":""Houston""}) == False, ""Fourth test error: "" + str(candidate({""Name"":""John"", ""Age"":""36"", ""City"":""Houston""}))
+    assert candidate({""STATE"":""NC"", ""ZIP"":""12345"" }) == True, ""Fifth test error: "" + str(candidate({""STATE"":""NC"", ""ZIP"":""12345"" }))      
+    assert candidate({""fruit"":""Orange"", ""taste"":""Sweet"" }) == True, ""Fourth test error: "" + str(candidate({""fruit"":""Orange"", ""taste"":""Sweet"" }))      
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate({}) == False, ""1st edge test error: "" + str(candidate({}))
+
+"
+"
+def count_up_to(n):
+    """"""ປະຕິບັດຟັງຊັນທີ່ເອົາເລກເຕັມທີ່ບໍ່ແມ່ນລົບ ແລະສົ່ງຄືນແຖວຂອງເລກເຕັມ n ອັນທໍາອິດທີ່ເປັນເລກຕົ້ນແລະນ້ອຍກວ່າ n. ຕົວຢ່າງ: count_up_to(5) => [2,3] count_up_to(11) => [2,3,5,7] count_up_to(0) => [] count_up_to(20) => [2,3,5,7,11,13,17,19] count_up_to(1) => [] count_up_to(18) => [2,3,5,7,11,13,17]
+    """"""
+","    primes = []
+    for i in range(2, n):
+        is_prime = True
+        for j in range(2, i):
+            if i % j == 0:
+                is_prime = False
+                break
+        if is_prime:
+            primes.append(i)
+    return primes
+
+","def check(candidate):
+
+    assert candidate(5) == [2,3]
+    assert candidate(6) == [2,3,5]
+    assert candidate(7) == [2,3,5]
+    assert candidate(10) == [2,3,5,7]
+    assert candidate(0) == []
+    assert candidate(22) == [2,3,5,7,11,13,17,19]
+    assert candidate(1) == []
+    assert candidate(18) == [2,3,5,7,11,13,17]
+    assert candidate(47) == [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43]
+    assert candidate(101) == [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]
+
+"
+"
+def multiply(a, b):
+    """"""ສໍາເລັດການປະຕິບັດທີ່ໃຊ້ເວລາສອງຕົວເລກເຕັມແລະກັບຄືນຜົນຜະລິດຂອງຕົວເລກຂອງຕົວເລກຂອງຕົວເລກຂອງມັນ. ສົມມຸດວ່າການປ້ອນຂໍ້ມູນແມ່ນຖືກຕ້ອງສະ ເຫມີ. ຕົວຢ່າງ: ການປ້ອນໂຮມ ((148, 412) ຄວນກັບຄືນ 16. ການປ້ອນໂຮມ ((19, 28) ຄວນກັບຄືນ 72. ການປ້ອນໂຮມ ((2020, 1851) ຄວນກັບຄືນ 0. ການປ້ອນໂຮມ ((14,-15) ຄວນກັບຄືນ 20.
+    """"""
+","    return abs(a % 10) * abs(b % 10)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(148, 412) == 16, ""First test error: "" + str(candidate(148, 412))                    
+    assert candidate(19, 28) == 72, ""Second test error: "" + str(candidate(19, 28))           
+    assert candidate(2020, 1851) == 0, ""Third test error: "" + str(candidate(2020, 1851))
+    assert candidate(14,-15) == 20, ""Fourth test error: "" + str(candidate(14,-15))      
+    assert candidate(76, 67) == 42, ""Fifth test error: "" + str(candidate(76, 67))      
+    assert candidate(17, 27) == 49, ""Sixth test error: "" + str(candidate(17, 27))      
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(0, 1) == 0, ""1st edge test error: "" + str(candidate(0, 1))
+    assert candidate(0, 0) == 0, ""2nd edge test error: "" + str(candidate(0, 0))
+
+"
+"
+def count_upper(s):
+    """"""
+    ໃຫ້ string s, ນັບຈໍານວນ vowels uppercase ໃນອິນເດຍແຖວ. ຕົວຢ່າງ: count_upper (('aBCdEf') ກັບຄືນ 1 count_upper (('abcdefg') ກັບຄືນ 0 count_upper (('dBBE') ກັບຄືນ 0
+    """"""
+","    count = 0
+    for i in range(0,len(s),2):
+        if s[i] in ""AEIOU"":
+            count += 1
+    return count
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('aBCdEf')  == 1
+    assert candidate('abcdefg') == 0
+    assert candidate('dBBE') == 0
+    assert candidate('B')  == 0
+    assert candidate('U')  == 1
+    assert candidate('') == 0
+    assert candidate('EEEE') == 2
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def closest_integer(value):
+    '''
+    Create a function that takes a value (string) representing a number
+    and returns the closest integer to it. If the number is equidistant
+    from two integers, round it away from zero.
+
+    Examples
+    >>> closest_integer(""10"")
+    10
+    >>> closest_integer(""15.3"")
+    15
+
+    Note:
+    Rounding away from zero means that if the given number is equidistant
+    from two integers, the one you should return is the one that is the
+    farthest from zero. For Exampleclosest_integer(""14.5"") should
+    return 15 and closest_integer(""-14.5"") should return -15.
+    '''
+","    from math import floor, ceil
+
+    if value.count('.') == 1:
+        # remove trailing zeros
+        while (value[-1] == '0'):
+            value = value[:-1]
+
+    num = float(value)
+    if value[-2:] == '.5':
+        if num > 0:
+            res = ceil(num)
+        else:
+            res = floor(num)
+    elif len(value) > 0:
+        res = int(round(num))
+    else:
+        res = 0
+
+    return res
+
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""10"") == 10, ""Test 1""
+    assert candidate(""14.5"") == 15, ""Test 2""
+    assert candidate(""-15.5"") == -16, ""Test 3""
+    assert candidate(""15.3"") == 15, ""Test 3""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""0"") == 0, ""Test 0""
+
+"
+"
+def make_a_pile(n):
+    """"""
+    ຖ້າໃຫ້ເປັນຈໍານວນເຕັມບວກ n, ທ່ານຕ້ອງເຮັດເປັນຄັງຂອງ n ລະດັບຂອງກ້ອນຫີນ. ລະດັບທໍາອິດມີ n ກ້ອນຫີນ. ຈໍານວນຂອງກ້ອນຫີນໃນລະດັບຕໍ່ໄປແມ່ນ: - ຕົວເລກແປກຕໍ່ໄປຖ້າ n ແມ່ນແປກ. - ຕົວເລກແຖວຕໍ່ໄປຖ້າ n ແມ່ນແຖວ. ກັບຄືນຈໍານວນຂອງກ້ອນຫີນໃນແຕ່ລະລະດັບໃນບັນຊີລາຍຊື່, ບ່ອນທີ່ອົງປະກອບທີ່ດັດຊະນີ i ສະແດງໃຫ້ເຫັນຈໍານວນຂອງກ້ອນຫີນໃນລະດັບ (i + 1). ຕົວຢ່າງ:
+    >>> make_a_pile(3)
+    [3, 5, 7]
+    """"""
+","    return [n + 2*i for i in range(n)]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(3) == [3, 5, 7], ""Test 3""
+    assert candidate(4) == [4,6,8,10], ""Test 4""
+    assert candidate(5) == [5, 7, 9, 11, 13]
+    assert candidate(6) == [6, 8, 10, 12, 14, 16]
+    assert candidate(8) == [8, 10, 12, 14, 16, 18, 20, 22]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def words_string(s):
+    """"""
+    ທ່ານຈະໄດ້ຮັບສາຍຂອງຄໍາທີ່ແຍກອອກດ້ວຍຄອມ ຫຼື ສະເປສ. ວຽກງານຂອງທ່ານແມ່ນເພື່ອແບ່ງສາຍເປັນຄໍາແລະສົ່ງຄືນການຈັດລຽງຂອງຄໍາ. ຕົວຢ່າງ: words_string ((""Hi, my name is John"") == [""Hi"", ""my"", ""name"", ""is"", ""John""] words_string ((""One, two, three, four, five, six"") == [""One"", ""two"", ""three"", ""four"", ""five"", ""six""]
+    """"""
+","    if not s:
+        return []
+
+    s_list = []
+
+    for letter in s:
+        if letter == ',':
+            s_list.append(' ')
+        else:
+            s_list.append(letter)
+
+    s_list = """".join(s_list)
+    return s_list.split()
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(""Hi, my name is John"") == [""Hi"", ""my"", ""name"", ""is"", ""John""]
+    assert candidate(""One, two, three, four, five, six"") == [""One"", ""two"", ""three"", ""four"", ""five"", ""six""]
+    assert candidate(""Hi, my name"") == [""Hi"", ""my"", ""name""]
+    assert candidate(""One,, two, three, four, five, six,"") == [""One"", ""two"", ""three"", ""four"", ""five"", ""six""]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate("""") == []
+    assert candidate(""ahmed     , gamal"") == [""ahmed"", ""gamal""]
+
+"
+"
+def choose_num(x, y):
+    """"""ຫນ້າ ທີ່ນີ້ເອົາສອງຕົວເລກບວກ x ແລະ y ແລະສົ່ງຄືນຕົວເລກເຕັມທີ່ໃຫຍ່ທີ່ສຸດທີ່ຢູ່ໃນຂອບ [x, y] ລວມ. ຖ້າບໍ່ມີຕົວເລກດັ່ງກ່າວ, ແລ້ວ ຫນ້າ ທີ່ຄວນຈະສົ່ງຄືນ -1. ຕົວຢ່າງ: choose_num(12, 15) = 14 choose_num(13, 12) = -1
+    """"""
+","    if x > y:
+        return -1
+    if y % 2 == 0:
+        return y
+    if x == y:
+        return -1
+    return y - 1
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(12, 15) == 14
+    assert candidate(13, 12) == -1
+    assert candidate(33, 12354) == 12354
+    assert candidate(5234, 5233) == -1
+    assert candidate(6, 29) == 28
+    assert candidate(27, 10) == -1
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(7, 7) == -1
+    assert candidate(546, 546) == 546
+
+"
+"
+def rounded_avg(n, m):
+    """"""ທ່ານໄດ້ຮັບສອງຕົວເລກເຕັມບວກ n ແລະ m, ແລະ ຫນ້າ ທີ່ຂອງທ່ານແມ່ນເພື່ອຄິດໄລ່ສະເລ່ຍຂອງຕົວເລກເຕັມຈາກ n ເຖິງ m (ລວມທັງ n ແລະ m). ຮອບ ຄໍາ ຕອບໃຫ້ເປັນຕົວເລກເຕັມທີ່ໃກ້ທີ່ສຸດແລະປ່ຽນມັນເປັນຕົວເລກບີເນີ. ຖ້າ n ໃຫຍ່ກວ່າ m, ກັບຄືນ -1. ຕົວຢ່າງ: rounded_avg ((1, 5) => ""0b11"" rounded_avg ((7, 5) => -1 rounded_avg ((10, 20) => ""0b11"" rounded_avg ((20, 33) => ""0b11010""
+    """"""
+","    if m < n:
+        return -1
+    summation = 0
+    for i in range(n, m+1):
+        summation += i
+    return bin(round(summation/(m - n + 1)))
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(1, 5) == ""0b11""
+    assert candidate(7, 13) == ""0b1010""
+    assert candidate(964,977) == ""0b1111001010""
+    assert candidate(996,997) == ""0b1111100100""
+    assert candidate(560,851) == ""0b1011000010""
+    assert candidate(185,546) == ""0b101101110""
+    assert candidate(362,496) == ""0b110101101""
+    assert candidate(350,902) == ""0b1001110010""
+    assert candidate(197,233) == ""0b11010111""
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(7, 5) == -1
+    assert candidate(5, 1) == -1
+    assert candidate(5, 5) == ""0b101""
+
+"
+"
+def unique_digits(x):
+    """"""ໂດຍໄດ້ຮັບບັນຊີລາຍຊື່ຂອງຕົວເລກເຕັມບວກ x. ກັບຄືນບັນຊີລາຍຊື່ທີ່ຈັດລຽງຂອງອົງປະກອບທັງ ຫມົດ ທີ່ບໍ່ມີຕົວເລກແຖວໃດໆ. ຫມາຍ ເຫດ: ບັນຊີລາຍຊື່ທີ່ສົ່ງຄືນຄວນຖືກຈັດລຽງຕາມ ລໍາ ດັບເພີ່ມຂື້ນ. ຕົວຢ່າງ:
+    >>> unique_digits([15, 33, 1422, 1])
+    [1, 15, 33]
+    >>> unique_digits([152, 323, 1422, 10])
+    []
+    """"""
+","    odd_digit_elements = []
+    for i in x:
+        if all (int(c) % 2 == 1 for c in str(i)):
+            odd_digit_elements.append(i)
+    return sorted(odd_digit_elements)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([15, 33, 1422, 1]) == [1, 15, 33]
+    assert candidate([152, 323, 1422, 10]) == []
+    assert candidate([12345, 2033, 111, 151]) == [111, 151]
+    assert candidate([135, 103, 31]) == [31, 135]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def by_length(arr):
+    """"""
+    ໂດຍໃຫ້ຕົວເລກເຕັມ, ຈັດແຈງຕົວເລກເຕັມທີ່ຢູ່ລະຫວ່າງ 1 ແລະ 9 ລວມທັງ, ປ່ຽນແຖວຜົນໄດ້ຮັບ, ແລະຫຼັງຈາກນັ້ນປ່ຽນແຕ່ລະຕົວເລກດ້ວຍຊື່ທີ່ສອດຄ່ອງຈາກ ""ຫນຶ່ງ"", ""ສອງ"", ""ສາມ"", ""ສີ່"", ""ຫ້າ"", ""ຫົກ"", ""ເຈັດ"", ""ແປດ"", ""ເກົ້າ"". ຕົວຢ່າງ: arr = [2, 1, 1, 4, 5, 8, 2, 3] -> ຈັດແຈງ arr -> [1, 1, 2, 2, 3, 4, 5, 8] -> reverse arr -> [8, 5, 4, 3, 2, 2, 1, 1] return [""Eight"", ""Five"", ""Three"", ""Two"", ""Two"", ""One"", ""One""] ຖ້າແຖວເປົ່າ, ກັບຄືນແຖວ: arr = [] return [] ຖ້າແຖວມີເລກແປກໃດກໍ່ບໍ່ສົນໃຈ: arr = [1, -1, 55] -> arr -> [1, 55
+    """"""
+","    dic = {
+        1: ""One"",
+        2: ""Two"",
+        3: ""Three"",
+        4: ""Four"",
+        5: ""Five"",
+        6: ""Six"",
+        7: ""Seven"",
+        8: ""Eight"",
+        9: ""Nine"",
+    }
+    sorted_arr = sorted(arr, reverse=True)
+    new_arr = []
+    for var in sorted_arr:
+        try:
+            new_arr.append(dic[var])
+        except:
+            pass
+    return new_arr
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([2, 1, 1, 4, 5, 8, 2, 3]) == [""Eight"", ""Five"", ""Four"", ""Three"", ""Two"", ""Two"", ""One"", ""One""], ""Error""
+    assert candidate([]) == [], ""Error""
+    assert candidate([1, -1 , 55]) == ['One'], ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([1, -1, 3, 2]) == [""Three"", ""Two"", ""One""]
+    assert candidate([9, 4, 8]) == [""Nine"", ""Eight"", ""Four""]
+
+"
+"
+def f(n):
+    """""" ປະຕິບັດຟັງຊັນ f ທີ່ຖື n ເປັນຕົວແປ, ແລະສົ່ງຄືນລາຍຊື່ຂະຫນາດ n, ເຊັ່ນວ່າຄ່າຂອງອົງປະກອບທີ່ດັດຊະນີ i ແມ່ນຕົວເລກຂອງ i ຖ້າ i ແມ່ນແຖວ ຫຼືຜົນລວມຂອງຕົວເລກຈາກ 1 ຫາ i ຖ້າບໍ່ດັ່ງນັ້ນ. i ເລີ່ມຈາກ 1. ຕົວເລກຂອງ i ແມ່ນການຄູນຂອງຕົວເລກຈາກ 1 ຫາ i (1 * 2 *... * i). ຕົວຢ່າງ: f (((5) == [1, 2, 6, 24, 15]
+    """"""
+","    ret = []
+    for i in range(1,n+1):
+        if i%2 == 0:
+            x = 1
+            for j in range(1,i+1): x *= j
+            ret += [x]
+        else:
+            x = 0
+            for j in range(1,i+1): x += j
+            ret += [x]
+    return ret
+","def check(candidate):
+
+    assert candidate(5) == [1, 2, 6, 24, 15]
+    assert candidate(7) == [1, 2, 6, 24, 15, 720, 28]
+    assert candidate(1) == [1]
+    assert candidate(3) == [1, 2, 6]
+"
+"
+def even_odd_palindrome(n):
+    """"""
+    ໂດຍໃຫ້ຕົວເລກເຕັມບວກ n, ສົ່ງຄືນ tuple ທີ່ມີ ຈໍາ ນວນ palindromes ທີ່ເທົ່າທຽມກັນແລະບໍ່ເທົ່າທຽມກັນທີ່ຕົກຢູ່ໃນຂອບເຂດ ((1, n), ລວມທັງ. ຕົວຢ່າງ1: ການປ້ອນຂໍ້ມູນ: 3 ຜົນຜະລິດ: (1, 2) ຄໍາອະທິບາຍ: Palindrome Integer ແມ່ນ 1, 2, 3. ຫນຶ່ງ ໃນນັ້ນແມ່ນເທົ່າທຽມກັນ, ແລະສອງໃນນັ້ນແມ່ນແປກ. ຕົວຢ່າງ2: ການປ້ອນຂໍ້ມູນ: 12 ຜົນຜະລິດ: (4, 6) ຄໍາອະທິບາຍ: Palindrome Integer ແມ່ນ 1, 2, 3, 4, 5, 6, 7, 8, 9, 11. ສີ່ໃນນັ້ນແມ່ນເທົ່າທຽມກັນ, ແລະ 6 ໃນນັ້ນແມ່ນແປກ. ຫມາຍເຫດ: 1. 1 <= n <= 10^3 2. tuple ໄດ້ສົ່ງຄືນ ຈໍາ ນວນ palindromes ທີ່ເທົ່າທຽມກັນແລະແປກຕາມລໍາດັບ.
+    """"""
+","    def is_palindrome(n):
+        return str(n) == str(n)[::-1]
+
+    even_palindrome_count = 0
+    odd_palindrome_count = 0
+
+    for i in range(1, n+1):
+        if i%2 == 1 and is_palindrome(i):
+                odd_palindrome_count += 1
+        elif i%2 == 0 and is_palindrome(i):
+            even_palindrome_count += 1
+    return (even_palindrome_count, odd_palindrome_count)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(123) == (8, 13)
+    assert candidate(12) == (4, 6)
+    assert candidate(3) == (1, 2)
+    assert candidate(63) == (6, 8)
+    assert candidate(25) == (5, 6)
+    assert candidate(19) == (4, 6)
+    assert candidate(9) == (4, 5), ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1) == (0, 1), ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def count_nums(arr):
+    """"""
+    ຂຽນຟັງຊັນ count_nums ທີ່ເອົາແຖວຂອງຕົວເລກເຕັມ ແລະສົ່ງຄືນຈໍານວນອົງປະກອບທີ່ມີຈໍານວນຕົວເລກ > 0. ຖ້າຕົວເລກເປັນລົບ, ແລ້ວຕົວເລກທີ່ລົງນາມທໍາອິດຂອງມັນຈະເປັນລົບ: ຕົວຢ່າງ -123 ມີຕົວເລກລົງນາມ -1, 2, ແລະ 3.
+    >>> count_nums([]) == 0
+    >>> count_nums([-1, 11, -11]) == 1
+    >>> count_nums([1, 1, 2]) == 3
+    """"""
+","    def digits_sum(n):
+        neg = 1
+        if n < 0: n, neg = -1 * n, -1 
+        n = [int(i) for i in str(n)]
+        n[0] = n[0] * neg
+        return sum(n)
+    return len(list(filter(lambda x: x > 0, [digits_sum(i) for i in arr])))
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([]) == 0
+    assert candidate([-1, -2, 0]) == 0
+    assert candidate([1, 1, 2, -2, 3, 4, 5]) == 6
+    assert candidate([1, 6, 9, -6, 0, 1, 5]) == 5
+    assert candidate([1, 100, 98, -7, 1, -1]) == 4
+    assert candidate([12, 23, 34, -45, -56, 0]) == 5
+    assert candidate([-0, 1**0]) == 1
+    assert candidate([1]) == 1
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def move_one_ball(arr):
+    """"""ພວກເຮົາມີ array 'arr' ຂອງຕົວເລກເຕັມ N arr[1], arr[2],..., arr[N].ຕົວເລກໃນ array ຈະຖືກຈັດລຽງຕາມຄວາມເປັນໄປໄດ້. ຫນ້າທີ່ຂອງທ່ານແມ່ນເພື່ອ ກໍາ ນົດວ່າມັນເປັນໄປໄດ້ທີ່ຈະຈັດລຽງ array ໃນລໍາດັບທີ່ບໍ່ຫຼຸດລົງໂດຍການປະຕິບັດການຕໍ່ໄປນີ້ໃນ array ທີ່ໃຫ້: ທ່ານໄດ້ຮັບອະນຸຍາດໃຫ້ປະຕິບັດການເຄື່ອນໄຫວຂວາຊ້າຍເທົ່າໃດຄັ້ງ. ການປະຕິບັດການເຄື່ອນໄຫວຂວາຊ້າຍ ຫນຶ່ງ ຫມາຍ ຄວາມວ່າການເຄື່ອນໄຫວອົງປະກອບທັງ ຫມົດ ຂອງ array ໂດຍ ຫນຶ່ງ ຕໍາ ແຫນ່ງ ໃນທິດທາງທີ່ຖືກຕ້ອງ. ອົງປະກອບສຸດທ້າຍຂອງ array ຈະຖືກຍ້າຍໄປທີ່ ຕໍາ ແຫນ່ງ ເລີ່ມຕົ້ນໃນ array ຄື 0th index. ຖ້າມັນເປັນໄປໄດ້ທີ່ຈະໄດ້ຮັບ array ທີ່ຖືກຈັດລຽງໂດຍການປະຕິບັດການຂ້າງເທິງຫຼັງຈາກນັ້ນກັບຄືນ True ຖ້າຫາກວ່າການປະຕິບັດການທີ່ໃຫ້ແມ່ນ False. ຖ້າ array ເປົ່າແລ້ວຈຶ່ງກັບຄືນ True. ຫມາຍ ເຫດ: ບັນຊີ
+                
+    """"""
+","    if len(arr)==0:
+      return True
+    sorted_array=sorted(arr)
+    my_arr=[]
+    
+    min_value=min(arr)
+    min_index=arr.index(min_value)
+    my_arr=arr[min_index:]+arr[0:min_index]
+    for i in range(len(arr)):
+      if my_arr[i]!=sorted_array[i]:
+        return False
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([3, 4, 5, 1, 2])==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([3, 5, 10, 1, 2])==True
+    assert candidate([4, 3, 1, 2])==False
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([3, 5, 4, 1, 2])==False, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([])==True
+"
+"
+def exchange(lst1, lst2):
+    """"""ໃນບັນຫານີ້, ທ່ານຈະຈັດຕັ້ງປະຕິບັດຟັງຊັນທີ່ເອົາສອງລາຍຊື່ຂອງຕົວເລກ, ແລະ ກໍາ ນົດວ່າມັນເປັນໄປໄດ້ທີ່ຈະແລກປ່ຽນອົງປະກອບລະຫວ່າງພວກມັນເພື່ອເຮັດໃຫ້ lst1 ເປັນລາຍຊື່ຂອງຕົວເລກແຖວເທົ່ານັ້ນ. ບໍ່ມີຂໍ້ ຈໍາ ກັດຕໍ່ ຈໍາ ນວນອົງປະກອບທີ່ແລກປ່ຽນລະຫວ່າງ lst1 ແລະ lst2. ຖ້າມັນເປັນໄປໄດ້ທີ່ຈະແລກປ່ຽນອົງປະກອບລະຫວ່າງ lst1 ແລະ lst2 ເພື່ອເຮັດໃຫ້ອົງປະກອບທັງ ຫມົດ ຂອງ lst1 ເປັນແຖວ, ກັບຄືນ ""YES"". ຖ້າບໍ່ດັ່ງນັ້ນ, ກັບຄືນ ""NO"". ຕົວຢ່າງ: ແລກປ່ຽນ [1, 2, 3, 4], [1, 2, 3, 4]) => ""YES"" ແລກປ່ຽນ [1, 2, 3, 4], [1, 5, 3, 4]) => ""NO"" ມັນຖືວ່າລາຍຊື່ການປ້ອນຂໍ້ມູນຈະບໍ່ເປົ່າ.
+    """"""
+","    odd = 0
+    even = 0
+    for i in lst1:
+        if i%2 == 1:
+            odd += 1
+    for i in lst2:
+        if i%2 == 0:
+            even += 1
+    if even >= odd:
+        return ""YES""
+    return ""NO""
+            
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1, 2, 3, 4], [1, 2, 3, 4]) == ""YES""
+    assert candidate([1, 2, 3, 4], [1, 5, 3, 4]) == ""NO""
+    assert candidate([1, 2, 3, 4], [2, 1, 4, 3]) == ""YES"" 
+    assert candidate([5, 7, 3], [2, 6, 4]) == ""YES""
+    assert candidate([5, 7, 3], [2, 6, 3]) == ""NO"" 
+    assert candidate([3, 2, 6, 1, 8, 9], [3, 5, 5, 1, 1, 1]) == ""NO""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([100, 200], [200, 200]) == ""YES""
+
+"
+"
+def histogram(test):
+    """"""ໃຫ້ string ທີ່ສະແດງໃຫ້ເຫັນເປັນຕົວອັກສອນຂະຫນາດນ້ອຍທີ່ແຍກຕ່າງຫາກດ້ວຍຊ່ອງຫວ່າງ, ສົ່ງຄືນຄໍານິຍາມຂອງຕົວອັກສອນທີ່ມີການຊ້ ໍາ ຊ້ອນຫຼາຍທີ່ສຸດແລະມີ ຈໍາ ນວນທີ່ສອດຄ່ອງ. ຖ້າມີຫລາຍຕົວອັກສອນມີການເກີດຂື້ນຄືກັນ, ສົ່ງຄືນທັງ ຫມົດ. ຕົວຢ່າງ: histogram ((('a b c') == {'a': 1, 'b': 1, 'c': 1} histogram ((('a b b a') == {'a': 2, 'b': 2} histogram ((('a b c a b') == {'a': 2, 'b': 2} histogram ((('b b a') == {'b 4}': histogram'(((') == {}
+
+    """"""
+","    dict1={}
+    list1=test.split("" "")
+    t=0
+
+    for i in list1:
+        if(list1.count(i)>t) and i!='':
+            t=list1.count(i)
+    if t>0:
+        for i in list1:
+            if(list1.count(i)==t):
+                
+                dict1[i]=t
+    return dict1
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('a b b a') == {'a':2,'b': 2}, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('a b c a b') == {'a': 2, 'b': 2}, ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate('a b c d g') == {'a': 1, 'b': 1, 'c': 1, 'd': 1, 'g': 1}, ""This prints if this assert fails 3 (good for debugging!)""
+    assert candidate('r t g') == {'r': 1,'t': 1,'g': 1}, ""This prints if this assert fails 4 (good for debugging!)""
+    assert candidate('b b b b a') == {'b': 4}, ""This prints if this assert fails 5 (good for debugging!)""
+    assert candidate('r t g') == {'r': 1,'t': 1,'g': 1}, ""This prints if this assert fails 6 (good for debugging!)""
+    
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('') == {}, ""This prints if this assert fails 7 (also good for debugging!)""
+    assert candidate('a') == {'a': 1}, ""This prints if this assert fails 8 (also good for debugging!)""
+
+"
+"
+def reverse_delete(s,c):
+    """"""ວຽກງານ ພວກເຮົາໄດ້ຮັບສອງສາຍ s ແລະ c, ທ່ານຕ້ອງລຶບຕົວອັກສອນທັງ ຫມົດ ໃນ s ທີ່ເທົ່າກັບຕົວອັກສອນໃດໆໃນ c ແລ້ວກວດເບິ່ງວ່າສາຍຜົນໄດ້ຮັບແມ່ນ palindrome. ສາຍຖືກເອີ້ນວ່າ palindrome ຖ້າມັນອ່ານຄືກັນກັບກັບໄປຂ້າງ ຫນ້າ. ທ່ານຄວນສົ່ງຄືນ tuple ທີ່ປະກອບດ້ວຍສາຍຜົນໄດ້ຮັບແລະ True / False ສໍາ ລັບການກວດສອບ. ຕົວຢ່າງ ສໍາ ລັບ s = ""abcde"", c = ""ae"", ຜົນໄດ້ຮັບຄວນຈະເປັນ ('bcd', False) ສໍາ ລັບ s = ""abcdef"", c = ""b"" ຜົນໄດ້ຮັບຄວນຈະເປັນ ('acdef', False) ສໍາ ລັບ s = ""abcdedcba"", c = ""ab"", ຜົນໄດ້ຮັບຄວນຈະເປັນ ('cdedc', True)
+    """"""
+","    s = ''.join([char for char in s if char not in c])
+    return (s,s[::-1] == s)
+","def check(candidate):
+
+    assert candidate(""abcde"",""ae"") == ('bcd',False)
+    assert candidate(""abcdef"", ""b"") == ('acdef',False)
+    assert candidate(""abcdedcba"",""ab"") == ('cdedc',True)
+    assert candidate(""dwik"",""w"") == ('dik',False)
+    assert candidate(""a"",""a"") == ('',True)
+    assert candidate(""abcdedcba"","""") == ('abcdedcba',True)
+    assert candidate(""abcdedcba"",""v"") == ('abcdedcba',True)
+    assert candidate(""vabba"",""v"") == ('abba',True)
+    assert candidate(""mamma"", ""mia"") == ("""", True)
+"
+"
+def odd_count(lst):
+    """"""ໂດຍໃຫ້ບັນຊີລາຍຊື່ຂອງສາຍ, ບ່ອນທີ່ແຕ່ລະສາຍປະກອບດ້ວຍຕົວເລກເທົ່ານັ້ນ, ກັບຄືນບັນຊີລາຍຊື່. ແຕ່ລະອົງປະກອບ i ຂອງຜົນຜະລິດຄວນຈະເປັນ ""ຈໍານວນອົງປະກອບແປກໃນສາຍ i ຂອງຂໍ້ມູນ"". ບ່ອນທີ່ is ທັງ ຫມົດ ຄວນຖືກທົດແທນໂດຍ ຈໍາ ນວນຕົວເລກແປກໃນສາຍ i ຂອງຂໍ້ມູນ.
+
+    >>> odd_count(['1234567'])
+    [""the number of odd elements 4n the str4ng 4 of the 4nput.""]
+    >>> odd_count(['3',""11111111""])
+    [""the number of odd elements 1n the str1ng 1 of the 1nput."",
+     ""the number of odd elements 8n the str8ng 8 of the 8nput.""]
+    """"""
+","    res = []
+    for arr in lst:
+        n = sum(int(d)%2==1 for d in arr)
+        res.append(""the number of odd elements "" + str(n) + ""n the str""+ str(n) +""ng ""+ str(n) +"" of the ""+ str(n) +""nput."")
+    return res
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(['1234567']) == [""the number of odd elements 4n the str4ng 4 of the 4nput.""], ""Test 1""
+    assert candidate(['3',""11111111""]) == [""the number of odd elements 1n the str1ng 1 of the 1nput."", ""the number of odd elements 8n the str8ng 8 of the 8nput.""], ""Test 2""
+    assert candidate(['271', '137', '314']) == [
+        'the number of odd elements 2n the str2ng 2 of the 2nput.',
+        'the number of odd elements 3n the str3ng 3 of the 3nput.',
+        'the number of odd elements 2n the str2ng 2 of the 2nput.'
+    ]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def minSubArraySum(nums):
+    """"""
+    ໂດຍໃຫ້ເປັນແອຣ໌ຂອງເລກເຕັມ n, ຊອກຫາຜົນລວມຂັ້ນຕ່ໍາຂອງແອຣ໌ຍ່ອຍຂອງເລກທີ່ບໍ່ແມ່ນເປົ່າ. ຕົວຢ່າງ minSubArraySum (([2, 3, 4, 1, 2, 4]) == 1 minSubArraySum (([-1, -2, -3]) == -6
+    """"""
+","    max_sum = 0
+    s = 0
+    for num in nums:
+        s += -num
+        if (s < 0):
+            s = 0
+        max_sum = max(s, max_sum)
+    if max_sum == 0:
+        max_sum = max(-i for i in nums)
+    min_sum = -max_sum
+    return min_sum
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([2, 3, 4, 1, 2, 4]) == 1, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([-1, -2, -3]) == -6
+    assert candidate([-1, -2, -3, 2, -10]) == -14
+    assert candidate([-9999999999999999]) == -9999999999999999
+    assert candidate([0, 10, 20, 1000000]) == 0
+    assert candidate([-1, -2, -3, 10, -5]) == -6
+    assert candidate([100, -1, -2, -3, 10, -5]) == -6
+    assert candidate([10, 11, 13, 8, 3, 4]) == 3
+    assert candidate([100, -33, 32, -1, 0, -2]) == -33
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([-10]) == -10, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([7]) == 7
+    assert candidate([1, -1]) == -1
+"
+"
+def max_fill(grid, capacity):
+    import math
+    """"""
+    ທ່ານໄດ້ຮັບຕາຫນ່າງສີ່ຫຼ່ຽມຂອງຮູ. ແຕ່ລະແຖວສະແດງໃຫ້ເຫັນເປັນຮູດຽວ, ແລະແຕ່ລະ 1 ໃນແຖວສະແດງໃຫ້ເຫັນເປັນຫົວຫນ່ວຍດຽວຂອງນ້ໍາ. ແຕ່ລະຮູມີຖັງທີ່ກົງກັບທີ່ສາມາດໃຊ້ເພື່ອສະກັດເອົານ້ໍາຈາກມັນ, ແລະຖັງທັງ ຫມົດ ມີຄວາມສາມາດດຽວກັນ. ຫນ້າທີ່ຂອງທ່ານແມ່ນການໃຊ້ຖັງເພື່ອເປົ່າຖັງ. ຜົນຜະລິດຈໍານວນຄັ້ງທີ່ທ່ານຕ້ອງການຫຼຸດລົງຖັງ. ຕົວຢ່າງ 1: Input: grid: [[0,0,1,0], [0,1,0,0], [1,1,1,1]] bucket_capacity: 1 ຜົນຜະລິດ: 6 ຕົວຢ່າງ 2: Input: grid: [[0,0,1,1], [0,0,0,0], [1,1,1], [0,1,1]] bucket_capacity: 2 ຜົນຜະລິດ: 5 ຕົວຢ່າງ 3: Input: [[:0,0,0], [0,0,0]]
+    """"""
+","    return sum([math.ceil(sum(arr)/capacity) for arr in grid])
+","def check(candidate):
+
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([[0,0,1,0], [0,1,0,0], [1,1,1,1]], 1) == 6, ""Error""
+    assert candidate([[0,0,1,1], [0,0,0,0], [1,1,1,1], [0,1,1,1]], 2) == 5, ""Error""
+    assert candidate([[0,0,0], [0,0,0]], 5) == 0, ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([[1,1,1,1], [1,1,1,1]], 2) == 4, ""Error""
+    assert candidate([[1,1,1,1], [1,1,1,1]], 9) == 2, ""Error""
+
+"
+"
+def sort_array(arr):
+    """"""
+    ໃນ Kata ນີ້, ທ່ານຕ້ອງຈັດແຈງແຖວຂອງຕົວເລກເຕັມທີ່ບໍ່ແມ່ນລົບຕາມ ຈໍາ ນວນຂອງຕົວເລກ ຫນຶ່ງ ໃນຕົວແທນສອງຂອງມັນຕາມ ລໍາ ດັບເພີ່ມຂື້ນ. ສໍາ ລັບ ຈໍາ ນວນທີ່ຄ້າຍຄືກັນຂອງຕົວເລກ ຫນຶ່ງ, ຈັດແຈງໂດຍອີງໃສ່ຄ່າປະລິມານສິບ. ມັນຕ້ອງຖືກປະຕິບັດດັ່ງນີ້:
+    >>> sort_array([1, 5, 2, 3, 4]) == [1, 2, 3, 4, 5]
+    >>> sort_array([-2, -3, -4, -5, -6]) == [-6, -5, -4, -3, -2]
+    >>> sort_array([1, 0, 2, 3, 4]) [0, 1, 2, 3, 4]
+    """"""
+","    return sorted(sorted(arr), key=lambda x: bin(x)[2:].count('1'))
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1,5,2,3,4]) == [1, 2, 4, 3, 5]
+    assert candidate([-2,-3,-4,-5,-6]) == [-4, -2, -6, -5, -3]
+    assert candidate([1,0,2,3,4]) == [0, 1, 2, 4, 3]
+    assert candidate([]) == []
+    assert candidate([2,5,77,4,5,3,5,7,2,3,4]) == [2, 2, 4, 4, 3, 3, 5, 5, 5, 7, 77]
+    assert candidate([3,6,44,12,32,5]) == [32, 3, 5, 6, 12, 44]
+    assert candidate([2,4,8,16,32]) == [2, 4, 8, 16, 32]
+    assert candidate([2,4,8,16,32]) == [2, 4, 8, 16, 32]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def select_words(s, n):
+    """"""ໂດຍໃຫ້ string s ແລະຕົວເລກທໍາມະຊາດ n, ທ່ານໄດ້ຖືກມອບຫມາຍໃຫ້ປະຕິບັດຫນ້າທີ່ທີ່ກັບຄືນບັນຊີລາຍຊື່ຂອງຄໍາສັບທັງຫມົດຈາກ string s ທີ່ປະກອບດ້ວຍຕົວອັກສອນທີ່ຖືກຕ້ອງ n, ເພື່ອຄໍາສັບເຫຼົ່ານີ້ຈະປາກົດຢູ່ໃນ string s. ຖ້າ string s ແມ່ນເປົ່າແລ້ວ, ຫນ້າທີ່ຄວນຈະກັບຄືນບັນຊີລາຍຊື່ເປົ່າ. ຫມາຍເຫດ: ທ່ານອາດຈະສົມມຸດວ່າ string input ມີພຽງແຕ່ຕົວອັກສອນແລະຊ່ອງຫວ່າງ. ຕົວຢ່າງ: select_words ""Mary had a little lamb"", 4) ==> [""little""] select_words ""Mary had a little lamb"", 3) ==> [""Mary"", ""lamb""] select_words ""simple white space"", 2) ==> [] select_words ""Hello world"", 4) ==> [""world""] select_words ""Uncle sam"", 3) ==> [""Uncle""]
+    """"""
+","    result = []
+    for word in s.split():
+        n_consonants = 0
+        for i in range(0, len(word)):
+            if word[i].lower() not in [""a"",""e"",""i"",""o"",""u""]:
+                n_consonants += 1 
+        if n_consonants == n:
+            result.append(word)
+    return result
+
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""Mary had a little lamb"", 4) == [""little""], ""First test error: "" + str(candidate(""Mary had a little lamb"", 4))      
+    assert candidate(""Mary had a little lamb"", 3) == [""Mary"", ""lamb""], ""Second test error: "" + str(candidate(""Mary had a little lamb"", 3))  
+    assert candidate(""simple white space"", 2) == [], ""Third test error: "" + str(candidate(""simple white space"", 2))      
+    assert candidate(""Hello world"", 4) == [""world""], ""Fourth test error: "" + str(candidate(""Hello world"", 4))  
+    assert candidate(""Uncle sam"", 3) == [""Uncle""], ""Fifth test error: "" + str(candidate(""Uncle sam"", 3))
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate("""", 4) == [], ""1st edge test error: "" + str(candidate("""", 4))
+    assert candidate(""a b c d e f"", 1) == [""b"", ""c"", ""d"", ""f""], ""2nd edge test error: "" + str(candidate(""a b c d e f"", 1))
+
+"
+"
+def get_closest_vowel(word):
+    """"""ທ່ານໄດ້ຮັບຄໍາ. ຫນ້າທີ່ຂອງທ່ານແມ່ນເພື່ອຊອກຫາ vowel ທີ່ໃກ້ທີ່ສຸດທີ່ຢືນຢູ່ລະຫວ່າງສອງ consonants ຈາກດ້ານຂວາຂອງຄໍາ ( case sensitive). vowels ໃນຕອນເລີ່ມຕົ້ນແລະສິ້ນສຸດບໍ່ໄດ້ນັບ. ກັບຄືນໄປບ່ອນ empty string ຖ້າຫາກວ່າທ່ານບໍ່ໄດ້ພົບເຫັນ vowel ໃດທີ່ຕອບສະ ຫນອງ ເງື່ອນໄຂຂ້າງເທິງ. ທ່ານອາດຈະສົມມຸດວ່າ string ທີ່ໃຫ້ມີຕົວອັກສອນພາສາອັງກິດເທົ່ານັ້ນ. ຕົວຢ່າງ: get_closest_vowel (((""yogurt"") ==> ""u"" get_closest_vowel (((""F"") ==> ""U"" get_closest_vowel (((""quick"") ==> """" get_closest_vowel"" (((ab"") ==> """"
+    """"""
+","    if len(word) < 3:
+        return """"
+
+    vowels = {""a"", ""e"", ""i"", ""o"", ""u"", ""A"", ""E"", 'O', 'U', 'I'}
+    for i in range(len(word)-2, 0, -1):
+        if word[i] in vowels:
+            if (word[i+1] not in vowels) and (word[i-1] not in vowels):
+                return word[i]
+    return """"
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""yogurt"") == ""u""
+    assert candidate(""full"") == ""u""
+    assert candidate(""easy"") == """"
+    assert candidate(""eAsy"") == """"
+    assert candidate(""ali"") == """"
+    assert candidate(""bad"") == ""a""
+    assert candidate(""most"") == ""o""
+    assert candidate(""ab"") == """"
+    assert candidate(""ba"") == """"
+    assert candidate(""quick"") == """"
+    assert candidate(""anime"") == ""i""
+    assert candidate(""Asia"") == """"
+    assert candidate(""Above"") == ""o""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def match_parens(lst):
+    '''
+    You are given a list of two strings, both strings consist of open
+    parentheses '(' or close parentheses ')' only.
+    Your job is to check if it is possible to concatenate the two strings in
+    some order, that the resulting string will be good.
+    A string S is considered to be good if and only if all parentheses in S
+    are balanced. For example: the string '(())()' is good, while the string
+    '())' is not.
+    Return 'Yes' if there's a way to make a good string, and return 'No' otherwise.
+
+    Examples:
+    match_parens(['()(', ')']) == 'Yes'
+    match_parens([')', ')']) == 'No'
+    '''
+","    def check(s):
+        val = 0
+        for i in s:
+            if i == '(':
+                val = val + 1
+            else:
+                val = val - 1
+            if val < 0:
+                return False
+        return True if val == 0 else False
+
+    S1 = lst[0] + lst[1]
+    S2 = lst[1] + lst[0]
+    return 'Yes' if check(S1) or check(S2) else 'No'
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(['()(', ')']) == 'Yes'
+    assert candidate([')', ')']) == 'No'
+    assert candidate(['(()(())', '())())']) == 'No'
+    assert candidate([')())', '(()()(']) == 'Yes'
+    assert candidate(['(())))', '(()())((']) == 'Yes'
+    assert candidate(['()', '())']) == 'No'
+    assert candidate(['(()(', '()))()']) == 'Yes'
+    assert candidate(['((((', '((())']) == 'No'
+    assert candidate([')(()', '(()(']) == 'No'
+    assert candidate([')(', ')(']) == 'No'
+    
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(['(', ')']) == 'Yes'
+    assert candidate([')', '(']) == 'Yes' 
+
+"
+"
+def maximum(arr, k):
+    """"""
+    ໂດຍໃຫ້ເປັນ array arr ຂອງຕົວເລກເຕັມແລະຕົວເລກເຕັມບວກ k, ໃຫ້ກັບຄືນບັນຊີລາຍຊື່ທີ່ຈັດລຽງຄວາມຍາວ k ດ້ວຍຕົວເລກ k ສູງສຸດໃນ arr. ຕົວຢ່າງ1: ການປ້ອນຂໍ້ມູນ: arr = [-3, -4, 5], k = 3 ຜົນຜະລິດ: [-4, -3, 5] ຕົວຢ່າງ2: ການປ້ອນຂໍ້ມູນ: arr = [4, -4, 4], k = 2 ຜົນຜະລິດ: [4, 4] ຕົວຢ່າງ3: ການປ້ອນຂໍ້ມູນ: arr = [-3, 2, 1, 2, -1, -2, 1], k = 1 ຜົນຜະລິດ: [2] ຫມາຍເຫດ: 1. ຄວາມຍາວຂອງ array ຈະຢູ່ໃນລະດັບ [1, 1000]. 2. ອົງປະກອບໃນ array ຈະຢູ່ໃນລະດັບ [-1000, 1000]. 3. 0 <= k <= len ((arr)
+    """"""
+","    if k == 0:
+        return []
+    arr.sort()
+    ans = arr[-k:]
+    return ans
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([-3, -4, 5], 3) == [-4, -3, 5]
+    assert candidate([4, -4, 4], 2) == [4, 4]
+    assert candidate([-3, 2, 1, 2, -1, -2, 1], 1) == [2]
+    assert candidate([123, -123, 20, 0 , 1, 2, -3], 3) == [2, 20, 123]
+    assert candidate([-123, 20, 0 , 1, 2, -3], 4) == [0, 1, 2, 20]
+    assert candidate([5, 15, 0, 3, -13, -8, 0], 7) == [-13, -8, 0, 0, 3, 5, 15]
+    assert candidate([-1, 0, 2, 5, 3, -10], 2) == [3, 5]
+    assert candidate([1, 0, 5, -7], 1) == [5]
+    assert candidate([4, -4], 2) == [-4, 4]
+    assert candidate([-10, 10], 2) == [-10, 10]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1, 2, 3, -23, 243, -400, 0], 0) == []
+
+"
+"
+def solution(lst):
+    """"""ໂດຍໃຫ້ບັນຊີລາຍຊື່ຂອງຕົວເລກເຕັມທີ່ບໍ່ແມ່ນເປົ່າ, ກັບຄືນຜົນລວມຂອງອົງປະກອບແປກທັງ ຫມົດ ທີ່ຢູ່ໃນ ຕໍາ ແຫນ່ງ ແຖວ. ຕົວຢ່າງການແກ້ໄຂ (([5, 8, 7, 1]) ==> 12 ວິທີແກ້ໄຂ (([3, 3, 3, 3, 3]) ==> 9 ວິທີແກ້ໄຂ (([30, 13, 24, 321]) ==>0
+    """"""
+","    return sum([x for idx, x in enumerate(lst) if idx%2==0 and x%2==1])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([5, 8, 7, 1])    == 12
+    assert candidate([3, 3, 3, 3, 3]) == 9
+    assert candidate([30, 13, 24, 321]) == 0
+    assert candidate([5, 9]) == 5
+    assert candidate([2, 4, 8]) == 0
+    assert candidate([30, 13, 23, 32]) == 23
+    assert candidate([3, 13, 2, 9]) == 3
+
+    # Check some edge cases that are easy to work out by hand.
+
+"
+"
+def add_elements(arr, k):
+    """"""
+    ໂດຍໃຫ້ແຖວທີ່ບໍ່ແມ່ນເປົ່າຂອງຕົວເລກເຕັມ arr ແລະຕົວເລກເຕັມ k, ໃຫ້ກັບຄືນຜົນລວມຂອງອົງປະກອບທີ່ມີສອງຕົວເລກສູງສຸດຈາກອົງປະກອບ k ທໍາ ອິດຂອງ arr. ຕົວຢ່າງ: ການປ້ອນຂໍ້ມູນ: arr = [111,21,3,4000,5,6,7,8,9], k = 4 ຜົນຜະລິດ: 24 # ລວມຂອງ 21 + 3 ຂໍ້ ຈໍາ ກັດ: 1. 1 <= lenarr) <= 100 2. 1 <= k <= lenarr)
+    """"""
+","    return sum(elem for elem in arr[:k] if len(str(elem)) <= 2)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,-2,-3,41,57,76,87,88,99], 3) == -4
+    assert candidate([111,121,3,4000,5,6], 2) == 0
+    assert candidate([11,21,3,90,5,6,7,8,9], 4) == 125
+    assert candidate([111,21,3,4000,5,6,7,8,9], 4) == 24, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1], 1) == 1, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def get_odd_collatz(n):
+    """"""
+    ຖ້າໃຫ້ມີຈໍານວນເຕັມບວກ n, ໃຫ້ກັບລາຍຊື່ທີ່ຈັດລຽງທີ່ມີຕົວເລກທີ່ແປກໃນ ລໍາ ດັບ collatz. ການຄາດເດົາ Collatz ແມ່ນການຄາດເດົາໃນຄະນິດສາດທີ່ກ່ຽວຂ້ອງກັບຄວາມລໍາ ດັບທີ່ຖືກ ກໍາ ນົດດັ່ງຕໍ່ໄປນີ້: ເລີ່ມຕົ້ນດ້ວຍຕົວເລກເຕັມບວກ n. ຫຼັງຈາກນັ້ນແຕ່ລະໄລຍະຈະໄດ້ຮັບຈາກໄລຍະທີ່ຜ່ານມາດັ່ງຕໍ່ໄປນີ້: ຖ້າໄລຍະທີ່ຜ່ານມາແມ່ນແຖບ, ໄລຍະຕໍ່ໄປແມ່ນເຄິ່ງ ຫນຶ່ງ ຂອງໄລຍະທີ່ຜ່ານມາ. ຖ້າໄລຍະທີ່ຜ່ານມາເປັນແປກ, ໄລຍະຕໍ່ໄປແມ່ນ 3 ເທົ່າກັບໄລຍະທີ່ຜ່ານມາບວກ 1. ການຄາດເດົາແມ່ນວ່າບໍ່ວ່າຈະເປັນມູນຄ່າຂອງ n, ລໍາ ດັບຈະບັນລຸ 1.
+    """"""
+","    if n%2==0:
+        odd_collatz = [] 
+    else:
+        odd_collatz = [n]
+    while n > 1:
+        if n % 2 == 0:
+            n = n/2
+        else:
+            n = n*3 + 1
+            
+        if n%2 == 1:
+            odd_collatz.append(int(n))
+
+    return sorted(odd_collatz)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(14) == [1, 5, 7, 11, 13, 17]
+    assert candidate(5) == [1, 5]
+    assert candidate(12) == [1, 3, 5], ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1) == [1], ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def valid_date(date):
+    """"""ທ່ານຕ້ອງຂຽນຟັງຊັນທີ່ຢັ້ງຢືນສາຍວັນທີ່ຖືກມອບໃຫ້ແລະສົ່ງຄືນຄວາມຈິງຖ້າວັນທີຖືກຕ້ອງຖ້າບໍ່ດັ່ງນັ້ນ False. ວັນທີແມ່ນຖືກຕ້ອງຖ້າກົດລະບຽບທັງ ຫມົດ ທີ່ກ່າວມາຂ້າງລຸ່ມນີ້ຖືກຕອບສະ ຫນອງ: 1. ສາຍວັນບໍ່ໄດ້ເປົ່າ. 2. ຈໍາ ນວນມື້ບໍ່ຕໍ່າກວ່າ 1 ຫຼືສູງກວ່າ 31 ມື້ ສໍາ ລັບເດືອນ 1,3,5,7,8,10,12. ແລະ ຈໍາ ນວນມື້ບໍ່ຕໍ່າກວ່າ 1 ຫຼືສູງກວ່າ 30 ມື້ ສໍາ ລັບເດືອນ 4,6,9,11. ແລະ ຈໍາ ນວນມື້ບໍ່ຕໍ່າກວ່າ 1 ຫຼືສູງກວ່າ 29 ມື້ ສໍາ ລັບເດືອນ 2. 3. ເດືອນບໍ່ຄວນຕ່ ໍາ ກວ່າ 1 ຫຼືສູງກວ່າ 12. 4. ວັນທີຄວນຢູ່ໃນຮູບແບບ: mm-dd-yyyy ເຊັ່ນ: valid_date (('03-11-2000') => true_date (('15-01-2012') => false_date (('04-04-2040') => false_date (('06-04-2020') => true_date
+    """"""
+","    try:
+        date = date.strip()
+        month, day, year = date.split('-')
+        month, day, year = int(month), int(day), int(year)
+        if month < 1 or month > 12:
+            return False
+        if month in [1,3,5,7,8,10,12] and day < 1 or day > 31:
+            return False
+        if month in [4,6,9,11] and day < 1 or day > 30:
+            return False
+        if month == 2 and day < 1 or day > 29:
+            return False
+    except:
+        return False
+
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('03-11-2000') == True
+
+    assert candidate('15-01-2012') == False
+
+    assert candidate('04-0-2040') == False
+
+    assert candidate('06-04-2020') == True
+
+    assert candidate('01-01-2007') == True
+
+    assert candidate('03-32-2011') == False
+
+    assert candidate('') == False
+
+    assert candidate('04-31-3000') == False
+
+    assert candidate('06-06-2005') == True
+
+    assert candidate('21-31-2000') == False
+
+    assert candidate('04-12-2003') == True
+
+    assert candidate('04122003') == False
+
+    assert candidate('20030412') == False
+
+    assert candidate('2003-04') == False
+
+    assert candidate('2003-04-12') == False
+
+    assert candidate('04-2003') == False
+"
+"
+def split_words(txt):
+    '''
+    Given a string of words, return a list of words split on whitespace, if no whitespaces exists in the text you
+    should split on commas ',' if no commas exists you should return the number of lower-case letters with odd order in the
+    alphabet, ord('a') = 0, ord('b') = 1, ... ord('z') = 25
+    Examples
+    split_words(""Hello world!"") â -> [""Hello"", ""world!""]
+    split_words(""Hello,world!"") â -> [""Hello"", ""world!""]
+    split_words(""abcdef"") == 3 
+    '''
+","    if "" "" in txt:
+        return txt.split()
+    elif "","" in txt:
+        return txt.replace(',',' ').split()
+    else:
+        return len([i for i in txt if i.islower() and ord(i)%2 == 0])
+","def check(candidate):
+
+    assert candidate(""Hello world!"") == [""Hello"",""world!""]
+    assert candidate(""Hello,world!"") == [""Hello"",""world!""]
+    assert candidate(""Hello world,!"") == [""Hello"",""world,!""]
+    assert candidate(""Hello,Hello,world !"") == [""Hello,Hello,world"",""!""]
+    assert candidate(""abcdef"") == 3
+    assert candidate(""aaabb"") == 2
+    assert candidate(""aaaBb"") == 1
+    assert candidate("""") == 0
+"
+"
+def is_sorted(lst):
+    '''
+    Given a list of numbers, return whether or not they are sorted
+    in ascending order. If list has more than 1 duplicate of the same
+    number, return False. Assume no negative numbers and only integers.
+
+    Examples
+    is_sorted([5]) â -> True
+    is_sorted([1, 2, 3, 4, 5]) â -> True
+    is_sorted([1, 3, 2, 4, 5]) â -> False
+    is_sorted([1, 2, 3, 4, 5, 6]) â -> True
+    is_sorted([1, 2, 3, 4, 5, 6, 7]) â -> True
+    is_sorted([1, 3, 2, 4, 5, 6, 7]) â -> False
+    is_sorted([1, 2, 2, 3, 3, 4]) â -> True
+    is_sorted([1, 2, 2, 2, 3, 4]) â -> False
+    '''
+","    count_digit = dict([(i, 0) for i in lst])
+    for i in lst:
+        count_digit[i]+=1 
+    if any(count_digit[i] > 2 for i in lst):
+        return False
+    if all(lst[i-1] <= lst[i] for i in range(1, len(lst))):
+        return True
+    else:
+        return False
+    
+    
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([5]) == True
+    assert candidate([1, 2, 3, 4, 5]) == True
+    assert candidate([1, 3, 2, 4, 5]) == False
+    assert candidate([1, 2, 3, 4, 5, 6]) == True
+    assert candidate([1, 2, 3, 4, 5, 6, 7]) == True
+    assert candidate([1, 3, 2, 4, 5, 6, 7]) == False, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([]) == True, ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate([1]) == True, ""This prints if this assert fails 3 (good for debugging!)""
+    assert candidate([3, 2, 1]) == False, ""This prints if this assert fails 4 (good for debugging!)""
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1, 2, 2, 2, 3, 4]) == False, ""This prints if this assert fails 5 (good for debugging!)""
+    assert candidate([1, 2, 3, 3, 3, 4]) == False, ""This prints if this assert fails 6 (good for debugging!)""
+    assert candidate([1, 2, 2, 3, 3, 4]) == True, ""This prints if this assert fails 7 (good for debugging!)""
+    assert candidate([1, 2, 3, 4]) == True, ""This prints if this assert fails 8 (good for debugging!)""
+
+"
+"
+def intersection(interval1, interval2):
+    """"""ທ່ານໄດ້ຮັບສອງຊ່ວງເວລາ, ບ່ອນທີ່ຊ່ວງເວລາແຕ່ລະອັນແມ່ນຄູ່ຂອງຕົວເລກເຕັມ. ຍົກຕົວຢ່າງ, ຊ່ວງເວລາ = (ເລີ່ມຕົ້ນ, ສິ້ນສຸດ) = (1, 2). ຊ່ວງເວລາທີ່ໃຫ້ໄວ້ແມ່ນປິດເຊິ່ງ ຫມາຍ ຄວາມວ່າຊ່ວງເວລາ (ເລີ່ມຕົ້ນ, ສິ້ນສຸດ) ປະກອບມີທັງເລີ່ມຕົ້ນແລະສິ້ນສຸດ. ສໍາ ລັບຊ່ວງເວລາແຕ່ລະອັນ, ມັນຖືກສົມມຸດວ່າເລີ່ມຕົ້ນຂອງມັນແມ່ນ ຫນ້ອຍ ກວ່າຫຼືເທົ່າກັບສິ້ນສຸດຂອງມັນ. ຫນ້າທີ່ຂອງທ່ານແມ່ນເພື່ອ ກໍາ ນົດວ່າຄວາມຍາວຂອງເສັ້ນຕັດຂອງຊ່ວງເວລາສອງອັນນີ້ແມ່ນຕົວເລກຕົ້ນ. ຕົວຢ່າງ, ຄວາມຍາວຂອງຊ່ວງເວລາ (1, 3), (2, 4) ແມ່ນ (2, 3) ເຊິ່ງຄວາມຍາວຂອງມັນແມ່ນ 1, ເຊິ່ງບໍ່ແມ່ນຕົວເລກຕົ້ນ. ຖ້າຄວາມຍາວຂອງເສັ້ນຕັດແມ່ນຕົວເລກຕົ້ນ, ກັບຄືນ ""YES"", ຖ້າບໍ່ດັ່ງນັ້ນ, ກັບຄືນ ""NO"". ຖ້າສອງຊ່ວງເວລາບໍ່ຕັດກັນ, ກັບຄືນ
+    """"""
+","    def is_prime(num):
+        if num == 1 or num == 0:
+            return False
+        if num == 2:
+            return True
+        for i in range(2, num):
+            if num%i == 0:
+                return False
+        return True
+
+    l = max(interval1[0], interval2[0])
+    r = min(interval1[1], interval2[1])
+    length = r - l
+    if length > 0 and is_prime(length):
+        return ""YES""
+    return ""NO""
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate((1, 2), (2, 3)) == ""NO""
+    assert candidate((-1, 1), (0, 4)) == ""NO""
+    assert candidate((-3, -1), (-5, 5)) == ""YES""
+    assert candidate((-2, 2), (-4, 0)) == ""YES""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate((-11, 2), (-1, -1)) == ""NO""
+    assert candidate((1, 2), (3, 5)) == ""NO""
+    assert candidate((1, 2), (1, 2)) == ""NO""
+    assert candidate((-2, -2), (-3, -2)) == ""NO""
+
+"
+"
+def prod_signs(arr):
+    """"""
+    ທ່ານໄດ້ຮັບ array ຂອງຕົວເລກເຕັມແລະທ່ານຕ້ອງກັບຄືນຜົນລວມຂອງຂະ ຫນາດ ຂອງຕົວເລກເຕັມທີ່ປ້ອນດ້ວຍຜະລິດຕະພັນຂອງທຸກສັນຍາລັກຂອງແຕ່ລະຕົວເລກໃນ array, ເຊິ່ງສະແດງໂດຍ 1, -1 ຫຼື 0.
+    >>> prod_signs([1, 2, 2, -4]) == -9
+    >>> prod_signs([0, 1]) == 0
+    >>> prod_signs([]) == None
+    """"""
+","    if not arr: return None
+    prod = 0 if 0 in arr else (-1) ** len(list(filter(lambda x: x < 0, arr)))
+    return prod * sum([abs(i) for i in arr])
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1, 2, 2, -4]) == -9
+    assert candidate([0, 1]) == 0
+    assert candidate([1, 1, 1, 2, 3, -1, 1]) == -10
+    assert candidate([]) == None
+    assert candidate([2, 4,1, 2, -1, -1, 9]) == 20
+    assert candidate([-1, 1, -1, 1]) == 4
+    assert candidate([-1, 1, 1, 1]) == -4
+    assert candidate([-1, 1, 1, 0]) == 0
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def minPath(grid, k):
+    """"""
+    ໃຫ້ຕາຂ່າຍທີ່ມີແຖວ N ແລະເສົາ N (N > = 2) ແລະຕົວເລກເຕັມບວກ k, ແຕ່ລະຈຸລັງຂອງຕາຂ່າຍປະກອບມີຄ່າ. ທຸກໆຕົວເລກເຕັມໃນລະດັບ [1, N * N] ລວມທັງຈະປາກົດຂື້ນຢ່າງຖືກຕ້ອງໃນຈຸລັງຂອງຕາຂ່າຍ. ທ່ານຕ້ອງຊອກຫາເສັ້ນທາງຕ່ ໍາ ສຸດຂອງຄວາມຍາວ k ໃນຕາຂ່າຍ. ທ່ານສາມາດເລີ່ມຕົ້ນຈາກຈຸລັງໃດກໍ່ໄດ້, ແລະໃນແຕ່ລະຂັ້ນຕອນທ່ານສາມາດຍ້າຍໄປຫາຈຸລັງທີ່ໃກ້ຄຽງ, ເວົ້າອີກຢ່າງ ຫນຶ່ງ, ທ່ານສາມາດໄປຫາຈຸລັງທີ່ແບ່ງປັນຂອບກັບທ່ານຈຸລັງປະຈຸບັນ. ກະລຸນາສັງເກດວ່າເສັ້ນທາງທີ່ມີຄວາມຍາວ k ຫມາຍ ຄວາມວ່າການໄປຢ້ຽມຢາມຈຸລັງ k ຢ່າງແນ່ນອນ (ບໍ່ ຈໍາ ເປັນຕ້ອງແຕກຕ່າງ). ທ່ານບໍ່ສາມາດອອກຈາກຕາຂ່າຍ. ເສັ້ນທາງ A (ຄວາມຍາວ k) ຖືກພິຈາລະນາວ່າມີຂະ ຫນາດ ນ້ອຍກວ່າເສັ້ນທາງ B (ຄວາມ
+    """"""
+","    n = len(grid)
+    val = n * n + 1
+    for i in range(n):
+        for j in range(n):
+            if grid[i][j] == 1:
+                temp = []
+                if i != 0:
+                    temp.append(grid[i - 1][j])
+
+                if j != 0:
+                    temp.append(grid[i][j - 1])
+
+                if i != n - 1:
+                    temp.append(grid[i + 1][j])
+
+                if j != n - 1:
+                    temp.append(grid[i][j + 1])
+
+                val = min(temp)
+
+    ans = []
+    for i in range(k):
+        if i % 2 == 0:
+            ans.append(1)
+        else:
+            ans.append(val)
+    return ans
+","def check(candidate):
+
+    # Check some simple cases
+    print
+    assert candidate([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 3) == [1, 2, 1]
+    assert candidate([[5, 9, 3], [4, 1, 6], [7, 8, 2]], 1) == [1]
+    assert candidate([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]], 4) == [1, 2, 1, 2]
+    assert candidate([[6, 4, 13, 10], [5, 7, 12, 1], [3, 16, 11, 15], [8, 14, 9, 2]], 7) == [1, 10, 1, 10, 1, 10, 1]
+    assert candidate([[8, 14, 9, 2], [6, 4, 13, 15], [5, 7, 1, 12], [3, 10, 11, 16]], 5) == [1, 7, 1, 7, 1]
+    assert candidate([[11, 8, 7, 2], [5, 16, 14, 4], [9, 3, 15, 6], [12, 13, 10, 1]], 9) == [1, 6, 1, 6, 1, 6, 1, 6, 1]
+    assert candidate([[12, 13, 10, 1], [9, 3, 15, 6], [5, 16, 14, 4], [11, 8, 7, 2]], 12) == [1, 6, 1, 6, 1, 6, 1, 6, 1, 6, 1, 6]
+    assert candidate([[2, 7, 4], [3, 1, 5], [6, 8, 9]], 8) == [1, 3, 1, 3, 1, 3, 1, 3]
+    assert candidate([[6, 1, 5], [3, 8, 9], [2, 7, 4]], 8) == [1, 5, 1, 5, 1, 5, 1, 5]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([[1, 2], [3, 4]], 10) == [1, 2, 1, 2, 1, 2, 1, 2, 1, 2]
+    assert candidate([[1, 3], [3, 2]], 10) == [1, 3, 1, 3, 1, 3, 1, 3, 1, 3]
+
+"
+"
+def tri(n):
+    """"""ທຸກຄົນຮູ້ Fibonacci ລໍາດັບ, ມັນໄດ້ຖືກສຶກສາຢ່າງເລິກເຊິ່ງໂດຍນັກຄະນິດສາດໃນສອງສາມສະຕະວັດທີ່ຜ່ານມາ. ເຖິງຢ່າງໃດກໍ່ຕາມ, ສິ່ງທີ່ຄົນບໍ່ຮູ້ແມ່ນລໍາດັບ Tribonacci. ລໍາດັບ Tribonacci ຖືກ ກໍາ ນົດໂດຍການຊ້ ໍາ ຄືນ: tri(1) = 3 tri(n) = 1 + n / 2, ຖ້າ n ແມ່ນແຖມ. tri(n) = tri(n - 1) + tri(n - 2) + tri(n + 1), ຖ້າ n ແມ່ນແປກ. ຕົວຢ່າງ: tri(2) = 1 + (2 / 2) = 2 tri(4) = 3 tri(3) = tri(2) + tri(1) + tri(4) = 2 + 3 + 3 = 8 ທ່ານໄດ້ຮັບເລກເຕັມທີ່ບໍ່ແມ່ນລົບ n, ທ່ານຕ້ອງສົ່ງຄືນບັນຊີລາຍຊື່ຂອງເລກ ທໍາ ອິດ n + 1 ຂອງລໍາດັບ Tribonacci. ຕົວຢ່າງ: tri(3) = [1,
+    """"""
+","    if n == 0:
+        return [1]
+    my_tri = [1, 3]
+    for i in range(2, n + 1):
+        if i % 2 == 0:
+            my_tri.append(i / 2 + 1)
+        else:
+            my_tri.append(my_tri[i - 1] + my_tri[i - 2] + (i + 3) / 2)
+    return my_tri
+","def check(candidate):
+
+    # Check some simple cases
+    
+    assert candidate(3) == [1, 3, 2.0, 8.0]
+    assert candidate(4) == [1, 3, 2.0, 8.0, 3.0]
+    assert candidate(5) == [1, 3, 2.0, 8.0, 3.0, 15.0]
+    assert candidate(6) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0]
+    assert candidate(7) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0, 24.0]
+    assert candidate(8) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0, 24.0, 5.0]
+    assert candidate(9) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0, 24.0, 5.0, 35.0]
+    assert candidate(20) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0, 24.0, 5.0, 35.0, 6.0, 48.0, 7.0, 63.0, 8.0, 80.0, 9.0, 99.0, 10.0, 120.0, 11.0]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(0) == [1]
+    assert candidate(1) == [1, 3]
+"
+"
+def digits(n):
+    """"""ໃຫ້ຕົວເລກເຕັມບວກ n, ໃຫ້ຜົນຜະລິດຂອງຕົວເລກແປກ. ໃຫ້ 0 ຖ້າຕົວເລກທັງ ຫມົດ ແມ່ນແຖວ. ຕົວຢ່າງ: ຕົວເລກ(1) == 1 ຕົວເລກ(4) == 0 ຕົວເລກ(235) == 15
+    """"""
+","    product = 1
+    odd_count = 0
+    for digit in str(n):
+        int_digit = int(digit)
+        if int_digit%2 == 1:
+            product= product*int_digit
+            odd_count+=1
+    if odd_count ==0:
+        return 0
+    else:
+        return product
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(5) == 5
+    assert candidate(54) == 5
+    assert candidate(120) ==1
+    assert candidate(5014) == 5
+    assert candidate(98765) == 315
+    assert candidate(5576543) == 2625
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(2468) == 0
+
+"
+"
+def is_nested(string):
+    '''
+    Create a function that takes a string as input which contains only square brackets.
+    The function should return True if and only if there is a valid subsequence of brackets 
+    where at least one bracket in the subsequence is nested.
+
+    is_nested('[[]]') â -> True
+    is_nested('[]]]]]]][[[[[]') â -> False
+    is_nested('[][]') â -> False
+    is_nested('[]') â -> False
+    is_nested('[[][]]') â -> True
+    is_nested('[[]][[') â -> True
+    '''
+","    opening_bracket_index = []
+    closing_bracket_index = []
+    for i in range(len(string)):
+        if string[i] == '[':
+            opening_bracket_index.append(i)
+        else:
+            closing_bracket_index.append(i)
+    closing_bracket_index.reverse()
+    cnt = 0
+    i = 0
+    l = len(closing_bracket_index)
+    for idx in opening_bracket_index:
+        if i < l and idx < closing_bracket_index[i]:
+            cnt += 1
+            i += 1
+    return cnt >= 2
+
+    
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('[[]]') == True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('[]]]]]]][[[[[]') == False
+    assert candidate('[][]') == False
+    assert candidate(('[]')) == False
+    assert candidate('[[[[]]]]') == True
+    assert candidate('[]]]]]]]]]]') == False
+    assert candidate('[][][[]]') == True
+    assert candidate('[[]') == False
+    assert candidate('[]]') == False
+    assert candidate('[[]][[') == True
+    assert candidate('[[][]]') == True
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('') == False, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate('[[[[[[[[') == False
+    assert candidate(']]]]]]]]') == False
+
+"
+"
+
+def sum_squares(lst):
+    """"""ທ່ານໄດ້ຮັບບັນຊີລາຍຊື່ຂອງຕົວເລກ. ທ່ານຕ້ອງສົ່ງຄືນຜົນລວມຂອງຕົວເລກທີ່ຖືກຍົກອອກເປັນສີ່ເທົ່າໃນບັນຊີທີ່ຖືກມອບໃຫ້, ຮອບແຕ່ລະອົງປະກອບໃນບັນຊີລາຍຊື່ໃຫ້ເປັນ int ເທິງ (((Ceiling) ກ່ອນ. ຕົວຢ່າງ: ສໍາ ລັບ lst = [1,2,3] ຜົນຜະລິດຄວນຈະເປັນ 14 ສໍາ ລັບ lst = [1,4,9] ຜົນຜະລິດຄວນຈະເປັນ 98 ສໍາ ລັບ lst = [1,3,5,7] ຜົນຜະລິດຄວນຈະເປັນ 84 ສໍາ ລັບ lst = [1.4,4.2,0] ຜົນຜະລິດຄວນຈະເປັນ 29 ສໍາ ລັບ lst = [-2.4,1,1] ຜົນຜະລິດຄວນຈະເປັນ 6
+    
+
+    """"""
+","    import math
+    squared = 0
+    for i in lst:
+        squared += math.ceil(i)**2
+    return squared
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,2,3])==14, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1.0,2,3])==14, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1,3,5,7])==84, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1.4,4.2,0])==29, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([-2.4,1,1])==6, ""This prints if this assert fails 1 (good for debugging!)""
+
+    assert candidate([100,1,15,2])==10230, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([10000,10000])==200000000, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([-1.4,4.6,6.3])==75, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([-1.4,17.9,18.9,19.9])==1086, ""This prints if this assert fails 1 (good for debugging!)""
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([0])==0, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([-1])==1, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([-1,1,0])==2, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def check_if_last_char_is_a_letter(txt):
+    '''
+    Create a function that returns True if the last character
+    of a given string is an alphabetical character and is not
+    a part of a word, and False otherwise.
+    Note: ""word"" is a group of characters separated by space.
+
+    Examples:
+    check_if_last_char_is_a_letter(""apple pie"") â -> False
+    check_if_last_char_is_a_letter(""apple pi e"") â -> True
+    check_if_last_char_is_a_letter(""apple pi e "") â -> False
+    check_if_last_char_is_a_letter("""") â -> False 
+    '''
+"," 
+    check = txt.split(' ')[-1]
+    return True if len(check) == 1 and (97 <= ord(check.lower()) <= 122) else False
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""apple"") == False
+    assert candidate(""apple pi e"") == True
+    assert candidate(""eeeee"") == False
+    assert candidate(""A"") == True
+    assert candidate(""Pumpkin pie "") == False
+    assert candidate(""Pumpkin pie 1"") == False
+    assert candidate("""") == False
+    assert candidate(""eeeee e "") == False
+    assert candidate(""apple pie"") == False
+    assert candidate(""apple pi e "") == False
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def can_arrange(arr):
+    """"""ສ້າງຟັງຊັນທີ່ສົ່ງຄືນດັດຊະນີທີ່ໃຫຍ່ທີ່ສຸດຂອງອົງປະກອບທີ່ບໍ່ໃຫຍ່ກວ່າຫຼືເທົ່າກັບອົງປະກອບທີ່ຢູ່ກ່ອນມັນໂດຍທັນທີ. ຖ້າບໍ່ມີອົງປະກອບດັ່ງກ່າວແລ້ວໃຫ້ກັບຄືນ -1. ແຖວທີ່ໃຫ້ໄວ້ຈະບໍ່ບັນຈຸຄ່າທີ່ຄົບຖ້ວນ. ຕົວຢ່າງ: can_arrange (([1,2,4,3,5]) = 3 can_arrange[(1,2,3]) = -1
+    """"""
+","    ind=-1
+    i=1
+    while i<len(arr):
+      if arr[i]<arr[i-1]:
+        ind=i
+      i+=1
+    return ind
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,2,4,3,5])==3
+    assert candidate([1,2,4,5])==-1
+    assert candidate([1,4,2,5,6,7,8,9,10])==2
+    assert candidate([4,8,5,7,3])==4
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([])==-1
+
+"
+"
+def largest_smallest_integers(lst):
+    '''
+    Create a function that returns a tuple (a, b), where 'a' is
+    the largest of negative integers, and 'b' is the smallest
+    of positive integers in a list.
+    If there is no negative or positive integers, return them as None.
+
+    Examples:
+    largest_smallest_integers([2, 4, 1, 3, 5, 7]) == (None, 1)
+    largest_smallest_integers([]) == (None, None)
+    largest_smallest_integers([0]) == (None, None)
+    '''
+","    smallest = list(filter(lambda x: x < 0, lst))
+    largest = list(filter(lambda x: x > 0, lst))
+    return (max(smallest) if smallest else None, min(largest) if largest else None)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([2, 4, 1, 3, 5, 7]) == (None, 1)
+    assert candidate([2, 4, 1, 3, 5, 7, 0]) == (None, 1)
+    assert candidate([1, 3, 2, 4, 5, 6, -2]) == (-2, 1)
+    assert candidate([4, 5, 3, 6, 2, 7, -7]) == (-7, 2)
+    assert candidate([7, 3, 8, 4, 9, 2, 5, -9]) == (-9, 2)
+    assert candidate([]) == (None, None)
+    assert candidate([0]) == (None, None)
+    assert candidate([-1, -3, -5, -6]) == (-1, None)
+    assert candidate([-1, -3, -5, -6, 0]) == (-1, None)
+    assert candidate([-6, -4, -4, -3, 1]) == (-3, 1)
+    assert candidate([-6, -4, -4, -3, -100, 1]) == (-3, 1)
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+"
+"
+def compare_one(a, b):
+    """"""
+    ສ້າງຟັງຊັນທີ່ເອົາຕົວເລກເຕັມ, floats, ຫຼື string ທີ່ເປັນຕົວແທນຂອງຕົວເລກທີ່ແທ້ຈິງ, ແລະສົ່ງຕົວແປທີ່ໃຫຍ່ກວ່າໃນປະເພດຕົວແປທີ່ຖືກມອບໃຫ້. ສົ່ງຄືນ None ຖ້າຄ່າເທົ່າກັນ. ຫມາຍເຫດ: ຖ້າຕົວເລກທີ່ແທ້ຈິງຖືກສະແດງເປັນສາຍ, ຈຸດລອຍອາດຈະເປັນ. ຫຼື, compare_one ((1, 2.5) â -> 2.5 compare_one ((1, ""2,3"") â -> ""2,3"" compare_one ((5,1"", ""6"") â -> ""6"" compare_one ((1"", 1) â -> None
+    """"""
+","    temp_a, temp_b = a, b
+    if isinstance(temp_a, str): temp_a = temp_a.replace(',','.')
+    if isinstance(temp_b, str): temp_b = temp_b.replace(',','.')
+    if float(temp_a) == float(temp_b): return None
+    return a if float(temp_a) > float(temp_b) else b 
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(1, 2) == 2
+    assert candidate(1, 2.5) == 2.5
+    assert candidate(2, 3) == 3
+    assert candidate(5, 6) == 6
+    assert candidate(1, ""2,3"") == ""2,3""
+    assert candidate(""5,1"", ""6"") == ""6""
+    assert candidate(""1"", ""2"") == ""2""
+    assert candidate(""1"", 1) == None
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def is_equal_to_sum_even(n):
+    """"""ປະເມີນວ່າຕົວເລກທີ່ໃຫ້ n ສາມາດຂຽນເປັນຜົນລວມຂອງຕົວເລກບວກທີ່ເທົ່າທຽມກັນ 4 ຕົວຢ່າງ is_equal_to_sum_even ((4) == False is_equal_to_sum_even ((6) == False is_equal_to_sum_even ((8) == True
+    """"""
+","    return n%2 == 0 and n >= 8
+","def check(candidate):
+    assert candidate(4) == False
+    assert candidate(6) == False
+    assert candidate(8) == True
+    assert candidate(10) == True
+    assert candidate(11) == False
+    assert candidate(12) == True
+    assert candidate(13) == False
+    assert candidate(16) == True
+"
+"
+def special_factorial(n):
+    """"""ຕົວເລກປັດໄຈຂອງບຣາຊິນຖືກກໍານົດໄວ້ຄື: brazilian_factorial ((n) = n! * (n-1)! * (n-2)! *... * 1! ບ່ອນທີ່ n > 0 ຕົວຢ່າງ:
+    >>> special_factorial(4)
+    288
+
+    The function will receive an integer as input and should return the special
+    factorial of this integer.
+    """"""
+","    fact_i = 1
+    special_fact = 1
+    for i in range(1, n+1):
+        fact_i *= i
+        special_fact *= fact_i
+    return special_fact
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(4) == 288, ""Test 4""
+    assert candidate(5) == 34560, ""Test 5""
+    assert candidate(7) == 125411328000, ""Test 7""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1) == 1, ""Test 1""
+
+"
+"
+def fix_spaces(text):
+    """"""
+    ໃຫ້ຂໍ້ຄວາມສາຍ, ປ່ຽນບ່ອນຫວ່າງທັງ ຫມົດ ໃນມັນດ້ວຍຕົວຊີ້ບອກ, ແລະຖ້າສາຍມີຫຼາຍກວ່າ 2 ບ່ອນຫວ່າງຕິດຕໍ່ກັນ, ຫຼັງຈາກນັ້ນປ່ຽນບ່ອນຫວ່າງຕິດຕໍ່ກັນທັງ ຫມົດ ດ້ວຍ - fix_spaces ((""ຕົວຢ່າງ"") == ""ຕົວຢ່າງ"" fix_spaces ((""ຕົວຢ່າງ1"") == ""ຕົວຢ່າງ_1"" fix_spaces (((""ຕົວຢ່າງ2"") == ""_ຕົວຢ່າງ_2"" fix_spaces (((""ຕົວຢ່າງ 3"") == ""_ຕົວຢ່າງ-3""
+    """"""
+","    new_text = """"
+    i = 0
+    start, end = 0, 0
+    while i < len(text):
+        if text[i] == "" "":
+            end += 1
+        else:
+            if end - start > 2:
+                new_text += ""-""+text[i]
+            elif end - start > 0:
+                new_text += ""_""*(end - start)+text[i]
+            else:
+                new_text += text[i]
+            start, end = i+1, i+1
+        i+=1
+    if end - start > 2:
+        new_text += ""-""
+    elif end - start > 0:
+        new_text += ""_""
+    return new_text
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""Example"") == ""Example"", ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(""Mudasir Hanif "") == ""Mudasir_Hanif_"", ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate(""Yellow Yellow  Dirty  Fellow"") == ""Yellow_Yellow__Dirty__Fellow"", ""This prints if this assert fails 3 (good for debugging!)""
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""Exa   mple"") == ""Exa-mple"", ""This prints if this assert fails 4 (good for debugging!)""
+    assert candidate(""   Exa 1 2 2 mple"") == ""-Exa_1_2_2_mple"", ""This prints if this assert fails 4 (good for debugging!)""
+
+"
+"
+def file_name_check(file_name):
+    """"""ສ້າງຟັງຊັນທີ່ໃຊ້ສາຍສະຕິງທີ່ເປັນຕົວແທນຊື່ເອກະສານ, ແລະສົ່ງຄືນ 'Yes' ຖ້າຊື່ເອກະສານຖືກຕ້ອງ, ແລະສົ່ງຄືນ 'No' ຖ້າບໍ່ດັ່ງນັ້ນ. ຊື່ເອກະສານຖືກພິຈາລະນາວ່າຖືກຕ້ອງຖ້າແລະພຽງແຕ່ຖ້າເງື່ອນໄຂທັງ ຫມົດ ທີ່ກ່າວມາຂ້າງລຸ່ມນີ້ຖືກຕອບສະ ຫນອງ: - ບໍ່ຄວນມີຫຼາຍກວ່າສາມຕົວເລກ ('0'-'9') ໃນຊື່ເອກະສານ. - ຊື່ເອກະສານປະກອບມີຈຸດດຽວ '.' - ສາຍຍ່ອຍກ່ອນຈຸດບໍ່ຄວນເປົ່າ, ແລະມັນເລີ່ມຕົ້ນດ້ວຍຕົວອັກສອນຈາກອັກສອນລາຕິນ ('a'-'z' ແລະ 'A'Z'). - ສາຍຍ່ອຍຫຼັງຈາກຈຸດຄວນເປັນ ຫນຶ່ງ ໃນສິ່ງເຫຼົ່ານີ້: ['txt', 'exe', 'll'd'] ຕົວຢ່າງ: file_name_check""(ຕົວຢ່າງ.txt"") # => 'Yes'name_file_check""(ຕົວຢ່າງ
+    """"""
+","    suf = ['txt', 'exe', 'dll']
+    lst = file_name.split(sep='.')
+    if len(lst) != 2:
+        return 'No'
+    if not lst[1] in suf:
+        return 'No'
+    if len(lst[0]) == 0:
+        return 'No'
+    if not lst[0][0].isalpha():
+        return 'No'
+    t = len([x for x in lst[0] if x.isdigit()])
+    if t > 3:
+        return 'No'
+    return 'Yes'
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""example.txt"") == 'Yes'
+    assert candidate(""1example.dll"") == 'No'
+    assert candidate('s1sdf3.asd') == 'No'
+    assert candidate('K.dll') == 'Yes'
+    assert candidate('MY16FILE3.exe') == 'Yes'
+    assert candidate('His12FILE94.exe') == 'No'
+    assert candidate('_Y.txt') == 'No'
+    assert candidate('?aREYA.exe') == 'No'
+    assert candidate('/this_is_valid.dll') == 'No'
+    assert candidate('this_is_valid.wow') == 'No'
+    assert candidate('this_is_valid.txt') == 'Yes'
+    assert candidate('this_is_valid.txtexe') == 'No'
+    assert candidate('#this2_i4s_5valid.ten') == 'No'
+    assert candidate('@this1_is6_valid.exe') == 'No'
+    assert candidate('this_is_12valid.6exe4.txt') == 'No'
+    assert candidate('all.exe.txt') == 'No'
+    assert candidate('I563_No.exe') == 'Yes'
+    assert candidate('Is3youfault.txt') == 'Yes'
+    assert candidate('no_one#knows.dll') == 'Yes'
+    assert candidate('1I563_Yes3.exe') == 'No'
+    assert candidate('I563_Yes3.txtt') == 'No'
+    assert candidate('final..txt') == 'No'
+    assert candidate('final132') == 'No'
+    assert candidate('_f4indsartal132.') == 'No'
+    
+        
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('.txt') == 'No'
+    assert candidate('s.') == 'No'
+
+"
+"
+
+
+def sum_squares(lst):
+    """""""" ຫນ້າ ທີ່ນີ້ຈະເອົາບັນຊີລາຍຊື່ຂອງຕົວເລກເຕັມ. ສໍາລັບລາຍການທັງຫມົດໃນບັນຊີລາຍການ, ຫນ້າ ທີ່ຈະຍົກລະດັບລາຍການຕົວເລກເຕັມຖ້າດັດຊະນີຂອງມັນເປັນຕົວເລກຫຼາຍຂອງ 3 ແລະຈະຍົກລະດັບລາຍການຕົວເລກເຕັມຖ້າດັດຊະນີຂອງມັນເປັນຕົວເລກຫຼາຍຂອງ 4 ແລະບໍ່ແມ່ນຕົວເລກຫຼາຍຂອງ 3. ຫນ້າ ທີ່ຈະບໍ່ປ່ຽນລາຍການໃນບັນຊີລາຍການທີ່ມີດັດຊະນີບໍ່ແມ່ນຕົວເລກຫຼາຍຂອງ 3 ຫຼື 4. ຫນ້າ ທີ່ຈະກັບຄືນຜົນລວມຂອງລາຍການທັງຫມົດ. ຕົວຢ່າງ: ສໍາລັບ lst = [1,2,3] ຜົນຜະລິດຄວນຈະເປັນ 6 ສໍາລັບ lst = [] ຜົນຜະລິດຄວນຈະເປັນ 0 ສໍາລັບ lst = [-1,-5,2,-1,-5] ຜົນຜະລິດຄວນຈະເປັນ -126
+    """"""
+","    result =[]
+    for i in range(len(lst)):
+        if i %3 == 0:
+            result.append(lst[i]**2)
+        elif i % 4 == 0 and i%3 != 0:
+            result.append(lst[i]**3)
+        else:
+            result.append(lst[i])
+    return sum(result)
+","def check(candidate):
+
+    # Check some simple cases
+    
+    assert candidate([1,2,3]) == 6
+    assert candidate([1,4,9]) == 14
+    assert candidate([]) == 0
+    assert candidate([1,1,1,1,1,1,1,1,1]) == 9
+    assert candidate([-1,-1,-1,-1,-1,-1,-1,-1,-1]) == -3
+    assert candidate([0]) == 0
+    assert candidate([-1,-5,2,-1,-5]) == -126
+    assert candidate([-56,-99,1,0,-2]) == 3030
+    assert candidate([-1,0,0,0,0,0,0,0,-1]) == 0
+    assert candidate([-16, -9, -2, 36, 36, 26, -20, 25, -40, 20, -4, 12, -26, 35, 37]) == -14196
+    assert candidate([-1, -3, 17, -1, -15, 13, -1, 14, -14, -12, -5, 14, -14, 6, 13, 11, 16, 16, 4, 10]) == -1448
+    
+    
+    # Don't remove this line:
+"
+"
+def words_in_sentence(sentence):
+    """"""
+    ທ່ານໄດ້ຮັບສາຍທີ່ສະແດງປະໂຫຍກ, ປະໂຫຍກມີບາງ ຄໍາ ທີ່ແຍກອອກດ້ວຍຊ່ອງຫວ່າງ, ແລະທ່ານຕ້ອງສົ່ງຄືນສາຍທີ່ມີ ຄໍາ ຈາກປະໂຫຍກຕົ້ນສະບັບ, ເຊິ່ງຄວາມຍາວແມ່ນຕົວເລກ ທໍາ ອິດ, ລໍາ ດັບຂອງ ຄໍາ ໃນສາຍ ໃຫມ່ ຄວນຄືກັນກັບຕົວເດີມ. ຕົວຢ່າງ1: Input: sentence = ""This is a test"" Output: ""is"" ຕົວຢ່າງ2: Input: sentence = ""let go for swimming"" Output: ""go for"" ຂໍ້ ຈໍາ ກັດ: * 1 <= len(sentence) <= 100 * ປະໂຫຍກມີພຽງແຕ່ຕົວອັກສອນເທົ່ານັ້ນ
+    """"""
+","    new_lst = []
+    for word in sentence.split():
+        flg = 0
+        if len(word) == 1:
+            flg = 1
+        for i in range(2, len(word)):
+            if len(word)%i == 0:
+                flg = 1
+        if flg == 0 or len(word) == 2:
+            new_lst.append(word)
+    return "" "".join(new_lst)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""This is a test"") == ""is""
+    assert candidate(""lets go for swimming"") == ""go for""
+    assert candidate(""there is no place available here"") == ""there is no place""
+    assert candidate(""Hi I am Hussein"") == ""Hi am Hussein""
+    assert candidate(""go for it"") == ""go for it""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""here"") == """"
+    assert candidate(""here is"") == ""is""
+
+"
+"
+def simplify(x, n):
+    """"""ຫນ້າ ທີ່ຂອງທ່ານແມ່ນເພື່ອປະຕິບັດ ຫນ້າ ທີ່ທີ່ຈະເຮັດໃຫ້ ຄໍາ ວ່າ x * n ງ່າຍດາຍ. ຫນ້າ ທີ່ຈະສົ່ງຄືນຄວາມຈິງຖ້າ x * n ປະເມີນເປັນ ຈໍາ ນວນທັງ ຫມົດ ແລະ False ຖ້າບໍ່ດັ່ງນັ້ນ. ທັງ x ແລະ n, ແມ່ນຕົວແທນສາຍຂອງສ່ວນ, ແລະມີຮູບແບບຕໍ່ໄປນີ້, <numerator> / <denominator> ບ່ອນທີ່ທັງຕົວເລກແລະຕົວເລກແມ່ນ ຈໍາ ນວນທັງ ຫມົດ ທີ່ເປັນບວກ. ທ່ານສາມາດສົມມຸດວ່າ x, ແລະ n ແມ່ນສ່ວນທີ່ຖືກຕ້ອງ, ແລະບໍ່ມີສູນເປັນຕົວເລກ. simplify "" 1 / 5"", ""5 / 1"") = True simplify "" 1/ 6"", ""2 / 1"") = False simplify "" 7 / 10"", ""10 / 2"") = False
+    """"""
+","    a, b = x.split(""/"")
+    c, d = n.split(""/"")
+    numerator = int(a) * int(c)
+    denom = int(b) * int(d)
+    if (numerator/denom == int(numerator/denom)):
+        return True
+    return False
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""1/5"", ""5/1"") == True, 'test1'
+    assert candidate(""1/6"", ""2/1"") == False, 'test2'
+    assert candidate(""5/1"", ""3/1"") == True, 'test3'
+    assert candidate(""7/10"", ""10/2"") == False, 'test4'
+    assert candidate(""2/10"", ""50/10"") == True, 'test5'
+    assert candidate(""7/2"", ""4/2"") == True, 'test6'
+    assert candidate(""11/6"", ""6/1"") == True, 'test7'
+    assert candidate(""2/3"", ""5/2"") == False, 'test8'
+    assert candidate(""5/2"", ""3/5"") == False, 'test9'
+    assert candidate(""2/4"", ""8/4"") == True, 'test10'
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""2/4"", ""4/2"") == True, 'test11'
+    assert candidate(""1/5"", ""5/1"") == True, 'test12'
+    assert candidate(""1/5"", ""1/5"") == False, 'test13'
+
+"
+"
+def order_by_points(nums):
+    """"""
+    ຂຽນຟັງຊັນທີ່ຈັດລຽງລາຍຊື່ຕົວເລກເຕັມທີ່ໃຫ້ໄວ້ຕາມ ລໍາ ດັບເພີ່ມຂຶ້ນຕາມຜົນລວມຂອງຕົວເລກຂອງພວກເຂົາ ຫມາຍ ເຫດ: ຖ້າມີຫລາຍລາຍການທີ່ມີຜົນລວມຂອງຕົວເລກຂອງພວກເຂົາຄ້າຍຄືກັນ, ໃຫ້ຈັດລຽງພວກມັນໂດຍອີງໃສ່ດັດຊະນີຂອງພວກມັນໃນບັນຊີລາຍຊື່ຕົ້ນສະບັບ. ຍົກຕົວຢ່າງ:
+    >>> order_by_points([1, 11, -1, -11, -12]) == [-1, -11, 1, -12, 11]
+    >>> order_by_points([]) == []
+    """"""
+","    def digits_sum(n):
+        neg = 1
+        if n < 0: n, neg = -1 * n, -1 
+        n = [int(i) for i in str(n)]
+        n[0] = n[0] * neg
+        return sum(n)
+    return sorted(nums, key=digits_sum)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1, 11, -1, -11, -12]) == [-1, -11, 1, -12, 11]
+    assert candidate([1234,423,463,145,2,423,423,53,6,37,3457,3,56,0,46]) == [0, 2, 3, 6, 53, 423, 423, 423, 1234, 145, 37, 46, 56, 463, 3457]
+    assert candidate([]) == []
+    assert candidate([1, -11, -32, 43, 54, -98, 2, -3]) == [-3, -32, -98, -11, 1, 2, 43, 54]
+    assert candidate([1,2,3,4,5,6,7,8,9,10,11]) == [1, 10, 2, 11, 3, 4, 5, 6, 7, 8, 9]
+    assert candidate([0,6,6,-76,-21,23,4]) == [-76, -21, 0, 4, 23, 6, 6]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def specialFilter(nums):
+    """"""ຂຽນຟັງຊັນທີ່ເອົາແຖວຂອງຕົວເລກເປັນຂໍ້ມູນແລະສົ່ງຄືນ ຈໍາ ນວນອົງປະກອບໃນແຖວທີ່ໃຫຍ່ກວ່າ 10 ແລະທັງສອງຕົວເລກ ທໍາ ອິດແລະສຸດທ້າຍຂອງຕົວເລກແມ່ນບໍ່ຄ້າຍຄືກັນ (1, 3, 5, 7, 9). ຕົວຢ່າງ: specialFilter (([15, -73, 14, -15]) => 1 specialFilter (([33, -2, -3, 45, 21, 109]) => 2
+    """"""
+","    
+    count = 0
+    for num in nums:
+        if num > 10:
+            odd_digits = (1, 3, 5, 7, 9)
+            number_as_string = str(num)
+            if int(number_as_string[0]) in odd_digits and int(number_as_string[-1]) in odd_digits:
+                count += 1
+        
+    return count 
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([5, -2, 1, -5]) == 0  
+    assert candidate([15, -73, 14, -15]) == 1
+    assert candidate([33, -2, -3, 45, 21, 109]) == 2
+    assert candidate([43, -12, 93, 125, 121, 109]) == 4
+    assert candidate([71, -2, -33, 75, 21, 19]) == 3
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1]) == 0              
+    assert candidate([]) == 0                   
+
+"
+"
+def get_max_triples(n):
+    """"""
+    ທ່ານໄດ້ຮັບເລກເຕັມບວກ n. ທ່ານຕ້ອງສ້າງແຖວເລກເຕັມ a ຂອງຄວາມຍາວ n. ສໍາລັບ i (1 ‰¤ i ‰¤ n) ແຕ່ລະອັນ, ຄ່າຂອງ a[i] = i * i - i + 1. ໃຫ້ຈໍານວນຂອງ triples (a[i], a[j], a[k]) ຂອງ a ບ່ອນທີ່ i < j < k, ແລະ a[i] + a[j] + a[k] ແມ່ນເປັນຕົວເລກຫຼາຍຂອງ 3. ຕົວຢ່າງ: Input: n = 5 Output: 1 ຄໍາອະທິບາຍ: a = [1, 3, 7, 13, 21] ຕົວເລກ triples ທີ່ຖືກຕ້ອງແມ່ນ (1, 7, 13).
+    """"""
+","    A = [i*i - i + 1 for i in range(1,n+1)]
+    ans = []
+    for i in range(n):
+        for j in range(i+1,n):
+            for k in range(j+1,n):
+                if (A[i]+A[j]+A[k])%3 == 0:
+                    ans += [(A[i],A[j],A[k])]
+    return len(ans)
+","def check(candidate):
+
+    assert candidate(5) == 1
+    assert candidate(6) == 4
+    assert candidate(10) == 36
+    assert candidate(100) == 53361
+"
+"
+def bf(planet1, planet2):
+    '''
+    There are eight planets in our solar system: the closerst to the Sun 
+    is Mercury, the next one is Venus, then Earth, Mars, Jupiter, Saturn, 
+    Uranus, Neptune.
+    Write a function that takes two planet names as strings planet1 and planet2. 
+    The function should return a tuple containing all planets whose orbits are 
+    located between the orbit of planet1 and the orbit of planet2, sorted by 
+    the proximity to the sun. 
+    The function should return an empty tuple if planet1 or planet2
+    are not correct planet names. 
+    Examples
+    bf(""Jupiter"", ""Neptune"") ==> (""Saturn"", ""Uranus"")
+    bf(""Earth"", ""Mercury"") ==> (""Venus"")
+    bf(""Mercury"", ""Uranus"") ==> (""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn"")
+    '''
+","    planet_names = (""Mercury"", ""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn"", ""Uranus"", ""Neptune"")
+    if planet1 not in planet_names or planet2 not in planet_names or planet1 == planet2:
+        return ()
+    planet1_index = planet_names.index(planet1)
+    planet2_index = planet_names.index(planet2)
+    if planet1_index < planet2_index:
+        return (planet_names[planet1_index + 1: planet2_index])
+    else:
+        return (planet_names[planet2_index + 1 : planet1_index])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""Jupiter"", ""Neptune"") == (""Saturn"", ""Uranus""), ""First test error: "" + str(len(candidate(""Jupiter"", ""Neptune"")))      
+    assert candidate(""Earth"", ""Mercury"") == (""Venus"",), ""Second test error: "" + str(candidate(""Earth"", ""Mercury""))  
+    assert candidate(""Mercury"", ""Uranus"") == (""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn""), ""Third test error: "" + str(candidate(""Mercury"", ""Uranus""))      
+    assert candidate(""Neptune"", ""Venus"") == (""Earth"", ""Mars"", ""Jupiter"", ""Saturn"", ""Uranus""), ""Fourth test error: "" + str(candidate(""Neptune"", ""Venus""))  
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""Earth"", ""Earth"") == ()
+    assert candidate(""Mars"", ""Earth"") == ()
+    assert candidate(""Jupiter"", ""Makemake"") == ()
+
+"
+"
+def sorted_list_sum(lst):
+    """"""ຂຽນຟັງຊັນທີ່ຮັບເອົາລາຍຊື່ຂອງສາຍເປັນຕົວແປ, ລຶບສາຍທີ່ມີຄວາມຍາວບໍ່ຄ່ອຍຈາກມັນ, ແລະສົ່ງຄືນລາຍຊື່ທີ່ໄດ້ຮັບຜົນດ້ວຍລໍາດັບທີ່ຈັດລຽງ, ລາຍຊື່ແມ່ນສະ ເຫມີ ເປັນລາຍຊື່ຂອງສາຍແລະບໍ່ເຄີຍເປັນແຖວຂອງຕົວເລກ, ແລະມັນອາດຈະມີ duplicates. ລໍາດັບຂອງລາຍຊື່ຄວນຈະເພີ່ມຂື້ນໂດຍຄວາມຍາວຂອງແຕ່ລະ ຄໍາ, ແລະທ່ານຄວນສົ່ງຄືນລາຍຊື່ທີ່ຈັດລຽງໂດຍກົດນັ້ນ. ຖ້າສອງ ຄໍາ ມີຄວາມຍາວເທົ່າກັນ, ຈັດລຽງລາຍຊື່ຕາມຕົວອັກສອນ. ຫນ້າ ທີ່ຄວນສົ່ງຄືນລາຍຊື່ຂອງສາຍຕາມລໍາດັບທີ່ຈັດລຽງ. ທ່ານອາດຈະສົມມຸດວ່າ ຄໍາ ທັງ ຫມົດ ຈະມີຄວາມຍາວເທົ່າກັນ. ຕົວຢ່າງ: assert list_sort[""aa"", ""a"", ""aaa""]) => assert list_sort[""ab"", ""a"",
+    """"""
+","    lst.sort()
+    new_lst = []
+    for i in lst:
+        if len(i)%2 == 0:
+            new_lst.append(i)
+    return sorted(new_lst, key=len)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([""aa"", ""a"", ""aaa""]) == [""aa""]
+    assert candidate([""school"", ""AI"", ""asdf"", ""b""]) == [""AI"", ""asdf"", ""school""]
+    assert candidate([""d"", ""b"", ""c"", ""a""]) == []
+    assert candidate([""d"", ""dcba"", ""abcd"", ""a""]) == [""abcd"", ""dcba""]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([""AI"", ""ai"", ""au""]) == [""AI"", ""ai"", ""au""]
+    assert candidate([""a"", ""b"", ""b"", ""c"", ""c"", ""a""]) == []
+    assert candidate(['aaaa', 'bbbb', 'dd', 'cc']) == [""cc"", ""dd"", ""aaaa"", ""bbbb""]
+
+"
+"
+def x_or_y(n, x, y):
+    """"""ໂປແກຼມງ່າຍໆທີ່ຄວນສົ່ງຄືນມູນຄ່າຂອງ x ຖ້າ n ເປັນຕົວເລກຕົ້ນ ແລະຄວນສົ່ງຄືນມູນຄ່າຂອງ y ຖ້າບໍ່ດັ່ງນັ້ນ. ຕົວຢ່າງ: ສໍາ ລັບ x_or_y ((7, 34, 12) == 34 ສໍາ ລັບ x_or_y ((15, 8, 5) == 5
+    
+    """"""
+","    if n == 1:
+        return y
+    for i in range(2, n):
+        if n % i == 0:
+            return y
+            break
+    else:
+        return x
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(7, 34, 12) == 34
+    assert candidate(15, 8, 5) == 5
+    assert candidate(3, 33, 5212) == 33
+    assert candidate(1259, 3, 52) == 3
+    assert candidate(7919, -1, 12) == -1
+    assert candidate(3609, 1245, 583) == 583
+    assert candidate(91, 56, 129) == 129
+    assert candidate(6, 34, 1234) == 1234
+    
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1, 2, 0) == 0
+    assert candidate(2, 2, 0) == 2
+
+"
+"
+def double_the_difference(lst):
+    '''
+    Given a list of numbers, return the sum of squares of the numbers
+    in the list that are odd. Ignore numbers that are negative or not integers.
+    
+    double_the_difference([1, 3, 2, 0]) == 1 + 9 + 0 + 0 = 10
+    double_the_difference([-1, -2, 0]) == 0
+    double_the_difference([9, -2]) == 81
+    double_the_difference([0]) == 0  
+   
+    If the input list is empty, return 0.
+    '''
+","    return sum([i**2 for i in lst if i > 0 and i%2!=0 and ""."" not in str(i)])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([]) == 0 , ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([5, 4]) == 25 , ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate([0.1, 0.2, 0.3]) == 0 , ""This prints if this assert fails 3 (good for debugging!)""
+    assert candidate([-10, -20, -30]) == 0 , ""This prints if this assert fails 4 (good for debugging!)""
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([-1, -2, 8]) == 0, ""This prints if this assert fails 5 (also good for debugging!)""
+    assert candidate([0.2, 3, 5]) == 34, ""This prints if this assert fails 6 (also good for debugging!)""
+    lst = list(range(-99, 100, 2))
+    odd_sum = sum([i**2 for i in lst if i%2!=0 and i > 0])
+    assert candidate(lst) == odd_sum , ""This prints if this assert fails 7 (good for debugging!)""
+
+"
+"
+def compare(game,guess):
+    """"""ທ່ານຕ້ອງໄດ້ຄິດວ່າຜົນຂອງການຄາດຄະເນແມ່ນຖືກຕ້ອງຫຼືບໍ່. ທ່ານຕ້ອງໄດ້ຄິດວ່າຜົນຂອງການຄາດຄະເນແມ່ນຖືກຕ້ອງຫຼືບໍ່. ທ່ານຕ້ອງໄດ້ຄິດວ່າຜົນຂອງການຄາດຄະເນແມ່ນຖືກຕ້ອງຫຼືບໍ່. ທ່ານຕ້ອງໄດ້ຄິດວ່າຜົນຂອງການຄາດຄະເນແມ່ນຖືກຕ້ອງຫຼືບໍ່. ທ່ານຕ້ອງໄດ້ຄິດວ່າຜົນຂອງການຄາດຄະເນແມ່ນຖືກຕ້ອງຫຼືບໍ່. ທ່ານຕ້ອງໄດ້ຄິດວ່າຜົນຂອງການຄາດຄະເນແມ່ນຖືກຕ້ອງຫຼືບໍ່. ທ່ານຕ້ອງຄິດວ່າຜົນຂອງການຄາດຄະເນແມ່ນຖືກຕ້ອງຫຼືບໍ່. ທ່ານຕ້ອງຄິດວ່າຜົນຂອງການຄາດຄະເນແມ່ນຖືກຕ້ອງຫຼືບໍ່. ທ່ານຕ້ອງຄິດວ່າຜົນຂອງການຄາດຄະເນແມ່ນຖືກຕ້ອງຫຼືບໍ່. ທ່ານຕ້ອງຄິດວ່າຜົນຂອງການຄາດຄະເນແມ່ນຖືກຕ້ອງຫຼືບໍ່. ທ່ານຕ້ອງຄິດວ່າຜົນຂອງການຄາດຄະເນແມ່ນຖືກຕ້ອງຫຼືບໍ່. ທ່ານຕ້ອງຄິດວ່າຜົນຂອງການຄາດຄະເນແມ່ນຖືກຕ້ອງຫຼືບໍ່. ທ່ານຕ້ອງຄິດວ່າຜົນຂອງການຄາດຄະເນແມ່ນຖືກຕ້ອງຫຼືບໍ່. ທ່ານຕ້ອງຄິດວ່າຜົນຂອງການຄາດຄະເນແມ່ນຖືກຕ້ອງ
+    """"""
+","    return [abs(x-y) for x,y in zip(game,guess)]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,2,3,4,5,1],[1,2,3,4,2,-2])==[0,0,0,0,3,3], ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([0,0,0,0,0,0],[0,0,0,0,0,0])==[0,0,0,0,0,0], ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1,2,3],[-1,-2,-3])==[2,4,6], ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1,2,3,5],[-1,2,3,4])==[2,0,0,1], ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def Strongest_Extension(class_name, extensions):
+    """"""ທ່ານຈະໄດ້ຮັບຊື່ຂອງຊັ້ນຮຽນ (ສາຍ) ແລະບັນຊີລາຍຊື່ຂອງຂະຫຍາຍ. ຂະຫຍາຍຈະຖືກນໍາໃຊ້ເພື່ອໂຫຼດຊັ້ນຮຽນເພີ່ມເຕີມເຂົ້າໃນຊັ້ນຮຽນ. ຄວາມເຂັ້ມແຂງຂອງຂະຫຍາຍແມ່ນດັ່ງຕໍ່ໄປນີ້: ໃຫ້ CAP ເປັນຈໍານວນຕົວອັກສອນຂະຫນາດໃຫຍ່ໃນຊື່ຂະຫຍາຍ, ແລະໃຫ້ SM ເປັນຈໍານວນຕົວອັກສອນຂະຫນາດນ້ອຍໃນຊື່ຂະຫຍາຍ, ຄວາມເຂັ້ມແຂງແມ່ນໃຫ້ໂດຍສ່ວນແບ່ງ CAP - SM. ທ່ານຄວນຊອກຫາຂະຫຍາຍທີ່ເຂັ້ມແຂງທີ່ສຸດແລະສົ່ງຄືນສາຍໃນຮູບແບບນີ້: ClassName.StrongestExtensionName. ຖ້າມີຂະຫຍາຍສອງຫຼືຫຼາຍທີ່ມີຄວາມເຂັ້ມແຂງດຽວກັນ, ທ່ານຄວນເລືອກຫນຶ່ງທີ່ມາທໍາອິດໃນບັນຊີລາຍຊື່. ຍົກຕົວຢ່າງ, ຖ້າທ່ານໄດ້ຮັບ ""Slices"" ເປັນຊັ້ນຮຽນແລະບັນຊີລາຍຊື່ຂອງຂະຫຍາຍ: ['SEviviRNGSliCes', 'Cheese', 'StuFfed'] ຫຼັງຈາກນັ້ນທ່ານ
+    """"""
+","    strong = extensions[0]
+    my_val = len([x for x in extensions[0] if x.isalpha() and x.isupper()]) - len([x for x in extensions[0] if x.isalpha() and x.islower()])
+    for s in extensions:
+        val = len([x for x in s if x.isalpha() and x.isupper()]) - len([x for x in s if x.isalpha() and x.islower()])
+        if val > my_val:
+            strong = s
+            my_val = val
+
+    ans = class_name + ""."" + strong
+    return ans
+
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('Watashi', ['tEN', 'niNE', 'eIGHt8OKe']) == 'Watashi.eIGHt8OKe'
+    assert candidate('Boku123', ['nani', 'NazeDa', 'YEs.WeCaNe', '32145tggg']) == 'Boku123.YEs.WeCaNe'
+    assert candidate('__YESIMHERE', ['t', 'eMptY', 'nothing', 'zeR00', 'NuLl__', '123NoooneB321']) == '__YESIMHERE.NuLl__'
+    assert candidate('K', ['Ta', 'TAR', 't234An', 'cosSo']) == 'K.TAR'
+    assert candidate('__HAHA', ['Tab', '123', '781345', '-_-']) == '__HAHA.123'
+    assert candidate('YameRore', ['HhAas', 'okIWILL123', 'WorkOut', 'Fails', '-_-']) == 'YameRore.okIWILL123'
+    assert candidate('finNNalLLly', ['Die', 'NowW', 'Wow', 'WoW']) == 'finNNalLLly.WoW'
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('_', ['Bb', '91245']) == '_.Bb'
+    assert candidate('Sp', ['671235', 'Bb']) == 'Sp.671235'
+    
+"
+"
+def cycpattern_check(a , b):
+    """"""ທ່ານໄດ້ຮັບຄໍາສັບ 2 ຄໍາ. ທ່ານຕ້ອງກັບຄືນ True ຖ້າຄໍາສັບທີສອງຫຼືການຫມູນວຽນໃດໆຂອງມັນແມ່ນສາຍຍ່ອຍໃນຄໍາສັບທໍາອິດ cycpattern_check (((""abcd"",""abd"") => False cycpattern_check (((""hello"",""ell"") => True cycpattern_check (((""whassup"",""psus"") => False cycpattern_check (((""abab"",""baa"") => True cycpattern_check (((""efef"",""eeff"") => False cycpattern_check (((hims"",""simen"") => True
+
+    """"""
+","    l = len(b)
+    pat = b + b
+    for i in range(len(a) - l + 1):
+        for j in range(l + 1):
+            if a[i:i+l] == pat[j:j+l]:
+                return True
+    return False
+","def check(candidate):
+
+    # Check some simple cases
+    #assert True, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    #assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert  candidate(""xyzw"",""xyw"") == False , ""test #0""
+    assert  candidate(""yello"",""ell"") == True , ""test #1""
+    assert  candidate(""whattup"",""ptut"") == False , ""test #2""
+    assert  candidate(""efef"",""fee"") == True , ""test #3""
+    assert  candidate(""abab"",""aabb"") == False , ""test #4""
+    assert  candidate(""winemtt"",""tinem"") == True , ""test #5""
+
+"
+"
+def even_odd_count(num):
+    """"""ໃຫ້ຕົວເລກເຕັມ. ສົ່ງຄືນຕົວເລກທີ່ມີຈໍານວນຕົວເລກເທົ່າແລະບໍ່ເທົ່າກັນຕາມລໍາດັບ. ຕົວຢ່າງ: even_odd_count(-12) ==> (1, 1) even_odd_count(123) ==> (1, 2)
+    """"""
+","    even_count = 0
+    odd_count = 0
+    for i in str(abs(num)):
+        if int(i)%2==0:
+            even_count +=1
+        else:
+            odd_count +=1
+    return (even_count, odd_count)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(7) == (0, 1)
+    assert candidate(-78) == (1, 1)
+    assert candidate(3452) == (2, 2)
+    assert candidate(346211) == (3, 3)
+    assert candidate(-345821) == (3, 3)
+    assert candidate(-2) == (1, 0)
+    assert candidate(-45347) == (2, 3)
+    assert candidate(0) == (1, 0)
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def int_to_mini_roman(number):
+    """"""
+    ໂດຍໃຫ້ຕົວເລກເຕັມບວກ, ໃຫ້ຕົວເລກໂຣມັນທີ່ເທົ່າທຽມກັນເປັນສາຍ, ແລະສົ່ງມັນກັບມາເປັນຕົວເລກນ້ອຍ. ຂໍ້ຈໍາກັດ: 1 <= num <= 1000 ຕົວຢ່າງ:
+    >>> int_to_mini_roman(19) == 'xix'
+    >>> int_to_mini_roman(152) == 'clii'
+    >>> int_to_mini_roman(426) == 'cdxxvi'
+    """"""
+","    num = [1, 4, 5, 9, 10, 40, 50, 90,  
+           100, 400, 500, 900, 1000] 
+    sym = [""I"", ""IV"", ""V"", ""IX"", ""X"", ""XL"",  
+           ""L"", ""XC"", ""C"", ""CD"", ""D"", ""CM"", ""M""] 
+    i = 12
+    res = ''
+    while number: 
+        div = number // num[i] 
+        number %= num[i] 
+        while div: 
+            res += sym[i] 
+            div -= 1
+        i -= 1
+    return res.lower()
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(19) == 'xix'
+    assert candidate(152) == 'clii'
+    assert candidate(251) == 'ccli'
+    assert candidate(426) == 'cdxxvi'
+    assert candidate(500) == 'd'
+    assert candidate(1) == 'i'
+    assert candidate(4) == 'iv'
+    assert candidate(43) == 'xliii'
+    assert candidate(90) == 'xc'
+    assert candidate(94) == 'xciv'
+    assert candidate(532) == 'dxxxii'
+    assert candidate(900) == 'cm'
+    assert candidate(994) == 'cmxciv'
+    assert candidate(1000) == 'm'
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def right_angle_triangle(a, b, c):
+    '''
+    Given the lengths of the three sides of a triangle. Return True if the three
+    sides form a right-angled triangle, False otherwise.
+    A right-angled triangle is a triangle in which one angle is right angle or 
+    90 degree.
+    Example:
+    right_angle_triangle(3, 4, 5) == True
+    right_angle_triangle(1, 2, 3) == False
+    '''
+","    return a*a == b*b + c*c or b*b == a*a + c*c or c*c == a*a + b*b
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(3, 4, 5) == True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(1, 2, 3) == False
+    assert candidate(10, 6, 8) == True
+    assert candidate(2, 2, 2) == False
+    assert candidate(7, 24, 25) == True
+    assert candidate(10, 5, 7) == False
+    assert candidate(5, 12, 13) == True
+    assert candidate(15, 8, 17) == True
+    assert candidate(48, 55, 73) == True
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1, 1, 1) == False, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(2, 2, 10) == False
+
+"
+"
+def find_max(words):
+    """"""ຂຽນຟັງຊັນທີ່ຮັບເອົາລາຍຊື່ຂອງສາຍ. ລາຍຊື່ມີຄໍາສັບຕ່າງໆ. ກັບຄືນຄໍາທີ່ມີຕົວອັກສອນທີ່ເປັນເອກະລັກສູງສຸດ. ຖ້າສາຍຫຼາຍສາຍມີຕົວອັກສອນທີ່ເປັນເອກະລັກສູງສຸດ, ກັບຄືນຕົວອັກສອນທີ່ມາກ່ອນໃນລໍາດັບ lexicographical. find_max (([""name"", ""of"", ""string""]) == ""string"" find_max (([""name"", ""enam"", ""game""]) == ""enam"" find_max (([""aaaaaaa"", ""bb"", ""cc""]) == """"aaaaaaa""
+    """"""
+","    return sorted(words, key = lambda x: (-len(set(x)), x))[0]
+","def check(candidate):
+
+    # Check some simple cases
+    assert (candidate([""name"", ""of"", ""string""]) == ""string""), ""t1""
+    assert (candidate([""name"", ""enam"", ""game""]) == ""enam""), 't2'
+    assert (candidate([""aaaaaaa"", ""bb"", ""cc""]) == ""aaaaaaa""), 't3'
+    assert (candidate([""abc"", ""cba""]) == ""abc""), 't4'
+    assert (candidate([""play"", ""this"", ""game"", ""of"",""footbott""]) == ""footbott""), 't5'
+    assert (candidate([""we"", ""are"", ""gonna"", ""rock""]) == ""gonna""), 't6'
+    assert (candidate([""we"", ""are"", ""a"", ""mad"", ""nation""]) == ""nation""), 't7'
+    assert (candidate([""this"", ""is"", ""a"", ""prrk""]) == ""this""), 't8'
+
+    # Check some edge cases that are easy to work out by hand.
+    assert (candidate([""b""]) == ""b""), 't9'
+    assert (candidate([""play"", ""play"", ""play""]) == ""play""), 't10'
+
+"
+"
+def eat(number, need, remaining):
+    """"""
+    ທ່ານເປັນແມວທີ່ອຶດຫິວ, ແລະທ່ານໄດ້ກິນ carrots ຈໍານວນຫນຶ່ງແລ້ວ, ແຕ່ດຽວນີ້ທ່ານຕ້ອງການທີ່ຈະກິນ carrots ຫຼາຍເພື່ອໃຫ້ສໍາເລັດອາຫານຂອງມື້. ທ່ານຄວນຈະກັບຄືນໄປບ່ອນ array ຂອງ [ຈໍານວນທັງຫມົດຂອງ carrots ກິນຫຼັງຈາກອາຫານຂອງທ່ານ, ຈໍານວນຂອງ carrots ທີ່ຍັງເຫຼືອຫຼັງຈາກອາຫານຂອງທ່ານ ] ຖ້າບໍ່ມີ carrots ທີ່ຍັງເຫຼືອພຽງພໍ, ທ່ານຈະກິນ carrots ທີ່ຍັງເຫຼືອທັງຫມົດ, ແຕ່ຍັງຈະອຶດຫິວ. ຕົວຢ່າງ: * ກິນ(5, 6, 10) -> [11, 4] * ກິນ(4, 8, 9) -> [12, 1] * ກິນ(1, 10, 10) -> [11, 0] * ກິນ(2, 11, 5) -> [7, 0] ຕົວແປ: @number: ຈໍານວນ integer ຂອງ carrots ທີ່ທ່ານໄດ້ກິນ. @need: ຈໍານວນ integer ຂອງ carrots ທີ່ທ່ານຕ້ອງການທີ່ຈະກິນ. @remaining: ຈໍານວນ integer ຂອງ carrots ທີ່ຍັງເຫຼືອໃນສະຕັອກ Constrain
+    """"""
+","    if(need <= remaining):
+        return [ number + need , remaining-need ]
+    else:
+        return [ number + remaining , 0]
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(5, 6, 10) == [11, 4], ""Error""
+    assert candidate(4, 8, 9) == [12, 1], ""Error""
+    assert candidate(1, 10, 10) == [11, 0], ""Error""
+    assert candidate(2, 11, 5) == [7, 0], ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(4, 5, 7) == [9, 2], ""Error""
+    assert candidate(4, 5, 1) == [5, 0], ""Error""
+
+"
+"
+def do_algebra(operator, operand):
+    """"""
+    ໃຫ້ສອງບັນຊີຜູ້ປະຕິບັດງານ, ແລະ operand. ບັນຊີລາຍຊື່ທໍາອິດມີການປະຕິບັດ algebra ພື້ນຖານ, ແລະບັນຊີລາຍຊື່ທີສອງແມ່ນບັນຊີລາຍຊື່ຂອງຕົວເລກເຕັມ. ໃຊ້ສອງບັນຊີລາຍຊື່ທີ່ໃຫ້ເພື່ອສ້າງການສະແດງອອກ algebraic ແລະກັບຄືນການປະເມີນຜົນຂອງຄໍາສະແດງອອກນີ້. ການປະຕິບັດງານ algebra ພື້ນຖານ: ການເພີ່ມ ( + ) ການລົບ ( - ) ການເພີ່ມ ( * ) ການແບ່ງຊັ້ນ ( // ) ການສະແດງ ( ** ຕົວຢ່າງ): ຜູ້ປະຕິບັດງານ['+', '*', '-'] array = [2, 3, 4, 5] ຜົນໄດ້ຮັບ = 2 + 3 * 4 - 5 => ຜົນໄດ້ຮັບ = 9 ຫມາຍເຫດ: ຄວາມຍາວຂອງບັນຊີລາຍຊື່ຂອງຜູ້ປະຕິບັດງານແມ່ນເທົ່າກັບຄວາມຍາວຂອງບັນຊີລາຍຊື່ operand ลบ ຫນຶ່ງ. Operand ແມ່ນບັນຊີລາຍຊື່ຂອງຕົວເລກເຕັມທີ່ບໍ່ແມ່ນລົບ. ຜູ້ປະຕິບັດງານມີຢ່າງຫນ້ອຍຫນຶ່ງບັນຊີລາຍຊື່ຜູ້
+
+    """"""
+","    expression = str(operand[0])
+    for oprt, oprn in zip(operator, operand[1:]):
+        expression+= oprt + str(oprn)
+    return eval(expression)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(['**', '*', '+'], [2, 3, 4, 5]) == 37
+    assert candidate(['+', '*', '-'], [2, 3, 4, 5]) == 9
+    assert candidate(['//', '*'], [7, 3, 4]) == 8, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
+"
+def solve(s):
+    """"""ທ່ານໄດ້ຮັບ string s. ຖ້າ s[i] ເປັນຕົວອັກສອນ, ປ່ຽນຕົວອັກສອນຈາກຕ່ໍາໄປຫາສູງຫຼື vice versa, ຖ້າບໍ່ດັ່ງນັ້ນໃຫ້ມັນຢູ່ຄືເກົ່າ. ຖ້າ string ບໍ່ມີຕົວອັກສອນ, ປ່ຽນ string. ຫນ້າທີ່ຄວນສົ່ງຄືນ string ທີ່ໄດ້ຮັບຜົນ. ຕົວຢ່າງ solve ((""1234"") = ""4321"" solve ((""ab"") = ""AB"" solve ((""#a@C"") = ""#A@c""
+    """"""
+","    flg = 0
+    idx = 0
+    new_str = list(s)
+    for i in s:
+        if i.isalpha():
+            new_str[idx] = i.swapcase()
+            flg = 1
+        idx += 1
+    s = """"
+    for i in new_str:
+        s += i
+    if flg == 0:
+        return s[len(s)::-1]
+    return s
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""AsDf"") == ""aSdF""
+    assert candidate(""1234"") == ""4321""
+    assert candidate(""ab"") == ""AB""
+    assert candidate(""#a@C"") == ""#A@c""
+    assert candidate(""#AsdfW^45"") == ""#aSDFw^45""
+    assert candidate(""#6@2"") == ""2@6#""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""#$a^D"") == ""#$A^d""
+    assert candidate(""#ccc"") == ""#CCC""
+
+    # Don't remove this line:
+"
+"
+def string_to_md5(text):
+    """"""
+    ຖ້າໃຫ້ string 'text', ໃຫ້ string ທີ່ເທົ່າທຽມກັນກັບ md5 hash ຂອງມັນ. ຖ້າ 'text' ເປັນ string ເປົ່າ, ໃຫ້ None.
+
+    >>> string_to_md5('Hello world') == '3e25960a79dbc69b674cd4ec67a72c62'
+    """"""
+","    import hashlib
+    return hashlib.md5(text.encode('ascii')).hexdigest() if text else None
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('Hello world') == '3e25960a79dbc69b674cd4ec67a72c62'
+    assert candidate('') == None
+    assert candidate('A B C') == '0ef78513b0cb8cef12743f5aeb35f888'
+    assert candidate('password') == '5f4dcc3b5aa765d61d8327deb882cf99'
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+"
+"
+def generate_integers(a, b):
+    """"""
+    ໂດຍໃຫ້ສອງຕົວເລກເຕັມບວກ a ແລະ b, ສົ່ງຄືນຕົວເລກແຖວລະຫວ່າງ a ແລະ b, ຕາມລໍາດັບເພີ່ມຂຶ້ນ. ຕົວຢ່າງ: generate_integers ((2, 8) => [2, 4, 6, 8] generate_integers ((8, 2) => [2, 4, 6, 8] generate_integers ((10, 14) => []
+    """"""
+","    lower = max(2, min(a, b))
+    upper = min(8, max(a, b))
+
+    return [i for i in range(lower, upper+1) if i % 2 == 0]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(2, 10) == [2, 4, 6, 8], ""Test 1""
+    assert candidate(10, 2) == [2, 4, 6, 8], ""Test 2""
+    assert candidate(132, 2) == [2, 4, 6, 8], ""Test 3""
+    assert candidate(17,89) == [], ""Test 4""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+"
