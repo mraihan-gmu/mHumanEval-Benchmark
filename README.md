@@ -1,8 +1,8 @@
 <div align="center">
-
-[![arXiv](https://img.shields.io/badge/arXiv-Read_Paper-blue?style=for-the-badge&logo=arxiv)]([https://your-arxiv-link-here.com](https://arxiv.org/abs/2410.15037)) 
-[![Email](https://img.shields.io/badge/Email-Contact_Us-blue?style=for-the-badge&logo=gmail)](mailto:mraihan2@gmu.edu)
-
+<table><tr>
+<td><a href="[https://arxiv.org/abs/2410.17736](https://arxiv.org/abs/2410.15037)"><img src="https://img.shields.io/badge/arXiv-Read_Paper-blue?style=for-the-badge&logo=arxiv" /></a></td>
+<td><a href="mailto:mraihan2@gmu.edu"><img src="https://img.shields.io/badge/Email-Contact_Us-blue?style=for-the-badge&logo=gmail" /></a></td>
+</tr></table>
 </div>
 
 <div align="center">
