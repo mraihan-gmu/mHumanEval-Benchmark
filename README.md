@@ -126,7 +126,26 @@ The mHumanEval-Expert benchmark includes human translations of programming promp
 
 ![performance](resources/images/performance_on_mHumanEval.png)
 
+---
 
+
+<div align="center">
+<h2>📚 Citation</h2>
+</div>
+
+If you find our work helpful, please consider citing our paper:
+
+<div style="background-color: #f6f8fa; padding: 20px; border-radius: 5px; margin: 10px 0;">
+<p style="margin-bottom: 10px;"><strong>mHumanEval: A Multilingual Benchmark to Evaluate Large Language Models for Code Generation</strong></p>
+
+```bibtex
+@article{raihan2024mhumaneval,
+  title={mHumanEval--A Multilingual Benchmark to Evaluate Large Language Models for Code Generation},
+  author={Raihan, Nishat and Anastasopoulos, Antonios and Zampieri, Marcos},
+  journal={arXiv preprint arXiv:2410.15037},
+  year={2024}
+}
+```
 
 
 
