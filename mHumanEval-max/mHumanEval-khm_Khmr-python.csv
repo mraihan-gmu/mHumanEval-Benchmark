@@ -1,0 +1,3843 @@
+task_id,nl,pl,prompt,canonical_solution,test,Unnamed: 6,Unnamed: 7,Unnamed: 8
+HumanEval/0,khm_Khmr,python,"from typing import List
+
+
+def has_close_elements(numbers: List[float], threshold: float) -> bool:
+    """"""ពិនិត្យមើលថាក្នុងបញ្ជីចំនួនដែលបានផ្តល់, មានចំនួនពីរណាដែលជិតគ្នាជាងកម្រិតកំណត់ដែលត្រូវបានផ្តល់។ ឧទាហរណ៍: >>> has_close_elements (([1.0, 2.0, 3.0], 0.5) កុហក >>> has_close_elements (([1.0, 2.8, 3.0, 4.0, 5.0, 2.0], 0.3) ពិតប្រាកដ """"""
+","for idx, elem in enumerate(numbers):
+    for idx2, elem2 in enumerate(numbers):
+        if idx != idx2:
+            distance = abs(elem - elem2)
+            if distance < threshold:
+                return True
+return False
+","def check(candidate):
+    assert candidate([1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.3) == True
+    assert candidate([1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.05) == False
+    assert candidate([1.0, 2.0, 5.9, 4.0, 5.0], 0.95) == True
+    assert candidate([1.0, 2.0, 5.9, 4.0, 5.0], 0.8) == False
+    assert candidate([1.0, 2.0, 3.0, 4.0, 5.0, 2.0], 0.1) == True
+    assert candidate([1.1, 2.2, 3.1, 4.1, 5.1], 1.0) == True
+    assert candidate([1.1, 2.2, 3.1, 4.1, 5.1], 0.5) == False
+
+",,,
+HumanEval/1,khm_Khmr,python,"from typing import List
+
+
+def separate_paren_groups(paren_string: str) -> List[str]:
+    """"""Input to this function is a string containing multiple groups of nested parentheses. គោលបំណងរបស់អ្នកគឺដើម្បីបែងចែកក្រុមទាំងនោះទៅជាសរសៃដាច់ដោយឡែកពីគ្នា និងត្រឡប់មកវិញនូវបញ្ជីនៃពួកគេ។ ក្រុមដាច់ដោយឡែកពីគ្នាមានតុល្យភាព (សរសៃដាច់ដោយឡែកពីគ្នាត្រូវបានបិទត្រឹមត្រូវ) និងមិនត្រូវបានបែងចែកគ្នាក្នុងគ្នាទៅវិញទៅមក Ignore any spaces in the input string. ឧទាហរណ៍: >>> separate_paren_groups'(( ) (() (( ) ) ) ) ) ) ' ['() ', '(()) ', '(() ')) ]""""""
+","    result = []
+    current_string = []
+    current_depth = 0
+
+    for c in paren_string:
+        if c == '(':
+            current_depth += 1
+            current_string.append(c)
+        elif c == ')':
+            current_depth -= 1
+            current_string.append(c)
+
+            if current_depth == 0:
+                result.append(''.join(current_string))
+                current_string.clear()
+
+    return result
+","def check(candidate):
+    assert candidate('(()()) ((())) () ((())()())') == [
+        '(()())', '((()))', '()', '((())()())'
+    ]
+    assert candidate('() (()) ((())) (((())))') == [
+        '()', '(())', '((()))', '(((())))'
+    ]
+    assert candidate('(()(())((())))') == [
+        '(()(())((())))'
+    ]
+    assert candidate('( ) (( )) (( )( ))') == ['()', '(())', '(()())']
+",,,
+HumanEval/2,khm_Khmr,python,"
+
+def truncate_number(number: float) -> float:
+    """"""ដោយបានផ្តល់ចំនួន floating point វិជ្ជមាន, វាអាចត្រូវបានបំបែកទៅជាចំនួន integer (ចំនួន integer ធំជាងចំនួនដែលផ្តល់) និងតួលេខ (ផ្នែកដែលនៅសល់គឺមានតួលេខតិចជាង 1) ។ ត្រឡប់មកវិញផ្នែកតួលេខនៃចំនួន ឧទាហរណ៍: >>> truncate_number ((3.5) 0.5 """"""
+","    return number % 1.0
+","def check(candidate):
+    assert candidate(3.5) == 0.5
+    assert abs(candidate(1.33) - 0.33) < 1e-6
+    assert abs(candidate(123.456) - 0.456) < 1e-6
+",,,
+HumanEval/3,khm_Khmr,python,"from typing import List
+
+
+def below_zero(operations: List[int]) -> bool:
+    """"""អ្នកត្រូវបានផ្តល់បញ្ជីនៃប្រតិបត្តិការដាក់ប្រាក់ និងការដកប្រាក់នៅលើគណនីធនាគារដែលចាប់ផ្តើមដោយសល់សល់សល់សល់។ ការងាររបស់អ្នកគឺដើម្បីកំណត់ថាតើនៅចំណុចណាមួយសល់សល់គណនីធ្លាក់ចុះក្រោមសល់សល់សល់ហើយនៅចំណុចនោះមុខងារគួរតែត្រឡប់មកវិញ True ។ បើមិនដូច្នេះទេវាគួរតែត្រឡប់មកវិញ False ឧទាហរណ៍: >>> below_zero([1, 2, 3]) False >>> below_zero([1, 2, -4, 5]) True """"""
+","    balance = 0
+
+    for op in operations:
+        balance += op
+        if balance < 0:
+            return True
+
+    return False
+","def check(candidate):
+    assert candidate([]) == False
+    assert candidate([1, 2, -3, 1, 2, -3]) == False
+    assert candidate([1, 2, -4, 5, 6]) == True
+    assert candidate([1, -1, 2, -2, 5, -5, 4, -4]) == False
+    assert candidate([1, -1, 2, -2, 5, -5, 4, -5]) == True
+    assert candidate([1, -2, 2, -2, 5, -5, 4, -4]) == True
+",,,
+HumanEval/4,khm_Khmr,python,"from typing import List
+
+
+def mean_absolute_deviation(numbers: List[float]) -> float:
+    """"""សម្រាប់បញ្ជីចំនួនបញ្ចូលដែលបានផ្តល់ជូន, គណនា Mean Absolute Deviation ជុំវិញមធ្យមនៃតួលេខនេះ Mean Absolute Deviation គឺជាការខុសគ្នារវាងមធ្យមសរុបរវាងតួគំរូនិងមជ្ឈមណ្ឌល (មធ្យមនៅក្នុងករណីនេះ): MAD = មធ្យម  x - x_mean  ឧទាហរណ៍: >>> mean_absolute_deviation (([1.0, 2.0, 3.0, 4.0]) 1.0 """"""
+","    mean = sum(numbers) / len(numbers)
+    return sum(abs(x - mean) for x in numbers) / len(numbers)
+","def check(candidate):
+    assert abs(candidate([1.0, 2.0, 3.0]) - 2.0/3.0) < 1e-6
+    assert abs(candidate([1.0, 2.0, 3.0, 4.0]) - 1.0) < 1e-6
+    assert abs(candidate([1.0, 2.0, 3.0, 4.0, 5.0]) - 6.0/5.0) < 1e-6
+
+",,,
+HumanEval/5,khm_Khmr,python,"from typing import List
+
+
+def intersperse(numbers: List[int], delimeter: int) -> List[int]:
+    """"""បញ្ចូលលេខ 'ដកស្រង់' រវាងតួទាំងពីរដងជាប់គ្នានៃបញ្ជីបញ្ចូល `numbers' >>> intersperse (([], 4) [] >>> intersperse (([1, 2, 3], 4) [1, 4, 2, 4, 3] """"""
+","    if not numbers:
+        return []
+
+    result = []
+
+    for n in numbers[:-1]:
+        result.append(n)
+        result.append(delimeter)
+
+    result.append(numbers[-1])
+
+    return result
+","def check(candidate):
+    assert candidate([], 7) == []
+    assert candidate([5, 6, 3, 2], 8) == [5, 8, 6, 8, 3, 8, 2]
+    assert candidate([2, 2, 2], 2) == [2, 2, 2, 2, 2]
+",,,
+HumanEval/6,khm_Khmr,python,"from typing import List
+
+
+def parse_nested_parens(paren_string: str) -> List[int]:
+    """"""Input ទៅកាន់ function នេះគឺជា string តំណាងឱ្យក្រុមជាច្រើនសម្រាប់ parentheses ដែលមានកំប៉ុងបែងចែកដោយអគារ។ សម្រាប់ក្រុមនីមួយៗ output កម្រិតកំប៉ុងបែងចែកដ៏ជ្រៅបំផុតនៃ parentheses. ឧទាហរណ៍ (() (()) មានកម្រិតកំប៉ុងកំប៉ុងកំប៉ុងកំប៉ុងកំប៉ុងកំប៉ុងកំប៉ុងកំប៉ុងកំប៉ុងកំប៉ុងកំប៉ុងកំប៉ុងកំប៉ុងកំប៉ុងកំប៉ុងកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកកក""""""
+","    def parse_paren_group(s):
+        depth = 0
+        max_depth = 0
+        for c in s:
+            if c == '(':
+                depth += 1
+                max_depth = max(depth, max_depth)
+            else:
+                depth -= 1
+
+        return max_depth
+
+    return [parse_paren_group(x) for x in paren_string.split(' ') if x]
+","def check(candidate):
+    assert candidate('(()()) ((())) () ((())()())') == [2, 3, 1, 3]
+    assert candidate('() (()) ((())) (((())))') == [1, 2, 3, 4]
+    assert candidate('(()(())((())))') == [4]
+",,,
+HumanEval/7,khm_Khmr,python,"from typing import List
+
+
+def filter_by_substring(strings: List[str], substring: str) -> List[str]:
+    """"""ការកាត់បន្ថយបញ្ជីបញ្ចូលនៃខ្សែសង្វាក់សម្រាប់តែខ្សែសង្វាក់ដែលមានខ្សែសង្វាក់ក្រោម >>> filter_by_substring (([], 'a') [] >>> filter_by_substring ((['abc', 'bacd', 'cde', 'array'], 'a') ['abc', 'bacd', 'array'] """"""
+","    return [x for x in strings if substring in x]
+","def check(candidate):
+    assert candidate([], 'john') == []
+    assert candidate(['xxx', 'asd', 'xxy', 'john doe', 'xxxAAA', 'xxx'], 'xxx') == ['xxx', 'xxxAAA', 'xxx']
+    assert candidate(['xxx', 'asd', 'aaaxxy', 'john doe', 'xxxAAA', 'xxx'], 'xx') == ['xxx', 'aaaxxy', 'xxxAAA', 'xxx']
+    assert candidate(['grunt', 'trumpet', 'prune', 'gruesome'], 'run') == ['grunt', 'prune']
+",,,
+HumanEval/8,khm_Khmr,python,"from typing import List, Tuple
+
+
+def sum_product(numbers: List[int]) -> Tuple[int, int]:
+    """"""សម្រាប់បញ្ជីចំនួនសរុបដែលបានផ្តល់ជូន, សូមត្រឡប់មកវិញនូវ tuple ដែលមានចំនួន និងផលិតផលនៃចំនួនសរុបទាំងអស់នៅក្នុងបញ្ជី។ ចំនួនសរុបគ្មានត្រូវស្មើនឹង 0 និងផលិតផលគ្មានត្រូវស្មើនឹង 1. >>> sum_product (([]) (0, 1) >>> sum_product (([1, 2, 3, 4]) (10, 24) """"""
+","    sum_value = 0
+    prod_value = 1
+
+    for n in numbers:
+        sum_value += n
+        prod_value *= n
+    return sum_value, prod_value
+","def check(candidate):
+    assert candidate([]) == (0, 1)
+    assert candidate([1, 1, 1]) == (3, 1)
+    assert candidate([100, 0]) == (100, 0)
+    assert candidate([3, 5, 7]) == (3 + 5 + 7, 3 * 5 * 7)
+    assert candidate([10]) == (10, 10)
+",,,
+HumanEval/9,khm_Khmr,python,"from typing import List, Tuple
+
+
+def rolling_max(numbers: List[int]) -> List[int]:
+    """"""ពីបញ្ជីចំនួនគត់ដែលបានផ្តល់ជូន, បង្កើតបញ្ជីនៃតួអក្សរ rolling max ដែលត្រូវបានរកឃើញរហូតដល់ពេលដែលត្រូវបានផ្តល់នៅក្នុងលំដាប់។ >>> rolling_max (([1, 2, 3, 2, 3, 4, 2]) [1, 2, 3, 3, 3, 4, 4] """"""
+","    running_max = None
+    result = []
+
+    for n in numbers:
+        if running_max is None:
+            running_max = n
+        else:
+            running_max = max(running_max, n)
+
+        result.append(running_max)
+
+    return result
+","def check(candidate):
+    assert candidate([]) == []
+    assert candidate([1, 2, 3, 4]) == [1, 2, 3, 4]
+    assert candidate([4, 3, 2, 1]) == [4, 4, 4, 4]
+    assert candidate([3, 2, 3, 100, 3]) == [3, 3, 3, 100, 100]
+",,,
+HumanEval/10,khm_Khmr,python,"
+
+def is_palindrome(string: str) -> bool:
+    """"""រក palindrome ខ្លីបំផុតដែលចាប់ផ្តើមដោយសរសៃដែលផ្តល់ជូន គំនិតអាល់ហ្សេរីទាំគឺងាយស្រួល: - រក postfix ខ្លីបំផុតនៃសរសៃដែលផ្តល់ជូនដែលជា palindrome - បន្ថែមទៅដល់ចុងនៃសរសៃប្រឆាំងនៃសរសៃ prefix ដែលមកមុនសរសៃ palindromic ។ >>> make_palindrome ((('') ' ' >>> make_palindrome ((('cat') 'catac' >>> make_palindrome ((('cata') 'catac' """"""
+    return string == string[::-1]
+
+
+def make_palindrome(string: str) -> str:
+    """"""តេស្តប្រសិនបើ string ត្រូវបានផ្តល់ជា palindrome """"""
+","    if not string:
+        return ''
+
+    beginning_of_suffix = 0
+
+    while not is_palindrome(string[beginning_of_suffix:]):
+        beginning_of_suffix += 1
+
+    return string + string[:beginning_of_suffix][::-1]
+","def check(candidate):
+    assert candidate('') == ''
+    assert candidate('x') == 'x'
+    assert candidate('xyz') == 'xyzyx'
+    assert candidate('xyx') == 'xyx'
+    assert candidate('jerry') == 'jerryrrej'
+",,,
+HumanEval/11,khm_Khmr,python,"from typing import List
+
+
+def string_xor(a: str, b: str) -> str:
+    """"""Input គឺជា string a និង b ដែលមានតែ 1 និង 0 ប៉ុណ្ណោះ។ ធ្វើការ XOR ជា binary លើ input ទាំងនេះ និង return result ដូចគ្នា ជា string ។ >>> string_xor (('010', '110') '100' """"""
+","    def xor(i, j):
+        if i == j:
+            return '0'
+        else:
+            return '1'
+
+    return ''.join(xor(x, y) for x, y in zip(a, b))
+","def check(candidate):
+    assert candidate('111000', '101010') == '010010'
+    assert candidate('1', '1') == '0'
+    assert candidate('0101', '0000') == '0101'
+",,,
+HumanEval/12,khm_Khmr,python,"from typing import List, Optional
+
+
+def longest(strings: List[str]) -> Optional[str]:
+    """"""ក្នុងបញ្ជីនៃខ្សែ, ត្រឡប់ទៅខ្សែវែងបំផុត។ ត្រឡប់ទៅខ្សែវែងដំបូងក្នុងករណីមានខ្សែជាច្រើននៃកំណាត់តែមួយ។ ត្រឡប់ទៅគ្មានក្នុងករណីបញ្ជីបញ្ចូលគ្មាន។ >>> longest([]) >>> longest(['a', 'b', 'c']) 'a' >>> longest(['a', 'bb', 'ccc']) 'ccc' """"""
+","    if not strings:
+        return None
+
+    maxlen = max(len(x) for x in strings)
+    for s in strings:
+        if len(s) == maxlen:
+            return s
+","def check(candidate):
+    assert candidate([]) == None
+    assert candidate(['x', 'y', 'z']) == 'x'
+    assert candidate(['x', 'yyy', 'zzzz', 'www', 'kkkk', 'abc']) == 'zzzz'
+",,,
+HumanEval/13,khm_Khmr,python,"
+
+def greatest_common_divisor(a: int, b: int) -> int:
+    """"""ត្រឡប់មកវិញនូវមធ្យមភាគរួមដ៏ធំបំផុតនៃចំនួនគត់ a និង b >>> មធ្យមភាគ_ធំបំផុត (greatest_common_divisor) (៣, ៥) ១ >>> មធ្យមភាគ_ធំបំផុត (greatest_common_divisor) (២៥, ១៥) ៥""""""
+","    while b:
+        a, b = b, a % b
+    return a
+","def check(candidate):
+    assert candidate(3, 7) == 1
+    assert candidate(10, 15) == 5
+    assert candidate(49, 14) == 7
+    assert candidate(144, 60) == 12
+",,,
+HumanEval/14,khm_Khmr,python,"from typing import List
+
+
+def all_prefixes(string: str) -> List[str]:
+    """"""បញ្ជីត្រឡប់នៃ prefix ទាំងអស់ពីខ្លីបំផុតទៅជាយូរបំផុតនៃ string input >>> all_prefixes (('abc') ['a', 'ab', 'abc'] """"""
+","    result = []
+
+    for i in range(len(string)):
+        result.append(string[:i+1])
+    return result
+","def check(candidate):
+    assert candidate('') == []
+    assert candidate('asdfgh') == ['a', 'as', 'asd', 'asdf', 'asdfg', 'asdfgh']
+    assert candidate('WWW') == ['W', 'WW', 'WWW']
+",,,
+HumanEval/15,khm_Khmr,python,"
+
+def string_sequence(n: int) -> str:
+    """"""បញ្ជូន string ដែលមានចំនួនកំណត់ដោយអវកាសចាប់ពី 0 រហូតដល់ n រួមទាំង។ >>> string_sequence(0) '0' >>> string_sequence(5) '0 1 2 3 4 5' """"""
+","    return ' '.join([str(x) for x in range(n + 1)])
+","def check(candidate):
+    assert candidate(0) == '0'
+    assert candidate(3) == '0 1 2 3'
+    assert candidate(10) == '0 1 2 3 4 5 6 7 8 9 10'
+",,,
+HumanEval/16,khm_Khmr,python,"
+
+def count_distinct_characters(string: str) -> int:
+    """"""ផ្តល់នូវខ្សែសង្វាក់មួយ, រកមើលថាតើមានអក្សរខុសគ្នាតែប៉ុន្មាន (មិនគិតពី case) តើវាមានចំនួន >>> count_distinct_characters (('xyzXYZ') 3 >>> count_distinct_characters (('Jerry') 4 """"""
+","    return len(set(string.lower()))
+","def check(candidate):
+    assert candidate('') == 0
+    assert candidate('abcde') == 5
+    assert candidate('abcde' + 'cade' + 'CADE') == 5
+    assert candidate('aaaaAAAAaaaa') == 1
+    assert candidate('Jerry jERRY JeRRRY') == 5
+",,,
+HumanEval/17,khm_Khmr,python,"from typing import List
+
+
+def parse_music(music_string: str) -> List[int]:
+    """"""Input to function នេះគឺជាខ្សែតំណាងឱ្យតន្រ្តីតន្ត្រីនៅក្នុងទម្រង់ ASCII ពិសេសការងាររបស់អ្នកគឺដើម្បី parse បញ្ជីខ្សែនៃ integer ដែលពាក់ព័ន្ធនឹង beat ជាច្រើនធ្វើអោយមានរូបភាពមួយនេះគឺ legend: 'o' note, lasts four beats 'o' dak' - half note, lasts two beats 'o' - quater note, lasts one beat >>> parse_music 'o' o' dak' o' dak' o' dak' o' dak' o' dak' o' dak' o' dak' o' dak' o' dak' o' dak' o' dak' o' dak' o' dak' o' dak' o' dak' o' dak' o' dak' o' dak' o' dak' o' dak' o dak' o dak' o dak' o dak' o dak' o dak' o dak' o dak' o dak' o dak' o dak' o dak' o dak' o dak' o dak' o dak' o dak' o dak' o dak' o dak' o dak' o dak' o dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak dak""""""
+","    note_map = {'o': 4, 'o|': 2, '.|': 1}
+    return [note_map[x] for x in music_string.split(' ') if x]
+","def check(candidate):
+    assert candidate('') == []
+    assert candidate('o o o o') == [4, 4, 4, 4]
+    assert candidate('.| .| .| .|') == [1, 1, 1, 1]
+    assert candidate('o| o| .| .| o o o o') == [2, 2, 1, 1, 4, 4, 4, 4]
+    assert candidate('o| .| o| .| o o| o o|') == [2, 1, 2, 1, 4, 2, 4, 2]
+",,,
+HumanEval/18,khm_Khmr,python,"
+
+def how_many_times(string: str, substring: str) -> int:
+    """"""រកមើលថា តើសន្សើមមួយអាចត្រូវបានរកឃើញក្នុងសន្សើមដើមបានប៉ុន្មានដង។ រាប់បញ្ចូលករណីផ្ទុយគ្នា: >>> how_many_times('', 'a') 0 >>> how_many_times('aaa', 'a') 3 >>> how_many_times('aaaa', 'aa') 3 """"""
+","    times = 0
+
+    for i in range(len(string) - len(substring) + 1):
+        if string[i:i+len(substring)] == substring:
+            times += 1
+
+    return times
+","def check(candidate):
+    assert candidate('', 'x') == 0
+    assert candidate('xyxyxyx', 'x') == 4
+    assert candidate('cacacacac', 'cac') == 4
+    assert candidate('john doe', 'john') == 1
+",,,
+HumanEval/19,khm_Khmr,python,"from typing import List
+
+
+def sort_numbers(numbers: str) -> str:
+    """"""Input គឺជា string ដែលមានអវកាសកំណត់នៃចំនួនពី 'សូន្យ' ទៅ 'ប្រាំមួយ' ជម្រើសត្រឹមត្រូវគឺ 'សូន្យ', 'មួយ', 'ពីរ', 'បី', 'បួន', 'ប្រាំ', 'ប្រាំមួយ', 'ប្រាំពីរ', 'ប្រាំបី' និង 'ប្រាំមួយ' ត្រឡប់មកវិញ string ជាមួយនឹងលេខដែលត្រូវបានរៀបចំនៃតូចបំផុតទៅធំបំផុត >>> sort_numbers ((('បីមួយប្រាំ') 'មួយបីប្រាំ' """"""
+","    value_map = {
+        'zero': 0,
+        'one': 1,
+        'two': 2,
+        'three': 3,
+        'four': 4,
+        'five': 5,
+        'six': 6,
+        'seven': 7,
+        'eight': 8,
+        'nine': 9
+    }
+    return ' '.join(sorted([x for x in numbers.split(' ') if x], key=lambda x: value_map[x]))
+","def check(candidate):
+    assert candidate('') == ''
+    assert candidate('three') == 'three'
+    assert candidate('three five nine') == 'three five nine'
+    assert candidate('five zero four seven nine eight') == 'zero four five seven eight nine'
+    assert candidate('six five four three two one zero') == 'zero one two three four five six'
+",,,
+HumanEval/20,khm_Khmr,python,"from typing import List, Tuple
+
+
+def find_closest_elements(numbers: List[float]) -> Tuple[float, float]:
+    """"""ពីបញ្ជីដែលផ្តល់ជូននៃលេខ (ដែលមានកម្ពស់យ៉ាងហោចណាស់ពីរ) ជ្រើសរើសនិងត្រឡប់មកវិញពីរដែលនៅជិតគ្នាទៅវិញទៅមកនិងត្រឡប់មកវិញតាមលំដាប់ (លេខតូចជាង, លេខធំជាង) >>> find_closest_elements (([1.0, 2.0, 3.0, 4.0, 5.0, 2.2]) (2.0, 2.2) >>> find_closest_elements (([1.0, 2.0, 3.0, 4.0, 5.0, 2.0]) (2.0, 2.0) """"""
+","    closest_pair = None
+    distance = None
+
+    for idx, elem in enumerate(numbers):
+        for idx2, elem2 in enumerate(numbers):
+            if idx != idx2:
+                if distance is None:
+                    distance = abs(elem - elem2)
+                    closest_pair = tuple(sorted([elem, elem2]))
+                else:
+                    new_distance = abs(elem - elem2)
+                    if new_distance < distance:
+                        distance = new_distance
+                        closest_pair = tuple(sorted([elem, elem2]))
+
+    return closest_pair
+","def check(candidate):
+    assert candidate([1.0, 2.0, 3.9, 4.0, 5.0, 2.2]) == (3.9, 4.0)
+    assert candidate([1.0, 2.0, 5.9, 4.0, 5.0]) == (5.0, 5.9)
+    assert candidate([1.0, 2.0, 3.0, 4.0, 5.0, 2.2]) == (2.0, 2.2)
+    assert candidate([1.0, 2.0, 3.0, 4.0, 5.0, 2.0]) == (2.0, 2.0)
+    assert candidate([1.1, 2.2, 3.1, 4.1, 5.1]) == (2.2, 3.1)
+
+",,,
+HumanEval/21,khm_Khmr,python,"from typing import List
+
+
+def rescale_to_unit(numbers: List[float]) -> List[float]:
+    """"""ដោយបានផ្តល់បញ្ជីនៃលេខ (យ៉ាងហោចណាស់មានពីរអក្សរ) សូមអនុវត្តការផ្លាស់ប្តូរលេខលំដាប់ទៅក្នុងបញ្ជីនោះ ដោយលេខតូចបំផុតនឹងក្លាយជា 0 និងលេខធំបំផុតនឹងក្លាយជា 1 >>> rescale_to_unit (([1.0, 2.0, 3.0, 4.0, 5.0]) [0.0, 0.25, 0.5, 0.75, 1.0] """"""
+","    min_number = min(numbers)
+    max_number = max(numbers)
+    return [(x - min_number) / (max_number - min_number) for x in numbers]
+","def check(candidate):
+    assert candidate([2.0, 49.9]) == [0.0, 1.0]
+    assert candidate([100.0, 49.9]) == [1.0, 0.0]
+    assert candidate([1.0, 2.0, 3.0, 4.0, 5.0]) == [0.0, 0.25, 0.5, 0.75, 1.0]
+    assert candidate([2.0, 1.0, 5.0, 3.0, 4.0]) == [0.25, 0.0, 1.0, 0.5, 0.75]
+    assert candidate([12.0, 11.0, 15.0, 13.0, 14.0]) == [0.25, 0.0, 1.0, 0.5, 0.75]
+",,,
+HumanEval/22,khm_Khmr,python,"from typing import List, Any
+
+
+def filter_integers(values: List[Any]) -> List[int]:
+    """"""Filter given list of any python values only for integers >>> filter_integers ((['a', 3.14, 5]) [5] >>> filter_integers (([1, 2, 3, 'abc', {}, []]) [1, 2, 3] """"""
+","    return [x for x in values if isinstance(x, int)]
+","def check(candidate):
+    assert candidate([]) == []
+    assert candidate([4, {}, [], 23.2, 9, 'adasd']) == [4, 9]
+    assert candidate([3, 'c', 3, 3, 'a', 'b']) == [3, 3, 3]
+",,,
+HumanEval/23,khm_Khmr,python,"
+
+def strlen(string: str) -> int:
+    """"""ការត្រឡប់ទៅវិញនៃខ្សែដែលត្រូវបានផ្តល់ >>> strlen('') 0 >>> strlen('abc') 3 """"""
+","    return len(string)
+","def check(candidate):
+    assert candidate('') == 0
+    assert candidate('x') == 1
+    assert candidate('asdasnakj') == 9
+",,,
+HumanEval/24,khm_Khmr,python,"
+
+def largest_divisor(n: int) -> int:
+    """"""សម្រាប់ចំនួន n ដែលបានផ្តល់ឱ្យ, រកចំនួនធំជាងគេដែលបែងចែក n បានស្មើ, តូចជាង n >>> largest_divisor ((15) 5 """"""
+","    for i in reversed(range(n)):
+        if n % i == 0:
+            return i
+","def check(candidate):
+    assert candidate(3) == 1
+    assert candidate(7) == 1
+    assert candidate(10) == 5
+    assert candidate(100) == 50
+    assert candidate(49) == 7
+",,,
+HumanEval/25,khm_Khmr,python,"from typing import List
+
+
+def factorize(n: int) -> List[int]:
+    """"""បញ្ជីបញ្ជីនៃកត្តាដំបូងនៃចំនួនគត់ដែលត្រូវបានផ្តល់ដោយចាត់តាំងពីតូចបំផុតទៅធំបំផុត។ កត្តានីមួយៗ ត្រូវបញ្ជីចំនួនដងដែលទាក់ទងនឹងចំនួនដងដែលវាបង្ហាញនៅក្នុង factorization ។ ចំនួនបញ្ចូលត្រូវស្មើនឹងផលិតផលនៃកត្តាទាំងអស់ >>> factorization ((8) [2, 2, 2] >>> factorization ((25) [5, 5] >>> factorization ((70) [2, 5, 7] """"""
+","    import math
+    fact = []
+    i = 2
+    while i <= int(math.sqrt(n) + 1):
+        if n % i == 0:
+            fact.append(i)
+            n //= i
+        else:
+            i += 1
+
+    if n > 1:
+        fact.append(n)
+    return fact
+","def check(candidate):
+    assert candidate(2) == [2]
+    assert candidate(4) == [2, 2]
+    assert candidate(8) == [2, 2, 2]
+    assert candidate(3 * 19) == [3, 19]
+    assert candidate(3 * 19 * 3 * 19) == [3, 3, 19, 19]
+    assert candidate(3 * 19 * 3 * 19 * 3 * 19) == [3, 3, 3, 19, 19, 19]
+    assert candidate(3 * 19 * 19 * 19) == [3, 19, 19, 19]
+    assert candidate(3 * 2 * 3) == [2, 3, 3]
+",,,
+HumanEval/26,khm_Khmr,python,"from typing import List
+
+
+def remove_duplicates(numbers: List[int]) -> List[int]:
+    """"""ពីបញ្ជីនៃចំនួនពេញលេញ ដកចេញនូវតួទាំងឡាយដែលកើតឡើងច្រើនជាងមួយដង។ រក្សាលំដាប់នៃតួដែលនៅសល់ដូចគ្នាទៅនឹងការបញ្ចូល។ >>> remove_duplicates (([1, 2, 3, 2, 4]) [1, 3, 4] """"""
+","    import collections
+    c = collections.Counter(numbers)
+    return [n for n in numbers if c[n] <= 1]
+","def check(candidate):
+    assert candidate([]) == []
+    assert candidate([1, 2, 3, 4]) == [1, 2, 3, 4]
+    assert candidate([1, 2, 3, 2, 4, 3, 5]) == [1, 4, 5]
+",,,
+HumanEval/27,khm_Khmr,python,"
+
+def flip_case(string: str) -> str:
+    """"""សម្រាប់សរសៃដែលបានផ្តល់ជូន សូមបម្លែងអក្សរតូចទៅជាអក្សរធំ និងអក្សរធំទៅជាអក្សរតូច។ >>> flip_case ((('Hello') 'hELLO' """"""
+","    return string.swapcase()
+","def check(candidate):
+    assert candidate('') == ''
+    assert candidate('Hello!') == 'hELLO!'
+    assert candidate('These violent delights have violent ends') == 'tHESE VIOLENT DELIGHTS HAVE VIOLENT ENDS'
+",,,
+HumanEval/28,khm_Khmr,python,"from typing import List
+
+
+def concatenate(strings: List[str]) -> str:
+    """"""បញ្ជីនៃខ្សែដែលត្រូវបានបែងចែកជាខ្សែតែមួយ >>> concatenate (([]) '' >>> concatenate ((['a', 'b', 'c']) 'abc' """"""
+","    return ''.join(strings)
+","def check(candidate):
+    assert candidate([]) == ''
+    assert candidate(['x', 'y', 'z']) == 'xyz'
+    assert candidate(['x', 'y', 'z', 'w', 'k']) == 'xyzwk'
+",,,
+HumanEval/29,khm_Khmr,python,"from typing import List
+
+
+def filter_by_prefix(strings: List[str], prefix: str) -> List[str]:
+    """"""ការកាត់បន្ថយបញ្ជីបញ្ចូលនៃខ្សែសង្វាក់សម្រាប់តែអ្នកដែលចាប់ផ្តើមដោយអក្សរដើមដែលមាន។ >>> filter_by_prefix([], 'a') [] >>> filter_by_prefix(['abc', 'bcd', 'cde', 'array'], 'a') ['abc', 'array'] """"""
+","    return [x for x in strings if x.startswith(prefix)]
+","def check(candidate):
+    assert candidate([], 'john') == []
+    assert candidate(['xxx', 'asd', 'xxy', 'john doe', 'xxxAAA', 'xxx'], 'xxx') == ['xxx', 'xxxAAA', 'xxx']
+",,,
+HumanEval/30,khm_Khmr,python,"
+
+def get_positive(l: list):
+    """"""សូមត្រឡប់មកវិញតែចំនួនវិជ្ជមាននៅក្នុងបញ្ជី >>> get_positive (([-1, 2, -4, 5, 6]) [2, 5, 6] >>> get_positive (([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10]) [5, 3, 2, 3, 9, 123, 1] """"""
+","    return [e for e in l if e > 0]
+","def check(candidate):
+    assert candidate([-1, -2, 4, 5, 6]) == [4, 5, 6]
+    assert candidate([5, 3, -5, 2, 3, 3, 9, 0, 123, 1, -10]) == [5, 3, 2, 3, 3, 9, 123, 1]
+    assert candidate([-1, -2]) == []
+    assert candidate([]) == []
+
+",,,
+HumanEval/31,khm_Khmr,python,"
+
+def is_prime(n):
+    """"""ត្រឡប់មកវិញ true ប្រសិនបើចំនួនដែលបានផ្តល់គឺ prime ហើយ false បើមិនដូច្នេះទេ: >>> is_prime(6) False >>> is_prime(101) True >>> is_prime(11) True >>> is_prime(13441) True >>> is_prime(61) True >>> is_prime(4) False >>> is_prime(1) False """"""
+","    if n < 2:
+        return False
+    for k in range(2, n - 1):
+        if n % k == 0:
+            return False
+    return True
+","def check(candidate):
+    assert candidate(6) == False
+    assert candidate(101) == True
+    assert candidate(11) == True
+    assert candidate(13441) == True
+    assert candidate(61) == True
+    assert candidate(4) == False
+    assert candidate(1) == False
+    assert candidate(5) == True
+    assert candidate(11) == True
+    assert candidate(17) == True
+    assert candidate(5 * 17) == False
+    assert candidate(11 * 7) == False
+    assert candidate(13441 * 19) == False
+
+",,,
+HumanEval/32,khm_Khmr,python,"import math
+
+
+def poly(xs: list, x: float):
+    """"""find_zero រក x ដូច poly ((x) = 0 find_zero ត្រឡប់មកវិញតែពិន្ទុសូន្យតែប៉ុណ្ណោះ ទោះបីជាមានច្រើនក៏ដោយ។ លើសពីនេះទៅទៀត find_zero គ្រាន់តែយកបញ្ជី xs ដែលមានចំនួនសូត្រនៃសូត្រនិងសូត្រដែលមិនមែនជាសូន្យធំជាងគេដោយវាធានាបាននូវដំណោះស្រាយ។ >>> round ((find_zero[1, 2]), 2) # f ((x) = 1 + 2x -0.5 >>> round ((find_zero([-6, 11, -6, 1]), 2) # (x - 1) * (x - 2) * (x - 3) = -6 + 11x - 6x ^ 2 + x ^ 3  1.0""""""
+    return sum([coeff * math.pow(x, i) for i, coeff in enumerate(xs)])
+
+
+def find_zero(xs: list):
+    """"""វាយតម្លៃពូឡូណូមដែលមានកម្រិត xs នៅចំណុច x. ត្រឡប់មកវិញ xs [0] + xs [1] * x + xs [1] * x ^ 2 + .... xs [n] * x ^ n """"""
+","    begin, end = -1., 1.
+    while poly(xs, begin) * poly(xs, end) > 0:
+        begin *= 2.0
+        end *= 2.0
+    while end - begin > 1e-10:
+        center = (begin + end) / 2.0
+        if poly(xs, center) * poly(xs, begin) > 0:
+            begin = center
+        else:
+            end = center
+    return begin
+","def check(candidate):
+    import math
+    import random
+    rng = random.Random(42)
+    import copy
+    for _ in range(100):
+        ncoeff = 2 * rng.randint(1, 4)
+        coeffs = []
+        for _ in range(ncoeff):
+            coeff = rng.randint(-10, 10)
+            if coeff == 0:
+                coeff = 1
+            coeffs.append(coeff)
+        solution = candidate(copy.deepcopy(coeffs))
+        assert math.fabs(poly(coeffs, solution)) < 1e-4
+
+",,,
+HumanEval/33,khm_Khmr,python,"
+
+def sort_third(l: list):
+    """"""តួអង្គនេះយកបញ្ជី l ហើយបញ្ជូនបញ្ជី l' ដូចដែល l' គឺដូចគ្នាទៅនឹង l នៅក្នុងតារាងដែលមិនអាចបែងចែកបានដោយបីទេ ខណៈតម្លៃរបស់វានៅតារាងដែលអាចបែងចែកបានដោយបីគឺស្មើនឹងតម្លៃនៃតារាងដែលពាក់ព័ន្ធនៃ l ប៉ុន្តែត្រូវបានរៀបចំ។ >>> sort_third (([1, 2, 3]) [1, 2, 3] >>> sort_third (([5, 6, 3, 4, 8, 9, 2]) [2, 6, 3, 4, 8, 9, 5] """"""
+","    l = list(l)
+    l[::3] = sorted(l[::3])
+    return l
+","def check(candidate):
+    assert tuple(candidate([1, 2, 3])) == tuple(sort_third([1, 2, 3]))
+    assert tuple(candidate([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])) == tuple(sort_third([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10]))
+    assert tuple(candidate([5, 8, -12, 4, 23, 2, 3, 11, 12, -10])) == tuple(sort_third([5, 8, -12, 4, 23, 2, 3, 11, 12, -10]))
+    assert tuple(candidate([5, 6, 3, 4, 8, 9, 2])) == tuple([2, 6, 3, 4, 8, 9, 5])
+    assert tuple(candidate([5, 8, 3, 4, 6, 9, 2])) == tuple([2, 8, 3, 4, 6, 9, 5])
+    assert tuple(candidate([5, 6, 9, 4, 8, 3, 2])) == tuple([2, 6, 9, 4, 8, 3, 5])
+    assert tuple(candidate([5, 6, 3, 4, 8, 9, 2, 1])) == tuple([2, 6, 3, 4, 8, 9, 5, 1])
+
+",,,
+HumanEval/34,khm_Khmr,python,"
+
+def unique(l: list):
+    """"""ត្រឡប់ទៅវិញនូវតួឯកដែលត្រូវបានរៀបចំបំបំបំបាត់បញ្ជី >>> unique (([5, 3, 5, 2, 3, 3, 9, 0, 123]) [0, 2, 3, 5, 9, 123] """"""
+","    return sorted(list(set(l)))
+","def check(candidate):
+    assert candidate([5, 3, 5, 2, 3, 3, 9, 0, 123]) == [0, 2, 3, 5, 9, 123]
+
+",,,
+HumanEval/35,khm_Khmr,python,"
+
+def max_element(l: list):
+    """"""ត្រឡប់ទៅលេខកូដអក្សរធំបំផុតនៅក្នុងបញ្ជី >>> max_element (([1, 2, 3]) 3 >>> max_element (([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10)) 123 """"""
+","    m = l[0]
+    for e in l:
+        if e > m:
+            m = e
+    return m
+","def check(candidate):
+    assert candidate([1, 2, 3]) == 3
+    assert candidate([5, 3, -5, 2, -3, 3, 9, 0, 124, 1, -10]) == 124
+",,,
+HumanEval/36,khm_Khmr,python,"
+
+def fizz_buzz(n: int):
+    """"""សូមត្រឡប់មកវិញចំនួនដងដែលតួ 7 លេចឡើងនៅក្នុងចំនួនគត់តិចជាង n ដែលអាចបែងចែកបានដោយ 11 ឬ 13 >>> fizz_buzz(50) 0 >>> fizz_buzz(78) 2 >>> fizz_buzz(79) 3 """"""
+","    ns = []
+    for i in range(n):
+        if i % 11 == 0 or i % 13 == 0:
+            ns.append(i)
+    s = ''.join(list(map(str, ns)))
+    ans = 0
+    for c in s:
+        ans += (c == '7')
+    return ans
+","def check(candidate):
+    assert candidate(50) == 0
+    assert candidate(78) == 2
+    assert candidate(79) == 3
+    assert candidate(100) == 3
+    assert candidate(200) == 6
+    assert candidate(4000) == 192
+    assert candidate(10000) == 639
+    assert candidate(100000) == 8026
+
+",,,
+HumanEval/37,khm_Khmr,python,"
+
+def sort_even(l: list):
+    """"""តួអង្គនេះយកបញ្ជី l ហើយបញ្ជូនបញ្ជី l 'ដែល l 'ដូចគ្នាទៅនឹង l នៅក្នុងបញ្ជីមិនសូវជាធម្មតា ខណៈដែលតម្លៃរបស់វានៅបញ្ជីស្មើនឹងតម្លៃនៃបញ្ជីស្មើនៃ l ប៉ុន្តែត្រូវបានរៀបចំ។ >>> sort_even (([1, 2, 3]) [1, 2, 3] >>> sort_even (([5, 6, 3, 4]) [3, 6, 5, 4] """"""
+","    evens = l[::2]
+    odds = l[1::2]
+    evens.sort()
+    ans = []
+    for e, o in zip(evens, odds):
+        ans.extend([e, o])
+    if len(evens) > len(odds):
+        ans.append(evens[-1])
+    return ans
+","def check(candidate):
+    assert tuple(candidate([1, 2, 3])) == tuple([1, 2, 3])
+    assert tuple(candidate([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])) == tuple([-10, 3, -5, 2, -3, 3, 5, 0, 9, 1, 123])
+    assert tuple(candidate([5, 8, -12, 4, 23, 2, 3, 11, 12, -10])) == tuple([-12, 8, 3, 4, 5, 2, 12, 11, 23, -10])
+
+",,,
+HumanEval/38,khm_Khmr,python,"
+
+def encode_cyclic(s: str):
+    """"""ទទួលយកជាខ្សែប្រវែងដែលត្រូវបានកូដដោយប្រតិបត្តិការ encode_cyclic ។ ត្រឡប់មកវិញខ្សែប្រវែងដែលត្រូវបានកូដ។ """"""
+    # split string to groups. Each of length 3.
+    groups = [s[(3 * i):min((3 * i + 3), len(s))] for i in range((len(s) + 2) // 3)]
+    # cycle elements in each group. Unless group has fewer elements than 3.
+    groups = [(group[1:] + group[0]) if len(group) == 3 else group for group in groups]
+    return """".join(groups)
+
+
+def decode_cyclic(s: str):
+    """"""វិលត្រឡប់មកវិញនូវ string ដែលត្រូវបានបូកបញ្ចូលដោយក្រុម cycling ដែលមានចំនួនបីតួអក្សរ។""""""
+","    return encode_cyclic(encode_cyclic(s))
+","def check(candidate):
+    from random import randint, choice
+    import string
+
+    letters = string.ascii_lowercase
+    for _ in range(100):
+        str = ''.join(choice(letters) for i in range(randint(10, 20)))
+        encoded_str = encode_cyclic(str)
+        assert candidate(encoded_str) == str
+
+",,,
+HumanEval/39,khm_Khmr,python,"
+
+def prime_fib(n: int):
+    """"""prime_fib ផ្តល់នូវចំនួន n-th ដែលជាចំនួន Fibonacci ហើយវាក៏ជាចំនួន prime ផងដែរ ។ >>> prime_fib(1) 2 >>> prime_fib(2) 3 >>> prime_fib(3) 5 >>> prime_fib(4) 13 >>> prime_fib(5) 89 """"""
+","    import math
+
+    def is_prime(p):
+        if p < 2:
+            return False
+        for k in range(2, min(int(math.sqrt(p)) + 1, p - 1)):
+            if p % k == 0:
+                return False
+        return True
+    f = [0, 1]
+    while True:
+        f.append(f[-1] + f[-2])
+        if is_prime(f[-1]):
+            n -= 1
+        if n == 0:
+            return f[-1]
+","def check(candidate):
+    assert candidate(1) == 2
+    assert candidate(2) == 3
+    assert candidate(3) == 5
+    assert candidate(4) == 13
+    assert candidate(5) == 89
+    assert candidate(6) == 233
+    assert candidate(7) == 1597
+    assert candidate(8) == 28657
+    assert candidate(9) == 514229
+    assert candidate(10) == 433494437
+
+",,,
+HumanEval/40,khm_Khmr,python,"
+
+def triples_sum_to_zero(l: list):
+    """"""triples_sum_to_zero យកបញ្ជីនៃចំនួនសរុបជាអង់គ្លេសមកវិញ True ប្រសិនបើមានអំបិលចំនួនបីផ្សេងគ្នានៅក្នុងបញ្ជីដែលសរុបទៅជាសូន្យ ហើយ False បើមិនដូច្នេះទេ >>> triples_sum_to_zero (([1, 3, 5, 0]) False >>> triples_sum_to_zero (([1, 3, -2, 1]) True >>> triples_sum_to_zero (([1, 2, 3, 7]) False >>> triples_sum_to_zero (([2, 4, -5, 3, 9, 7]) True >>> triples_sum_to_zero (([1]) False """"""
+","    for i in range(len(l)):
+        for j in range(i + 1, len(l)):
+            for k in range(j + 1, len(l)):
+                if l[i] + l[j] + l[k] == 0:
+                    return True
+    return False
+","def check(candidate):
+    assert candidate([1, 3, 5, 0]) == False
+    assert candidate([1, 3, 5, -1]) == False
+    assert candidate([1, 3, -2, 1]) == True
+    assert candidate([1, 2, 3, 7]) == False
+    assert candidate([1, 2, 5, 7]) == False
+    assert candidate([2, 4, -5, 3, 9, 7]) == True
+    assert candidate([1]) == False
+    assert candidate([1, 3, 5, -100]) == False
+    assert candidate([100, 3, 5, -100]) == False
+
+",,,
+HumanEval/41,khm_Khmr,python,"
+
+def car_race_collision(n: int):
+    """"""សូមទស្សនាបង្ហាញផ្លូវមួយដែលជាផ្លូវដ៏ត្រឹមត្រូវមួយដែលមានរយៈពេលយូរឥតឈប់ឈរ. រថយន្ត n កំពុងបើកឆ្វេងទៅស្តាំ; ស្របពេលជាមួយគ្នានៃរថយន្ត n ផ្សេងទៀតកំពុងបើកឆ្វេងទៅឆ្វេង. រថយន្តទាំងពីរចាប់ផ្តើមនៅឆ្ងាយពីគ្នាទៅវិញទៅមក. រថយន្តទាំងអស់ដើរក្នុងល្បឿនដូចគ្នា. រថយន្តពីរត្រូវបានគេនិយាយថាប៉ះគ្នានៅពេលរថយន្តដែលកំពុងដើរឆ្វេងទៅស្តាំប៉ះរថយន្តដែលកំពុងដើរពីស្តាំទៅឆ្វេង. ទោះជាយ៉ាងណា, រថយន្តទាំងពីរមានភាពរឹងមាំនិងរឹងមាំឥតឈប់ឈរ; ជាលទ្ធផល, ពួកគេនៅតែបន្តដំណើរតាមផ្លូវរបស់ពួកគេដូចមិនដែលប៉ះគ្នា។ មុខងារនេះបញ្ចេញចំនួននៃការប៉ះទង្គិចបែបនេះ។ """"""
+","    return n**2
+","def check(candidate):
+    assert candidate(2) == 4
+    assert candidate(3) == 9
+    assert candidate(4) == 16
+    assert candidate(8) == 64
+    assert candidate(10) == 100
+
+",,,
+HumanEval/42,khm_Khmr,python,"
+
+def incr_list(l: list):
+    """"""បញ្ជីត្រឡប់មកវិញជាមួយតួដែលបង្កើនឡើងដោយ 1. >>> incr_list (([1, 2, 3]) [2, 3, 4] >>> incr_list (([5, 3, 5, 2, 3, 3, 9, 0, 123]) [6, 4, 6, 3, 4, 4, 10, 1, 124] """"""
+","    return [(e + 1) for e in l]
+","def check(candidate):
+    assert candidate([]) == []
+    assert candidate([3, 2, 1]) == [4, 3, 2]
+    assert candidate([5, 2, 5, 2, 3, 3, 9, 0, 123]) == [6, 3, 6, 3, 4, 4, 10, 1, 124]
+
+",,,
+HumanEval/43,khm_Khmr,python,"
+
+def pairs_sum_to_zero(l):
+    """"""pairs_sum_to_zero យកបញ្ជីនៃចំនួនសរុបជាអង់គ្លេសមកវិញ True ប្រសិនបើមានអំបិលពីរផ្សេងគ្នានៅក្នុងបញ្ជីដែលសរុបទៅជាសូន្យ ហើយ False បើមិនដូច្នេះទេ >>> pairs_sum_to_zero (([1, 3, 5, 0]) False >>> pairs_sum_to_zero (([1, 3, -2, 1]) False >>> pairs_sum_to_zero (([1, 2, 3, 7]) False >>> pairs_sum_to_zero (([2, 4, -5, 3, 5, 7]) True >>> pairs_sum_to_zero (([1]) False """"""
+","    for i, l1 in enumerate(l):
+        for j in range(i + 1, len(l)):
+            if l1 + l[j] == 0:
+                return True
+    return False
+","def check(candidate):
+    assert candidate([1, 3, 5, 0]) == False
+    assert candidate([1, 3, -2, 1]) == False
+    assert candidate([1, 2, 3, 7]) == False
+    assert candidate([2, 4, -5, 3, 5, 7]) == True
+    assert candidate([1]) == False
+
+    assert candidate([-3, 9, -1, 3, 2, 30]) == True
+    assert candidate([-3, 9, -1, 3, 2, 31]) == True
+    assert candidate([-3, 9, -1, 4, 2, 30]) == False
+    assert candidate([-3, 9, -1, 4, 2, 31]) == False
+
+",,,
+HumanEval/44,khm_Khmr,python,"
+
+def change_base(x: int, base: int):
+    """"""ផ្លាស់ប្តូរមូលដ្ឋានចំនួននៃលេខបញ្ចូល x ទៅជាមូលដ្ឋាន។ ត្រឡប់មកវិញតំណាងសរសៃបន្ទាប់ពីការបម្លែង។ ចំនួនមូលដ្ឋានតិចជាង 10 >>> change_base(8, 3) '22' >>> change_base(8, 2) '1000' >>> change_base(7, 2) '111' """"""
+","    ret = """"
+    while x > 0:
+        ret = str(x % base) + ret
+        x //= base
+    return ret
+","def check(candidate):
+    assert candidate(8, 3) == ""22""
+    assert candidate(9, 3) == ""100""
+    assert candidate(234, 2) == ""11101010""
+    assert candidate(16, 2) == ""10000""
+    assert candidate(8, 2) == ""1000""
+    assert candidate(7, 2) == ""111""
+    for x in range(2, 8):
+        assert candidate(x, x + 1) == str(x)
+
+",,,
+HumanEval/45,khm_Khmr,python,"
+
+def triangle_area(a, h):
+    """"""ដោយបានផ្តល់នូវប្រវែងនៃផ្នែកមួយ និងផ្ទៃនៃការវិលត្រឡប់ខ្ពស់សម្រាប់ត្រីកោណ។ >>> triangle_area ((5, 3) 7.5 """"""
+","    return a * h / 2.0
+","def check(candidate):
+    assert candidate(5, 3) == 7.5
+    assert candidate(2, 2) == 2.0
+    assert candidate(10, 8) == 40.0
+
+",,,
+HumanEval/46,khm_Khmr,python,"
+
+def fib4(n: int):
+    """"""លំដាប់លេខ Fib4 គឺជាលំដាប់ដែលស្រដៀងនឹងលំដាប់ Fibbonacci ដែលត្រូវបានកំណត់ដូចខាងក្រោម: fib4(0) -> 0 fib4(1) -> 0 fib4(2) -> 2 fib4(3) -> 0 fib4(n) -> fib4(n-1) + fib4(n-2) + fib4(n-3) + fib4(n-4). សូមសរសេរមុខងារដើម្បីធ្វើការរាប់លេខលេខលេខ n-th នៃលំដាប់លេខ fib4 ដោយមានប្រសិទ្ធភាព។ កុំប្រើការវិលត្រឡប់។ >>> fib4(5) 4 >>> fib4(6) >>> 8 fib4(7) 14 """"""
+","    results = [0, 0, 2, 0]
+    if n < 4:
+        return results[n]
+
+    for _ in range(4, n + 1):
+        results.append(results[-1] + results[-2] + results[-3] + results[-4])
+        results.pop(0)
+
+    return results[-1]
+","def check(candidate):
+    assert candidate(5) == 4
+    assert candidate(8) == 28
+    assert candidate(10) == 104
+    assert candidate(12) == 386
+
+",,,
+HumanEval/47,khm_Khmr,python,"
+
+def median(l: list):
+    """"""ការវិលត្រឡប់មកវិញនៃតួអក្សរនៅក្នុងបញ្ជី l. >>> median (([3, 1, 2, 4, 5]) 3 >>> median (([-10, 4, 6, 1000, 10, 20]) 15.0 """"""
+","    l = sorted(l)
+    if len(l) % 2 == 1:
+        return l[len(l) // 2]
+    else:
+        return (l[len(l) // 2 - 1] + l[len(l) // 2]) / 2.0
+","def check(candidate):
+    assert candidate([3, 1, 2, 4, 5]) == 3
+    assert candidate([-10, 4, 6, 1000, 10, 20]) == 8.0
+    assert candidate([5]) == 5
+    assert candidate([6, 5]) == 5.5
+    assert candidate([8, 1, 3, 9, 9, 2, 7]) == 7 
+
+",,,
+HumanEval/48,khm_Khmr,python,"
+
+def is_palindrome(text: str):
+    """"""ត្រួតពិនិត្យថាតើខ្សែដែលត្រូវបានផ្តល់ជា palindrome >>> is_palindrome (('') True >>> is_palindrome (('aba') True >>> is_palindrome (('aaaaa') True >>> is_palindrome (('zbcd') False """"""
+","    for i in range(len(text)):
+        if text[i] != text[len(text) - 1 - i]:
+            return False
+    return True
+","def check(candidate):
+    assert candidate('') == True
+    assert candidate('aba') == True
+    assert candidate('aaaaa') == True
+    assert candidate('zbcd') == False
+    assert candidate('xywyx') == True
+    assert candidate('xywyz') == False
+    assert candidate('xywzx') == False
+
+",,,
+HumanEval/49,khm_Khmr,python,"
+
+def modp(n: int, p: int):
+    """"""សូមត្រឡប់ទៅ 2^n modulo p (ត្រូវដឹងអំពីតួលេខ) >>> modp(3, 5) 3 >>> modp(1101, 101) 2 >>> modp(0, 101) 1 >>> modp(3, 11) 8 >>> modp(100, 101) 1 """"""
+","    ret = 1
+    for i in range(n):
+        ret = (2 * ret) % p
+    return ret
+","def check(candidate):
+    assert candidate(3, 5) == 3
+    assert candidate(1101, 101) == 2
+    assert candidate(0, 101) == 1
+    assert candidate(3, 11) == 8
+    assert candidate(100, 101) == 1
+    assert candidate(30, 5) == 4
+    assert candidate(31, 5) == 3
+
+",,,
+HumanEval/50,khm_Khmr,python,"
+
+def encode_shift(s: str):
+    """"""ទទួលយកជាខ្សែប្រវែងដែលត្រូវបានកូដដោយប្រតិបត្តិការ encode_shift ។ ត្រឡប់មកវិញខ្សែប្រវែងដែលត្រូវបានកូដ។ """"""
+    return """".join([chr(((ord(ch) + 5 - ord(""a"")) % 26) + ord(""a"")) for ch in s])
+
+
+def decode_shift(s: str):
+    """"""វិលត្រឡប់មកវិញនូវ string ដែលត្រូវបានបិទដោយការផ្លាស់ប្តូរតួអក្សរទាំងអស់ដោយ 5 នៅក្នុងអក្សរអក្សរ។""""""
+","    return """".join([chr(((ord(ch) - 5 - ord(""a"")) % 26) + ord(""a"")) for ch in s])
+","def check(candidate):
+    from random import randint, choice
+    import copy
+    import string
+
+    letters = string.ascii_lowercase
+    for _ in range(100):
+        str = ''.join(choice(letters) for i in range(randint(10, 20)))
+        encoded_str = encode_shift(str)
+        assert candidate(copy.deepcopy(encoded_str)) == str
+
+",,,
+HumanEval/51,khm_Khmr,python,"
+
+def remove_vowels(text):
+    """"""remove_vowels គឺជាមុខងារដែលយកសរសៃវ៉ែន និងបញ្ជូនសរសៃវ៉ែនដោយគ្មានសម្លេង។ >>> remove_vowels ((('') ' ' >>> remove_vowels (((""abcdef\nghijklm"") 'bcdf\nghjklm' >>> remove_vowels (('abcdef') 'bcdf' >>> remove_vowels (('aaaaa') ' ' >>> remove_vowels (('aaBAA') 'B' >>> remove_vowels (('zbcd') 'zbcd' """"""
+","    return """".join([s for s in text if s.lower() not in [""a"", ""e"", ""i"", ""o"", ""u""]])
+","def check(candidate):
+    assert candidate('') == ''
+    assert candidate(""abcdef\nghijklm"") == 'bcdf\nghjklm'
+    assert candidate('fedcba') == 'fdcb'
+    assert candidate('eeeee') == ''
+    assert candidate('acBAA') == 'cB'
+    assert candidate('EcBOO') == 'cB'
+    assert candidate('ybcd') == 'ybcd'
+
+",,,
+HumanEval/52,khm_Khmr,python,"
+
+def below_threshold(l: list, t: int):
+    """"""ត្រឡប់មកវិញ True ប្រសិនបើចំនួនទាំងអស់នៅក្នុងបញ្ជី l ស្ថិតនៅក្រោមកម្រិត t. >>> below_threshold (([1, 2, 4, 10], 100) True >>> below_threshold (([1, 20, 4, 10], 5) False """"""
+","    for e in l:
+        if e >= t:
+            return False
+    return True
+","def check(candidate):
+    assert candidate([1, 2, 4, 10], 100)
+    assert not candidate([1, 20, 4, 10], 5)
+    assert candidate([1, 20, 4, 10], 21)
+    assert candidate([1, 20, 4, 10], 22)
+    assert candidate([1, 8, 4, 10], 11)
+    assert not candidate([1, 8, 4, 10], 10)
+
+",,,
+HumanEval/53,khm_Khmr,python,"
+
+def add(x: int, y: int):
+    """"""បន្ថែមចំនួនពីរ x និង y >>> បន្ថែម (២,៣) ៥ >>> បន្ថែម (៥,៧) ១២ """"""
+","    return x + y
+","def check(candidate):
+    import random
+
+    assert candidate(0, 1) == 1
+    assert candidate(1, 0) == 1
+    assert candidate(2, 3) == 5
+    assert candidate(5, 7) == 12
+    assert candidate(7, 5) == 12
+
+    for i in range(100):
+        x, y = random.randint(0, 1000), random.randint(0, 1000)
+        assert candidate(x, y) == x + y
+
+",,,
+HumanEval/54,khm_Khmr,python,"
+
+def same_chars(s0: str, s1: str):
+    """"""ពិនិត្យមើលថាតើពាក្យពីរមានអក្សរដូចគ្នាទេ >>> same_chars ((('eabcdzzzz', 'dddzzzzzzdeddabc') ពិត >>> same_chars ((('abcd', 'dddddddabc') ពិត >>> same_chars ((('dddddddabc', 'abcd') ពិត >>> same_chars ((('eabcd', 'dddddddddabc') ក្លែងក្លាយ >>> same_chars ((('abcd', 'dddddddabddce') ក្លែងក្លាយ >>> same_chars (((abcdzzzz', 'dddzzzzzzdddabc') ក្លែងក្លាយ """"""
+","    return set(s0) == set(s1)
+","def check(candidate):
+    assert candidate('eabcdzzzz', 'dddzzzzzzzddeddabc') == True
+    assert candidate('abcd', 'dddddddabc') == True
+    assert candidate('dddddddabc', 'abcd') == True
+    assert candidate('eabcd', 'dddddddabc') == False
+    assert candidate('abcd', 'dddddddabcf') == False
+    assert candidate('eabcdzzzz', 'dddzzzzzzzddddabc') == False
+    assert candidate('aabb', 'aaccc') == False
+
+",,,
+HumanEval/55,khm_Khmr,python,"
+
+def fib(n: int):
+    """"""សូមត្រឡប់មកវិញលេខ Fibonacci n-th ។ >>> fib(10) 55 >>> fib(1) 1 >>> fib(8) 21 """"""
+","    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+    return fib(n - 1) + fib(n - 2)
+","def check(candidate):
+    assert candidate(10) == 55
+    assert candidate(1) == 1
+    assert candidate(8) == 21
+    assert candidate(11) == 89
+    assert candidate(12) == 144
+
+",,,
+HumanEval/56,khm_Khmr,python,"
+
+def correct_bracketing(brackets: str):
+    """"""brackets គឺជាសរសៃនៃ ""<"" និង "">"". return True ប្រសិនបើ bracket បើកមួយមាន bracket បិទមួយប្រហាក់ប្រហែលគ្នា. >>> correct_bracketing(""<"") False >>> correct_bracketing(""<>"") True >>> correct_bracketing(""<><>>"") True >>> correct_bracketing(""><<>"") False """"""
+","    depth = 0
+    for b in brackets:
+        if b == ""<"":
+            depth += 1
+        else:
+            depth -= 1
+        if depth < 0:
+            return False
+    return depth == 0
+","def check(candidate):
+    assert candidate(""<>"")
+    assert candidate(""<<><>>"")
+    assert candidate(""<><><<><>><>"")
+    assert candidate(""<><><<<><><>><>><<><><<>>>"")
+    assert not candidate(""<<<><>>>>"")
+    assert not candidate(""><<>"")
+    assert not candidate(""<"")
+    assert not candidate(""<<<<"")
+    assert not candidate("">"")
+    assert not candidate(""<<>"")
+    assert not candidate(""<><><<><>><>><<>"")
+    assert not candidate(""<><><<><>><>>><>"")
+
+",,,
+HumanEval/57,khm_Khmr,python,"
+
+def monotonic(l: list):
+    """"""Return True is list elements are monotonically increasing or decreasing. >>> monotonic (([1, 2, 4, 20]) True >>> monotonic (([1, 20, 4, 10]) False >>> monotonic (([4, 1, 0, -10]) True """"""
+","    if l == sorted(l) or l == sorted(l, reverse=True):
+        return True
+    return False
+","def check(candidate):
+    assert candidate([1, 2, 4, 10]) == True
+    assert candidate([1, 2, 4, 20]) == True
+    assert candidate([1, 20, 4, 10]) == False
+    assert candidate([4, 1, 0, -10]) == True
+    assert candidate([4, 1, 1, 0]) == True
+    assert candidate([1, 2, 3, 2, 5, 60]) == False
+    assert candidate([1, 2, 3, 4, 5, 60]) == True
+    assert candidate([9, 9, 9, 9]) == True
+
+",,,
+HumanEval/58,khm_Khmr,python,"
+
+def common(l1: list, l2: list):
+    """"""ត្រឡប់ទៅវិញនូវតួឯករួមដែលត្រូវបានរៀបចំបែបតែមួយសម្រាប់បញ្ជីពីរ។ >>> common (([1, 4, 3, 34, 653, 2, 5], [5, 7, 1, 5, 9, 653, 121]) [1, 5, 653] >>> common (([5, 3, 2, 8], [3, 2]) [2, 3] """"""
+","    ret = set()
+    for e1 in l1:
+        for e2 in l2:
+            if e1 == e2:
+                ret.add(e1)
+    return sorted(list(ret))
+","def check(candidate):
+    assert candidate([1, 4, 3, 34, 653, 2, 5], [5, 7, 1, 5, 9, 653, 121]) == [1, 5, 653]
+    assert candidate([5, 3, 2, 8], [3, 2]) == [2, 3]
+    assert candidate([4, 3, 2, 8], [3, 2, 4]) == [2, 3, 4]
+    assert candidate([4, 3, 2, 8], []) == []
+
+",,,
+HumanEval/59,khm_Khmr,python,"
+
+def largest_prime_factor(n: int):
+    """"""សូមត្រឡប់ទៅកត្តាដំបូងដ៏ធំបំផុតនៃ n. ឧទាហរណ៍ថា n > 1 ហើយមិនមែនជាកត្តាដំបូងទេ >>> largest_prime_factor ((13195) 29 >>> largest_prime_factor ((2048) 2 """"""
+","    def is_prime(k):
+        if k < 2:
+            return False
+        for i in range(2, k - 1):
+            if k % i == 0:
+                return False
+        return True
+    largest = 1
+    for j in range(2, n + 1):
+        if n % j == 0 and is_prime(j):
+            largest = max(largest, j)
+    return largest
+","def check(candidate):
+    assert candidate(15) == 5
+    assert candidate(27) == 3
+    assert candidate(63) == 7
+    assert candidate(330) == 11
+    assert candidate(13195) == 29
+
+",,,
+HumanEval/60,khm_Khmr,python,"
+
+def sum_to_n(n: int):
+    """"""sum_to_n គឺជាមុខងារដែលសរុបចំនួនពី 1 ដល់ n. >>> sum_to_n(30) 465 >>> sum_to_n(100) 5050 >>> sum_to_n(5) 15 >>> sum_to_n(10) 55 >>> sum_to_n(1) 1 """"""
+","    return sum(range(n + 1))
+","def check(candidate):
+    assert candidate(1) == 1
+    assert candidate(6) == 21
+    assert candidate(11) == 66
+    assert candidate(30) == 465
+    assert candidate(100) == 5050
+
+",,,
+HumanEval/61,khm_Khmr,python,"
+
+def correct_bracketing(brackets: str):
+    """"""brackets គឺជាសង្វាក់នៃ ""("" និង "")"". return True ប្រសិនបើ bracket បើកមួយមាន bracket បិទមួយប្រតិបត្ដិ។ >>> correct_bracketing(""("") False >>> correct_bracketing(""() True >>> correct_bracketing(""() "") True >>> correct_bracketing("") False """"""
+","    depth = 0
+    for b in brackets:
+        if b == ""("":
+            depth += 1
+        else:
+            depth -= 1
+        if depth < 0:
+            return False
+    return depth == 0
+","def check(candidate):
+    assert candidate(""()"")
+    assert candidate(""(()())"")
+    assert candidate(""()()(()())()"")
+    assert candidate(""()()((()()())())(()()(()))"")
+    assert not candidate(""((()())))"")
+    assert not candidate("")(()"")
+    assert not candidate(""("")
+    assert not candidate(""(((("")
+    assert not candidate("")"")
+    assert not candidate(""(()"")
+    assert not candidate(""()()(()())())(()"")
+    assert not candidate(""()()(()())()))()"")
+
+",,,
+HumanEval/62,khm_Khmr,python,"
+
+def derivative(xs: list):
+    """"""xs តំណាងឱ្យកម្រិតនៃពូជសញ្ញា. xs[0] + xs[1] * x + xs[2] * x^2 + .... ត្រឡប់មកវិញនូវកំណែនៃពូជសញ្ញានេះនៅក្នុងទម្រង់ដូចគ្នា. >>> កំណែ (([3, 1, 2, 4, 5]) [1, 4, 12, 20] >>> កំណែ (([1, 2, 3]) [2, 6] """"""
+","    return [(i * x) for i, x in enumerate(xs)][1:]
+","def check(candidate):
+    assert candidate([3, 1, 2, 4, 5]) == [1, 4, 12, 20]
+    assert candidate([1, 2, 3]) == [2, 6]
+    assert candidate([3, 2, 1]) == [2, 2]
+    assert candidate([3, 2, 1, 0, 4]) == [2, 2, 0, 16]
+    assert candidate([1]) == []
+
+",,,
+HumanEval/63,khm_Khmr,python,"
+
+def fibfib(n: int):
+    """"""លំដាប់លេខ FibFib គឺជាលំដាប់ដែលស្រដៀងនឹងលំដាប់លេខ Fibbonacci ដែលត្រូវបានកំណត់ដូចខាងក្រោម: fibfib(0) == 0 fibfib(1) == 0 fibfib(2) == 1 fibfib(n) == fibfib(n-1) + fibfib(n-2) + fibfib(n-3). សូមសរសេរមុខងារដើម្បីធ្វើការគណនាប្រកបដោយប្រសិទ្ធភាពនូវតួ n- នៃលំដាប់លេខ fibfib. >>> fibfib(1) 0 >>> fib(5) 4 >>> fibfib(8) 24 """"""
+","    if n == 0:
+        return 0
+    if n == 1:
+        return 0
+    if n == 2:
+        return 1
+    return fibfib(n - 1) + fibfib(n - 2) + fibfib(n - 3)
+","def check(candidate):
+    assert candidate(2) == 1
+    assert candidate(1) == 0
+    assert candidate(5) == 4
+    assert candidate(8) == 24
+    assert candidate(10) == 81
+    assert candidate(12) == 274
+    assert candidate(14) == 927
+
+",,,
+HumanEval/64,khm_Khmr,python,"
+FIX = """"""សរសេរមុខងារ vowels_count ដែលយកសរសៃតំណាងឱ្យពាក្យជាចំណូល និងបញ្ជូនចំនួនសរសៃតំណាងឱ្យសរសៃតំណាងនៅក្នុងសរសៃតំណាងនៅក្នុងករណីនេះគឺ 'a', 'e', 'i', 'o', 'u' ។នៅទីនេះ 'y' ក៏ជាសរសៃតំណាងដែរ ប៉ុន្តែគ្រាន់តែនៅពេលដែលវាស្ថិតនៅចុងនៃពាក្យដែលបានផ្តល់ជូន។ ឧទាហរណ៍: >>> vowels_count ((""abcde"") 2 >>> vowels_count ((""ACEDY"") 3 """"""
+
+def vowels_count(s):
+    """"""បន្ថែមករណីសាកល្បងបន្ថែមទៀត។""""""
+","    vowels = ""aeiouAEIOU""
+    n_vowels = sum(c in vowels for c in s)
+    if s[-1] == 'y' or s[-1] == 'Y':
+        n_vowels += 1
+    return n_vowels
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""abcde"") == 2, ""Test 1""
+    assert candidate(""Alone"") == 3, ""Test 2""
+    assert candidate(""key"") == 2, ""Test 3""
+    assert candidate(""bye"") == 1, ""Test 4""
+    assert candidate(""keY"") == 2, ""Test 5""
+    assert candidate(""bYe"") == 1, ""Test 6""
+    assert candidate(""ACEDY"") == 3, ""Test 7""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/65,khm_Khmr,python,"
+def circular_shift(x, shift):
+    """"""ការផ្លាស់ប្តូរជារង្វង់នៃលេខនៃចំនួនគត់ x, ការផ្លាស់ប្តូរលេខទៅខាងស្តាំដោយការផ្លាស់ប្តូរ និងបញ្ជូនលទ្ធផលមកជាសរសៃមួយ។ ប្រសិនបើការផ្លាស់ប្តូរ > ចំនួនលេខ, ត្រឡប់លេខត្រឡប់មកវិញ។ >>> circular_shift(12, 1) ""21"" >>> circular_shift(12, 2) ""12"" """"""
+","    s = str(x)
+    if shift > len(s):
+        return s[::-1]
+    else:
+        return s[len(s) - shift:] + s[:len(s) - shift]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(100, 2) == ""001""
+    assert candidate(12, 2) == ""12""
+    assert candidate(97, 8) == ""79""
+    assert candidate(12, 1) == ""21"", ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(11, 101) == ""11"", ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/66,khm_Khmr,python,"
+def digitSum(s):
+    """"""កិច្ចការ សរសេរ មុខងារ ដែល យក ខ្សែអក្សរ ជា ចំណូល និង បញ្ជូន លទ្ធផល នៃ តួអក្សរ ខាងលើ តែ ប៉ុណ្ណោះ' កូដ ASCII ឧទាហរណ៍: digitSum("""") => 0 digitSum(""abAB"") => 131 digitSum(""abcCd"") => 67 digitSum(""helloE"") => 69 digitSum(""woArBld"") => 131 digitSum(""aAaaaXa"") => 153 """"""
+","    if s == """": return 0
+    return sum(ord(char) if char.isupper() else 0 for char in s)
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate("""") == 0, ""Error""
+    assert candidate(""abAB"") == 131, ""Error""
+    assert candidate(""abcCd"") == 67, ""Error""
+    assert candidate(""helloE"") == 69, ""Error""
+    assert candidate(""woArBld"") == 131, ""Error""
+    assert candidate(""aAaaaXa"") == 153, ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate("" How are yOu?"") == 151, ""Error""
+    assert candidate(""You arE Very Smart"") == 327, ""Error""
+
+",,,
+HumanEval/67,khm_Khmr,python,"
+def fruit_distribution(s,n):
+    """"""ក្នុងការងារនេះអ្នកនឹងទទួលបានសរសៃមួយដែលតំណាងឱ្យចំនួនផ្លែប៉ោម និងផ្លែប៉ោមដែលត្រូវបានចែកចាយនៅក្នុងកញ្ចប់ផ្លែឈើ កញ្ចប់នេះមានផ្លែប៉ោម, ផ្លែប៉ោម, និងផ្លែឈើម៉ុងហ្គោ។ ដោយបានផ្តល់សរសៃដែលតំណាងឱ្យចំនួនសរុបនៃផ្លែប៉ោម និងផ្លែប៉ោម និងចំនួនគត់ដែលតំណាងឱ្យចំនួនសរុបនៃផ្លែឈើនៅក្នុងកញ្ចប់ត្រឡប់មកវិញចំនួនផ្លែឈើម៉ុងហ្គោនៅក្នុងកញ្ចប់។ សម្រាប់ឧទាហរណ៍: fruit_distribution""5(apples និង 6 ផ្លែប៉ោម"", 19) -> 19 - 5 - 6 = 8 ផ្លែ_distribution""0 ផ្លែប៉ោមនិង 1 ផ្លែប៉ោម"", 3) -> 3 - 0 - 1 = 2 ផ្លែ_distribution""2 ផ្លែប៉ោមនិង 3 ផ្លែប៉ោម"", 100) -> 100 - 2 - 3 = 95 ផ្លែ_distribution""100 ផ្លែប៉ោមនិង 1 ផ្លែប៉ោម""20) "",1 -> 120 - 100 - 1 = 19 """"""
+","    lis = list()
+    for i in s.split(' '):
+        if i.isdigit():
+            lis.append(int(i))
+    return n - sum(lis)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""5 apples and 6 oranges"",19) == 8
+    assert candidate(""5 apples and 6 oranges"",21) == 10
+    assert candidate(""0 apples and 1 oranges"",3) == 2
+    assert candidate(""1 apples and 0 oranges"",3) == 2
+    assert candidate(""2 apples and 3 oranges"",100) == 95
+    assert candidate(""2 apples and 3 oranges"",5) == 0
+    assert candidate(""1 apples and 100 oranges"",120) == 19
+",,,
+HumanEval/68,khm_Khmr,python,"
+def pluck(arr):
+    """"""""ដោយមាន array តំណាងអោយសាខានៃដើមឈើដែលមាន node integer non-negative កិច្ចការរបស់អ្នកគឺដើម្បីដកយក node មួយ និងបញ្ជូនវា។ node ដែលដកចេញគួរតែជា node ដែលមានតម្លៃស្មើតូចបំផុត។ ប្រសិនបើមាន node ច្រើនដែលមានតម្លៃស្មើតូចបំផុតដែលត្រូវបានរកឃើញត្រឡប់មកវិញ node ដែលមានអត្រាអត្រាតូចបំផុត។ node ដែលដកចេញគួរតែត្រូវបានបញ្ជូននៅក្នុងបញ្ជី, [smallest_value, its index], ប្រសិនបើគ្មានតម្លៃស្មើឬ array ដែលត្រូវបានផ្តល់គឺគ្មាន, ត្រឡប់មកវិញ []. ឧទាហរណ៍ 1: Input: [4,2,3] Output: [2, 1] ពន្យល់: 2 មានតម្លៃស្មើតូចបំផុត, និង 2 មានអត្រាអត្រាតូចបំផុត. ឧទាហរណ៍ 2: Input: [1,2,3] Output: [2, 1] ពន្យល់: 2 មានតម្លៃតូចបំផុត, និង 2 មានអត្រាអត្រាតូចបំផុត. ឧទាហរណ៍ 3: Input: [] Output: [4: ] Input: [5, 3, 4, 2] Output: 1 [0, 0] Output: 1 node ដែលមានតម្លៃស្មើនឹងអត្រាអត្រាអត្រាតូចបំផុត, ប៉ុន្តែមានចំនួនទាបំផុតគឺ 0 * ឧទាហរណ៍: 1 មានចំនួនតូចបំផុត, ដូច្នេះយើងនឹងជ្រើសរើស node ដំបូងដែលមានទំហំតូចបំផុតគឺ 0 * ឧទាហរណ៍: <= 10000 * កំណត់ទំហំតូចបំផុត។""""""
+","    if(len(arr) == 0): return []
+    evens = list(filter(lambda x: x%2 == 0, arr))
+    if(evens == []): return []
+    return [min(evens), arr.index(min(evens))]
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([4,2,3]) == [2, 1], ""Error""
+    assert candidate([1,2,3]) == [2, 1], ""Error""
+    assert candidate([]) == [], ""Error""
+    assert candidate([5, 0, 3, 0, 4, 2]) == [0, 1], ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([1, 2, 3, 0, 5, 3]) == [0, 3], ""Error""
+    assert candidate([5, 4, 8, 4 ,8]) == [4, 1], ""Error""
+    assert candidate([7, 6, 7, 1]) == [6, 1], ""Error""
+    assert candidate([7, 9, 7, 1]) == [], ""Error""
+
+",,,
+HumanEval/69,khm_Khmr,python,"
+def search(lst):
+    '''អ្នកត្រូវបានផ្តល់បញ្ជីដែលមិនមែនជាលំហនៃចំនួនគត់វិជ្ជមាន។ ត្រឡប់មកវិញចំនួនគត់ធំជាងគេដែលធំជាងសូន្យនិងមានអត្រាធំជាងឬស្មើនឹងតម្លៃនៃចំនួនគត់ផ្ទាល់ខ្លួន។ អត្រានៃចំនួនគត់គឺចំនួនដងដែលវាបង្ហាញនៅក្នុងបញ្ជី។ ប្រសិនបើគ្មានតម្លៃបែបនេះ, ត្រឡប់មកវិញ -1. ឧទាហរណ៍: ស្វែងរក ([4, 1, 2, 2, 3, 1]) == 2 ស្វែងរក ([1, 2, 2, 3, 3, 3, 4, 4]) == 3 ស្វែងរក ([5, 5, 4, 4, 4]) == -1 '''
+","    frq = [0] * (max(lst) + 1)
+    for i in lst:
+        frq[i] += 1;
+
+    ans = -1
+    for i in range(1, len(frq)):
+        if frq[i] >= i:
+            ans = i
+    
+    return ans
+","def check(candidate):
+
+    # manually generated tests
+    assert candidate([5, 5, 5, 5, 1]) == 1
+    assert candidate([4, 1, 4, 1, 4, 4]) == 4
+    assert candidate([3, 3]) == -1
+    assert candidate([8, 8, 8, 8, 8, 8, 8, 8]) == 8
+    assert candidate([2, 3, 3, 2, 2]) == 2
+
+    # automatically generated tests
+    assert candidate([2, 7, 8, 8, 4, 8, 7, 3, 9, 6, 5, 10, 4, 3, 6, 7, 1, 7, 4, 10, 8, 1]) == 1
+    assert candidate([3, 2, 8, 2]) == 2
+    assert candidate([6, 7, 1, 8, 8, 10, 5, 8, 5, 3, 10]) == 1
+    assert candidate([8, 8, 3, 6, 5, 6, 4]) == -1
+    assert candidate([6, 9, 6, 7, 1, 4, 7, 1, 8, 8, 9, 8, 10, 10, 8, 4, 10, 4, 10, 1, 2, 9, 5, 7, 9]) == 1
+    assert candidate([1, 9, 10, 1, 3]) == 1
+    assert candidate([6, 9, 7, 5, 8, 7, 5, 3, 7, 5, 10, 10, 3, 6, 10, 2, 8, 6, 5, 4, 9, 5, 3, 10]) == 5
+    assert candidate([1]) == 1
+    assert candidate([8, 8, 10, 6, 4, 3, 5, 8, 2, 4, 2, 8, 4, 6, 10, 4, 2, 1, 10, 2, 1, 1, 5]) == 4
+    assert candidate([2, 10, 4, 8, 2, 10, 5, 1, 2, 9, 5, 5, 6, 3, 8, 6, 4, 10]) == 2
+    assert candidate([1, 6, 10, 1, 6, 9, 10, 8, 6, 8, 7, 3]) == 1
+    assert candidate([9, 2, 4, 1, 5, 1, 5, 2, 5, 7, 7, 7, 3, 10, 1, 5, 4, 2, 8, 4, 1, 9, 10, 7, 10, 2, 8, 10, 9, 4]) == 4
+    assert candidate([2, 6, 4, 2, 8, 7, 5, 6, 4, 10, 4, 6, 3, 7, 8, 8, 3, 1, 4, 2, 2, 10, 7]) == 4
+    assert candidate([9, 8, 6, 10, 2, 6, 10, 2, 7, 8, 10, 3, 8, 2, 6, 2, 3, 1]) == 2
+    assert candidate([5, 5, 3, 9, 5, 6, 3, 2, 8, 5, 6, 10, 10, 6, 8, 4, 10, 7, 7, 10, 8]) == -1
+    assert candidate([10]) == -1
+    assert candidate([9, 7, 7, 2, 4, 7, 2, 10, 9, 7, 5, 7, 2]) == 2
+    assert candidate([5, 4, 10, 2, 1, 1, 10, 3, 6, 1, 8]) == 1
+    assert candidate([7, 9, 9, 9, 3, 4, 1, 5, 9, 1, 2, 1, 1, 10, 7, 5, 6, 7, 6, 7, 7, 6]) == 1
+    assert candidate([3, 10, 10, 9, 2]) == -1
+
+",,,
+HumanEval/70,khm_Khmr,python,"
+def strange_sort_list(lst):
+    '''បញ្ជីនៃចំនួនពេញដែលត្រូវបានផ្តល់បញ្ជីត្រឡប់មកវិញក្នុងលំដាប់ចម្លែក ការរៀបចំចម្លែកគឺនៅពេលដែលអ្នកចាប់ផ្តើមជាមួយតម្លៃទាបបំផុត បន្ទាប់មកចំនួនពេញដែលនៅសល់ច្រើនបំផុត បន្ទាប់មកតិចបំផុតនិងដូច្នេះទៅទៀត ឧទាហរណ៍: strange_sort_list (([1, 2, 3, 4]) == [1, 4, 2, 3] strange_sort_list (([5, 5, 5, 5]) == [5, 5, 5, 5] strange_sort_list (([]) == [] '''
+","    res, switch = [], True
+    while lst:
+        res.append(min(lst) if switch else max(lst))
+        lst.remove(res[-1])
+        switch = not switch
+    return res
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1, 2, 3, 4]) == [1, 4, 2, 3]
+    assert candidate([5, 6, 7, 8, 9]) == [5, 9, 6, 8, 7]
+    assert candidate([1, 2, 3, 4, 5]) == [1, 5, 2, 4, 3]
+    assert candidate([5, 6, 7, 8, 9, 1]) == [1, 9, 5, 8, 6, 7]
+    assert candidate([5, 5, 5, 5]) == [5, 5, 5, 5]
+    assert candidate([]) == []
+    assert candidate([1,2,3,4,5,6,7,8]) == [1, 8, 2, 7, 3, 6, 4, 5]
+    assert candidate([0,2,2,2,5,5,-5,-5]) == [-5, 5, -5, 5, 0, 2, 2, 2]
+    assert candidate([111111]) == [111111]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/71,khm_Khmr,python,"
+def triangle_area(a, b, c):
+    '''ដោយបានផ្តល់នូវប្រវែងនៃភាគីទាំងបីនៃត្រីចក្រមួយ។ ត្រឡប់មកវិញនៃតំបន់នៃត្រីចក្រដែលត្រូវបានពង្រីកទៅ 2 ដឺស៊ីម៉ាល់ប្រសិនបើភាគីទាំងបីបង្កើតជាត្រីចក្រត្រឹមត្រូវ។ បើមិនដូច្នេះទេត្រឡប់មកវិញ -1 ភាគីទាំងបីបង្កើតជាត្រីចក្រត្រឹមត្រូវនៅពេលដែលចំនួននៃភាគីទាំងពីរធំជាងភាគីទីបី។ ឧទាហរណ៍: triangle_area (៣, ៤, ៥) == 6.00 triangle_area (១, ២, ១០) == -1 '''
+","    if a + b <= c or a + c <= b or b + c <= a:
+        return -1 
+    s = (a + b + c)/2    
+    area = (s * (s - a) * (s - b) * (s - c)) ** 0.5
+    area = round(area, 2)
+    return area
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(3, 4, 5) == 6.00, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(1, 2, 10) == -1
+    assert candidate(4, 8, 5) == 8.18
+    assert candidate(2, 2, 2) == 1.73
+    assert candidate(1, 2, 3) == -1
+    assert candidate(10, 5, 7) == 16.25
+    assert candidate(2, 6, 3) == -1
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1, 1, 1) == 0.43, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(2, 2, 10) == -1
+
+",,,
+HumanEval/72,khm_Khmr,python,"
+def will_it_fly(q,w):
+    '''សរសេរមុខងារដែលត្រឡប់មកវិញ True ប្រសិនបើវត្ថុ q នឹងហោះ, និង False បើមិនដូច្នេះទេ វត្ថុ q នឹងហោះ ប្រសិនបើវាមានតុល្យភាព (វាជាបញ្ជី palindromic) និងចំនួននៃអំបិលរបស់វាតិចជាងឬស្មើនឹងទម្ងន់អតិបរមាដែលអាចធ្វើបាន w. ឧទាហរណ៍: will_it_fly (([1, 2], 5) â -> False # 1+2 តិចជាងទម្ងន់អតិបរមាដែលអាចធ្វើបាន, ប៉ុន្តែវាមិនមានតុល្យភាព. will_it_fly (([3, 2, 3], 1) â -> False # វាមានតុល្យភាព, ប៉ុន្តែ 3+2+3 ច្រើនជាងទម្ងន់អតិបរមាដែលអាចធ្វើបាន. will_it_fly (([3, 2, 3], 9) â -> True # 3+23 តិចជាងទម្ងន់អតិបរមាដែលអាចធ្វើបាន, ហើយវាមានតុល្យភាព. will_it_fly ((([3], 5) â -> True # 3 តិចជាងទម្ងន់អតិបរមាដែលអាចធ្វើបាន, ហើយវាមានតុល្យភាព '''
+","    if sum(q) > w:
+        return False
+
+    i, j = 0, len(q)-1
+    while i<j:
+        if q[i] != q[j]:
+            return False
+        i+=1
+        j-=1
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([3, 2, 3], 9) is True
+    assert candidate([1, 2], 5) is False
+    assert candidate([3], 5) is True
+    assert candidate([3, 2, 3], 1) is False
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1, 2, 3], 6) is False
+    assert candidate([5], 5) is True
+
+",,,
+HumanEval/73,khm_Khmr,python,"
+def smallest_change(arr):
+    """"""ការផ្តល់នូវ array នៃចំនួនពេញ, រកចំនួនអក្សរដែលត្រូវផ្លាស់ប្តូរដើម្បីធ្វើឱ្យ array ជា palindromic. array palindromic គឺជា array ដែលត្រូវបានអានដូចគ្នាទៅមុខនិងក្រោយ។ ក្នុងការផ្លាស់ប្តូរមួយ, អ្នកអាចផ្លាស់ប្តូរអក្សរមួយទៅអក្សរផ្សេងទៀត. ឧទាហរណ៍: smallest_change (([1,2,3,5,4,7,9,6]) == 4 smallest_change (([1, 2, 3, 4, 3, 2, 2]) == 1 smallest_change (([1, 2, 3, 2, 1]) == 0 """"""
+","    ans = 0
+    for i in range(len(arr) // 2):
+        if arr[i] != arr[len(arr) - i - 1]:
+            ans += 1
+    return ans
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,2,3,5,4,7,9,6]) == 4
+    assert candidate([1, 2, 3, 4, 3, 2, 2]) == 1
+    assert candidate([1, 4, 2]) == 1
+    assert candidate([1, 4, 4, 2]) == 1
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1, 2, 3, 2, 1]) == 0
+    assert candidate([3, 1, 1, 3]) == 0
+    assert candidate([1]) == 0
+    assert candidate([0, 1]) == 1
+
+",,,
+HumanEval/74,khm_Khmr,python,"
+def total_match(lst1, lst2):
+    '''សរសេរមុខងារដែលទទួលយកពីរបញ្ជីនៃ strings និងត្រឡប់មកវិញបញ្ជីដែលមានចំនួនសរុបនៃ chars នៅក្នុងសរសៃទាំងអស់នៃបញ្ជីតិចជាងបញ្ជីផ្សេងទៀត។ ប្រសិនបើបញ្ជីទាំងពីរមានចំនួនសរុបនៃ chars ដូចគ្នា, ត្រឡប់មកវិញបញ្ជីដំបូង។ ឧទាហរណ៍ total_match (([], []) â -> [] total_match ((['hi', 'admin'], ['hI', 'Hi']) â -> ['hI', 'Hi'] total_match ((['hi', 'admin'], ['hi', 'admin', 'project']) â -> ['hi', 'admin'] total_match ((['hi', 'admin'], ['hI', 'hi', 'hi']) â -> ['hI', 'hi', 'hi'] total_match ((['4'], ['1'', '2'', '3'', '4' , '5' -> ['4'])'''
+","    l1 = 0
+    for st in lst1:
+        l1 += len(st)
+    
+    l2 = 0
+    for st in lst2:
+        l2 += len(st)
+    
+    if l1 <= l2:
+        return lst1
+    else:
+        return lst2
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([], []) == []
+    assert candidate(['hi', 'admin'], ['hi', 'hi']) == ['hi', 'hi']
+    assert candidate(['hi', 'admin'], ['hi', 'hi', 'admin', 'project']) == ['hi', 'admin']
+    assert candidate(['4'], ['1', '2', '3', '4', '5']) == ['4']
+    assert candidate(['hi', 'admin'], ['hI', 'Hi']) == ['hI', 'Hi']
+    assert candidate(['hi', 'admin'], ['hI', 'hi', 'hi']) == ['hI', 'hi', 'hi']
+    assert candidate(['hi', 'admin'], ['hI', 'hi', 'hii']) == ['hi', 'admin']
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([], ['this']) == []
+    assert candidate(['this'], []) == []
+
+",,,
+HumanEval/75,khm_Khmr,python,"
+def is_multiply_prime(a):
+    """"""សរសេរអក្សរដែលត្រឡប់មកវិញពិត ប្រសិនបើចំនួនដែលបានផ្តល់គឺការបំបែកនៃចំនួនដើម 3 និងខុសទៀត។ ដឹងថា (a) តិចជាង 100 ឧទាហរណ៍: is_multiply_prime(30) == True 30 = 2 * 3 * 5 """"""
+","    def is_prime(n):
+        for j in range(2,n):
+            if n%j == 0:
+                return False
+        return True
+
+    for i in range(2,101):
+        if not is_prime(i): continue
+        for j in range(2,101):
+            if not is_prime(j): continue
+            for k in range(2,101):
+                if not is_prime(k): continue
+                if i*j*k == a: return True
+    return False
+","def check(candidate):
+
+    assert candidate(5) == False
+    assert candidate(30) == True
+    assert candidate(8) == True
+    assert candidate(10) == False
+    assert candidate(125) == True
+    assert candidate(3 * 5 * 7) == True
+    assert candidate(3 * 6 * 7) == False
+    assert candidate(9 * 9 * 9) == False
+    assert candidate(11 * 9 * 9) == False
+    assert candidate(11 * 13 * 7) == True
+
+",,,
+HumanEval/76,khm_Khmr,python,"
+def is_simple_power(x, n):
+    """"""កិច្ចការរបស់អ្នកគឺសរសេរ function ដែលត្រឡប់មកវិញ true ប្រសិនបើចំនួន x គឺជាសមត្ថភាពសាមញ្ញនៃ n និង false នៅក្នុងករណីផ្សេងទៀត។ x គឺជាសមត្ថភាពសាមញ្ញនៃ n ប្រសិនបើ n**int=x ឧទាហរណ៍: is_simple_power(1, 4) => true is_simple_power(2, 2) => true is_simple_power(8, 2) => true is_simple_power(3, 2) => false is_simple_power(3, 1) false => is_simple_power(5, 3) => false """"""
+","    if (n == 1): 
+        return (x == 1) 
+    power = 1
+    while (power < x): 
+        power = power * n 
+    return (power == x) 
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(16, 2)== True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(143214, 16)== False, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(4, 2)==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(9, 3)==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(16, 4)==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(24, 2)==False, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(128, 4)==False, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(12, 6)==False, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1, 1)==True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(1, 12)==True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/77,khm_Khmr,python,"
+def iscube(a):
+    '''សរសេរអក្សរដែលយកចំនួនសរុប a ហើយត្រឡប់មកវិញ True ប្រសិនបើ ingeger នេះជាគុម្ពនៃចំនួនសរុបមួយ។ សូមបញ្ជាក់ថាអ្នកអាចគិតថាការបញ្ចូលគឺមានប្រសិទ្ធភាពជានិច្ច។ ឧទាហរណ៍: iscube ((1) ==> True iscube ((2) ==> False iscube ((-1) ==> True iscube ((64) ==> True iscube ((0) ==> True iscube ((180) ==> False '''
+","    a = abs(a)
+    return int(round(a ** (1. / 3))) ** 3 == a
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(1) == True, ""First test error: "" + str(candidate(1))
+    assert candidate(2) == False, ""Second test error: "" + str(candidate(2))
+    assert candidate(-1) == True, ""Third test error: "" + str(candidate(-1))
+    assert candidate(64) == True, ""Fourth test error: "" + str(candidate(64))
+    assert candidate(180) == False, ""Fifth test error: "" + str(candidate(180))
+    assert candidate(1000) == True, ""Sixth test error: "" + str(candidate(1000))
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(0) == True, ""1st edge test error: "" + str(candidate(0))
+    assert candidate(1729) == False, ""2nd edge test error: "" + str(candidate(1728))
+
+",,,
+HumanEval/78,khm_Khmr,python,"
+def hex_key(num):
+    """"""អ្នកត្រូវបានបញ្ជាឱ្យសរសេរមុខងារដែលទទួលបានចំនួន hexadecimal ជា string និងរាប់ចំនួននៃលេខ hexadecimal ដែលជាលេខដំបូង (លេខដំបូង, ឬលេខដំបូង, គឺជាលេខធម្មជាតិដែលធំជាង 1 ដែលមិនមែនជាផលិតផលនៃចំនួនធម្មជាតិតូចជាងពីរ) ។លេខ hexadecimal គឺ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F.លេខដំបូងគឺ 2, 3, 5, 7, 11, 13, 17,... ដូច្នេះអ្នកត្រូវកំណត់ចំនួននៃលេខដូចខាងក្រោម: 2, 3, 5, 7, B (=លេខដប់ 11), D (=លេខដប់ 13) កត់សម្គាល់: អ្នកអាចគិតថាការបញ្ចូលគឺត្រឹមត្រូវឬលេខដងនិងសញ្ញាកំណត់ A, B, C, D, E, F គឺតែងតែមានអក្សរធំ។ ឧទាហរណ៍: សម្រាប់ num ""AB"" លទ្ធផលត្រូវជា num = 1. សម្រាប់ num ""1077E"" លទ្ធផលត្រូវជា 2. សម្រាប់ num ""AB"" = 1 ""AB"" = 331 ""A"" គួរជា num = 4. ""ABC"" = 6.067 ""A"" = 6.0 ""A"" សម្រាប់ output ត្រូវជា num = 2. ""2020""""""""
+","    primes = ('2', '3', '5', '7', 'B', 'D')
+    total = 0
+    for i in range(0, len(num)):
+        if num[i] in primes:
+            total += 1
+    return total
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""AB"") == 1, ""First test error: "" + str(candidate(""AB""))      
+    assert candidate(""1077E"") == 2, ""Second test error: "" + str(candidate(""1077E""))  
+    assert candidate(""ABED1A33"") == 4, ""Third test error: "" + str(candidate(""ABED1A33""))      
+    assert candidate(""2020"") == 2, ""Fourth test error: "" + str(candidate(""2020""))  
+    assert candidate(""123456789ABCDEF0"") == 6, ""Fifth test error: "" + str(candidate(""123456789ABCDEF0""))      
+    assert candidate(""112233445566778899AABBCCDDEEFF00"") == 12, ""Sixth test error: "" + str(candidate(""112233445566778899AABBCCDDEEFF00""))  
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([]) == 0
+
+",,,
+HumanEval/79,khm_Khmr,python,"
+def decimal_to_binary(decimal):
+    """"""អ្នកនឹងទទួលបានលេខនៅក្នុងទម្រង់ដប់ ហើយការងាររបស់អ្នកគឺដើម្បីបម្លែងវាទៅជាទម្រង់គូ។ មុខងារនេះគួរតែត្រឡប់មកវិញខ្សែមួយ ដោយមានតួអង្គនីមួយៗ តួអង្គនីមួយៗ នៅក្នុងខ្សែនឹងជា '0' ឬ '1' ។ នឹងមានតួអង្គបន្ថែម 'db' នៅដើមនិងចុងនៃខ្សែ។ តួអង្គបន្ថែមនឹងមានដើម្បីជួយដល់ទម្រង់នោះ។ ឧទាហរណ៍: decimal_to_binary (១៥) # ត្រឡប់មកវិញ ""db1111db"" decimal_to_binary (៣២) # ត្រឡប់មកវិញ ""db100000db""""""""
+","    return ""db"" + bin(decimal)[2:] + ""db""
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(0) == ""db0db""
+    assert candidate(32) == ""db100000db""
+    assert candidate(103) == ""db1100111db""
+    assert candidate(15) == ""db1111db"", ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/80,khm_Khmr,python,"
+def is_happy(s):
+    """"""អ្នកត្រូវបានផ្តល់នូវ string s. កិច្ចការរបស់អ្នកគឺដើម្បីត្រួតពិនិត្យថា string នោះមានភាពសប្បាយរីករាយឬអត់។ string មួយមានភាពសប្បាយរីករាយប្រសិនបើប្រវែងរបស់វាមានយ៉ាងហោចណាស់ 3 ហើយអក្សរទាំង 3 ជាប់គ្នាគឺខុសគ្នា ឧទាហរណ៍: is_happy ((a) => False is_happy ((aa) => False is_happy ((abcd) => True is_happy ((aabb) => False is_happy ((adb) => True is_happy ((xyy) => False """"""
+","    if len(s) < 3:
+      return False
+
+    for i in range(len(s) - 2):
+      
+      if s[i] == s[i+1] or s[i+1] == s[i+2] or s[i] == s[i+2]:
+        return False
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""a"") == False , ""a""
+    assert candidate(""aa"") == False , ""aa""
+    assert candidate(""abcd"") == True , ""abcd""
+    assert candidate(""aabb"") == False , ""aabb""
+    assert candidate(""adb"") == True , ""adb""
+    assert candidate(""xyy"") == False , ""xyy""
+    assert candidate(""iopaxpoi"") == True , ""iopaxpoi""
+    assert candidate(""iopaxioi"") == False , ""iopaxioi""
+",,,
+HumanEval/81,khm_Khmr,python,"
+def numerical_letter_grade(grades):
+    """"""វាជាសប្តាហ៍ចុងក្រោយនៃវស្សា ហើយគ្រូបង្រៀនត្រូវផ្តល់ចំណាត់ថ្នាក់ដល់សិស្ស។ គ្រូបង្រៀនបានបង្កើត algorithm ផ្ទាល់ខ្លួនសម្រាប់ការវាយតម្លៃ។ បញ្ហាតែមួយគត់គឺនាងបានបាត់បង់កូដដែលនាងបានប្រើសម្រាប់ការវាយតម្លៃ។ នាងបានផ្តល់ជូនអ្នកបញ្ជី GPAs សម្រាប់សិស្សមួយចំនួនហើយអ្នកត្រូវសរសេរ function ដែលអាចបញ្ចេញបញ្ជីចំណាត់ថ្នាក់អក្សរដោយប្រើតារាងដូចខាងក្រោម: GPA  Letter grade 4.0 A+ > 3.7 A > 3.3 A- > 3.0 B+ > 2.7 B- > 2.3 B- > 2.0 C+ > 1.7 C > 1.3 C- > 1.0 D+ > 0.7 D > 0.0 D- 0.0 E: grade_equation (([4.0, 3, 1.7, 2, 3.5]) ==> ['A+', 'B', 'C-', 'C', 'A-']""""""
+","
+   
+    letter_grade = []
+    for gpa in grades:
+        if gpa == 4.0:
+            letter_grade.append(""A+"")
+        elif gpa > 3.7:
+            letter_grade.append(""A"")
+        elif gpa > 3.3:
+            letter_grade.append(""A-"")
+        elif gpa > 3.0:
+            letter_grade.append(""B+"")
+        elif gpa > 2.7:
+            letter_grade.append(""B"")
+        elif gpa > 2.3:
+            letter_grade.append(""B-"")
+        elif gpa > 2.0:
+            letter_grade.append(""C+"")
+        elif gpa > 1.7:
+            letter_grade.append(""C"")
+        elif gpa > 1.3:
+            letter_grade.append(""C-"")
+        elif gpa > 1.0:
+            letter_grade.append(""D+"")
+        elif gpa > 0.7:
+            letter_grade.append(""D"")
+        elif gpa > 0.0:
+            letter_grade.append(""D-"")
+        else:
+            letter_grade.append(""E"")
+    return letter_grade
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([4.0, 3, 1.7, 2, 3.5]) == ['A+', 'B', 'C-', 'C', 'A-']
+    assert candidate([1.2]) == ['D+']
+    assert candidate([0.5]) == ['D-']
+    assert candidate([0.0]) == ['E']
+    assert candidate([1, 0.3, 1.5, 2.8, 3.3]) == ['D', 'D-', 'C-', 'B', 'B+']
+    assert candidate([0, 0.7]) == ['E', 'D-']
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/82,khm_Khmr,python,"
+def prime_length(string):
+    """"""សរសេរមុខងារដែលយកសរសៃវ៉ែនមួយ ហើយត្រឡប់មកវិញ True ប្រសិនបើប្រវែងសរសៃវ៉ែនជាចំនួនដើម ឬ False បើមិនដូច្នេះទេ ឧទាហរណ៍ prime_length ((('Hello') == True prime_length ((('abcdcba') == True prime_length ((('kittens') == True prime_length ((('orange') == False """"""
+","    l = len(string)
+    if l == 0 or l == 1:
+        return False
+    for i in range(2, l):
+        if l % i == 0:
+            return False
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('Hello') == True
+    assert candidate('abcdcba') == True
+    assert candidate('kittens') == True
+    assert candidate('orange') == False
+    assert candidate('wow') == True
+    assert candidate('world') == True
+    assert candidate('MadaM') == True
+    assert candidate('Wow') == True
+    assert candidate('') == False
+    assert candidate('HI') == True
+    assert candidate('go') == True
+    assert candidate('gogo') == False
+    assert candidate('aaaaaaaaaaaaaaa') == False
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('Madam') == True
+    assert candidate('M') == False
+    assert candidate('0') == False
+
+",,,
+HumanEval/83,khm_Khmr,python,"
+def starts_one_ends(n):
+    """"""ដោយបានផ្តល់ចំនួនគត់វិជ្ជមាន n, សូមត្រឡប់មកវិញចំនួននៃចំនួនគត់វិជ្ជមាន n-digit ដែលចាប់ផ្តើមឬបញ្ចប់ដោយ 1 ។""""""
+","    if n == 1: return 1
+    return 18 * (10 ** (n - 2))
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(1) == 1
+    assert candidate(2) == 18
+    assert candidate(3) == 180
+    assert candidate(4) == 1800
+    assert candidate(5) == 18000
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/84,khm_Khmr,python,"
+def solve(N):
+    """"""ដោយបានផ្តល់ចំនួនគត់វិជ្ជមាន N, សូមត្រឡប់មកវិញចំនួនសរុបនៃលេខរបស់វានៅក្នុងគណបក្សពីរគត់. ឧទាហរណ៍សម្រាប់ N = 1000, ចំនួនលេខនឹងជា 1 លទ្ធផលត្រូវជា ""1"" សម្រាប់ N = 150, ចំនួនលេខនឹងជា 6 លទ្ធផលត្រូវជា ""110"" សម្រាប់ N = 147, ចំនួនលេខនឹងជា 12 លទ្ធផលត្រូវជា ""1100"" ។ កែប្រែ: @N ចំនួនគត់ការរឹតត្បិត: 0 â‰¤ N â‰¤ 10000. លទ្ធផល: ខ្សែនៃលេខគណបក្សពីរគត់ """"""
+","    return bin(sum(int(i) for i in str(N)))[2:]
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(1000) == ""1"", ""Error""
+    assert candidate(150) == ""110"", ""Error""
+    assert candidate(147) == ""1100"", ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(333) == ""1001"", ""Error""
+    assert candidate(963) == ""10010"", ""Error""
+
+",,,
+HumanEval/85,khm_Khmr,python,"
+def add(lst):
+    """"""ដោយបានផ្តល់បញ្ជីដែលមិនមែនជាលេខគត់នៃចំនួនគត់ lst. បន្ថែមអក្សរគត់ដែលស្ថិតនៅតារាងមិនធម្មតា .. ឧទាហរណ៍: add (([4, 2, 6, 7]) ==> 2 """"""
+","    return sum([lst[i] for i in range(1, len(lst), 2) if lst[i]%2 == 0])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([4, 88]) == 88
+    assert candidate([4, 5, 6, 7, 2, 122]) == 122
+    assert candidate([4, 0, 6, 7]) == 0
+    assert candidate([4, 4, 6, 8]) == 12
+
+    # Check some edge cases that are easy to work out by hand.
+    
+",,,
+HumanEval/86,khm_Khmr,python,"
+def anti_shuffle(s):
+    """"""សរសេរមុខងារដែលយកស្លាកសញ្ញាមួយ ហើយត្រឡប់មកវិញនូវប្រភេទដែលត្រូវបានបញ្ជាបញ្ជា។ ស្លាកសញ្ញាដែលត្រូវបានបញ្ជាបញ្ជាជា គឺជាស្លាកសញ្ញាមួយដែលពាក្យទាំងអស់ (បែងចែកដោយអាកាស) ត្រូវបានជំនួសដោយពាក្យថ្មីដែលអក្សរទាំងអស់ត្រូវបានរៀបចំតាមលំដាប់ឡើងទៅដោយផ្អែកលើតម្លៃ ascii ។ សូមបញ្ជាក់ថា អ្នកគួរតែរក្សាលំដាប់នៃពាក្យនិងអាកាសយាន្តសងខាងនៅក្នុងសំនួរ។ ឧទាហរណ៍: anti_shuffle ((('Hi') ត្រឡប់មកវិញ 'Hi' anti_shuffle ((('hello') ត្រឡប់មកវិញ 'ehllo' anti_shuffle (('Hello World!!!') ត្រឡប់មកវិញ 'Hello !!!Wdlor' """"""
+","    return ' '.join([''.join(sorted(list(i))) for i in s.split(' ')])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('Hi') == 'Hi'
+    assert candidate('hello') == 'ehllo'
+    assert candidate('number') == 'bemnru'
+    assert candidate('abcd') == 'abcd'
+    assert candidate('Hello World!!!') == 'Hello !!!Wdlor'
+    assert candidate('') == ''
+    assert candidate('Hi. My name is Mister Robot. How are you?') == '.Hi My aemn is Meirst .Rboot How aer ?ouy'
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/87,khm_Khmr,python,"
+def get_row(lst, x):
+    """"""អ្នកត្រូវបានផ្តល់នូវទិន្នន័យ 2 ដីម៉ិចស៍, ជាបញ្ជីកំប៉ុង, ដែលមានលក្ខណៈដូចទៅនឹងម៉ាត្រីស, ទោះជាយ៉ាងណា, ខុសពីម៉ាត្រីស, រៀងរាល់ជួរអាចមានចំនួនស្លាកផ្សេងគ្នា. ដោយបានផ្តល់ lst, និង integer x, រក integer x នៅក្នុងបញ្ជី, និងត្រឡប់ទៅវិញបញ្ជីនៃ tuples, [(x1, y1), (x2, y2) ...] ដូច្នេះថា tuple នីមួយៗ គឺជាតម្រូវការ - (ជួរ, ជួរ), ចាប់ផ្តើមដោយ 0. រៀបចំតម្រូវការជាដំបូងដោយជួរក្នុងលំដាប់ឡើង. ផងដែរ, រៀបចំតម្រូវការនៃជួរដោយជួរក្នុងលំដាប់ចុះ. ឧទាហរណ៍: get_row [1,2,3,4,5,6], [1,2,3,4,1,6], [1,2,3,4,5,1], 1) == [0, 0, 0, 0, 1, 4], 0 (2, 5), (2, 0) get_(], 1) [] == [[ជួរ 1, 2, 3, 2, 3]], [2, 3]]""""""
+","    coords = [(i, j) for i in range(len(lst)) for j in range(len(lst[i])) if lst[i][j] == x]
+    return sorted(sorted(coords, key=lambda x: x[1], reverse=True), key=lambda x: x[0])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([
+        [1,2,3,4,5,6],
+        [1,2,3,4,1,6],
+        [1,2,3,4,5,1]
+    ], 1) == [(0, 0), (1, 4), (1, 0), (2, 5), (2, 0)]
+    assert candidate([
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6]
+    ], 2) == [(0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (5, 1)]
+    assert candidate([
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,1,3,4,5,6],
+        [1,2,1,4,5,6],
+        [1,2,3,1,5,6],
+        [1,2,3,4,1,6],
+        [1,2,3,4,5,1]
+    ], 1) == [(0, 0), (1, 0), (2, 1), (2, 0), (3, 2), (3, 0), (4, 3), (4, 0), (5, 4), (5, 0), (6, 5), (6, 0)]
+    assert candidate([], 1) == []
+    assert candidate([[1]], 2) == []
+    assert candidate([[], [1], [1, 2, 3]], 3) == [(2, 2)]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/88,khm_Khmr,python,"
+def sort_array(array):
+    """"""ដោយបានផ្តល់នូវ array នៃចំនួនពេញដែលមិនមែនជាអវិជ្ជមាន, ត្រឡប់មកវិញនូវចម្លងនៃ array ដែលបានផ្តល់បន្ទាប់ពីការរៀបចំបញ្ជី, អ្នកនឹងរៀបចំបញ្ជីដែលបានផ្តល់ឡើងទៅតាមលំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់បង្អស់""""""
+","    return [] if len(array) == 0 else sorted(array, reverse= (array[0]+array[-1]) % 2 == 0) 
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([]) == [], ""Error""
+    assert candidate([5]) == [5], ""Error""
+    assert candidate([2, 4, 3, 0, 1, 5]) == [0, 1, 2, 3, 4, 5], ""Error""
+    assert candidate([2, 4, 3, 0, 1, 5, 6]) == [6, 5, 4, 3, 2, 1, 0], ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([2, 1]) == [1, 2], ""Error""
+    assert candidate([15, 42, 87, 32 ,11, 0]) == [0, 11, 15, 32, 42, 87], ""Error""
+    assert candidate([21, 14, 23, 11]) == [23, 21, 14, 11], ""Error""
+
+",,,
+HumanEval/89,khm_Khmr,python,"
+def encrypt(s):
+    """"""បង្កើត មុខងារ encrypt ដែល យក ខ្សែសង្វាក់ ជា អារ៉ាម និង បញ្ជូន ខ្សែសង្វាក់ ដែល បាន បិទ ដោយ បិទ អក្សរ ដែល ត្រូវ បាន បត់។ អក្សរ ត្រូវ បាន បិទ ដោយ របៀប ដែល អក្សរ ត្រូវ បាន បត់ ចុះ ដោយ ពីរ ដែល ត្រូវ បាន បង្កើន ទៅ ពីរ កន្លែង ឧទាហរណ៍: encrypt ((('hi') បញ្ជូន 'lm' encrypt ((('asdfghjkl') បញ្ជូន 'ewhjklnop' encrypt ((('gf') បញ្ជូន 'kj' encrypt ((('et') បញ្ជូន 'ix' """"""
+","    d = 'abcdefghijklmnopqrstuvwxyz'
+    out = ''
+    for c in s:
+        if c in d:
+            out += d[(d.index(c)+2*2) % 26]
+        else:
+            out += c
+    return out
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('hi') == 'lm', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('asdfghjkl') == 'ewhjklnop', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('gf') == 'kj', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('et') == 'ix', ""This prints if this assert fails 1 (good for debugging!)""
+
+    assert candidate('faewfawefaewg')=='jeiajeaijeiak', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('hellomyfriend')=='lippsqcjvmirh', ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate('dxzdlmnilfuhmilufhlihufnmlimnufhlimnufhfucufh')=='hbdhpqrmpjylqmpyjlpmlyjrqpmqryjlpmqryjljygyjl', ""This prints if this assert fails 3 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('a')=='e', ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/90,khm_Khmr,python,"
+def next_smallest(lst):
+    """"""អ្នកបានទទួលបញ្ជីនៃចំនួនគត់។ សរសេរមុខងារ next_smallest (() ដែលត្រឡប់មកវិញនូវតួអក្សរតូចជាងគេទី 2 នៃបញ្ជី។ ត្រឡប់មកវិញគ្មានប្រសិនបើគ្មានតួអក្សរនោះ next_smallest (([1, 2, 3, 4, 5]) == 2 next_smallest (([5, 1, 4, 3, 2]) == 2 next_smallest (([]) == None next_smallest (([1, 1]) == None """"""
+","    lst = sorted(set(lst))
+    return None if len(lst) < 2 else lst[1]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1, 2, 3, 4, 5]) == 2
+    assert candidate([5, 1, 4, 3, 2]) == 2
+    assert candidate([]) == None
+    assert candidate([1, 1]) == None
+    assert candidate([1,1,1,1,0]) == 1
+    assert candidate([1, 0**0]) == None
+    assert candidate([-35, 34, 12, -45]) == -35
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/91,khm_Khmr,python,"
+def is_bored(S):
+    """"""អ្នកនឹងទទួលបានពាក្យជាច្រើន ហើយការងាររបស់អ្នកគឺរាប់ចំនួននៃការធុញទ្រាន់។ ភាពធុញទ្រាន់គឺជាសំនួរដែលចាប់ផ្តើមដោយពាក្យ ""I"" សំនួរត្រូវបានកំណត់ដោយ '.', '?' ឬ '! ' ឧទាហរណ៍: >>> is_bored (("" Hello world "") 0 >>> is_bored ((""មេឃពណ៌ខៀវ។ ព្រះអាទិត្យកំពុងភ្លឺ។ ខ្ញុំចូលចិត្តអាកាសធាតុនេះ"") 1 """"""
+","    import re
+    sentences = re.split(r'[.?!]\s*', S)
+    return sum(sentence[0:2] == 'I ' for sentence in sentences)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""Hello world"") == 0, ""Test 1""
+    assert candidate(""Is the sky blue?"") == 0, ""Test 2""
+    assert candidate(""I love It !"") == 1, ""Test 3""
+    assert candidate(""bIt"") == 0, ""Test 4""
+    assert candidate(""I feel good today. I will be productive. will kill It"") == 2, ""Test 5""
+    assert candidate(""You and I are going for a walk"") == 0, ""Test 6""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/92,khm_Khmr,python,"
+def any_int(x, y, z):
+    '''បង្កើតតួអង្គមួយដែលយកចំនួន 3 ។ ត្រឡប់មកវិញពិតប្រសិនបើចំនួនមួយគឺស្មើនឹងចំនួនពីរផ្សេងទៀត ហើយចំនួនទាំងអស់គឺជាចំនួនពេញ។ ត្រឡប់មកវិញខុសក្នុងករណីផ្សេងទៀត។ ឧទាហរណ៍ any_int ((5, 2, 7) â -> True any_int ((3, 2, 2) â -> False any_int ((3, -2, 1) â -> True any_int ((3.6, -2.2, 2) â -> False '''
+","    
+    if isinstance(x,int) and isinstance(y,int) and isinstance(z,int):
+        if (x+y==z) or (x+z==y) or (y+z==x):
+            return True
+        return False
+    return False
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(2, 3, 1)==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(2.5, 2, 3)==False, ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate(1.5, 5, 3.5)==False, ""This prints if this assert fails 3 (good for debugging!)""
+    assert candidate(2, 6, 2)==False, ""This prints if this assert fails 4 (good for debugging!)""
+    assert candidate(4, 2, 2)==True, ""This prints if this assert fails 5 (good for debugging!)""
+    assert candidate(2.2, 2.2, 2.2)==False, ""This prints if this assert fails 6 (good for debugging!)""
+    assert candidate(-4, 6, 2)==True, ""This prints if this assert fails 7 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(2,1,1)==True, ""This prints if this assert fails 8 (also good for debugging!)""
+    assert candidate(3,4,7)==True, ""This prints if this assert fails 9 (also good for debugging!)""
+    assert candidate(3.0,4,7)==False, ""This prints if this assert fails 10 (also good for debugging!)""
+
+",,,
+HumanEval/93,khm_Khmr,python,"
+def encode(message):
+    """"""សរសេរមុខងារដែលយកសារមួយមក និងកូដដោយរបៀបដែលវាប្ដូរ case នៃអក្សរទាំងអស់, ប្តូរ vowels ទាំងអស់នៅក្នុងសារទៅនឹងអក្សរដែលបង្ហាញ 2 កន្លែងមុន vowel នៅក្នុងអក្សរអង់គ្លេស. ឧទាហរណ៍: >>> encode ((('test') 'TGST' >>> encode ((('This is a message') 'tHKS KS C MGSSCGG' """"""
+","    vowels = ""aeiouAEIOU""
+    vowels_replace = dict([(i, chr(ord(i) + 2)) for i in vowels])
+    message = message.swapcase()
+    return ''.join([vowels_replace[i] if i in vowels else i for i in message])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('TEST') == 'tgst', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('Mudasir') == 'mWDCSKR', ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate('YES') == 'ygs', ""This prints if this assert fails 3 (good for debugging!)""
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('This is a message') == 'tHKS KS C MGSSCGG', ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(""I DoNt KnOw WhAt tO WrItE"") == 'k dQnT kNqW wHcT Tq wRkTg', ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/94,khm_Khmr,python,"
+
+def skjkasdkd(lst):
+    """"""អ្នកត្រូវទទួលបានបញ្ជីនៃចំនួនពេញ អ្នកត្រូវរកតម្លៃដំបូងដ៏ធំបំផុតនិងត្រឡប់មកវិញចំនួននៃលេខរបស់វា ឧទាហរណ៍: សម្រាប់ lst = [0,3,2,1,3,5,7,4,5,5,5,2,181,32,4,32,3,2,32,324,4,3] លទ្ធផលត្រូវជា 10 សម្រាប់ lst = [1,0,1,8,2,4597,2,1,3,40,1,2,1,2,4,2,5,1] លទ្ធផលត្រូវជា 25 សម្រាប់ lst = [1,3,1,32,5107,34,83278,109,163,23,2323,32,30,1,9,3] លទ្ធផលត្រូវជា 13 សម្រាប់ lst = [0,724,32,71,99,32,6,0,5,91,83,0,5,6] លទ្ធផលត្រូវជា 11 សម្រាប់ lst = [0,81,12,3,21,1] លទ្ធផលត្រូវជា 3 សម្រាប់ lst = [0,1,8,2,1,7] លទ្ធផលត្រូវជា 7 សម្រាប់ lst = [1,1,8,2,1,7] លទ្ធផលត្រូវជា """"""
+","    def isPrime(n):
+        for i in range(2,int(n**0.5)+1):
+            if n%i==0:
+                return False
+
+        return True
+    maxx = 0
+    i = 0
+    while i < len(lst):
+        if(lst[i] > maxx and isPrime(lst[i])):
+            maxx = lst[i]
+        i+=1
+    result = sum(int(digit) for digit in str(maxx))
+    return result
+
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([0,3,2,1,3,5,7,4,5,5,5,2,181,32,4,32,3,2,32,324,4,3]) == 10, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1,0,1,8,2,4597,2,1,3,40,1,2,1,2,4,2,5,1]) == 25, ""This prints if this assert fails 2 (also good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1,3,1,32,5107,34,83278,109,163,23,2323,32,30,1,9,3]) == 13, ""This prints if this assert fails 3 (also good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([0,724,32,71,99,32,6,0,5,91,83,0,5,6]) == 11, ""This prints if this assert fails 4 (also good for debugging!)""
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([0,81,12,3,1,21]) == 3, ""This prints if this assert fails 5 (also good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([0,8,1,2,1,7]) == 7, ""This prints if this assert fails 6 (also good for debugging!)""
+
+    assert candidate([8191]) == 19, ""This prints if this assert fails 7 (also good for debugging!)""
+    assert candidate([8191, 123456, 127, 7]) == 19, ""This prints if this assert fails 8 (also good for debugging!)""
+    assert candidate([127, 97, 8192]) == 10, ""This prints if this assert fails 9 (also good for debugging!)""
+",,,
+HumanEval/95,khm_Khmr,python,"
+def check_dict_case(dict):
+    """"""ដោយបានផ្តល់នូវវចនានុក្រមមួយ, ត្រឡប់មកវិញ True ប្រសិនបើគន្លឹះទាំងអស់ជាសរសៃនៅក្នុងអក្សរតូចឬគន្លឹះទាំងអស់ជាសរសៃនៅក្នុងអក្សរធំ, បើមិនដូច្នេះត្រឡប់មកវិញ False. មុខងារនេះគួរតែត្រឡប់មកវិញ False គឺជាវចនានុក្រមដែលត្រូវបានផ្តល់គឺគ្មាន។ ឧទាហរណ៍: check_dict_case{""a"":""apple"", ""b"":""banana""}) គួរត្រឡប់មកវិញ True. check_dict_case{""a"":""apple"", ""A"":""banana"", ""B"":""banana""}) គួរត្រឡប់មកវិញ False. check_dict_case{""a"":""apple"", 8:""banana"", ""a"":""apple""}) គួរត្រឡប់មកវិញ False. check_dict_case{""Name"":""John"", ""Age"":""36"", ""City"":""Houston""}) គួរត្រឡប់មកវិញ False. check_dict_case{""NC""STATE:""STATE"", ""Z"":""IP"":""45"") គួរត្រឡប់មកវិញ True.""""""
+","    if len(dict.keys()) == 0:
+        return False
+    else:
+        state = ""start""
+        for key in dict.keys():
+
+            if isinstance(key, str) == False:
+                state = ""mixed""
+                break
+            if state == ""start"":
+                if key.isupper():
+                    state = ""upper""
+                elif key.islower():
+                    state = ""lower""
+                else:
+                    break
+            elif (state == ""upper"" and not key.isupper()) or (state == ""lower"" and not key.islower()):
+                    state = ""mixed""
+                    break
+            else:
+                break
+        return state == ""upper"" or state == ""lower"" 
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate({""p"":""pineapple"", ""b"":""banana""}) == True, ""First test error: "" + str(candidate({""p"":""pineapple"", ""b"":""banana""}))
+    assert candidate({""p"":""pineapple"", ""A"":""banana"", ""B"":""banana""}) == False, ""Second test error: "" + str(candidate({""p"":""pineapple"", ""A"":""banana"", ""B"":""banana""}))
+    assert candidate({""p"":""pineapple"", 5:""banana"", ""a"":""apple""}) == False, ""Third test error: "" + str(candidate({""p"":""pineapple"", 5:""banana"", ""a"":""apple""}))
+    assert candidate({""Name"":""John"", ""Age"":""36"", ""City"":""Houston""}) == False, ""Fourth test error: "" + str(candidate({""Name"":""John"", ""Age"":""36"", ""City"":""Houston""}))
+    assert candidate({""STATE"":""NC"", ""ZIP"":""12345"" }) == True, ""Fifth test error: "" + str(candidate({""STATE"":""NC"", ""ZIP"":""12345"" }))      
+    assert candidate({""fruit"":""Orange"", ""taste"":""Sweet"" }) == True, ""Fourth test error: "" + str(candidate({""fruit"":""Orange"", ""taste"":""Sweet"" }))      
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate({}) == False, ""1st edge test error: "" + str(candidate({}))
+
+",,,
+HumanEval/96,khm_Khmr,python,"
+def count_up_to(n):
+    """"""អនុវត្តន៍តួដែលយកចំនួនគត់ដែលមិនមែនជាអវិជ្ជមាន និងវិលត្រឡប់មកវិញនូវ array នៃចំនួនគត់ n ដំបូងដែលជាចំនួនដើម និងតិចជាង n ឧទាហរណ៍: count_up_to(5) => [2,3] count_up_to(11) => [2,3,5,7] count_up_to(0) => [] count_up_to(20) => [2,3,5,7,11,13,17,19] count_up_to(1) => [] count_up_to(18) => [2,3,5,7,11,13,17] """"""
+","    primes = []
+    for i in range(2, n):
+        is_prime = True
+        for j in range(2, i):
+            if i % j == 0:
+                is_prime = False
+                break
+        if is_prime:
+            primes.append(i)
+    return primes
+
+","def check(candidate):
+
+    assert candidate(5) == [2,3]
+    assert candidate(6) == [2,3,5]
+    assert candidate(7) == [2,3,5]
+    assert candidate(10) == [2,3,5,7]
+    assert candidate(0) == []
+    assert candidate(22) == [2,3,5,7,11,13,17,19]
+    assert candidate(1) == []
+    assert candidate(18) == [2,3,5,7,11,13,17]
+    assert candidate(47) == [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43]
+    assert candidate(101) == [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]
+
+",,,
+HumanEval/97,khm_Khmr,python,"
+def multiply(a, b):
+    """"""បំពេញតួនាទីដែលយកចំនួនគត់ពីរ និងវិលត្រឡប់មកវិញនូវផលិតផលនៃលេខអង្គភាពរបស់ពួកគេ ។ គិតថាការបញ្ចូលគឺមានប្រសិទ្ធភាពជានិច្ច។ ឧទាហរណ៍: បង្កើនចំនួន 148, 412) គួរតែវិលត្រឡប់ 16. បង្កើនចំនួន 19 , 28 គួរតែវិលត្រឡប់មកវិញ 72. បង្កើនចំនួន 2020 , 1851) គួរតែវិលត្រឡប់មកវិញ 0. បង្កើនចំនួន 14 , 15 គួរតែវិលត្រឡប់មកវិញ 20 ។""""""
+","    return abs(a % 10) * abs(b % 10)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(148, 412) == 16, ""First test error: "" + str(candidate(148, 412))                    
+    assert candidate(19, 28) == 72, ""Second test error: "" + str(candidate(19, 28))           
+    assert candidate(2020, 1851) == 0, ""Third test error: "" + str(candidate(2020, 1851))
+    assert candidate(14,-15) == 20, ""Fourth test error: "" + str(candidate(14,-15))      
+    assert candidate(76, 67) == 42, ""Fifth test error: "" + str(candidate(76, 67))      
+    assert candidate(17, 27) == 49, ""Sixth test error: "" + str(candidate(17, 27))      
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(0, 1) == 0, ""1st edge test error: "" + str(candidate(0, 1))
+    assert candidate(0, 0) == 0, ""2nd edge test error: "" + str(candidate(0, 0))
+
+",,,
+HumanEval/98,khm_Khmr,python,"
+def count_upper(s):
+    """"""ដោយបានផ្តល់នូវខ្សែ s, រាប់ចំនួនសម្លេងស្លាកសញ្ញាធំនៅក្នុងអក្សរគូ។ ឧទាហរណ៍: count_upper (('aBCdEf') ត្រឡប់មកវិញ 1 count_upper (('abcdefg') ត្រឡប់មកវិញ 0 count_upper (('dBBE') ត្រឡប់មកវិញ 0 """"""
+","    count = 0
+    for i in range(0,len(s),2):
+        if s[i] in ""AEIOU"":
+            count += 1
+    return count
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('aBCdEf')  == 1
+    assert candidate('abcdefg') == 0
+    assert candidate('dBBE') == 0
+    assert candidate('B')  == 0
+    assert candidate('U')  == 1
+    assert candidate('') == 0
+    assert candidate('EEEE') == 2
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/99,khm_Khmr,python,"
+def closest_integer(value):
+    '''បង្កើតតួអង្គមួយដែលយកតំលៃ (សរសៃ) តំណាងឱ្យចំនួនមួយ ហើយត្រឡប់មកវិញនូវចំនួនគត់ដែលជិតបំផុតវា។ ប្រសិនបើចំនួននោះមានចម្ងាយស្មើពីចំនួនគត់ពីរ, សូមពង្រីកវាពីសូន្យ។ ឧទាហរណ៍ >>> closest_integer ((""10"") 10 >>> closest_integer ((""15.3"") 15 កត់សម្គាល់: ការពង្រីកពីសូន្យមានន័យថាប្រសិនបើចំនួនដែលបានផ្តល់គឺមានចម្ងាយស្មើពីចំនួនគត់ពីរ, អ្នកគួរតែត្រឡប់មកវិញគឺមួយដែលឆ្ងាយបំផុតពីសូន្យ។ សម្រាប់ឧទាហរណ៍ closest_integer "" ((14.5"") គួរតែត្រឡប់មកវិញ 15 និង closest_integer "" ((-14.5"") គួរតែត្រឡប់មកវិញ -15. '''
+","    from math import floor, ceil
+
+    if value.count('.') == 1:
+        # remove trailing zeros
+        while (value[-1] == '0'):
+            value = value[:-1]
+
+    num = float(value)
+    if value[-2:] == '.5':
+        if num > 0:
+            res = ceil(num)
+        else:
+            res = floor(num)
+    elif len(value) > 0:
+        res = int(round(num))
+    else:
+        res = 0
+
+    return res
+
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""10"") == 10, ""Test 1""
+    assert candidate(""14.5"") == 15, ""Test 2""
+    assert candidate(""-15.5"") == -16, ""Test 3""
+    assert candidate(""15.3"") == 15, ""Test 3""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""0"") == 0, ""Test 0""
+
+",,,
+HumanEval/100,khm_Khmr,python,"
+def make_a_pile(n):
+    """"""ដោយបានផ្តល់ចំនួនគត់វិជ្ជមាន n, អ្នកត្រូវធ្វើជាគំនរនៃ n កម្រិតនៃថ្ម. កម្រិតដំបូងមានថ្ម n ចំនួនថ្មនៅក្នុងកម្រិតបន្ទាប់គឺ: - ចំនួនគត់បន្ទាប់ប្រសិនបើ n ជាគត់ - ចំនួនគូបន្ទាប់ប្រសិនបើ n ជាគូ. ត្រឡប់មកវិញចំនួនថ្មក្នុងកម្រិតនីមួយៗ នៅក្នុងបញ្ជីមួយ, ដែលតួអក្សរនៅអិនឌិច i តំណាងឱ្យចំនួនថ្មនៅក្នុងកម្រិត (i + 1) ឧទាហរណ៍: >>> make_a_pile ((3) [3, 5, 7] """"""
+","    return [n + 2*i for i in range(n)]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(3) == [3, 5, 7], ""Test 3""
+    assert candidate(4) == [4,6,8,10], ""Test 4""
+    assert candidate(5) == [5, 7, 9, 11, 13]
+    assert candidate(6) == [6, 8, 10, 12, 14, 16]
+    assert candidate(8) == [8, 10, 12, 14, 16, 18, 20, 22]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/101,khm_Khmr,python,"
+def words_string(s):
+    """"""អ្នកនឹងទទួលបានស្លាកសញ្ញានៃពាក្យដែលបែងចែកដោយកំប៉ុង ឬអគារ។ ការងាររបស់អ្នកគឺបែងចែកស្លាកសញ្ញាជាពាក្យ និងត្រឡប់មកវិញនូវអារេនៃពាក្យ។ ឧទាហរណ៍: words_string ((""Hi, my name is John"") == [""Hi"", ""my"", ""name"", ""is"", ""John""] words_string ((""One, two, three, four, five, six"") == [""One"", ""two"", ""three"", ""four"", ""five"", ""six""] """"""
+","    if not s:
+        return []
+
+    s_list = []
+
+    for letter in s:
+        if letter == ',':
+            s_list.append(' ')
+        else:
+            s_list.append(letter)
+
+    s_list = """".join(s_list)
+    return s_list.split()
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(""Hi, my name is John"") == [""Hi"", ""my"", ""name"", ""is"", ""John""]
+    assert candidate(""One, two, three, four, five, six"") == [""One"", ""two"", ""three"", ""four"", ""five"", ""six""]
+    assert candidate(""Hi, my name"") == [""Hi"", ""my"", ""name""]
+    assert candidate(""One,, two, three, four, five, six,"") == [""One"", ""two"", ""three"", ""four"", ""five"", ""six""]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate("""") == []
+    assert candidate(""ahmed     , gamal"") == [""ahmed"", ""gamal""]
+
+",,,
+HumanEval/102,khm_Khmr,python,"
+def choose_num(x, y):
+    """"""តួអង្គនេះយកចំនួនវិជ្ជមាន x និង y ហើយវិលត្រឡប់មកវិញនូវចំនួនគត់ដែលធំជាងគេដែលស្ថិតនៅក្នុងចន្លោះ [x, y] រួមទាំង។ ប្រសិនបើគ្មានចំនួនបែបនេះទេ, តួអង្គនេះគួរតែវិលត្រឡប់មកវិញ -១ ឧទាហរណ៍: choose_num(12, 15) = 14 choose_num(13, 12) = -1 """"""
+","    if x > y:
+        return -1
+    if y % 2 == 0:
+        return y
+    if x == y:
+        return -1
+    return y - 1
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(12, 15) == 14
+    assert candidate(13, 12) == -1
+    assert candidate(33, 12354) == 12354
+    assert candidate(5234, 5233) == -1
+    assert candidate(6, 29) == 28
+    assert candidate(27, 10) == -1
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(7, 7) == -1
+    assert candidate(546, 546) == 546
+
+",,,
+HumanEval/103,khm_Khmr,python,"
+def rounded_avg(n, m):
+    """"""អ្នកត្រូវបានផ្តល់ចំនួនគត់វិជ្ជមាន n និង m ហើយការងាររបស់អ្នកគឺដើម្បីគិតជាមធ្យមនៃចំនួនគត់ពី n ដល់ m (រួមទាំង n និង m) ។ ជុំវិញចម្លើយទៅជាចំនួនគត់ជិតបំផុតនិងបម្លែងវាទៅជាគណបក្សបៃតង។ ប្រសិនបើ n ធំជាង m, ត្រឡប់មកវិញ -1. ឧទាហរណ៍: rounded_avg ((1, 5) => ""0b11"" rounded_avg ((7, 5) => -1 rounded_avg ((10, 20) => ""0b1111"" rounded_avg ((20, 33) => ""0b11010"" """"""
+","    if m < n:
+        return -1
+    summation = 0
+    for i in range(n, m+1):
+        summation += i
+    return bin(round(summation/(m - n + 1)))
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(1, 5) == ""0b11""
+    assert candidate(7, 13) == ""0b1010""
+    assert candidate(964,977) == ""0b1111001010""
+    assert candidate(996,997) == ""0b1111100100""
+    assert candidate(560,851) == ""0b1011000010""
+    assert candidate(185,546) == ""0b101101110""
+    assert candidate(362,496) == ""0b110101101""
+    assert candidate(350,902) == ""0b1001110010""
+    assert candidate(197,233) == ""0b11010111""
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(7, 5) == -1
+    assert candidate(5, 1) == -1
+    assert candidate(5, 5) == ""0b101""
+
+",,,
+HumanEval/104,khm_Khmr,python,"
+def unique_digits(x):
+    """"""ដោយបានផ្តល់បញ្ជីនៃចំនួនគត់វិជ្ជមាន x. ត្រឡប់មកវិញបញ្ជីដែលត្រូវបានរៀបចំបណ្តាញនៃតួទាំងឡាយដែលមិនមានតួគត់ណាមួយ។ កត់សម្គាល់: បញ្ជីដែលត្រូវបានត្រឡប់មកវិញគួរតែត្រូវបានរៀបចំបណ្តាញដោយបង្កើនលំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់បង្ជាង (បង្ជាង)""""""
+","    odd_digit_elements = []
+    for i in x:
+        if all (int(c) % 2 == 1 for c in str(i)):
+            odd_digit_elements.append(i)
+    return sorted(odd_digit_elements)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([15, 33, 1422, 1]) == [1, 15, 33]
+    assert candidate([152, 323, 1422, 10]) == []
+    assert candidate([12345, 2033, 111, 151]) == [111, 151]
+    assert candidate([135, 103, 31]) == [31, 135]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/105,khm_Khmr,python,"
+def by_length(arr):
+    """"""ដោយបានផ្តល់នូវ array នៃចំនួនគត់, sort ចំនួនគត់ដែលស្ថិតនៅចន្លោះពី 1 និង 9 រួមបញ្ចូលគ្នា, បកប្រែ array ដែលទទួលបាន, ហើយបន្ទាប់មកប្តូរលេខរៀងរាល់លេខដោយឈ្មោះដែលពាក់ព័ន្ធពី ""មួយ"", ""ពីរ"", ""បី"", ""បួន"", ""ប្រាំ"", ""ប្រាំមួយ"", ""ប្រាំពីរ"", ""ប្រាំបី"", ""ប្រាំបី"", ""ប្រាំពីរ"" ""៩"" ឧទាហរណ៍: arr = [2, 1, 1, 4, 5, 8, 2, 3] -> sort arr -> [1, 1, 2, 2, 3, 4, 5, 8] -> reverse arr -> [8, 5, 4, 3, 2, 2, 1, 1] return [""៨"", ""ប្រាំ"", ""បី"", ""ពីរ"", ""ពីរ"", ""មួយ"", ""មួយ""] ប្រសិនបើ array គឺគ្មានអ្វី, return an empty array: arr = [] return [] ប្រសិនបើ array មានលេខចម្លែកណាមួយវានឹងមិនយកចិត្តទុកដាក់: arr = [1, -1 , 55] -> arr -> [1, 55] -> reverse arr = [51] return - ['One' 1,' ] """"""
+","    dic = {
+        1: ""One"",
+        2: ""Two"",
+        3: ""Three"",
+        4: ""Four"",
+        5: ""Five"",
+        6: ""Six"",
+        7: ""Seven"",
+        8: ""Eight"",
+        9: ""Nine"",
+    }
+    sorted_arr = sorted(arr, reverse=True)
+    new_arr = []
+    for var in sorted_arr:
+        try:
+            new_arr.append(dic[var])
+        except:
+            pass
+    return new_arr
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([2, 1, 1, 4, 5, 8, 2, 3]) == [""Eight"", ""Five"", ""Four"", ""Three"", ""Two"", ""Two"", ""One"", ""One""], ""Error""
+    assert candidate([]) == [], ""Error""
+    assert candidate([1, -1 , 55]) == ['One'], ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([1, -1, 3, 2]) == [""Three"", ""Two"", ""One""]
+    assert candidate([9, 4, 8]) == [""Nine"", ""Eight"", ""Four""]
+
+",,,
+HumanEval/106,khm_Khmr,python,"
+def f(n):
+    """"""អនុវត្តន៍មុខងារ f ដែលយក n ជាឧបករណ៍បញ្ជា ហើយបញ្ជូនបញ្ជីដែលមានទំហំ n ដែលមានតម្លៃនៃអាល់អឹមនៅអិនឌីស i គឺជាសមាសភាគនៃ i ប្រសិនបើ i ជាគូ ឬចំនួននៃចំនួនពី 1 ទៅ i បើមិនដូច្នេះទេ i ចាប់ផ្តើមពី 1. សមាសភាគនៃ i គឺជាការបំបែកនៃចំនួនពី 1 ទៅ i (1 * 2 * ... * i) ឧទាហរណ៍: f ((5) == [1, 2, 6, 24, 15] """"""
+","    ret = []
+    for i in range(1,n+1):
+        if i%2 == 0:
+            x = 1
+            for j in range(1,i+1): x *= j
+            ret += [x]
+        else:
+            x = 0
+            for j in range(1,i+1): x += j
+            ret += [x]
+    return ret
+","def check(candidate):
+
+    assert candidate(5) == [1, 2, 6, 24, 15]
+    assert candidate(7) == [1, 2, 6, 24, 15, 720, 28]
+    assert candidate(1) == [1]
+    assert candidate(3) == [1, 2, 6]
+",,,
+HumanEval/107,khm_Khmr,python,"
+def even_odd_palindrome(n):
+    """"""ដោយបានផ្តល់នូវចំនួនគត់វិជ្ជមាន n, សូមត្រឡប់មកវិញនូវ tuple ដែលមានចំនួនគត់និងគត់ palindromes ដែលស្ថិតនៅក្នុងចន្លោះ ((1, n), រួមទាំង។ ឧទាហរណ៍ទី 1: Input: 3 Output: (1, 2) ពន្យល់: គត់ palindrome មាន 1, 2, 3. មួយក្នុងចំណោមពួកគេគឺគត់, និងពីរក្នុងចំណោមពួកគេគឺគត់. ឧទាហរណ៍ទី 2: Input: 12 Output: (4, 6) ពន្យល់: គត់ palindrome មាន 1, 2, 3, 4, 5, 6, 7, 8, 9, 11. បួនក្នុងចំណោមពួកគេគឺគត់, និង 6 ក្នុងចំណោមពួកគេគឺគត់។ កត់សម្គាល់: 1. 1 <= n <= 10^3 2. tuple បានត្រឡប់មកវិញចំនួនគត់និងគត់ palindromes គត់ជារៀងរាល់។ """"""
+","    def is_palindrome(n):
+        return str(n) == str(n)[::-1]
+
+    even_palindrome_count = 0
+    odd_palindrome_count = 0
+
+    for i in range(1, n+1):
+        if i%2 == 1 and is_palindrome(i):
+                odd_palindrome_count += 1
+        elif i%2 == 0 and is_palindrome(i):
+            even_palindrome_count += 1
+    return (even_palindrome_count, odd_palindrome_count)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(123) == (8, 13)
+    assert candidate(12) == (4, 6)
+    assert candidate(3) == (1, 2)
+    assert candidate(63) == (6, 8)
+    assert candidate(25) == (5, 6)
+    assert candidate(19) == (4, 6)
+    assert candidate(9) == (4, 5), ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1) == (0, 1), ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/108,khm_Khmr,python,"
+def count_nums(arr):
+    """"""សរសេរមុខងារ count_nums ដែលយក array នៃចំនួនពេញ ហើយត្រឡប់មកវិញចំនួនអក្សរដែលមានចំនួនលេខ > 0 ប្រសិនបើចំនួនមួយមានអវិជ្ជមាន, បន្ទាប់មកលេខដំបូងដែលចុះហត្ថលេខាលើវានឹងមានអវិជ្ជមាន: ឧទាហរណ៍ -123 មានលេខចុះហត្ថលេខាលើ -1, 2, និង 3. >>> count_nums (([]) == 0 >>> count_nums (([-1, 11, -11]) == 1 >>> count_nums[(1, 1, 2]) == 3 """"""
+","    def digits_sum(n):
+        neg = 1
+        if n < 0: n, neg = -1 * n, -1 
+        n = [int(i) for i in str(n)]
+        n[0] = n[0] * neg
+        return sum(n)
+    return len(list(filter(lambda x: x > 0, [digits_sum(i) for i in arr])))
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([]) == 0
+    assert candidate([-1, -2, 0]) == 0
+    assert candidate([1, 1, 2, -2, 3, 4, 5]) == 6
+    assert candidate([1, 6, 9, -6, 0, 1, 5]) == 5
+    assert candidate([1, 100, 98, -7, 1, -1]) == 4
+    assert candidate([12, 23, 34, -45, -56, 0]) == 5
+    assert candidate([-0, 1**0]) == 1
+    assert candidate([1]) == 1
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/109,khm_Khmr,python,"
+def move_one_ball(arr):
+    """"""យើងមាន array 'arr' នៃចំនួនគត់ N arr[1], arr[2], ..., arr[N] .ចំនួននៅក្នុង array នឹងត្រូវបានបញ្ជាដោយចៃដន្យ។ការងាររបស់អ្នកគឺដើម្បីកំណត់ថាតើវាអាចទទួលបាន array ដែលត្រូវបានរៀបចំបែបមិនថយចុះដោយអនុវត្តប្រតិបត្តិការដូចខាងក្រោមនៅលើ array ដែលបានផ្តល់ជូន: អ្នកត្រូវបានអនុញ្ញាតឱ្យអនុវត្តប្រតិបត្តិការប្ដូរទៅខាងស្តាំគ្រប់ចំនួនដង។ ប្រតិបត្តិការប្ដូរទៅខាងស្តាំមួយមានន័យថាផ្លាស់ប្តូរតួទាំងមូលនៃ array ដោយជំហានមួយក្នុងទិសដៅខាងស្តាំ។ តួចុងក្រោយនៃ array នឹងត្រូវបានផ្លាស់ប្តូរទៅកាន់ជំហានដំបូងនៅក្នុង array គឺ 0th index ។ ប្រសិនបើវាអាចទទួលបាន array ដែលត្រូវបានរៀបចំបែបអនុវត្តប្រតិបត្តិការខាងលើនោះត្រឡប់មក True ទៀតត្រឡប់មក False ។ ប្រសិនបើ array ដែលបានផ្តល់នោះគឺ return return True ។ កត់សម្គាល់: បញ្ជីដែលបានផ្តល់ជូនត្រូវបានធានាថាមានតួឯកតែមួយ។ ឧទាហរណ៍: move_one ((ball_[3, 4, 5, 2] === ការពន្យល់ពិត: ដោយការប្រតិបត្តិការប្ដូរទៅខាងស្តាំ 2min, មិនថយចុះអាចត្រូវបានសម្រេចបានសម្រាប់ array ដែលបានផ្តល់ជូន។ ការផ្លាស់ប្តូរ_one (_, ប្ដូរទៅខាងស្តាំ) === ការផ្លាស់ប្តូរតួទីតាំង: មិនអាចទទួលបានការប្ដូរទិសម្រាប់ការប្ដូរដោយការប្ដូរចំនួនដែលមិនបានផ្តល់ដោយការប្ដូរទៅខាងស្តាំ===== 1, 4, 5, ===== ការផ្លាស់ប្តូរតួ === === === ====================================================================================================================================================================================================================================================================================================================================""""""
+","    if len(arr)==0:
+      return True
+    sorted_array=sorted(arr)
+    my_arr=[]
+    
+    min_value=min(arr)
+    min_index=arr.index(min_value)
+    my_arr=arr[min_index:]+arr[0:min_index]
+    for i in range(len(arr)):
+      if my_arr[i]!=sorted_array[i]:
+        return False
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([3, 4, 5, 1, 2])==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([3, 5, 10, 1, 2])==True
+    assert candidate([4, 3, 1, 2])==False
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([3, 5, 4, 1, 2])==False, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([])==True
+",,,
+HumanEval/110,khm_Khmr,python,"
+def exchange(lst1, lst2):
+    """"""ក្នុងបញ្ហានេះ, អ្នកនឹងអនុវត្តមុខងារមួយដែលយកបញ្ជីចំនួនពីរ, និងកំណត់ថាតើវាអាចធ្វើបានការផ្លាស់ប្តូរអក្សររវាងពួកគេដើម្បីធ្វើឱ្យ lst1 ជាបញ្ជីនៃចំនួនគូតែប៉ុណ្ណោះ. គ្មានការកំណត់លើចំនួនអក្សរដែលត្រូវបានផ្លាស់ប្តូររវាង lst1 និង lst2. ប្រសិនបើវាអាចផ្លាស់ប្តូរអក្សររវាង lst1 និង lst2 ដើម្បីធ្វើឱ្យអក្សរទាំងអស់នៃ lst1 មានគូ, ត្រឡប់មកវិញ ""YES"" បើមិនដូច្នេះទេ, ត្រឡប់មកវិញ ""NO"" ឧទាហរណ៍: exchange[(1, 2, 3, 4], [1, 2, 3, 4]) => ""YES"" exchange[(1, 2, 3, 4], [1, 5, 3, 4]) => ""NO"" គេគិតថាបញ្ជីបញ្ចូលនឹងមិនខ្វះ។ """"""
+","    odd = 0
+    even = 0
+    for i in lst1:
+        if i%2 == 1:
+            odd += 1
+    for i in lst2:
+        if i%2 == 0:
+            even += 1
+    if even >= odd:
+        return ""YES""
+    return ""NO""
+            
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1, 2, 3, 4], [1, 2, 3, 4]) == ""YES""
+    assert candidate([1, 2, 3, 4], [1, 5, 3, 4]) == ""NO""
+    assert candidate([1, 2, 3, 4], [2, 1, 4, 3]) == ""YES"" 
+    assert candidate([5, 7, 3], [2, 6, 4]) == ""YES""
+    assert candidate([5, 7, 3], [2, 6, 3]) == ""NO"" 
+    assert candidate([3, 2, 6, 1, 8, 9], [3, 5, 5, 1, 1, 1]) == ""NO""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([100, 200], [200, 200]) == ""YES""
+
+",,,
+HumanEval/111,khm_Khmr,python,"
+def histogram(test):
+    """"""ឧទាហរណ៍: histogram ((('a b c') == {'a': 1, 'b': 1, 'c': 1} histogram ((('a b b a') == {'a': 2, 'b': 2} histogram ((('a b c a b') == {'a': 2, 'b': 2} histogram ((('b b a') == {'a': 2, 'b': 2} histogram ((('b b a') == {'b 4} histogram ((('a') == {'b 4}) == {} """"""
+","    dict1={}
+    list1=test.split("" "")
+    t=0
+
+    for i in list1:
+        if(list1.count(i)>t) and i!='':
+            t=list1.count(i)
+    if t>0:
+        for i in list1:
+            if(list1.count(i)==t):
+                
+                dict1[i]=t
+    return dict1
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('a b b a') == {'a':2,'b': 2}, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('a b c a b') == {'a': 2, 'b': 2}, ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate('a b c d g') == {'a': 1, 'b': 1, 'c': 1, 'd': 1, 'g': 1}, ""This prints if this assert fails 3 (good for debugging!)""
+    assert candidate('r t g') == {'r': 1,'t': 1,'g': 1}, ""This prints if this assert fails 4 (good for debugging!)""
+    assert candidate('b b b b a') == {'b': 4}, ""This prints if this assert fails 5 (good for debugging!)""
+    assert candidate('r t g') == {'r': 1,'t': 1,'g': 1}, ""This prints if this assert fails 6 (good for debugging!)""
+    
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('') == {}, ""This prints if this assert fails 7 (also good for debugging!)""
+    assert candidate('a') == {'a': 1}, ""This prints if this assert fails 8 (also good for debugging!)""
+
+",,,
+HumanEval/112,khm_Khmr,python,"
+def reverse_delete(s,c):
+    """"""កិច្ចការ យើងបានទទួលខ្សែពីរ s និង c, អ្នកត្រូវលុបអក្សរទាំងអស់នៅក្នុង s ដែលស្មើនឹងអក្សរណាមួយនៅក្នុង c បន្ទាប់មកពិនិត្យមើលថាខ្សែលទ្ធផលគឺ palindrome ។ខ្សែមួយត្រូវបានគេហៅថា palindrome ប្រសិនបើវាអានដូចគ្នាទៅមុខនិងក្រោយ។ អ្នកគួរតែត្រឡប់មកវិញនូវ tuple ដែលមានខ្សែលទ្ធផលនិង True / False សម្រាប់ការពិនិត្យមើល។ ឧទាហរណ៍សម្រាប់ s = ""abcde"", c = ""ae"", លទ្ធផលគួរតែជា ('bcd', False) សម្រាប់ s = ""abcdef"", c = ""b"" លទ្ធផលគួរតែជា ('acdef', False) សម្រាប់ s = ""abcdedcba"", c = ""ab"", លទ្ធផលគួរតែជា ('cdedc', True)""""""
+","    s = ''.join([char for char in s if char not in c])
+    return (s,s[::-1] == s)
+","def check(candidate):
+
+    assert candidate(""abcde"",""ae"") == ('bcd',False)
+    assert candidate(""abcdef"", ""b"") == ('acdef',False)
+    assert candidate(""abcdedcba"",""ab"") == ('cdedc',True)
+    assert candidate(""dwik"",""w"") == ('dik',False)
+    assert candidate(""a"",""a"") == ('',True)
+    assert candidate(""abcdedcba"","""") == ('abcdedcba',True)
+    assert candidate(""abcdedcba"",""v"") == ('abcdedcba',True)
+    assert candidate(""vabba"",""v"") == ('abba',True)
+    assert candidate(""mamma"", ""mia"") == ("""", True)
+",,,
+HumanEval/113,khm_Khmr,python,"
+def odd_count(lst):
+    """"""ដោយបានផ្តល់បញ្ជីនៃខ្សែដែលខ្សែនីមួយៗ មានតែលេខប៉ុណ្ណោះ, សូមបញ្ជូនបញ្ជីមួយ។ កត្តា i នៃលទ្ធផលចេញត្រូវជា ""ចំនួនអក្សរមិនធម្មតានៅក្នុងខ្សែ i នៃការបញ្ចូល"" ដែល i ទាំងអស់ត្រូវត្រូវបានជំនួសដោយចំនួនលេខមិនធម្មតានៅក្នុងខ្សែ i នៃការបញ្ចូល >>> odd_count['1234567']) [""ចំនួនអក្សរមិនធម្មតា 4n the str4ng 4 of the 4nput.""] >>> odd_count['3',""111111""]) [""ចំនួនអក្សរមិនធម្មតា 1n the str1ng 1 of the 1nput. "", ""ចំនួនអក្សរមិនធម្មតា 8n the str8ng 8 of the 8nput. ""]""""""
+","    res = []
+    for arr in lst:
+        n = sum(int(d)%2==1 for d in arr)
+        res.append(""the number of odd elements "" + str(n) + ""n the str""+ str(n) +""ng ""+ str(n) +"" of the ""+ str(n) +""nput."")
+    return res
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(['1234567']) == [""the number of odd elements 4n the str4ng 4 of the 4nput.""], ""Test 1""
+    assert candidate(['3',""11111111""]) == [""the number of odd elements 1n the str1ng 1 of the 1nput."", ""the number of odd elements 8n the str8ng 8 of the 8nput.""], ""Test 2""
+    assert candidate(['271', '137', '314']) == [
+        'the number of odd elements 2n the str2ng 2 of the 2nput.',
+        'the number of odd elements 3n the str3ng 3 of the 3nput.',
+        'the number of odd elements 2n the str2ng 2 of the 2nput.'
+    ]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/114,khm_Khmr,python,"
+def minSubArraySum(nums):
+    """"""ដោយបានផ្តល់នូវ array នៃ integer nums, រកចំនួនចំនួនតិចបំផុតនៃ nums ដែលមិនមែនជាលេខគ្មាន។ ឧទាហរណ៍ minSubArraySum (([2, 3, 4, 1, 2, 4]) == 1 minSubArraySum (([-1, -2, -3]) == -6 """"""
+","    max_sum = 0
+    s = 0
+    for num in nums:
+        s += -num
+        if (s < 0):
+            s = 0
+        max_sum = max(s, max_sum)
+    if max_sum == 0:
+        max_sum = max(-i for i in nums)
+    min_sum = -max_sum
+    return min_sum
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([2, 3, 4, 1, 2, 4]) == 1, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([-1, -2, -3]) == -6
+    assert candidate([-1, -2, -3, 2, -10]) == -14
+    assert candidate([-9999999999999999]) == -9999999999999999
+    assert candidate([0, 10, 20, 1000000]) == 0
+    assert candidate([-1, -2, -3, 10, -5]) == -6
+    assert candidate([100, -1, -2, -3, 10, -5]) == -6
+    assert candidate([10, 11, 13, 8, 3, 4]) == 3
+    assert candidate([100, -33, 32, -1, 0, -2]) == -33
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([-10]) == -10, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([7]) == 7
+    assert candidate([1, -1]) == -1
+",,,
+HumanEval/115,khm_Khmr,python,"
+def max_fill(grid, capacity):
+    import math
+    """"""អ្នកត្រូវបានផ្តល់នូវក្របខ័ណ្ឌព័ទ្ធដោយប្រឡាយ។ ជួរនីមួយៗតំណាងឱ្យប្រឡាយតែមួយ ហើយមួយជួរនីមួយៗតំណាងឱ្យទឹកមួយគ្រឿង។ ប្រឡាយនីមួយៗមានបង្គន់មួយដែលអាចប្រើដើម្បីដកទឹកចេញពីវា ហើយបង្គន់ទាំងអស់មានសមត្ថភាពដូចគ្នា។ការងាររបស់អ្នកគឺប្រើបង្គន់ដើម្បីបូមបង្គន់។ ការចេញចំនួនដងដែលអ្នកត្រូវការដើម្បីទម្លាក់បង្គន់។ ឧទាហរណ៍: ១: Input: grid: [[0,0,1,0], [0,1,0,0], [1,1,1,1]] bucket_capacity: 1 Output: 6 Example: Input: grid: [[0,0,1,1], [0,0,0,0], [1,1,1], [0,1,1]] bucket_capacity: 2 Output: 5 Example: Input: [[:0,0,0], [0,0,0]] bucket_capacity: 5 Output: 0 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *""""""
+","    return sum([math.ceil(sum(arr)/capacity) for arr in grid])
+","def check(candidate):
+
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([[0,0,1,0], [0,1,0,0], [1,1,1,1]], 1) == 6, ""Error""
+    assert candidate([[0,0,1,1], [0,0,0,0], [1,1,1,1], [0,1,1,1]], 2) == 5, ""Error""
+    assert candidate([[0,0,0], [0,0,0]], 5) == 0, ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([[1,1,1,1], [1,1,1,1]], 2) == 4, ""Error""
+    assert candidate([[1,1,1,1], [1,1,1,1]], 9) == 2, ""Error""
+
+",,,
+HumanEval/116,khm_Khmr,python,"
+def sort_array(arr):
+    """"""ក្នុង Kata នេះ អ្នក ត្រូវ រៀបចំ array នៃ integer ដែល មិនមែន ជា អវិជ្ជមាន តាម ចំនួន មួយ ក្នុង តំណាង binary របស់ វា ក្នុង លំដាប់ ថយ ចុះ ។ សម្រាប់ ចំនួន មួយ ដែល ស្រដៀង គ្នា នោះ ត្រូវ រៀបចំ តាម តម្លៃ ដប់ ។ វា ត្រូវ អនុវត្ត ដូច នេះ: >>> sort_array (([1, 5, 2, 3, 4]) == [1, 2, 3, 4, 5] >>> sort_array (([-2, -3, -4, -5, -6]) == [-6, -5, -4, -3, -2] >>> sort_array (([1, 0, 2, 3, 4]) [0, 1, 2, 3, 4] """"""
+","    return sorted(sorted(arr), key=lambda x: bin(x)[2:].count('1'))
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1,5,2,3,4]) == [1, 2, 4, 3, 5]
+    assert candidate([-2,-3,-4,-5,-6]) == [-4, -2, -6, -5, -3]
+    assert candidate([1,0,2,3,4]) == [0, 1, 2, 4, 3]
+    assert candidate([]) == []
+    assert candidate([2,5,77,4,5,3,5,7,2,3,4]) == [2, 2, 4, 4, 3, 3, 5, 5, 5, 7, 77]
+    assert candidate([3,6,44,12,32,5]) == [32, 3, 5, 6, 12, 44]
+    assert candidate([2,4,8,16,32]) == [2, 4, 8, 16, 32]
+    assert candidate([2,4,8,16,32]) == [2, 4, 8, 16, 32]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/117,khm_Khmr,python,"
+def select_words(s, n):
+    """"""ដោយបានផ្តល់នូវខ្សែ s និងចំនួនធម្មជាតិ n, អ្នកត្រូវបានគេបញ្ជាឱ្យអនុវត្តមុខងារមួយដែលត្រឡប់មកវិញនូវបញ្ជីនៃពាក្យទាំងអស់ពីខ្សែ s ដែលមានសម្លេងសុទ្ធតែ n ដើម្បីឱ្យពាក្យទាំងនេះលេចឡើងនៅក្នុងខ្សែ s. ប្រសិនបើខ្សែ s គឺគ្មានអ្វីទេនោះមុខងារនេះគួរតែត្រឡប់មកវិញនូវបញ្ជីគ្មានអ្វីទេ។ សូមបញ្ជាក់ថាអ្នកអាចគិតថាខ្សែបញ្ចូលមានតែអក្សរនិងអគារគំរូ: select_words ""Mary had a little lamb"", 4) ==> [""little""] select_words ""Mary had a little lamb"", 3) ==> [""Mary"", ""lamb""] select_words ""simple white space"", 2) ==> [] select_words ""Hello world"", 4) ==> [""world""] select_words ""Uncle sam"", 3) ==> [""Uncle""] """"""
+","    result = []
+    for word in s.split():
+        n_consonants = 0
+        for i in range(0, len(word)):
+            if word[i].lower() not in [""a"",""e"",""i"",""o"",""u""]:
+                n_consonants += 1 
+        if n_consonants == n:
+            result.append(word)
+    return result
+
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""Mary had a little lamb"", 4) == [""little""], ""First test error: "" + str(candidate(""Mary had a little lamb"", 4))      
+    assert candidate(""Mary had a little lamb"", 3) == [""Mary"", ""lamb""], ""Second test error: "" + str(candidate(""Mary had a little lamb"", 3))  
+    assert candidate(""simple white space"", 2) == [], ""Third test error: "" + str(candidate(""simple white space"", 2))      
+    assert candidate(""Hello world"", 4) == [""world""], ""Fourth test error: "" + str(candidate(""Hello world"", 4))  
+    assert candidate(""Uncle sam"", 3) == [""Uncle""], ""Fifth test error: "" + str(candidate(""Uncle sam"", 3))
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate("""", 4) == [], ""1st edge test error: "" + str(candidate("""", 4))
+    assert candidate(""a b c d e f"", 1) == [""b"", ""c"", ""d"", ""f""], ""2nd edge test error: "" + str(candidate(""a b c d e f"", 1))
+
+",,,
+HumanEval/118,khm_Khmr,python,"
+def get_closest_vowel(word):
+    """"""អ្នកត្រូវបានផ្តល់ពាក្យមួយ. ការងាររបស់អ្នកគឺដើម្បីរក vowel ដែលជិតបំផុតដែលឈរនៅចន្លោះពីរសំឡេងរួមបញ្ចូលគ្នាពីខាងស្តាំនៃពាក្យ ( case sensitive) ។សំឡេងនៅក្នុងដើមនិងបញ្ចប់មិនរាប់។ ត្រឡប់ស្លាកសញ្ញាទទេប្រសិនបើអ្នកមិនបានរកឃើញសំឡេងណាមួយបានបំពេញលក្ខខណ្ឌខាងលើ។ អ្នកអាចគិតថាស្លាកសញ្ញាដែលផ្តល់បានមានអក្សរអង់គ្លេសតែប៉ុណ្ណោះ។ ឧទាហរណ៍: get_closest_vowel (((""yogurt"") ==> ""u"" get_closest_vowel (((""F"") ==> ""U"" get_closest_vowel (((""quick"") ==> """" get_closest_vowel"" ((ab"") ==> """" """"""
+","    if len(word) < 3:
+        return """"
+
+    vowels = {""a"", ""e"", ""i"", ""o"", ""u"", ""A"", ""E"", 'O', 'U', 'I'}
+    for i in range(len(word)-2, 0, -1):
+        if word[i] in vowels:
+            if (word[i+1] not in vowels) and (word[i-1] not in vowels):
+                return word[i]
+    return """"
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""yogurt"") == ""u""
+    assert candidate(""full"") == ""u""
+    assert candidate(""easy"") == """"
+    assert candidate(""eAsy"") == """"
+    assert candidate(""ali"") == """"
+    assert candidate(""bad"") == ""a""
+    assert candidate(""most"") == ""o""
+    assert candidate(""ab"") == """"
+    assert candidate(""ba"") == """"
+    assert candidate(""quick"") == """"
+    assert candidate(""anime"") == ""i""
+    assert candidate(""Asia"") == """"
+    assert candidate(""Above"") == ""o""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/119,khm_Khmr,python,"
+def match_parens(lst):
+    '''អ្នកត្រូវបានផ្តល់បញ្ជីនៃខ្សែពីរខ្សែទាំងពីររួមមានក្រដាសបើក '(' ឬក្រដាសបិទ ') 'តែប៉ុណ្ណោះ ការងាររបស់អ្នកគឺដើម្បីត្រួតពិនិត្យថាតើវាអាចប្រកាសខ្សែទាំងពីរនៅក្នុងលំដាប់ណាមួយដែលបណ្តាលឱ្យខ្សែនឹងល្អ។ ខ្សែ S ត្រូវបានចាត់ទុកថាល្អប្រសិនបើនិងតែប្រសិនបើក្រដាសទាំងអស់នៅក្នុង S មានតុល្យភាព។ ឧទាហរណ៍: ខ្សែ '((()) 'ល្អហើយខ្សែ '()) 'មិនល្អទេ ត្រឡប់មកវិញ 'Yes' ប្រសិនបើមានវិធីដើម្បីបង្កើតខ្សែល្អនិងត្រឡប់មកវិញ 'No' បើមិនដូច្នេះទេ ឧទាហរណ៍: match_parens [('() ', ') ']) == 'Yes' match_parens [(') ', ') ']) == 'No' '''
+","    def check(s):
+        val = 0
+        for i in s:
+            if i == '(':
+                val = val + 1
+            else:
+                val = val - 1
+            if val < 0:
+                return False
+        return True if val == 0 else False
+
+    S1 = lst[0] + lst[1]
+    S2 = lst[1] + lst[0]
+    return 'Yes' if check(S1) or check(S2) else 'No'
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(['()(', ')']) == 'Yes'
+    assert candidate([')', ')']) == 'No'
+    assert candidate(['(()(())', '())())']) == 'No'
+    assert candidate([')())', '(()()(']) == 'Yes'
+    assert candidate(['(())))', '(()())((']) == 'Yes'
+    assert candidate(['()', '())']) == 'No'
+    assert candidate(['(()(', '()))()']) == 'Yes'
+    assert candidate(['((((', '((())']) == 'No'
+    assert candidate([')(()', '(()(']) == 'No'
+    assert candidate([')(', ')(']) == 'No'
+    
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(['(', ')']) == 'Yes'
+    assert candidate([')', '(']) == 'Yes' 
+
+",,,
+HumanEval/120,khm_Khmr,python,"
+def maximum(arr, k):
+    """"""ដោយបានផ្តល់នូវ array នៃចំនួនពេញ និងចំនួនពេញវិជ្ជមាន k, សូមត្រឡប់ទៅលេខដែលត្រូវបានរៀបចំបែបកម្រិត k ជាមួយនឹងចំនួន k ក្នុង arr. ឧទាហរណ៍ទី 1: Input: arr = [-3, -4, 5], k = 3 Output: [-4, -3, 5] ឧទាហរណ៍ទី 2: Input: arr = [4, -4, 4], k = 2 Output: [4, 4] ឧទាហរណ៍ទី 3: Input: arr = [-3, 2, 1, 2, -1, -2, 1], k = 1 Output: [2] កត់សម្គាល់: 1. កម្រិតនៃ array នឹងស្ថិតនៅក្នុងអត្រា [1, 1000] 2. អត្តសញ្ញាណនៅក្នុង array នឹងស្ថិតនៅក្នុងអត្រា [-1000, 1000] 3. 0 <= k <= len ((arr) """"""
+","    if k == 0:
+        return []
+    arr.sort()
+    ans = arr[-k:]
+    return ans
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([-3, -4, 5], 3) == [-4, -3, 5]
+    assert candidate([4, -4, 4], 2) == [4, 4]
+    assert candidate([-3, 2, 1, 2, -1, -2, 1], 1) == [2]
+    assert candidate([123, -123, 20, 0 , 1, 2, -3], 3) == [2, 20, 123]
+    assert candidate([-123, 20, 0 , 1, 2, -3], 4) == [0, 1, 2, 20]
+    assert candidate([5, 15, 0, 3, -13, -8, 0], 7) == [-13, -8, 0, 0, 3, 5, 15]
+    assert candidate([-1, 0, 2, 5, 3, -10], 2) == [3, 5]
+    assert candidate([1, 0, 5, -7], 1) == [5]
+    assert candidate([4, -4], 2) == [-4, 4]
+    assert candidate([-10, 10], 2) == [-10, 10]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1, 2, 3, -23, 243, -400, 0], 0) == []
+
+",,,
+HumanEval/121,khm_Khmr,python,"
+def solution(lst):
+    """"""ដោយបានផ្តល់បញ្ជីនៃចំនួនពេញដែលមិនមែនជាលេខបាត, សូមត្រឡប់មកវិញចំនួននៃតួឯកទាំងអស់ដែលស្ថិតនៅក្នុងជួរគូ។ ឧទាហរណ៍ដំណោះស្រាយ (([5, 8, 7, 1]) ==> ដំណោះស្រាយ 12 (([3, 3, 3, 3]) ==> ដំណោះស្រាយ 9 (([30, 13, 24, 321]) ==> 0 """"""
+","    return sum([x for idx, x in enumerate(lst) if idx%2==0 and x%2==1])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([5, 8, 7, 1])    == 12
+    assert candidate([3, 3, 3, 3, 3]) == 9
+    assert candidate([30, 13, 24, 321]) == 0
+    assert candidate([5, 9]) == 5
+    assert candidate([2, 4, 8]) == 0
+    assert candidate([30, 13, 23, 32]) == 23
+    assert candidate([3, 13, 2, 9]) == 3
+
+    # Check some edge cases that are easy to work out by hand.
+
+",,,
+HumanEval/122,khm_Khmr,python,"
+def add_elements(arr, k):
+    """"""ដោយបានផ្តល់នូវ array ដែលមិនមែនជាលំហនៃចំនួនពេញ arr និងចំនួនពេញ k, សូមត្រឡប់មកវិញនូវចំនួននៃតួដែលមានចំនួនពីរដងពីតួគំរូ k ដំបូងនៃ arr. ឧទាហរណ៍: Input: arr = [111,21,3,4000,5,6,7,8,9], k = 4 Output: 24 # sum of 21 + 3 Constraints: 1. 1 <= lenarr) <= 100 2. 1 <= k <= lenarr)""""""
+","    return sum(elem for elem in arr[:k] if len(str(elem)) <= 2)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,-2,-3,41,57,76,87,88,99], 3) == -4
+    assert candidate([111,121,3,4000,5,6], 2) == 0
+    assert candidate([11,21,3,90,5,6,7,8,9], 4) == 125
+    assert candidate([111,21,3,4000,5,6,7,8,9], 4) == 24, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1], 1) == 1, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/123,khm_Khmr,python,"
+def get_odd_collatz(n):
+    """"""ការគិតរបស់ Collatz គឺជាការគិតមួយនៅក្នុងគណិតវិទ្យាដែលពាក់ព័ន្ធនឹងការកំណត់បន្តបន្ទាប់ដូចខាងក្រោម: ចាប់ផ្តើមដោយចំនួនគត់វិជ្ជមាន n ។ បន្ទាប់មកពាក្យនីមួយៗត្រូវបានទទួលបានពីពាក្យមុនដូចខាងក្រោម: ប្រសិនបើពាក្យមុនគឺគូទ, ពាក្យបន្ទាប់គឺមួយកន្លះនៃពាក្យមុន។ ប្រសិនបើពាក្យមុនគឺគូទ, ពាក្យបន្ទាប់គឺ 3 ដងនៃពាក្យមុនបូក 1. ការគិតគឺថាមិនថាមានតម្លៃអ្វីនៃ n, ការបន្តបន្ទាប់នឹងឈានដល់ 1. កត់សម្គាល់: 1. Collatz ((1) គឺ [1] ។ 2. បញ្ជីដែលត្រូវបានរៀបរាប់ឡើងវិញដោយលំដាប់កើនឡើង។ ឧទាហរណ៍: get_odd_collatz ((5) ត្រឡប់មកវិញ [1, 5] # ការបន្តបន្ទាប់របស់ Collatz សម្រាប់ 5 គឺ [5, 8, 16, 4, 2, 1], ដូច្នេះចំនួនគូទមានតែ 1 និង 5 ប៉ុណ្ណោះ """"""
+","    if n%2==0:
+        odd_collatz = [] 
+    else:
+        odd_collatz = [n]
+    while n > 1:
+        if n % 2 == 0:
+            n = n/2
+        else:
+            n = n*3 + 1
+            
+        if n%2 == 1:
+            odd_collatz.append(int(n))
+
+    return sorted(odd_collatz)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(14) == [1, 5, 7, 11, 13, 17]
+    assert candidate(5) == [1, 5]
+    assert candidate(12) == [1, 3, 5], ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1) == [1], ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/124,khm_Khmr,python,"
+def valid_date(date):
+    """"""អ្នកត្រូវសរសេរមុខងារមួយដែលបញ្ជាក់លក្ខខណ្ឌនៃ string ថ្ងៃដែលបានផ្តល់និងត្រឡប់ True ប្រសិនបើថ្ងៃមានប្រសិទ្ធភាព បើមិនដូច្នេះទេ False. ថ្ងៃមានប្រសិទ្ធភាពប្រសិនបើគ្រប់ច្បាប់ដូចខាងក្រោមត្រូវបានបំពេញ: 1. ដងនៃថ្ងៃមិននៅស្ងៀម 2. ចំនួនថ្ងៃមិនតិចជាង 1 ឬខ្ពស់ជាង 31 ថ្ងៃសម្រាប់ខែ 1,3,5,7,8,10,12 និងចំនួនថ្ងៃមិនតិចជាង 1 ឬខ្ពស់ជាង 30 ថ្ងៃសម្រាប់ខែ 4,6,9,11 និងចំនួនថ្ងៃមិនតិចជាង 1 ឬខ្ពស់ជាង 29 សម្រាប់ខែ 2. 3. ខែមិនគួរតិចជាង 1 ឬខ្ពស់ជាង 12. 4. ថ្ងៃគួរតែមាននៅក្នុងទម្រង់: mm-dd-yyyy ឧទាហរណ៍: valid_date ((('03-11-2000') => true_date ((('15-01-2012') => false_date ((('04-02040') => false_date ((((('06-04-2020') => true_date ((('06/04/2020') => false""""""
+","    try:
+        date = date.strip()
+        month, day, year = date.split('-')
+        month, day, year = int(month), int(day), int(year)
+        if month < 1 or month > 12:
+            return False
+        if month in [1,3,5,7,8,10,12] and day < 1 or day > 31:
+            return False
+        if month in [4,6,9,11] and day < 1 or day > 30:
+            return False
+        if month == 2 and day < 1 or day > 29:
+            return False
+    except:
+        return False
+
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('03-11-2000') == True
+
+    assert candidate('15-01-2012') == False
+
+    assert candidate('04-0-2040') == False
+
+    assert candidate('06-04-2020') == True
+
+    assert candidate('01-01-2007') == True
+
+    assert candidate('03-32-2011') == False
+
+    assert candidate('') == False
+
+    assert candidate('04-31-3000') == False
+
+    assert candidate('06-06-2005') == True
+
+    assert candidate('21-31-2000') == False
+
+    assert candidate('04-12-2003') == True
+
+    assert candidate('04122003') == False
+
+    assert candidate('20030412') == False
+
+    assert candidate('2003-04') == False
+
+    assert candidate('2003-04-12') == False
+
+    assert candidate('04-2003') == False
+",,,
+HumanEval/125,khm_Khmr,python,"
+def split_words(txt):
+    '''ផ្តល់ឱ្យខ្សែនៃពាក្យ, ត្រឡប់មកវិញបញ្ជីនៃពាក្យបែកដោយអាកាសសុទ្ធ, ប្រសិនបើគ្មានអាកាសសុទ្ធនៅក្នុងអត្ថបទដែលអ្នកគួរតែបែកដោយកាំមេរ៉ា ',' ប្រសិនបើគ្មានកាំមេរ៉ាដែលអ្នកគួរតែត្រឡប់មកវិញចំនួនអក្សរតូចដែលមានលំដាប់មិនធម្មតានៅក្នុងអក្សរអក្សរ, ord (('a') = 0, ord (('b') = 1, ... ord (('z') = 25 ឧទាហរណ៍ split_words ((""Hello world!"") â -> [""Hello"", ""world!""] split_words ((""Hello,world!"") â -> [""Hello"", ""world!"" split_words"")'''
+","    if "" "" in txt:
+        return txt.split()
+    elif "","" in txt:
+        return txt.replace(',',' ').split()
+    else:
+        return len([i for i in txt if i.islower() and ord(i)%2 == 0])
+","def check(candidate):
+
+    assert candidate(""Hello world!"") == [""Hello"",""world!""]
+    assert candidate(""Hello,world!"") == [""Hello"",""world!""]
+    assert candidate(""Hello world,!"") == [""Hello"",""world,!""]
+    assert candidate(""Hello,Hello,world !"") == [""Hello,Hello,world"",""!""]
+    assert candidate(""abcdef"") == 3
+    assert candidate(""aaabb"") == 2
+    assert candidate(""aaaBb"") == 1
+    assert candidate("""") == 0
+",,,
+HumanEval/126,khm_Khmr,python,"
+def is_sorted(lst):
+    '''ការផ្តល់បញ្ជីនៃលេខ, ត្រឡប់មកវិញថាតើពួកគេត្រូវបានរៀបចំបាត់តាមលំដាប់ឡើងឬអត់. ប្រសិនបើបញ្ជីមានលេខដូចគ្នាច្រើនជាង 1 ដង, ត្រឡប់មកវិញ False. មិនមានលេខអវិជ្ជមានទេ និងមានតែចំនួនគត់. ឧទាហរណ៍ is_sorted ((([5]) â -> True is_sorted (([1, 2, 3, 4, 5]) â -> True is_sorted (([1, 2, 3, 4, 5, 6]) â -> False is_sorted (([1, 2, 3, 4, 5, 6, 7]) â -> True is_sorted (([1, 3, 2, 3, 4, 5, 6, 7]) â -> True is_sorted (([1, 3, 2, 4, 5, 6, 7]) -> False is_sorted (([1, 2, 2, 3, 3, 4]) -> True is_sorted (([1, 2, 2, 2, 3, 4 -> False ])'''
+","    count_digit = dict([(i, 0) for i in lst])
+    for i in lst:
+        count_digit[i]+=1 
+    if any(count_digit[i] > 2 for i in lst):
+        return False
+    if all(lst[i-1] <= lst[i] for i in range(1, len(lst))):
+        return True
+    else:
+        return False
+    
+    
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([5]) == True
+    assert candidate([1, 2, 3, 4, 5]) == True
+    assert candidate([1, 3, 2, 4, 5]) == False
+    assert candidate([1, 2, 3, 4, 5, 6]) == True
+    assert candidate([1, 2, 3, 4, 5, 6, 7]) == True
+    assert candidate([1, 3, 2, 4, 5, 6, 7]) == False, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([]) == True, ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate([1]) == True, ""This prints if this assert fails 3 (good for debugging!)""
+    assert candidate([3, 2, 1]) == False, ""This prints if this assert fails 4 (good for debugging!)""
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1, 2, 2, 2, 3, 4]) == False, ""This prints if this assert fails 5 (good for debugging!)""
+    assert candidate([1, 2, 3, 3, 3, 4]) == False, ""This prints if this assert fails 6 (good for debugging!)""
+    assert candidate([1, 2, 2, 3, 3, 4]) == True, ""This prints if this assert fails 7 (good for debugging!)""
+    assert candidate([1, 2, 3, 4]) == True, ""This prints if this assert fails 8 (good for debugging!)""
+
+",,,
+HumanEval/127,khm_Khmr,python,"
+def intersection(interval1, interval2):
+    """"""ឧទាហរណ៍: ការកាត់ផ្តាច់នៃរវាងរវាងរវាង (1, 3), (2, 4) គឺ (2, 3) ដែលមានទំហំគឺ 1 ដែលមិនមែនជាចំនួនដើម។ ប្រសិនបើទំហំនៃរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាងរវាង""""""
+","    def is_prime(num):
+        if num == 1 or num == 0:
+            return False
+        if num == 2:
+            return True
+        for i in range(2, num):
+            if num%i == 0:
+                return False
+        return True
+
+    l = max(interval1[0], interval2[0])
+    r = min(interval1[1], interval2[1])
+    length = r - l
+    if length > 0 and is_prime(length):
+        return ""YES""
+    return ""NO""
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate((1, 2), (2, 3)) == ""NO""
+    assert candidate((-1, 1), (0, 4)) == ""NO""
+    assert candidate((-3, -1), (-5, 5)) == ""YES""
+    assert candidate((-2, 2), (-4, 0)) == ""YES""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate((-11, 2), (-1, -1)) == ""NO""
+    assert candidate((1, 2), (3, 5)) == ""NO""
+    assert candidate((1, 2), (1, 2)) == ""NO""
+    assert candidate((-2, -2), (-3, -2)) == ""NO""
+
+",,,
+HumanEval/128,khm_Khmr,python,"
+def prod_signs(arr):
+    """"""អ្នកត្រូវបានផ្តល់នូវ array នៃចំនួនពេញ ហើយអ្នកត្រូវការដើម្បីត្រឡប់មកវិញចំនួននៃចំនួនពេញដែលបង្កើនដោយផលិតផលនៃសញ្ញាទាំងអស់នៃចំនួននីមួយៗ ក្នុង array ដែលតំណាងដោយ 1, -1 ឬ 0 កត់សម្គាល់: ត្រឡប់មកវិញគ្មានសម្រាប់ arr ដែលគ្មានសញ្ញា ឧទាហរណ៍: >>> prod_signs (([1, 2, 2, -4]) == -9 >>> prod_signs (([0, 1]) == 0 >>> prod_signs (([]) == គ្មាន""""""
+","    if not arr: return None
+    prod = 0 if 0 in arr else (-1) ** len(list(filter(lambda x: x < 0, arr)))
+    return prod * sum([abs(i) for i in arr])
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1, 2, 2, -4]) == -9
+    assert candidate([0, 1]) == 0
+    assert candidate([1, 1, 1, 2, 3, -1, 1]) == -10
+    assert candidate([]) == None
+    assert candidate([2, 4,1, 2, -1, -1, 9]) == 20
+    assert candidate([-1, 1, -1, 1]) == 4
+    assert candidate([-1, 1, 1, 1]) == -4
+    assert candidate([-1, 1, 1, 0]) == 0
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/129,khm_Khmr,python,"
+def minPath(grid, k):
+    """"""សូមបញ្ជាក់ថា ផ្លូវដែលមានប្រវែង k មានន័យថាបានទៅមើលកោសិកា k (មិនចាំបាច់ខុសគ្នា) អ្នកមិនអាចចេញពីក្រដាសបានទេ ផ្លូវ A (ប្រវែង k) ត្រូវបានចាត់ទុកថាមានទំហំតិចជាងផ្លូវ B (ប្រវែង k) ប្រសិនបើបន្ទាប់ពីធ្វើបញ្ជីបញ្ជាលំដាប់នៃតម្លៃនៅលើកោសិកាដែល A និង B (សូមហៅពួកគេថា l_stA និង l_stB) នោះ, l_stA មានទំហំតិចជាង l_stB (ដោយពាក្យផ្សេងទៀត, មានចំណាត់ថ្នាក់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទាត់គូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទូទ""""""
+","    n = len(grid)
+    val = n * n + 1
+    for i in range(n):
+        for j in range(n):
+            if grid[i][j] == 1:
+                temp = []
+                if i != 0:
+                    temp.append(grid[i - 1][j])
+
+                if j != 0:
+                    temp.append(grid[i][j - 1])
+
+                if i != n - 1:
+                    temp.append(grid[i + 1][j])
+
+                if j != n - 1:
+                    temp.append(grid[i][j + 1])
+
+                val = min(temp)
+
+    ans = []
+    for i in range(k):
+        if i % 2 == 0:
+            ans.append(1)
+        else:
+            ans.append(val)
+    return ans
+","def check(candidate):
+
+    # Check some simple cases
+    print
+    assert candidate([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 3) == [1, 2, 1]
+    assert candidate([[5, 9, 3], [4, 1, 6], [7, 8, 2]], 1) == [1]
+    assert candidate([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]], 4) == [1, 2, 1, 2]
+    assert candidate([[6, 4, 13, 10], [5, 7, 12, 1], [3, 16, 11, 15], [8, 14, 9, 2]], 7) == [1, 10, 1, 10, 1, 10, 1]
+    assert candidate([[8, 14, 9, 2], [6, 4, 13, 15], [5, 7, 1, 12], [3, 10, 11, 16]], 5) == [1, 7, 1, 7, 1]
+    assert candidate([[11, 8, 7, 2], [5, 16, 14, 4], [9, 3, 15, 6], [12, 13, 10, 1]], 9) == [1, 6, 1, 6, 1, 6, 1, 6, 1]
+    assert candidate([[12, 13, 10, 1], [9, 3, 15, 6], [5, 16, 14, 4], [11, 8, 7, 2]], 12) == [1, 6, 1, 6, 1, 6, 1, 6, 1, 6, 1, 6]
+    assert candidate([[2, 7, 4], [3, 1, 5], [6, 8, 9]], 8) == [1, 3, 1, 3, 1, 3, 1, 3]
+    assert candidate([[6, 1, 5], [3, 8, 9], [2, 7, 4]], 8) == [1, 5, 1, 5, 1, 5, 1, 5]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([[1, 2], [3, 4]], 10) == [1, 2, 1, 2, 1, 2, 1, 2, 1, 2]
+    assert candidate([[1, 3], [3, 2]], 10) == [1, 3, 1, 3, 1, 3, 1, 3, 1, 3]
+
+",,,
+HumanEval/130,khm_Khmr,python,"
+def tri(n):
+    """"""មនុស្សគ្រប់គ្នាស្គាល់លំដាប់ Fibonacci វាត្រូវបានសិក្សាយ៉ាងជ្រាលជ្រៅដោយអ្នកគណិតវិទ្យានៅក្នុងពីរសតវត្សរ៍ចុងក្រោយនេះ ទោះជាយ៉ាងណាអ្វីដែលមនុស្សមិនដឹងគឺលំដាប់ Tribonacci លំដាប់ Tribonacci ត្រូវបានកំណត់ដោយការវិវត្តន៍: tri(1) = 3 tri(n) = 1 + n / 2, ប្រសិនបើ n គឺគូ. tri(n) = tri(n - 1) + tri(n - 2) + tri(n + 1), ប្រសិនបើ n គឺគូ. ឧទាហរណ៍: tri(2) = 1 + (2 / 2) = 2 tri(4) = 3 tri(3) = tri(2) + tri(1) + tri(4) = 2 + 3 + 3 = 8 អ្នកត្រូវបានផ្តល់ចំនួនគត់មិនអវិជ្ជមាន n, អ្នកត្រូវត្រឡប់មកវិញបញ្ជីនៃចំនួនដំបូង n + 1 នៃលំដាប់ Tribonacci ឧទាហរណ៍: tri(3) = [1, 3, 2, 8]""""""
+","    if n == 0:
+        return [1]
+    my_tri = [1, 3]
+    for i in range(2, n + 1):
+        if i % 2 == 0:
+            my_tri.append(i / 2 + 1)
+        else:
+            my_tri.append(my_tri[i - 1] + my_tri[i - 2] + (i + 3) / 2)
+    return my_tri
+","def check(candidate):
+
+    # Check some simple cases
+    
+    assert candidate(3) == [1, 3, 2.0, 8.0]
+    assert candidate(4) == [1, 3, 2.0, 8.0, 3.0]
+    assert candidate(5) == [1, 3, 2.0, 8.0, 3.0, 15.0]
+    assert candidate(6) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0]
+    assert candidate(7) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0, 24.0]
+    assert candidate(8) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0, 24.0, 5.0]
+    assert candidate(9) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0, 24.0, 5.0, 35.0]
+    assert candidate(20) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0, 24.0, 5.0, 35.0, 6.0, 48.0, 7.0, 63.0, 8.0, 80.0, 9.0, 99.0, 10.0, 120.0, 11.0]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(0) == [1]
+    assert candidate(1) == [1, 3]
+",,,
+HumanEval/131,khm_Khmr,python,"
+def digits(n):
+    """"""ដោយបានផ្តល់ចំនួនគត់វិជ្ជមាន n, សូមត្រឡប់មកវិញនូវផលិតផលនៃលេខមិនស្មើគ្នា។ ត្រឡប់មកវិញ 0 ប្រសិនបើលេខទាំងអស់គឺគូ។ ឧទាហរណ៍: លេខ(1) == 1 លេខ(4) == 0 លេខ(235) == 15 """"""
+","    product = 1
+    odd_count = 0
+    for digit in str(n):
+        int_digit = int(digit)
+        if int_digit%2 == 1:
+            product= product*int_digit
+            odd_count+=1
+    if odd_count ==0:
+        return 0
+    else:
+        return product
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(5) == 5
+    assert candidate(54) == 5
+    assert candidate(120) ==1
+    assert candidate(5014) == 5
+    assert candidate(98765) == 315
+    assert candidate(5576543) == 2625
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(2468) == 0
+
+",,,
+HumanEval/132,khm_Khmr,python,"
+def is_nested(string):
+    '''បង្កើត មុខងារ ដែល ទទួល បាន ខ្សែ string ជា ចំណូល ដែល មាន តែ ក្រដាស ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ នឹង ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មើ ស្មា ស្មា ស្មា ស្មា ស្មា ស្មា ស្មា ស្មា ស្មា ស្មា ស្មា ស្មា ស្មា ស្មា ស្មា ស្មា ស ស ស ស ស ស ស ស ស ស ស ស ស ស ស'''
+","    opening_bracket_index = []
+    closing_bracket_index = []
+    for i in range(len(string)):
+        if string[i] == '[':
+            opening_bracket_index.append(i)
+        else:
+            closing_bracket_index.append(i)
+    closing_bracket_index.reverse()
+    cnt = 0
+    i = 0
+    l = len(closing_bracket_index)
+    for idx in opening_bracket_index:
+        if i < l and idx < closing_bracket_index[i]:
+            cnt += 1
+            i += 1
+    return cnt >= 2
+
+    
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('[[]]') == True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('[]]]]]]][[[[[]') == False
+    assert candidate('[][]') == False
+    assert candidate(('[]')) == False
+    assert candidate('[[[[]]]]') == True
+    assert candidate('[]]]]]]]]]]') == False
+    assert candidate('[][][[]]') == True
+    assert candidate('[[]') == False
+    assert candidate('[]]') == False
+    assert candidate('[[]][[') == True
+    assert candidate('[[][]]') == True
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('') == False, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate('[[[[[[[[') == False
+    assert candidate(']]]]]]]]') == False
+
+",,,
+HumanEval/133,khm_Khmr,python,"
+
+def sum_squares(lst):
+    """"""អ្នកត្រូវផ្តល់បញ្ជីនៃលេខអ្នកត្រូវបញ្ជូនចំនួននៃលេខកំរិតក្នុងបញ្ជីដែលបានផ្តល់ជូន, ចងក្រងអក្សរក្នុងបញ្ជីទៅ int ខាងលើ ((កំពូល) មុនដំបូង ឧទាហរណ៍: សម្រាប់ lst = [1,2,3] លទ្ធផលត្រូវជា 14 សម្រាប់ lst = [1,4,9] លទ្ធផលត្រូវជា 98 សម្រាប់ lst = [1,3,5,7] លទ្ធផលត្រូវជា 84 សម្រាប់ lst = [1.4,4.2,0] លទ្ធផលត្រូវជា 29 សម្រាប់ lst = [-2.4,1,1] លទ្ធផលត្រូវជា 6 """"""
+","    import math
+    squared = 0
+    for i in lst:
+        squared += math.ceil(i)**2
+    return squared
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,2,3])==14, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1.0,2,3])==14, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1,3,5,7])==84, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1.4,4.2,0])==29, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([-2.4,1,1])==6, ""This prints if this assert fails 1 (good for debugging!)""
+
+    assert candidate([100,1,15,2])==10230, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([10000,10000])==200000000, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([-1.4,4.6,6.3])==75, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([-1.4,17.9,18.9,19.9])==1086, ""This prints if this assert fails 1 (good for debugging!)""
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([0])==0, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([-1])==1, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([-1,1,0])==2, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/134,khm_Khmr,python,"
+def check_if_last_char_is_a_letter(txt):
+    '''បង្កើត មុខងារ ដែល ផ្តល់ លទ្ធផល True ប្រសិនបើ តួអក្សរ ចុងក្រោយ នៃ ខ្សែសង្វាក់ មួយ ត្រូវបាន ផ្តល់ ជា តួអក្សរ អក្សរ និង មិនមែន ជា ផ្នែក មួយ នៃ ពាក្យ និង False បើ មិន ដូច្នេះ ទេ ។ កត់សម្គាល់: "" ពាក្យ "" គឺជា ក្រុម តួអក្សរ ដែល បែងចែក ដោយ អក្សរ ។ ឧទាហរណ៍: check_if_last_char_is_a_letter"" "" ផ្កា ផ្លែ "" "" -> False check_if_last_char_is_a_letter"" "" ផ្កា ផ្លែ e "") "" -> True check_if_last_char_is_a_letter"" "" ផ្កា ផ្លែ e "") "" -> False check_if_last_char_is_a_letter"" "" "" -> False '''
+"," 
+    check = txt.split(' ')[-1]
+    return True if len(check) == 1 and (97 <= ord(check.lower()) <= 122) else False
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""apple"") == False
+    assert candidate(""apple pi e"") == True
+    assert candidate(""eeeee"") == False
+    assert candidate(""A"") == True
+    assert candidate(""Pumpkin pie "") == False
+    assert candidate(""Pumpkin pie 1"") == False
+    assert candidate("""") == False
+    assert candidate(""eeeee e "") == False
+    assert candidate(""apple pie"") == False
+    assert candidate(""apple pi e "") == False
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/135,khm_Khmr,python,"
+def can_arrange(arr):
+    """"""បង្កើត មុខងារ ដែល ផ្តល់ នូវ កំណត់ត្រា ធំ បំផុត នៃ អា ធាតុ ដែល មិន ធំ ជាង ឬ ស្មើ នឹង អា ធាតុ ដែល នៅ ពី មុខ វា ភ្លាម នោះ។ បើ គ្មាន អា ធាតុ បែប នេះ ទេ នោះ ត្រឡប់ មក វិញ -១ ។ array ដែល បាន ផ្តល់ មិន មាន តម្លៃ ចម្លង ទេ ឧទាហរណ៍: can_arrange (([1,2,4,3,5]) = 3 can_arrange[(1,2,3]) = -1 """"""
+","    ind=-1
+    i=1
+    while i<len(arr):
+      if arr[i]<arr[i-1]:
+        ind=i
+      i+=1
+    return ind
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,2,4,3,5])==3
+    assert candidate([1,2,4,5])==-1
+    assert candidate([1,4,2,5,6,7,8,9,10])==2
+    assert candidate([4,8,5,7,3])==4
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([])==-1
+
+",,,
+HumanEval/136,khm_Khmr,python,"
+def largest_smallest_integers(lst):
+    '''បង្កើតតួប្រវត្តិដែលវិលត្រឡប់មកវិញនូវ tuple (a, b), ដែល 'a' គឺជាចំនួនពេញអវិជ្ជមានធំជាងគេ, និង 'b' គឺជាចំនួនពេញអវិជ្ជមានតូចជាងគេនៅក្នុងបញ្ជី។ ប្រសិនបើគ្មានចំនួនពេញអវិជ្ជមានឬចំនួនពេញអវិជ្ជមាន, សូមវិលត្រឡប់មកវិញជា None. ឧទាហរណ៍: largest_smallest_integers[2, 4, 1, 3, 5, 7]) == (None, 1) largest_smallest_integers([]) == (None, None) largest_smallest_integers[0]) == (None, None) '''
+","    smallest = list(filter(lambda x: x < 0, lst))
+    largest = list(filter(lambda x: x > 0, lst))
+    return (max(smallest) if smallest else None, min(largest) if largest else None)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([2, 4, 1, 3, 5, 7]) == (None, 1)
+    assert candidate([2, 4, 1, 3, 5, 7, 0]) == (None, 1)
+    assert candidate([1, 3, 2, 4, 5, 6, -2]) == (-2, 1)
+    assert candidate([4, 5, 3, 6, 2, 7, -7]) == (-7, 2)
+    assert candidate([7, 3, 8, 4, 9, 2, 5, -9]) == (-9, 2)
+    assert candidate([]) == (None, None)
+    assert candidate([0]) == (None, None)
+    assert candidate([-1, -3, -5, -6]) == (-1, None)
+    assert candidate([-1, -3, -5, -6, 0]) == (-1, None)
+    assert candidate([-6, -4, -4, -3, 1]) == (-3, 1)
+    assert candidate([-6, -4, -4, -3, -100, 1]) == (-3, 1)
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+",,,
+HumanEval/137,khm_Khmr,python,"
+def compare_one(a, b):
+    """"""បង្កើតតួអង្គមួយដែលយកចំនួនសរុប, floats, ឬ string ដែលតំណាងឱ្យចំនួនពិត ហើយបញ្ជូន variable ធំជាងនៅក្នុងប្រភេទ variable ដែលបានផ្តល់ជូន។ បញ្ជូន None ប្រសិនបើតម្លៃគឺស្មើគ្នា។ កត់សម្គាល់: ប្រសិនបើចំនួនពិតត្រូវបានតំណាងឱ្យជា string, floating point អាចជា . ឬ , compare_one ((1, 2.5) â -> 2.5 compare_one ((1, ""2,3"") â -> ""2,3"" compare_one ((5,1"", ""6"") â -> ""6"" compare_one ((1"", 1) â -> None """"""
+","    temp_a, temp_b = a, b
+    if isinstance(temp_a, str): temp_a = temp_a.replace(',','.')
+    if isinstance(temp_b, str): temp_b = temp_b.replace(',','.')
+    if float(temp_a) == float(temp_b): return None
+    return a if float(temp_a) > float(temp_b) else b 
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(1, 2) == 2
+    assert candidate(1, 2.5) == 2.5
+    assert candidate(2, 3) == 3
+    assert candidate(5, 6) == 6
+    assert candidate(1, ""2,3"") == ""2,3""
+    assert candidate(""5,1"", ""6"") == ""6""
+    assert candidate(""1"", ""2"") == ""2""
+    assert candidate(""1"", 1) == None
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/138,khm_Khmr,python,"
+def is_equal_to_sum_even(n):
+    """"""វាយតម្លៃថា តើចំនួន n ដែលបានផ្តល់អាចត្រូវបានសរសេរជាចំនួននៃចំនួនសរុបចំនួនសរុបចំនួន 4 ដែលមានសុពលភាពដូចគ្នាបានឬអត់ ឧទាហរណ៍ is_equal_to_sum_even (៤) == False is_equal_to_sum_even (៦) == False is_equal_to_sum_even (៨) == True """"""
+","    return n%2 == 0 and n >= 8
+","def check(candidate):
+    assert candidate(4) == False
+    assert candidate(6) == False
+    assert candidate(8) == True
+    assert candidate(10) == True
+    assert candidate(11) == False
+    assert candidate(12) == True
+    assert candidate(13) == False
+    assert candidate(16) == True
+",,,
+HumanEval/139,khm_Khmr,python,"
+def special_factorial(n):
+    """"""កត្តាប្រេស៊ីលត្រូវបានកំណត់ថា: brazilian_factorial ((n) = n! * (n-1)! * (n-2)! * ... * 1! ដែល n > 0 ឧទាហរណ៍: >>> special_factorial ((4) 288 តួនាទីនឹងទទួលបានចំនួនគត់ជាចំណូលនិងគួរតែត្រឡប់មកវិញ កត្តាពិសេសនៃចំនួនគត់នេះ ។ """"""
+","    fact_i = 1
+    special_fact = 1
+    for i in range(1, n+1):
+        fact_i *= i
+        special_fact *= fact_i
+    return special_fact
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(4) == 288, ""Test 4""
+    assert candidate(5) == 34560, ""Test 5""
+    assert candidate(7) == 125411328000, ""Test 7""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1) == 1, ""Test 1""
+
+",,,
+HumanEval/140,khm_Khmr,python,"
+def fix_spaces(text):
+    """"""_គំរូ-3ត្ថបទស្លាកសញ្ញា, សូមជំនួសកន្លែងទាំងអស់នៅក្នុងវាដោយស្លាកសញ្ញា, ហើយប្រសិនបើស្លាកសញ្ញាមានច្រើនជាង 2 កន្លែងជាប់គ្នា, បន្ទាប់មកជំនួសកន្លែងជាប់គ្នាទាំងអស់ដោយ - fix_spaces ((""Example"") == ""Example"" fix_spaces ((""Example1"") == ""Example_1"" fix_spaces (((""Example2"") == ""_Example_2"" fix_spaces ((""Example 3"") == ""_Example-3"" ""
+    """"""
+","    new_text = """"
+    i = 0
+    start, end = 0, 0
+    while i < len(text):
+        if text[i] == "" "":
+            end += 1
+        else:
+            if end - start > 2:
+                new_text += ""-""+text[i]
+            elif end - start > 0:
+                new_text += ""_""*(end - start)+text[i]
+            else:
+                new_text += text[i]
+            start, end = i+1, i+1
+        i+=1
+    if end - start > 2:
+        new_text += ""-""
+    elif end - start > 0:
+        new_text += ""_""
+    return new_text
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""Example"") == ""Example"", ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(""Mudasir Hanif "") == ""Mudasir_Hanif_"", ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate(""Yellow Yellow  Dirty  Fellow"") == ""Yellow_Yellow__Dirty__Fellow"", ""This prints if this assert fails 3 (good for debugging!)""
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""Exa   mple"") == ""Exa-mple"", ""This prints if this assert fails 4 (good for debugging!)""
+    assert candidate(""   Exa 1 2 2 mple"") == ""-Exa_1_2_2_mple"", ""This prints if this assert fails 4 (good for debugging!)""
+
+",,,
+HumanEval/141,khm_Khmr,python,"
+def file_name_check(file_name):
+    """"""បង្កើតមុខងារមួយដែលយកសរសៃតំណាងឱ្យឈ្មោះឯកសារ ហើយត្រឡប់មកវិញ 'Yes' ប្រសិនបើឈ្មោះឯកសារមានភាពត្រឹមត្រូវ ហើយត្រឡប់មកវិញ 'No' បើមិនដូច្នេះទេ ឈ្មោះឯកសារត្រូវបានចាត់ទុកថាមានភាពត្រឹមត្រូវ ប្រសិនបើ និងតែប្រសិនបើលក្ខខណ្ឌដូចខាងក្រោមត្រូវបានបំពេញ: - មិនគួរមានច្រើនជាងបីតួ ('0'-'9') នៅក្នុងឈ្មោះឯកសារ - ឈ្មោះឯកសារមានពណ៌ពណ៌តែមួយ '.' - សរសៃដែកខាងក្រោមមុនពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ពណ៌ព""""""
+","    suf = ['txt', 'exe', 'dll']
+    lst = file_name.split(sep='.')
+    if len(lst) != 2:
+        return 'No'
+    if not lst[1] in suf:
+        return 'No'
+    if len(lst[0]) == 0:
+        return 'No'
+    if not lst[0][0].isalpha():
+        return 'No'
+    t = len([x for x in lst[0] if x.isdigit()])
+    if t > 3:
+        return 'No'
+    return 'Yes'
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""example.txt"") == 'Yes'
+    assert candidate(""1example.dll"") == 'No'
+    assert candidate('s1sdf3.asd') == 'No'
+    assert candidate('K.dll') == 'Yes'
+    assert candidate('MY16FILE3.exe') == 'Yes'
+    assert candidate('His12FILE94.exe') == 'No'
+    assert candidate('_Y.txt') == 'No'
+    assert candidate('?aREYA.exe') == 'No'
+    assert candidate('/this_is_valid.dll') == 'No'
+    assert candidate('this_is_valid.wow') == 'No'
+    assert candidate('this_is_valid.txt') == 'Yes'
+    assert candidate('this_is_valid.txtexe') == 'No'
+    assert candidate('#this2_i4s_5valid.ten') == 'No'
+    assert candidate('@this1_is6_valid.exe') == 'No'
+    assert candidate('this_is_12valid.6exe4.txt') == 'No'
+    assert candidate('all.exe.txt') == 'No'
+    assert candidate('I563_No.exe') == 'Yes'
+    assert candidate('Is3youfault.txt') == 'Yes'
+    assert candidate('no_one#knows.dll') == 'Yes'
+    assert candidate('1I563_Yes3.exe') == 'No'
+    assert candidate('I563_Yes3.txtt') == 'No'
+    assert candidate('final..txt') == 'No'
+    assert candidate('final132') == 'No'
+    assert candidate('_f4indsartal132.') == 'No'
+    
+        
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('.txt') == 'No'
+    assert candidate('s.') == 'No'
+
+",,,
+HumanEval/142,khm_Khmr,python,"
+
+
+def sum_squares(lst):
+    """""""" តួនាទីនេះនឹងយកបញ្ជីនៃចំនួនគត់សម្រាប់តំណរភ្ជាប់ទាំងអស់នៅក្នុងបញ្ជីនោះ តួនាទីនឹងបង្កើនជម្រៅនៃតំណរភ្ជាប់ចំនួនគត់ ប្រសិនបើអិនឌីសរបស់វាជាចម្លែកនៃ 3 ហើយនឹងធ្វើជាគីបតំណរភ្ជាប់ចំនួនគត់ ប្រសិនបើអិនឌីសរបស់វាជាចម្លែកនៃ 4 និងមិនមែនជាចម្លែកនៃ 3 តួនាទីនេះនឹងមិនផ្លាស់ប្តូរតំណរភ្ជាប់នៅក្នុងបញ្ជីដែលអិនឌីសរបស់វាមិនមែនជាចម្លែកនៃ 3 ឬ 4 តួនាទីនេះនឹងត្រឡប់មកវិញចំនួននៃតំណរភ្ជាប់ទាំងអស់ ឧទាហរណ៍: សម្រាប់ lst = [1,2,3] លទ្ធផលចេញគឺ 6 សម្រាប់ lst = [] លទ្ធផលចេញគឺ 0 សម្រាប់ lst = [-1,-5,2,-1,-5] លទ្ធផលចេញគឺ -126 """"""
+","    result =[]
+    for i in range(len(lst)):
+        if i %3 == 0:
+            result.append(lst[i]**2)
+        elif i % 4 == 0 and i%3 != 0:
+            result.append(lst[i]**3)
+        else:
+            result.append(lst[i])
+    return sum(result)
+","def check(candidate):
+
+    # Check some simple cases
+    
+    assert candidate([1,2,3]) == 6
+    assert candidate([1,4,9]) == 14
+    assert candidate([]) == 0
+    assert candidate([1,1,1,1,1,1,1,1,1]) == 9
+    assert candidate([-1,-1,-1,-1,-1,-1,-1,-1,-1]) == -3
+    assert candidate([0]) == 0
+    assert candidate([-1,-5,2,-1,-5]) == -126
+    assert candidate([-56,-99,1,0,-2]) == 3030
+    assert candidate([-1,0,0,0,0,0,0,0,-1]) == 0
+    assert candidate([-16, -9, -2, 36, 36, 26, -20, 25, -40, 20, -4, 12, -26, 35, 37]) == -14196
+    assert candidate([-1, -3, 17, -1, -15, 13, -1, 14, -14, -12, -5, 14, -14, 6, 13, 11, 16, 16, 4, 10]) == -1448
+    
+    
+    # Don't remove this line:
+",,,
+HumanEval/143,khm_Khmr,python,"
+def words_in_sentence(sentence):
+    """"""អ្នកត្រូវបានផ្តល់នូវខ្សែតំណាងឱ្យសំនួរមួយ សំនួរនោះមានពាក្យមួយចំនួនដែលបែងចែកដោយអគារ ហើយអ្នកត្រូវបញ្ជូនខ្សែមួយដែលមានពាក្យពីសំនួរដើម ដែលមានទំហំជាចំនួនដើម ការរៀបចំព្រាមនៃពាក្យនៅក្នុងខ្សែថ្មីគួរតែដូចគ្នាទៅនឹងដើម ឧទាហរណ៍១: Input: sentence = ""This is a test"" Output: ""is"" ឧទាហរណ៍២: Input: sentence = ""lets go for swimming"" Output: ""go for"" កំហិត: * 1 <= len(sentence) <= 100 * sentence contains only letters """"""
+","    new_lst = []
+    for word in sentence.split():
+        flg = 0
+        if len(word) == 1:
+            flg = 1
+        for i in range(2, len(word)):
+            if len(word)%i == 0:
+                flg = 1
+        if flg == 0 or len(word) == 2:
+            new_lst.append(word)
+    return "" "".join(new_lst)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""This is a test"") == ""is""
+    assert candidate(""lets go for swimming"") == ""go for""
+    assert candidate(""there is no place available here"") == ""there is no place""
+    assert candidate(""Hi I am Hussein"") == ""Hi am Hussein""
+    assert candidate(""go for it"") == ""go for it""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""here"") == """"
+    assert candidate(""here is"") == ""is""
+
+",,,
+HumanEval/144,khm_Khmr,python,"
+def simplify(x, n):
+    """"""ការបំពេញការងាររបស់អ្នកគឺដើម្បីអនុវត្តមុខងារដែលនឹងបង្កើនការបញ្ចេញមតិ x * n មុខងារនេះនឹងត្រឡប់មកវិញ True ប្រសិនបើ x * n វាយតម្លៃទៅជាចំនួនទាំងមូលនិង False បើមិនដូច្នេះទេ x និង n គឺជាការតំណាងស្លាកនៃភាគហ៊ុនមួយ ហើយមានទម្រង់ដូចខាងក្រោម <numerator>/<denominator> ដែលភាគហ៊ុននិងភាគហ៊ុនទាំងពីរគឺជាចំនួនទាំងមូលវិជ្ជមាន អ្នកអាចគិតថា x និង n គឺជាភាគហ៊ុនត្រឹមត្រូវ ហើយមិនមានសូន្យជាភាគហ៊ុន។ simplify "" 1/5 "", ""5/1"") = True simplify "" 1/6 "", ""2/1"") = False simplify "" 7/10 "", ""10/2"") = False """"""
+","    a, b = x.split(""/"")
+    c, d = n.split(""/"")
+    numerator = int(a) * int(c)
+    denom = int(b) * int(d)
+    if (numerator/denom == int(numerator/denom)):
+        return True
+    return False
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""1/5"", ""5/1"") == True, 'test1'
+    assert candidate(""1/6"", ""2/1"") == False, 'test2'
+    assert candidate(""5/1"", ""3/1"") == True, 'test3'
+    assert candidate(""7/10"", ""10/2"") == False, 'test4'
+    assert candidate(""2/10"", ""50/10"") == True, 'test5'
+    assert candidate(""7/2"", ""4/2"") == True, 'test6'
+    assert candidate(""11/6"", ""6/1"") == True, 'test7'
+    assert candidate(""2/3"", ""5/2"") == False, 'test8'
+    assert candidate(""5/2"", ""3/5"") == False, 'test9'
+    assert candidate(""2/4"", ""8/4"") == True, 'test10'
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""2/4"", ""4/2"") == True, 'test11'
+    assert candidate(""1/5"", ""5/1"") == True, 'test12'
+    assert candidate(""1/5"", ""1/5"") == False, 'test13'
+
+",,,
+HumanEval/145,khm_Khmr,python,"
+def order_by_points(nums):
+    """"""សរសេរមុខងារដែលរៀបចំបញ្ជីចំនួនពេញដែលត្រូវបានផ្តល់ឡើងតាមលទ្ធផលនៃលេខរបស់វា។ កត់សម្គាល់: ប្រសិនបើមានវត្ថុជាច្រើនដែលមានលទ្ធផលដូចគ្នានៃលេខរបស់វា, សូមរៀបចំបញ្ជីនេះតាមលេខកូដនៅក្នុងបញ្ជីដើម។ ឧទាហរណ៍: >>> order_by_points (([1, 11, -1, -11, -12]) == [-1, -11, 1, -12, 11] >>> order_by_points[]) == [] """"""
+","    def digits_sum(n):
+        neg = 1
+        if n < 0: n, neg = -1 * n, -1 
+        n = [int(i) for i in str(n)]
+        n[0] = n[0] * neg
+        return sum(n)
+    return sorted(nums, key=digits_sum)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1, 11, -1, -11, -12]) == [-1, -11, 1, -12, 11]
+    assert candidate([1234,423,463,145,2,423,423,53,6,37,3457,3,56,0,46]) == [0, 2, 3, 6, 53, 423, 423, 423, 1234, 145, 37, 46, 56, 463, 3457]
+    assert candidate([]) == []
+    assert candidate([1, -11, -32, 43, 54, -98, 2, -3]) == [-3, -32, -98, -11, 1, 2, 43, 54]
+    assert candidate([1,2,3,4,5,6,7,8,9,10,11]) == [1, 10, 2, 11, 3, 4, 5, 6, 7, 8, 9]
+    assert candidate([0,6,6,-76,-21,23,4]) == [-76, -21, 0, 4, 23, 6, 6]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/146,khm_Khmr,python,"
+def specialFilter(nums):
+    """"""សរសេរមុខងារដែលយក array នៃលេខជាចំណូល ហើយត្រឡប់មកវិញចំនួនអក្សរនៅក្នុង array ដែលមានច្រើនជាង 10 ហើយទាំងលេខដំបូងនិងចុងក្រោយនៃលេខគឺមិនសាមញ្ញ (1, 3, 5, 7, 9) ឧទាហរណ៍: specialFilter (([15, -73, 14, -15]) => 1 specialFilter (([33, -2, -3, 45, 21, 109]) => 2 """"""
+","    
+    count = 0
+    for num in nums:
+        if num > 10:
+            odd_digits = (1, 3, 5, 7, 9)
+            number_as_string = str(num)
+            if int(number_as_string[0]) in odd_digits and int(number_as_string[-1]) in odd_digits:
+                count += 1
+        
+    return count 
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([5, -2, 1, -5]) == 0  
+    assert candidate([15, -73, 14, -15]) == 1
+    assert candidate([33, -2, -3, 45, 21, 109]) == 2
+    assert candidate([43, -12, 93, 125, 121, 109]) == 4
+    assert candidate([71, -2, -33, 75, 21, 19]) == 3
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1]) == 0              
+    assert candidate([]) == 0                   
+
+",,,
+HumanEval/147,khm_Khmr,python,"
+def get_max_triples(n):
+    """"""អ្នកត្រូវបានផ្តល់ចំនួនគត់វិជ្ជមាន n អ្នកត្រូវបង្កើត array ចំនួនគត់ a នៃកម្ពស់ n សម្រាប់ i (1 ‰¤ i ‰¤ n) នីមួយៗ តម្លៃនៃ a[i] = i * i - i + 1 ។ ត្រឡប់មកវិញចំនួននៃ triples (a[i], a[j], a[k]) នៃ a ដែល i < j < k, និង a[i] + a[j] + a[k] គឺជាចំនួ ននៃ 3 ឧទាហរណ៍: Input: n = 5 Output: 1 ពន្យល់: a = [1, 3, 7, 13, 21] គុណភាព triples ត្រឹមត្រូវគឺ (1, 7, 13) ។""""""
+","    A = [i*i - i + 1 for i in range(1,n+1)]
+    ans = []
+    for i in range(n):
+        for j in range(i+1,n):
+            for k in range(j+1,n):
+                if (A[i]+A[j]+A[k])%3 == 0:
+                    ans += [(A[i],A[j],A[k])]
+    return len(ans)
+","def check(candidate):
+
+    assert candidate(5) == 1
+    assert candidate(6) == 4
+    assert candidate(10) == 36
+    assert candidate(100) == 53361
+",,,
+HumanEval/148,khm_Khmr,python,"
+def bf(planet1, planet2):
+    '''មានផែនដីចំនួន ៨ ក្នុងប្រព័ន្ធព្រះអាទិត្យរបស់យើង: ផ្កាយដែលនៅជិតបំផុតទៅនឹងព្រះអាទិត្យគឺមីក្រូ, ផ្កាយបន្ទាប់គឺវេណេស៊ុយអេឡា, បន្ទាប់មកផែនដី, មីក្រូ, មីក្រូ, ស្កាយ, អ៊ុយរ៉ាន, អ៊ុយរ៉ាន, នេពតុន. សរសេរមុខងារមួយដែលយកឈ្មោះផ្កាយពីរជាខ្សែផ្កាយ1 និងផ្កាយ2. មុខងារនេះគួរតែត្រឡប់មកវិញនូវ tuple ដែលមានគ្រប់ផ្កាយដែលមានរង្វង់ស្ថិតនៅចន្លោះរង្វង់ផ្កាយ1 និងរង្វង់ផ្កាយ2, ត្រូវបានរៀបចំនៃការជិតដល់ព្រះអាទិត្យ. មុខងារនេះគួរតែត្រឡប់មកវិញ tuple ដែលគ្មានអ្វីប្រសិនបើផ្កាយ1 ឬផ្កាយ2 មិនមែនជាឈ្មោះផ្កាយត្រឹមត្រូវ. ឧទាហរណ៍ bf ""(Jupiter"", ""Neptune"") ==> (""Saturn"", ""Uranus"") bf ""("" Earth"", ""Mercury"") ==> (""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Sn"") '''
+","    planet_names = (""Mercury"", ""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn"", ""Uranus"", ""Neptune"")
+    if planet1 not in planet_names or planet2 not in planet_names or planet1 == planet2:
+        return ()
+    planet1_index = planet_names.index(planet1)
+    planet2_index = planet_names.index(planet2)
+    if planet1_index < planet2_index:
+        return (planet_names[planet1_index + 1: planet2_index])
+    else:
+        return (planet_names[planet2_index + 1 : planet1_index])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""Jupiter"", ""Neptune"") == (""Saturn"", ""Uranus""), ""First test error: "" + str(len(candidate(""Jupiter"", ""Neptune"")))      
+    assert candidate(""Earth"", ""Mercury"") == (""Venus"",), ""Second test error: "" + str(candidate(""Earth"", ""Mercury""))  
+    assert candidate(""Mercury"", ""Uranus"") == (""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn""), ""Third test error: "" + str(candidate(""Mercury"", ""Uranus""))      
+    assert candidate(""Neptune"", ""Venus"") == (""Earth"", ""Mars"", ""Jupiter"", ""Saturn"", ""Uranus""), ""Fourth test error: "" + str(candidate(""Neptune"", ""Venus""))  
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""Earth"", ""Earth"") == ()
+    assert candidate(""Mars"", ""Earth"") == ()
+    assert candidate(""Jupiter"", ""Makemake"") == ()
+
+",,,
+HumanEval/149,khm_Khmr,python,"
+def sorted_list_sum(lst):
+    """"""សរសេរមុខងារដែលទទួលយកបញ្ជីនៃសរសៃវែងជាឧបករណ៍បញ្ជា លុបសរសៃវែងដែលមានកម្រាស់មិនស្មើពីវា ហើយបញ្ជូនបញ្ជីដែលទទួលបានដោយបញ្ជាលំដាប់បញ្ជាបញ្ជីនេះជារៀងរាល់សរសៃវែងនិងមិនដែលជាតារាងនៃលេខ ហើយវាអាចមានផ្ទុកដង។ បញ្ជីនៃបញ្ជីនេះគួរតែឡើងដោយកម្រាស់នៃពាក្យនីមួយៗ ហើយអ្នកគួរតែបញ្ជូនបញ្ជីដែលត្រូវបានលំដាប់ដោយច្បាប់នោះ។ ប្រសិនបើពាក្យពីរមានកម្រាស់ដូចគ្នា, សូមលំដាប់បញ្ជីតាមអក្សរ។ មុខងារនេះគួរតែបញ្ជូនបញ្ជីនៃសរសៃវែងក្នុងលំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់លំដាប់""""""
+","    lst.sort()
+    new_lst = []
+    for i in lst:
+        if len(i)%2 == 0:
+            new_lst.append(i)
+    return sorted(new_lst, key=len)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([""aa"", ""a"", ""aaa""]) == [""aa""]
+    assert candidate([""school"", ""AI"", ""asdf"", ""b""]) == [""AI"", ""asdf"", ""school""]
+    assert candidate([""d"", ""b"", ""c"", ""a""]) == []
+    assert candidate([""d"", ""dcba"", ""abcd"", ""a""]) == [""abcd"", ""dcba""]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([""AI"", ""ai"", ""au""]) == [""AI"", ""ai"", ""au""]
+    assert candidate([""a"", ""b"", ""b"", ""c"", ""c"", ""a""]) == []
+    assert candidate(['aaaa', 'bbbb', 'dd', 'cc']) == [""cc"", ""dd"", ""aaaa"", ""bbbb""]
+
+",,,
+HumanEval/150,khm_Khmr,python,"
+def x_or_y(n, x, y):
+    """"""កម្មវិធីសាមញ្ញមួយដែលត្រូវត្រឡប់មកវិញនូវតម្លៃនៃ x ប្រសិនបើ n ជាចំនួនដើម ហើយត្រូវត្រឡប់មកវិញនូវតម្លៃនៃ y បើមិនដូច្នេះទេ ឧទាហរណ៍: សម្រាប់ x_or_y ((7, 34, 12) == 34 សម្រាប់ x_or_y ((15, 8, 5) == 5 """"""
+","    if n == 1:
+        return y
+    for i in range(2, n):
+        if n % i == 0:
+            return y
+            break
+    else:
+        return x
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(7, 34, 12) == 34
+    assert candidate(15, 8, 5) == 5
+    assert candidate(3, 33, 5212) == 33
+    assert candidate(1259, 3, 52) == 3
+    assert candidate(7919, -1, 12) == -1
+    assert candidate(3609, 1245, 583) == 583
+    assert candidate(91, 56, 129) == 129
+    assert candidate(6, 34, 1234) == 1234
+    
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1, 2, 0) == 0
+    assert candidate(2, 2, 0) == 2
+
+",,,
+HumanEval/151,khm_Khmr,python,"
+def double_the_difference(lst):
+    '''ដោយបានផ្តល់បញ្ជីនៃលេខ, សូមត្រឡប់មកវិញនូវចំនួននៃទីពីរនៃលេខនៅក្នុងបញ្ជីដែលមិនសាមញ្ញ. សូមមើលមិនឃើញលេខដែលជាអវិជ្ជមានឬមិនមែនជាចំនួនពេញ. double_the_difference (([1, 3, 2, 0]) == 1 + 9 + 0 + 0 = 10 double_the_difference (([-1, -2, 0]) == 0 double_the_difference (([9, -2]) == 81 double_the_difference (([0]) == 0 ប្រសិនបើបញ្ជីបញ្ចូលគឺគ្មានលេខ, ត្រឡប់មកវិញ 0. '''
+","    return sum([i**2 for i in lst if i > 0 and i%2!=0 and ""."" not in str(i)])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([]) == 0 , ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([5, 4]) == 25 , ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate([0.1, 0.2, 0.3]) == 0 , ""This prints if this assert fails 3 (good for debugging!)""
+    assert candidate([-10, -20, -30]) == 0 , ""This prints if this assert fails 4 (good for debugging!)""
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([-1, -2, 8]) == 0, ""This prints if this assert fails 5 (also good for debugging!)""
+    assert candidate([0.2, 3, 5]) == 34, ""This prints if this assert fails 6 (also good for debugging!)""
+    lst = list(range(-99, 100, 2))
+    odd_sum = sum([i**2 for i in lst if i%2!=0 and i > 0])
+    assert candidate(lst) == odd_sum , ""This prints if this assert fails 7 (good for debugging!)""
+
+",,,
+HumanEval/152,khm_Khmr,python,"
+def compare(game,guess):
+    """"""ខ្ញុំគិតថាយើងទាំងអស់គ្នាចាំបាននូវអារម្មណ៍នោះនៅពេលដែលលទ្ធផលនៃព្រឹត្តិការណ៍ដែលរង់ចាំយូរបំផុតត្រូវបានគេដឹង។ អារម្មណ៍និងគំនិតដែលអ្នកមាននៅពេលនោះពិតជាគួរឱ្យកត់សម្គាល់និងប្រៀបធៀប។ ការងាររបស់អ្នកគឺដើម្បីកំណត់ថាតើមនុស្សម្នាក់បានសន្និដ្ឋានលទ្ធផលនៃលទ្ធផលនៃលទ្ធផលជាច្រើន។ អ្នកត្រូវបានផ្តល់នូវលេខពិន្ទុពីរនិងការប៉ាន់ស្មាននៃទំហំស្មើគ្នា, ដែលក្នុងនោះតារាងនីមួយៗ បង្ហាញលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផលលទ្ធផល""""""
+","    return [abs(x-y) for x,y in zip(game,guess)]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,2,3,4,5,1],[1,2,3,4,2,-2])==[0,0,0,0,3,3], ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([0,0,0,0,0,0],[0,0,0,0,0,0])==[0,0,0,0,0,0], ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1,2,3],[-1,-2,-3])==[2,4,6], ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1,2,3,5],[-1,2,3,4])==[2,0,0,1], ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/153,khm_Khmr,python,"
+def Strongest_Extension(class_name, extensions):
+    """"""អ្នកនឹងទទួលបានឈ្មោះនៃជម្រើស (ជម្រើស) និងបញ្ជីនៃការពង្រីក។ ការពង្រីកត្រូវបានប្រើដើម្បីផ្ទុកជម្រើសបន្ថែមទៅជម្រើស។ កម្លាំងនៃការពង្រីកមានដូចខាងក្រោម: ចូរ CAP ជាចំនួនអក្សរធំនៅក្នុងឈ្មោះការពង្រីក, ហើយសូម SM ជាចំនួនអក្សរតូចនៅក្នុងឈ្មោះការពង្រីក, កម្លាំងត្រូវបានផ្តល់ដោយបំណែក CAP - SM. អ្នកគួរតែរកការពង្រីកដែលខ្លាំងជាងគេនិងត្រឡប់មកវិញជម្រើសក្នុងទម្រង់នេះ: ClassName.StrongestExtensionName. ប្រសិនបើមានពីរឬច្រើនការពង្រីកដែលមានកម្លាំងដូចគ្នា, អ្នកគួរតែជ្រើសរើសមួយដែលកើតឡើងមុនគេនៅក្នុងបញ្ជីនេះ ឧទាហរណ៍ប្រសិនបើអ្នកត្រូវបានផ្តល់ ""Slices"" ជាជម្រើសនិងបញ្ជីនៃការពង្រីក: ['SEviRNGLISCes', 'Cheese', 'StuFfed'] បន្ទាប់មកអ្នកគួរតែត្រឡប់មកវិញ 'Slices.SEviRNGLISCes' 'SviRNGLISCes' (mySviRNGLISCes') គឺជាការពង្រីកដែលខ្លាំងជាងគេ (ឧទាហរណ៍: 'AA'_Class' StrongestExtension') ។""""""
+","    strong = extensions[0]
+    my_val = len([x for x in extensions[0] if x.isalpha() and x.isupper()]) - len([x for x in extensions[0] if x.isalpha() and x.islower()])
+    for s in extensions:
+        val = len([x for x in s if x.isalpha() and x.isupper()]) - len([x for x in s if x.isalpha() and x.islower()])
+        if val > my_val:
+            strong = s
+            my_val = val
+
+    ans = class_name + ""."" + strong
+    return ans
+
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('Watashi', ['tEN', 'niNE', 'eIGHt8OKe']) == 'Watashi.eIGHt8OKe'
+    assert candidate('Boku123', ['nani', 'NazeDa', 'YEs.WeCaNe', '32145tggg']) == 'Boku123.YEs.WeCaNe'
+    assert candidate('__YESIMHERE', ['t', 'eMptY', 'nothing', 'zeR00', 'NuLl__', '123NoooneB321']) == '__YESIMHERE.NuLl__'
+    assert candidate('K', ['Ta', 'TAR', 't234An', 'cosSo']) == 'K.TAR'
+    assert candidate('__HAHA', ['Tab', '123', '781345', '-_-']) == '__HAHA.123'
+    assert candidate('YameRore', ['HhAas', 'okIWILL123', 'WorkOut', 'Fails', '-_-']) == 'YameRore.okIWILL123'
+    assert candidate('finNNalLLly', ['Die', 'NowW', 'Wow', 'WoW']) == 'finNNalLLly.WoW'
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('_', ['Bb', '91245']) == '_.Bb'
+    assert candidate('Sp', ['671235', 'Bb']) == 'Sp.671235'
+    
+",,,
+HumanEval/154,khm_Khmr,python,"
+def cycpattern_check(a , b):
+    """"""អ្នកត្រូវបានផ្តល់ពាក្យចំនួន 2 អ្នកត្រូវត្រឡប់ទៅ True ប្រសិនបើពាក្យទីពីរឬការរត់របស់វាណាមួយគឺជាខ្សែសង្វាក់នៅពាក្យដំបូង cycpattern_check (((""abcd"",""abd"") => False cycpattern_check (((""hello"",""ell"") => True cycpattern_check (((""whassup"",""psus"") => False cycpattern_check (((""abab"",""baa"") => True cycpattern_check (((""efef"",""eeff"") => False cycpattern_check (((hims"",""simen"") => True """"""
+","    l = len(b)
+    pat = b + b
+    for i in range(len(a) - l + 1):
+        for j in range(l + 1):
+            if a[i:i+l] == pat[j:j+l]:
+                return True
+    return False
+","def check(candidate):
+
+    # Check some simple cases
+    #assert True, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    #assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert  candidate(""xyzw"",""xyw"") == False , ""test #0""
+    assert  candidate(""yello"",""ell"") == True , ""test #1""
+    assert  candidate(""whattup"",""ptut"") == False , ""test #2""
+    assert  candidate(""efef"",""fee"") == True , ""test #3""
+    assert  candidate(""abab"",""aabb"") == False , ""test #4""
+    assert  candidate(""winemtt"",""tinem"") == True , ""test #5""
+
+",,,
+HumanEval/155,khm_Khmr,python,"
+def even_odd_count(num):
+    """"""ផ្តល់នូវចំនួនគត់. return a tuple ដែលមានចំនួនគត់និងគត់ជារៀងរាល់ដង. ឧទាហរណ៍: even_odd_count(-12) ==> (1, 1) even_odd_count(123) ==> (1, 2) """"""
+","    even_count = 0
+    odd_count = 0
+    for i in str(abs(num)):
+        if int(i)%2==0:
+            even_count +=1
+        else:
+            odd_count +=1
+    return (even_count, odd_count)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(7) == (0, 1)
+    assert candidate(-78) == (1, 1)
+    assert candidate(3452) == (2, 2)
+    assert candidate(346211) == (3, 3)
+    assert candidate(-345821) == (3, 3)
+    assert candidate(-2) == (1, 0)
+    assert candidate(-45347) == (2, 3)
+    assert candidate(0) == (1, 0)
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/156,khm_Khmr,python,"
+def int_to_mini_roman(number):
+    """"""ដោយបានផ្តល់ចំនួនគត់វិជ្ជមាន, ទទួលបានលេខរ៉ូម៉ាំងស្មើនឹងវាជាខ្សែមួយ, ហើយបញ្ជូនវាទៅក្នុងអក្សរតូច: 1 <= num <= 1000 ឧទាហរណ៍: >>> int_to_mini_roman ((19) == 'xix' >>> int_to_mini_roman ((152) == 'clii' >>> int_to_mini_roman ((426) == 'cdxxvi' """"""
+","    num = [1, 4, 5, 9, 10, 40, 50, 90,  
+           100, 400, 500, 900, 1000] 
+    sym = [""I"", ""IV"", ""V"", ""IX"", ""X"", ""XL"",  
+           ""L"", ""XC"", ""C"", ""CD"", ""D"", ""CM"", ""M""] 
+    i = 12
+    res = ''
+    while number: 
+        div = number // num[i] 
+        number %= num[i] 
+        while div: 
+            res += sym[i] 
+            div -= 1
+        i -= 1
+    return res.lower()
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(19) == 'xix'
+    assert candidate(152) == 'clii'
+    assert candidate(251) == 'ccli'
+    assert candidate(426) == 'cdxxvi'
+    assert candidate(500) == 'd'
+    assert candidate(1) == 'i'
+    assert candidate(4) == 'iv'
+    assert candidate(43) == 'xliii'
+    assert candidate(90) == 'xc'
+    assert candidate(94) == 'xciv'
+    assert candidate(532) == 'dxxxii'
+    assert candidate(900) == 'cm'
+    assert candidate(994) == 'cmxciv'
+    assert candidate(1000) == 'm'
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/157,khm_Khmr,python,"
+def right_angle_triangle(a, b, c):
+    '''ដោយបានផ្តល់នូវប្រវែងនៃភាគីទាំងបីនៃត្រីកោណ. ត្រឡប់មកវិញពិតប្រសិនបើភាគីទាំងបីបង្កើតជាត្រីកោណទទឹង, ខុសបើយើងមិនធ្វើដូច្នេះទេ. ត្រីកោណទទឹងគឺជាត្រីកោណដែលមានទទឹងមួយគឺទទឹងទទឹងឬ 90 ឌីក្រេ. ឧទាហរណ៍: right_angle_triangle ((3, 4, 5) == True right_angle_triangle ((1, 2, 3) == False '''
+","    return a*a == b*b + c*c or b*b == a*a + c*c or c*c == a*a + b*b
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(3, 4, 5) == True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(1, 2, 3) == False
+    assert candidate(10, 6, 8) == True
+    assert candidate(2, 2, 2) == False
+    assert candidate(7, 24, 25) == True
+    assert candidate(10, 5, 7) == False
+    assert candidate(5, 12, 13) == True
+    assert candidate(15, 8, 17) == True
+    assert candidate(48, 55, 73) == True
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1, 1, 1) == False, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(2, 2, 10) == False
+
+",,,
+HumanEval/158,khm_Khmr,python,"
+def find_max(words):
+    """"""សរសេរមុខងារដែលទទួលយកបញ្ជីនៃស្លាកសញ្ញាបញ្ជីមានពាក្យផ្សេងគ្នា ត្រឡប់ពាក្យដែលមានចំនួនអតិបរមានៃតួអង្គតែមួយគត់ ប្រសិនបើស្លាកសញ្ញាជាច្រើនមានចំនួនអតិបរមានៃតួអង្គតែមួយគត់ត្រឡប់ពាក្យដែលមកមុនដំបូងតាមលំដាប់ lexicographical ។ find_max (([""name"", ""of"", ""string""]) == ""string"" find_max (([""name"", ""enam"", ""game""]) == ""enam"" find_max (([""aaaaaaa"", ""bb"" , ""cc""]) == """"aaaaaaa"" """"""
+","    return sorted(words, key = lambda x: (-len(set(x)), x))[0]
+","def check(candidate):
+
+    # Check some simple cases
+    assert (candidate([""name"", ""of"", ""string""]) == ""string""), ""t1""
+    assert (candidate([""name"", ""enam"", ""game""]) == ""enam""), 't2'
+    assert (candidate([""aaaaaaa"", ""bb"", ""cc""]) == ""aaaaaaa""), 't3'
+    assert (candidate([""abc"", ""cba""]) == ""abc""), 't4'
+    assert (candidate([""play"", ""this"", ""game"", ""of"",""footbott""]) == ""footbott""), 't5'
+    assert (candidate([""we"", ""are"", ""gonna"", ""rock""]) == ""gonna""), 't6'
+    assert (candidate([""we"", ""are"", ""a"", ""mad"", ""nation""]) == ""nation""), 't7'
+    assert (candidate([""this"", ""is"", ""a"", ""prrk""]) == ""this""), 't8'
+
+    # Check some edge cases that are easy to work out by hand.
+    assert (candidate([""b""]) == ""b""), 't9'
+    assert (candidate([""play"", ""play"", ""play""]) == ""play""), 't10'
+
+",,,
+HumanEval/159,khm_Khmr,python,"
+def eat(number, need, remaining):
+    """"""អ្នកជាចង្ក្រានដែលឃ្លាន ហើយអ្នកបានបរិភោគគ្រាប់ស្វាយមួយចំនួនហើយ ប៉ុន្តែឥឡូវនេះអ្នកត្រូវការបរិភោគគ្រាប់ស្វាយច្រើនទៀតដើម្បីបញ្ចប់អាហារក្នុងមួយថ្ងៃ អ្នកគួរតែត្រឡប់មកវិញនូវ array នៃ [ចំនួនគ្រាប់ស្វាយដែលបរិភោគបន្ទាប់ពីអាហាររបស់អ្នកចំនួនគ្រាប់ស្វាយដែលនៅសល់បន្ទាប់ពីអាហាររបស់អ្នក ] ប្រសិនបើគ្មានគ្រាប់ស្វាយដែលនៅសល់គ្រប់គ្រាន់ទេ, អ្នកនឹងបរិភោគគ្រាប់ស្វាយទាំងអស់ដែលនៅសល់, ប៉ុន្តែនៅតែឃ្លាន។ ឧទាហរណ៍: * បរិភោគ (៥, ៦, ១០) -> [11, 4] * បរិភោគ (៤, ៨, ៩) -> [12, ១] * បរិភោគ (១, ១០) -> [11, ០] * បរិភោគ (២, ១១, ៥) -> [៧, ០] ប្រែប្រួល: @number: integer ចំនួនគ្រាប់ស្វាយដែលអ្នកបានបរិភោគ @need: integer ចំនួនគ្រាប់ស្វាយដែលអ្នកត្រូវការបរិភោគ @remaining: integer ចំនួនគ្រាប់ស្វាយដែលនៅសល់ក្នុងស្តុក Constrain: * 0 = <= 0 * 1000 <= 0 * 0 = <= 1000 <= 0 ត្រូវការប្រើប្រាស់គ្រាប់ស្វាយដែលនៅសល់ <= 1000 មានភាពសប្បាយរីករាយ:""""""
+","    if(need <= remaining):
+        return [ number + need , remaining-need ]
+    else:
+        return [ number + remaining , 0]
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(5, 6, 10) == [11, 4], ""Error""
+    assert candidate(4, 8, 9) == [12, 1], ""Error""
+    assert candidate(1, 10, 10) == [11, 0], ""Error""
+    assert candidate(2, 11, 5) == [7, 0], ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(4, 5, 7) == [9, 2], ""Error""
+    assert candidate(4, 5, 1) == [5, 0], ""Error""
+
+",,,
+HumanEval/160,khm_Khmr,python,"
+def do_algebra(operator, operand):
+    """"""ការធ្វើប្រតិបត្តិការវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគវិភាគ""""""
+","    expression = str(operand[0])
+    for oprt, oprn in zip(operator, operand[1:]):
+        expression+= oprt + str(oprn)
+    return eval(expression)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(['**', '*', '+'], [2, 3, 4, 5]) == 37
+    assert candidate(['+', '*', '-'], [2, 3, 4, 5]) == 9
+    assert candidate(['//', '*'], [7, 3, 4]) == 8, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/161,khm_Khmr,python,"
+def solve(s):
+    """"""អ្នកត្រូវបានផ្តល់នូវ string s. ប្រសិនបើ s[i] គឺជាអក្សរមួយ, សូមបកប្រែ case របស់វាពីខាងក្រោមទៅខាងលើឬ vice versa, បើមិនដូច្នេះទេទុកវាដូចដែលវាមាន។ ប្រសិនបើ string គ្មានអក្សរ, សូមបកប្រែ string នេះ។ មុខងារនេះគួរតែត្រឡប់មកវិញ string ដែលទទួលបាន។ ឧទាហរណ៍ solve ((""1234"") = ""4321"" solve ((""ab"") = ""AB"" solve ((""#a@C"") = ""#A@c"" """"""
+","    flg = 0
+    idx = 0
+    new_str = list(s)
+    for i in s:
+        if i.isalpha():
+            new_str[idx] = i.swapcase()
+            flg = 1
+        idx += 1
+    s = """"
+    for i in new_str:
+        s += i
+    if flg == 0:
+        return s[len(s)::-1]
+    return s
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""AsDf"") == ""aSdF""
+    assert candidate(""1234"") == ""4321""
+    assert candidate(""ab"") == ""AB""
+    assert candidate(""#a@C"") == ""#A@c""
+    assert candidate(""#AsdfW^45"") == ""#aSDFw^45""
+    assert candidate(""#6@2"") == ""2@6#""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""#$a^D"") == ""#$A^d""
+    assert candidate(""#ccc"") == ""#CCC""
+
+    # Don't remove this line:
+",,,
+HumanEval/162,khm_Khmr,python,"
+def string_to_md5(text):
+    """"""ប្រសិនបើបានផ្តល់នូវខ្សែ 'text', សូមត្រឡប់ទៅវិញខ្សែស្មើនឹង md5 របស់វា។ ប្រសិនបើ 'text' គឺជាខ្សែសូន្យ, ត្រឡប់មកវិញ None. >>> string_to_md5 (('Hello world') == '3e25960a79dbc69b674cd4ec67a72c62' """"""
+","    import hashlib
+    return hashlib.md5(text.encode('ascii')).hexdigest() if text else None
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('Hello world') == '3e25960a79dbc69b674cd4ec67a72c62'
+    assert candidate('') == None
+    assert candidate('A B C') == '0ef78513b0cb8cef12743f5aeb35f888'
+    assert candidate('password') == '5f4dcc3b5aa765d61d8327deb882cf99'
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/163,khm_Khmr,python,"
+def generate_integers(a, b):
+    """"""ដោយបានផ្តល់ចំនួនគត់វិជ្ជមានចំនួនពីរ a និង b, សូមត្រឡប់ទៅលេខគត់រវាង a និង b, ដោយបញ្ជាឡើង។ ឧទាហរណ៍: generate_integers ((2, 8) => [2, 4, 6, 8] generate_integers ((8, 2) => [2, 4, 6, 8] generate_integers ((10, 14) => [] """"""
+","    lower = max(2, min(a, b))
+    upper = min(8, max(a, b))
+
+    return [i for i in range(lower, upper+1) if i % 2 == 0]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(2, 10) == [2, 4, 6, 8], ""Test 1""
+    assert candidate(10, 2) == [2, 4, 6, 8], ""Test 2""
+    assert candidate(132, 2) == [2, 4, 6, 8], ""Test 3""
+    assert candidate(17,89) == [], ""Test 4""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
