@@ -1,0 +1,3843 @@
+task_id,nl,pl,prompt,canonical_solution,test,Unnamed: 6,Unnamed: 7,Unnamed: 8
+HumanEval/0,kam_Latn,python,"from typing import List
+
+
+def has_close_elements(numbers: List[float], threshold: float) -> bool:
+    """"""Sisya kana nthĩnĩ wa namba ila syonanĩtw'e, ve namba ilĩ syĩ vakuvĩ na ila ingĩ syonanĩtw'e. Ngelekany'o: >>> has_close_elements (([1.0, 2.0, 3.0], 0.5) Ũvũngũ >>> has_close_elements (([1.0, 2.8, 3.0, 4.0, 5.0, 2.0], 0.3) Ũw'o """"""
+","for idx, elem in enumerate(numbers):
+    for idx2, elem2 in enumerate(numbers):
+        if idx != idx2:
+            distance = abs(elem - elem2)
+            if distance < threshold:
+                return True
+return False
+","def check(candidate):
+    assert candidate([1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.3) == True
+    assert candidate([1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.05) == False
+    assert candidate([1.0, 2.0, 5.9, 4.0, 5.0], 0.95) == True
+    assert candidate([1.0, 2.0, 5.9, 4.0, 5.0], 0.8) == False
+    assert candidate([1.0, 2.0, 3.0, 4.0, 5.0, 2.0], 0.1) == True
+    assert candidate([1.1, 2.2, 3.1, 4.1, 5.1], 1.0) == True
+    assert candidate([1.1, 2.2, 3.1, 4.1, 5.1], 0.5) == False
+
+",,,
+HumanEval/1,kam_Latn,python,"from typing import List
+
+
+def separate_paren_groups(paren_string: str) -> List[str]:
+    """"""Kĩeleelo kyaku nĩ kũaany'a ikundi isu syĩthĩwe tũlungu twĩ kĩvathũkany'o na ũisisya nĩ tũlungu tũva. Tũlungu tũu twĩthĩwa twĩ kĩvathũkany'o (kĩla kĩlungu kĩthĩawa na ũandĩko wa ũandĩko wa ũandĩko wa ala matonaa) na tũtiethĩwa tũvw'anene. Ndũkavũthĩĩsye maũndũ ala me wathinĩ.""""""
+","    result = []
+    current_string = []
+    current_depth = 0
+
+    for c in paren_string:
+        if c == '(':
+            current_depth += 1
+            current_string.append(c)
+        elif c == ')':
+            current_depth -= 1
+            current_string.append(c)
+
+            if current_depth == 0:
+                result.append(''.join(current_string))
+                current_string.clear()
+
+    return result
+","def check(candidate):
+    assert candidate('(()()) ((())) () ((())()())') == [
+        '(()())', '((()))', '()', '((())()())'
+    ]
+    assert candidate('() (()) ((())) (((())))') == [
+        '()', '(())', '((()))', '(((())))'
+    ]
+    assert candidate('(()(())((())))') == [
+        '(()(())((())))'
+    ]
+    assert candidate('( ) (( )) (( )( ))') == ['()', '(())', '(()())']
+",,,
+HumanEval/2,kam_Latn,python,"
+
+def truncate_number(number: float) -> float:
+    """"""Ĩĩ nĩ namba namba namba, na namba ĩla ĩatĩĩe namba ĩsu no ĩalyũlwe na kĩlungu kya namba ĩmwe (kana namba ĩla ĩatĩĩe namba ĩla nene) na namba ĩla ĩatĩĩe namba ya mũamba (kana namba ĩla ĩatĩĩe namba ĩla nini).""""""
+","    return number % 1.0
+","def check(candidate):
+    assert candidate(3.5) == 0.5
+    assert abs(candidate(1.33) - 0.33) < 1e-6
+    assert abs(candidate(123.456) - 0.456) < 1e-6
+",,,
+HumanEval/3,kam_Latn,python,"from typing import List
+
+
+def below_zero(operations: List[int]) -> bool:
+    """"""Ũkakwata ũvoo wa kwambĩĩa, ũkeethĩa kana ve kũndũ ĩana ũna ũandĩkaa ĩũlũ wa kũthooa kana kũthooa syĩndũ sya mbesa na mbesa isu. Ũndũ ũla wa vata waĩle kwĩka nĩ kũmanya kana ve kũndũ kũmwe ũtatonya kũthooa syĩndũ nũndũ ũandĩkaa ndwĩ vandũ ũtonya kũvikĩwa.""""""
+","    balance = 0
+
+    for op in operations:
+        balance += op
+        if balance < 0:
+            return True
+
+    return False
+","def check(candidate):
+    assert candidate([]) == False
+    assert candidate([1, 2, -3, 1, 2, -3]) == False
+    assert candidate([1, 2, -4, 5, 6]) == True
+    assert candidate([1, -1, 2, -2, 5, -5, 4, -4]) == False
+    assert candidate([1, -1, 2, -2, 5, -5, 4, -5]) == True
+    assert candidate([1, -2, 2, -2, 5, -5, 4, -4]) == True
+",,,
+HumanEval/4,kam_Latn,python,"from typing import List
+
+
+def mean_absolute_deviation(numbers: List[float]) -> float:
+    """"""Kwa namba sya maũndũ ala mawetetwe, calculate Mean Absolute Deviation around the mean of this dataset. Mean Absolute Deviation nĩ mũsaano wa mwanya katĩ wa kĩla kĩndũ na vala kĩũngamĩte (mean in this case): MAD = average ∙ x - x_mean ∙ Example: >>> mean_absolute_deviation (([1.0, 2.0, 3.0, 4.0]) 1.0 """"""
+","    mean = sum(numbers) / len(numbers)
+    return sum(abs(x - mean) for x in numbers) / len(numbers)
+","def check(candidate):
+    assert abs(candidate([1.0, 2.0, 3.0]) - 2.0/3.0) < 1e-6
+    assert abs(candidate([1.0, 2.0, 3.0, 4.0]) - 1.0) < 1e-6
+    assert abs(candidate([1.0, 2.0, 3.0, 4.0, 5.0]) - 6.0/5.0) < 1e-6
+
+",,,
+HumanEval/5,kam_Latn,python,"from typing import List
+
+
+def intersperse(numbers: List[int], delimeter: int) -> List[int]:
+    """"""Andĩka namba 'delimeter' katĩ wa kĩla kĩndũ kĩ nthĩnĩ wa input list `numbers' >>> intersperse([], 4) [] >>> intersperse([1, 2, 3], 4) [1, 4, 2, 4, 3] """"""
+","    if not numbers:
+        return []
+
+    result = []
+
+    for n in numbers[:-1]:
+        result.append(n)
+        result.append(delimeter)
+
+    result.append(numbers[-1])
+
+    return result
+","def check(candidate):
+    assert candidate([], 7) == []
+    assert candidate([5, 6, 3, 2], 8) == [5, 8, 6, 8, 3, 8, 2]
+    assert candidate([2, 2, 2], 2) == [2, 2, 2, 2, 2]
+",,,
+HumanEval/6,kam_Latn,python,"from typing import List
+
+
+def parse_nested_parens(paren_string: str) -> List[int]:
+    """"""Kĩlungu kya mbee kĩthĩawa na nzwĩĩ syĩ kĩvathũkany'o na isu ingĩ ikonanĩtye na kĩla kĩlungu. Kwa ngelekany'o, ũkuvĩ wa nthoo ila syĩ kĩlungunĩ kĩu nĩ kana ũmanye vala iũngi ikwatĩanĩe na nthoo ila ingĩ ikwatĩanĩe. Kwa ngelekany'o, ũkuvĩ wa nthoo ila syĩ kĩlungunĩ kĩu nĩ kana ũmanye vala iũngi ikwatĩanĩe na ila ingĩ ikwatĩanĩe na ila ingĩ.""""""
+","    def parse_paren_group(s):
+        depth = 0
+        max_depth = 0
+        for c in s:
+            if c == '(':
+                depth += 1
+                max_depth = max(depth, max_depth)
+            else:
+                depth -= 1
+
+        return max_depth
+
+    return [parse_paren_group(x) for x in paren_string.split(' ') if x]
+","def check(candidate):
+    assert candidate('(()()) ((())) () ((())()())') == [2, 3, 1, 3]
+    assert candidate('() (()) ((())) (((())))') == [1, 2, 3, 4]
+    assert candidate('(()(())((())))') == [4]
+",,,
+HumanEval/7,kam_Latn,python,"from typing import List
+
+
+def filter_by_substring(strings: List[str], substring: str) -> List[str]:
+    """"""filter a input list of strings only for ones that contain given substring >>> filter_by_substring([], 'a') [] >>> filter_by_substring(['abc', 'bacd', 'cde', 'array'], 'a') ['abc', 'bacd', 'array'] """"""
+","    return [x for x in strings if substring in x]
+","def check(candidate):
+    assert candidate([], 'john') == []
+    assert candidate(['xxx', 'asd', 'xxy', 'john doe', 'xxxAAA', 'xxx'], 'xxx') == ['xxx', 'xxxAAA', 'xxx']
+    assert candidate(['xxx', 'asd', 'aaaxxy', 'john doe', 'xxxAAA', 'xxx'], 'xx') == ['xxx', 'aaaxxy', 'xxxAAA', 'xxx']
+    assert candidate(['grunt', 'trumpet', 'prune', 'gruesome'], 'run') == ['grunt', 'prune']
+",,,
+HumanEval/8,kam_Latn,python,"from typing import List, Tuple
+
+
+def sum_product(numbers: List[int]) -> Tuple[int, int]:
+    """"""Ĩĩ nĩ ĩkomano ĩnene, ĩndĩ yĩ na andũ anini na me kĩvathũkany'o. Kwa ngelekany'o, mũndũ ũmwe ũwetetwe Mbivilianĩ e na myaka mbee wa 1,000, na ũngĩ e na myaka mbee wa 1,000.""""""
+","    sum_value = 0
+    prod_value = 1
+
+    for n in numbers:
+        sum_value += n
+        prod_value *= n
+    return sum_value, prod_value
+","def check(candidate):
+    assert candidate([]) == (0, 1)
+    assert candidate([1, 1, 1]) == (3, 1)
+    assert candidate([100, 0]) == (100, 0)
+    assert candidate([3, 5, 7]) == (3 + 5 + 7, 3 * 5 * 7)
+    assert candidate([10]) == (10, 10)
+",,,
+HumanEval/9,kam_Latn,python,"from typing import List, Tuple
+
+
+def rolling_max(numbers: List[int]) -> List[int]:
+    """"""Weta ũndũ namba ila syĩ nthĩnĩ wa myanya ĩla ĩwetetwe vau ĩũlũ itũmĩawa kũandĩka.""""""
+","    running_max = None
+    result = []
+
+    for n in numbers:
+        if running_max is None:
+            running_max = n
+        else:
+            running_max = max(running_max, n)
+
+        result.append(running_max)
+
+    return result
+","def check(candidate):
+    assert candidate([]) == []
+    assert candidate([1, 2, 3, 4]) == [1, 2, 3, 4]
+    assert candidate([4, 3, 2, 1]) == [4, 4, 4, 4]
+    assert candidate([3, 2, 3, 100, 3]) == [3, 3, 3, 100, 100]
+",,,
+HumanEval/10,kam_Latn,python,"
+
+def is_palindrome(string: str) -> bool:
+    """"""Mantha mũandĩko wa w'o ũla wĩ vakuvĩ na w'ongo wa w'ongo wa w'ongo ũla ũtũmĩawa kũandĩka.""""""
+    return string == string[::-1]
+
+
+def make_palindrome(string: str) -> str:
+    """"""Manya ethĩwa kĩla kĩandĩkĩtwe nĩ kya w'o kana ti kya w'o.""""""
+","    if not string:
+        return ''
+
+    beginning_of_suffix = 0
+
+    while not is_palindrome(string[beginning_of_suffix:]):
+        beginning_of_suffix += 1
+
+    return string + string[:beginning_of_suffix][::-1]
+","def check(candidate):
+    assert candidate('') == ''
+    assert candidate('x') == 'x'
+    assert candidate('xyz') == 'xyzyx'
+    assert candidate('xyx') == 'xyx'
+    assert candidate('jerry') == 'jerryrrej'
+",,,
+HumanEval/11,kam_Latn,python,"from typing import List
+
+
+def string_xor(a: str, b: str) -> str:
+    """"""Mongeleela kwasya kana ũvoo ũla wĩ nthĩnĩ wa string nĩ mũvĩndũe.""""""
+","    def xor(i, j):
+        if i == j:
+            return '0'
+        else:
+            return '1'
+
+    return ''.join(xor(x, y) for x, y in zip(a, b))
+","def check(candidate):
+    assert candidate('111000', '101010') == '010010'
+    assert candidate('1', '1') == '0'
+    assert candidate('0101', '0000') == '0101'
+",,,
+HumanEval/12,kam_Latn,python,"from typing import List, Optional
+
+
+def longest(strings: List[str]) -> Optional[str]:
+    """"""Ĩkũlyo: Nĩ ĩndĩĩ ndeto ila itũmĩawa kĩthyomonĩ kya Kĩsũngũ ""day"" syaĩle kũalyũlwa?""""""
+","    if not strings:
+        return None
+
+    maxlen = max(len(x) for x in strings)
+    for s in strings:
+        if len(s) == maxlen:
+            return s
+","def check(candidate):
+    assert candidate([]) == None
+    assert candidate(['x', 'y', 'z']) == 'x'
+    assert candidate(['x', 'yyy', 'zzzz', 'www', 'kkkk', 'abc']) == 'zzzz'
+",,,
+HumanEval/13,kam_Latn,python,"
+
+def greatest_common_divisor(a: int, b: int) -> int:
+    """"""Tũngĩaai mũtalatala ũũ mũseo wa kũsisya ũndũ mũtalatala ũũ ũilyĩ.""""""
+","    while b:
+        a, b = b, a % b
+    return a
+","def check(candidate):
+    assert candidate(3, 7) == 1
+    assert candidate(10, 15) == 5
+    assert candidate(49, 14) == 7
+    assert candidate(144, 60) == 12
+",,,
+HumanEval/14,kam_Latn,python,"from typing import List
+
+
+def all_prefixes(string: str) -> List[str]:
+    """"""Return list of all prefixes from shortest to longest of the input string >>> all_prefixes('abc') ['a', 'ab', 'abc']  Mĩsoa ĩla ĩthyũlũlũkĩte mũsoa ũla wa mbee nĩ mĩsoa ĩla ĩngĩ ĩtũmĩĩte ndeto ta ĩsu""""""
+","    result = []
+
+    for i in range(len(string)):
+        result.append(string[:i+1])
+    return result
+","def check(candidate):
+    assert candidate('') == []
+    assert candidate('asdfgh') == ['a', 'as', 'asd', 'asdf', 'asdfg', 'asdfgh']
+    assert candidate('WWW') == ['W', 'WW', 'WWW']
+",,,
+HumanEval/15,kam_Latn,python,"
+
+def string_sequence(n: int) -> str:
+    """"""Ĩkũlyo yĩla yĩvo: Mbee, ethĩwa myanya ĩla ĩwetetwe vau ĩũlũ nĩ mĩnini, namba ila ikonanĩtw'e na namba isu syonthe nĩ nini.""""""
+","    return ' '.join([str(x) for x in range(n + 1)])
+","def check(candidate):
+    assert candidate(0) == '0'
+    assert candidate(3) == '0 1 2 3'
+    assert candidate(10) == '0 1 2 3 4 5 6 7 8 9 10'
+",,,
+HumanEval/16,kam_Latn,python,"
+
+def count_distinct_characters(string: str) -> int:
+    """"""Tũmĩa nzĩa ĩno: Mbee, ũandĩke namba sya nthoo ila syĩ nthĩnĩ wa kĩla kaati sya kũthoosya syĩndũ.""""""
+","    return len(set(string.lower()))
+","def check(candidate):
+    assert candidate('') == 0
+    assert candidate('abcde') == 5
+    assert candidate('abcde' + 'cade' + 'CADE') == 5
+    assert candidate('aaaaAAAAaaaa') == 1
+    assert candidate('Jerry jERRY JeRRRY') == 5
+",,,
+HumanEval/17,kam_Latn,python,"from typing import List
+
+
+def parse_music(music_string: str) -> List[int]:
+    """"""Kĩanda kĩu kĩkeethĩawa na namba sya wathi syĩ na langi wa mũkũyũ wĩ kĩvathũkany'o, na kĩkeethĩawa na nzwĩĩ syĩ kĩvathũkany'o. Kĩanda kĩu kĩkeethĩawa na ndeto iilyĩ ta ũũ: 'o' note, lasts four beats 'o, 'n' , lasts two beats 'n' , lasts one beat >>> parse_music.""""""
+","    note_map = {'o': 4, 'o|': 2, '.|': 1}
+    return [note_map[x] for x in music_string.split(' ') if x]
+","def check(candidate):
+    assert candidate('') == []
+    assert candidate('o o o o') == [4, 4, 4, 4]
+    assert candidate('.| .| .| .|') == [1, 1, 1, 1]
+    assert candidate('o| o| .| .| o o o o') == [2, 2, 1, 1, 4, 4, 4, 4]
+    assert candidate('o| .| o| .| o o| o o|') == [2, 1, 2, 1, 4, 2, 4, 2]
+",,,
+HumanEval/18,kam_Latn,python,"
+
+def how_many_times(string: str, substring: str) -> int:
+    """"""Sisya mavinda meana mũamba ũsu wĩkĩtwe nthĩnĩ wa ndeto ĩla yumĩĩw'e mwambĩĩonĩ. Sisya mavinda ala mũamba ũsu ũandĩkĩtwe.""""""
+","    times = 0
+
+    for i in range(len(string) - len(substring) + 1):
+        if string[i:i+len(substring)] == substring:
+            times += 1
+
+    return times
+","def check(candidate):
+    assert candidate('', 'x') == 0
+    assert candidate('xyxyxyx', 'x') == 4
+    assert candidate('cacacacac', 'cac') == 4
+    assert candidate('john doe', 'john') == 1
+",,,
+HumanEval/19,kam_Latn,python,"from typing import List
+
+
+def sort_numbers(numbers: str) -> str:
+    """"""Kĩsio kĩla kĩthĩawa na namba syĩkĩanĩtw'e kĩilyĩ ta mũamba mũnene. Namba ikonanĩtw'e na namba imwe, na kwoou namba isu nĩsyo syĩ na ũkuvĩ wa vala iandĩkĩtwe. Syĩndũ ila itonya kũtũmĩwa nĩ ta 'zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight' na 'nine'.""""""
+","    value_map = {
+        'zero': 0,
+        'one': 1,
+        'two': 2,
+        'three': 3,
+        'four': 4,
+        'five': 5,
+        'six': 6,
+        'seven': 7,
+        'eight': 8,
+        'nine': 9
+    }
+    return ' '.join(sorted([x for x in numbers.split(' ') if x], key=lambda x: value_map[x]))
+","def check(candidate):
+    assert candidate('') == ''
+    assert candidate('three') == 'three'
+    assert candidate('three five nine') == 'three five nine'
+    assert candidate('five zero four seven nine eight') == 'zero four five seven eight nine'
+    assert candidate('six five four three two one zero') == 'zero one two three four five six'
+",,,
+HumanEval/20,kam_Latn,python,"from typing import List, Tuple
+
+
+def find_closest_elements(numbers: List[float]) -> Tuple[float, float]:
+    """"""(trg) =""10""> Matukũ aa , andũ ala mekwenda kwĩkĩa ilungu Mbivilianĩ ĩsu nĩmatũmawa kũndũ kũla kwĩthĩawa na mavuku ma kwĩmanyĩsya Mbivilia .""""""
+","    closest_pair = None
+    distance = None
+
+    for idx, elem in enumerate(numbers):
+        for idx2, elem2 in enumerate(numbers):
+            if idx != idx2:
+                if distance is None:
+                    distance = abs(elem - elem2)
+                    closest_pair = tuple(sorted([elem, elem2]))
+                else:
+                    new_distance = abs(elem - elem2)
+                    if new_distance < distance:
+                        distance = new_distance
+                        closest_pair = tuple(sorted([elem, elem2]))
+
+    return closest_pair
+","def check(candidate):
+    assert candidate([1.0, 2.0, 3.9, 4.0, 5.0, 2.2]) == (3.9, 4.0)
+    assert candidate([1.0, 2.0, 5.9, 4.0, 5.0]) == (5.0, 5.9)
+    assert candidate([1.0, 2.0, 3.0, 4.0, 5.0, 2.2]) == (2.0, 2.2)
+    assert candidate([1.0, 2.0, 3.0, 4.0, 5.0, 2.0]) == (2.0, 2.0)
+    assert candidate([1.1, 2.2, 3.1, 4.1, 5.1]) == (2.2, 3.1)
+
+",,,
+HumanEval/21,kam_Latn,python,"from typing import List
+
+
+def rescale_to_unit(numbers: List[float]) -> List[float]:
+    """"""ŨNDŨ ŨNGĨ ĨKASETINĨ YĨĨ ĨKASETINĨ YĨĨ ĨKASETINĨ YĨĨ ĨKASETINĨ YĨĨ ĨKASETINĨ YĨĨ ĨKASETINĨ YĨĨ ĨKASETINĨ YĨĨ ĨKASETINĨ YĨĨ ĨKASETINĨ YĨ ĨKASETINĨ YĨ ĨKASETINĨ YĨ ĨKASETINĨ YĨ ĨKASETINĨ YĨ ĨKASETINĨ YĨ ĨKASETINĨ YĨ ĨKASETINĨ YĨ ĨKASETINĨ YĨ ĨKASETINĨ YĨ ĨKASETINĨ YĨ ĨKASETINĨ YĨ ĨKASETINĨ YĨ ĨKASETINĨ YĨ ĨKASETINĨ YĨ ĨKASETINĨ YĨ ĨKASETINĨ YĨ ĨKASETINĨ YĨ ĨKASETINĨ""""""
+","    min_number = min(numbers)
+    max_number = max(numbers)
+    return [(x - min_number) / (max_number - min_number) for x in numbers]
+","def check(candidate):
+    assert candidate([2.0, 49.9]) == [0.0, 1.0]
+    assert candidate([100.0, 49.9]) == [1.0, 0.0]
+    assert candidate([1.0, 2.0, 3.0, 4.0, 5.0]) == [0.0, 0.25, 0.5, 0.75, 1.0]
+    assert candidate([2.0, 1.0, 5.0, 3.0, 4.0]) == [0.25, 0.0, 1.0, 0.5, 0.75]
+    assert candidate([12.0, 11.0, 15.0, 13.0, 14.0]) == [0.25, 0.0, 1.0, 0.5, 0.75]
+",,,
+HumanEval/22,kam_Latn,python,"from typing import List, Any
+
+
+def filter_integers(values: List[Any]) -> List[int]:
+    """"""filter given list of any python values only for integers >>> filter_integers(['a', 3.14, 5]) [5] >>> filter_integers([1, 2, 3, 'abc', {}, []]) [1, 2, 3] """"""
+","    return [x for x in values if isinstance(x, int)]
+","def check(candidate):
+    assert candidate([]) == []
+    assert candidate([4, {}, [], 23.2, 9, 'adasd']) == [4, 9]
+    assert candidate([3, 'c', 3, 3, 'a', 'b']) == [3, 3, 3]
+",,,
+HumanEval/23,kam_Latn,python,"
+
+def strlen(string: str) -> int:
+    """"""Kũtũngĩlĩĩla ũasa wa ndeto ĩla ĩwetetwe strlen{\displaystyle strlen{\text{\text{\text{\text{\text{\text{\text{\text{\text{\text{\text{\text{\text{\text{\text{\text{\text{\text{\text{\text{\text{\text{\text{\text{\text{\text{\text{\text}}}}}}}}}}}}}}} 3""""""
+","    return len(string)
+","def check(candidate):
+    assert candidate('') == 0
+    assert candidate('x') == 1
+    assert candidate('asdasnakj') == 9
+",,,
+HumanEval/24,kam_Latn,python,"
+
+def largest_divisor(n: int) -> int:
+    """"""Nĩ kana ũmanye namba n, sisya namba ĩla nene ĩtesa kũaanw'a ĩanene na namba ĩla ĩngĩ, na namba ĩsu nĩ nini kwĩ ĩsu n >>> largest_divisor ((15) 5 """"""
+","    for i in reversed(range(n)):
+        if n % i == 0:
+            return i
+","def check(candidate):
+    assert candidate(3) == 1
+    assert candidate(7) == 1
+    assert candidate(10) == 5
+    assert candidate(100) == 50
+    assert candidate(49) == 7
+",,,
+HumanEval/25,kam_Latn,python,"from typing import List
+
+
+def factorize(n: int) -> List[int]:
+    """"""Ĩĩ nĩ namba ya mũsingi ya namba ĩmwe na namba ĩmwe. Namba ĩla ĩwetetwe vau nĩ namba ya mũsingi wa namba ĩla ĩwetetwe vala ve namba ĩsu ya mũsingi. Namba ĩla ĩwetetwe vau nĩ namba ya mũsingi wa namba ĩla ĩwetetwe vala ve namba ĩsu ya mũsingi. Namba ĩla ĩwetetwe vau nĩ namba ya mũsingi wa namba ĩla ĩwetetwe vala ve namba ĩsu ya mũsingi. Namba ĩla ĩwetetwe vau nĩ namba ya mũsingi wa namba ĩla ĩwetetwe vala ve namba ĩsu ya mũsingi.""""""
+","    import math
+    fact = []
+    i = 2
+    while i <= int(math.sqrt(n) + 1):
+        if n % i == 0:
+            fact.append(i)
+            n //= i
+        else:
+            i += 1
+
+    if n > 1:
+        fact.append(n)
+    return fact
+","def check(candidate):
+    assert candidate(2) == [2]
+    assert candidate(4) == [2, 2]
+    assert candidate(8) == [2, 2, 2]
+    assert candidate(3 * 19) == [3, 19]
+    assert candidate(3 * 19 * 3 * 19) == [3, 3, 19, 19]
+    assert candidate(3 * 19 * 3 * 19 * 3 * 19) == [3, 3, 3, 19, 19, 19]
+    assert candidate(3 * 19 * 19 * 19) == [3, 19, 19, 19]
+    assert candidate(3 * 2 * 3) == [2, 3, 3]
+",,,
+HumanEval/26,kam_Latn,python,"from typing import List
+
+
+def remove_duplicates(numbers: List[int]) -> List[int]:
+    """"""Ĩtambya ya mbee: Ũvetanga syĩndũ syonthe ila siana ũndũ ũmwe ila syĩ vo.""""""
+","    import collections
+    c = collections.Counter(numbers)
+    return [n for n in numbers if c[n] <= 1]
+","def check(candidate):
+    assert candidate([]) == []
+    assert candidate([1, 2, 3, 4]) == [1, 2, 3, 4]
+    assert candidate([1, 2, 3, 2, 4, 3, 5]) == [1, 4, 5]
+",,,
+HumanEval/27,kam_Latn,python,"
+
+def flip_case(string: str) -> str:
+    """"""Nĩ kana ũlike Kĩsesenĩ kya jw.org/kam, sisya vala vaandĩkĩtwe ""Kĩla Wenda Kũmanya"".""""""
+","    return string.swapcase()
+","def check(candidate):
+    assert candidate('') == ''
+    assert candidate('Hello!') == 'hELLO!'
+    assert candidate('These violent delights have violent ends') == 'tHESE VIOLENT DELIGHTS HAVE VIOLENT ENDS'
+",,,
+HumanEval/28,kam_Latn,python,"from typing import List
+
+
+def concatenate(strings: List[str]) -> str:
+    """"""Concatenate list of strings into a single string >>> concatenate([]) '' >>> concatenate(['a', 'b', 'c']) 'abc' """"""
+","    return ''.join(strings)
+","def check(candidate):
+    assert candidate([]) == ''
+    assert candidate(['x', 'y', 'z']) == 'xyz'
+    assert candidate(['x', 'y', 'z', 'w', 'k']) == 'xyzwk'
+",,,
+HumanEval/29,kam_Latn,python,"from typing import List
+
+
+def filter_by_prefix(strings: List[str], prefix: str) -> List[str]:
+    """"""filter a input list of strings only for ones that start with a given prefix. >>> filter_by_prefix([], 'a') [] >>> filter_by_prefix(['abc', 'bcd', 'cde', 'array'], 'a') ['abc', 'array'] """"""
+","    return [x for x in strings if x.startswith(prefix)]
+","def check(candidate):
+    assert candidate([], 'john') == []
+    assert candidate(['xxx', 'asd', 'xxy', 'john doe', 'xxxAAA', 'xxx'], 'xxx') == ['xxx', 'xxxAAA', 'xxx']
+",,,
+HumanEval/30,kam_Latn,python,"
+
+def get_positive(l: list):
+    """"""(trg) =""s2.2""> Nĩ kana tũkwate mosũngĩo ma makũlyo asu , kwasũanĩa ngelekany'o ĩno:""""""
+","    return [e for e in l if e > 0]
+","def check(candidate):
+    assert candidate([-1, -2, 4, 5, 6]) == [4, 5, 6]
+    assert candidate([5, 3, -5, 2, 3, 3, 9, 0, 123, 1, -10]) == [5, 3, 2, 3, 3, 9, 123, 1]
+    assert candidate([-1, -2]) == []
+    assert candidate([]) == []
+
+",,,
+HumanEval/31,kam_Latn,python,"
+
+def is_prime(n):
+    """"""Return true if a given number is prime, and false otherwise. >>> is_prime(6) False >>> is_prime(101) True >>> is_prime(11) True >>> is_prime(13441) True >>> is_prime(61) True >>> is_prime(4) False >>> is_prime(1) False """"""
+","    if n < 2:
+        return False
+    for k in range(2, n - 1):
+        if n % k == 0:
+            return False
+    return True
+","def check(candidate):
+    assert candidate(6) == False
+    assert candidate(101) == True
+    assert candidate(11) == True
+    assert candidate(13441) == True
+    assert candidate(61) == True
+    assert candidate(4) == False
+    assert candidate(1) == False
+    assert candidate(5) == True
+    assert candidate(11) == True
+    assert candidate(17) == True
+    assert candidate(5 * 17) == False
+    assert candidate(11 * 7) == False
+    assert candidate(13441 * 19) == False
+
+",,,
+HumanEval/32,kam_Latn,python,"import math
+
+
+def poly(xs: list, x: float):
+    """"""find_zero find_zero ĩsyokaa o namba ĩmwe ya coefficients na namba ĩnene ti zero coefficient nũndũ ĩnũete mũsũngĩo. >>> round ((find_zero[1, 2]), 2) # f (((x) = 1 + 2x -0.5 >>> round ((find_zero([-6, 11, -6, 1]), 2) # (x - 1) * (x - 2) * (x - 3) = -6 + 11x - 6x^2 + x^3  1.0""""""
+    return sum([coeff * math.pow(x, i) for i, coeff in enumerate(xs)])
+
+
+def find_zero(xs: list):
+    """"""Ĩtambya ya polynomial na mũamba xs nthĩnĩ wa x. ĩsyokaa xs[0] + xs[1] * x + xs[1] * x^2 + .... xs[n] * x^n """"""
+","    begin, end = -1., 1.
+    while poly(xs, begin) * poly(xs, end) > 0:
+        begin *= 2.0
+        end *= 2.0
+    while end - begin > 1e-10:
+        center = (begin + end) / 2.0
+        if poly(xs, center) * poly(xs, begin) > 0:
+            begin = center
+        else:
+            end = center
+    return begin
+","def check(candidate):
+    import math
+    import random
+    rng = random.Random(42)
+    import copy
+    for _ in range(100):
+        ncoeff = 2 * rng.randint(1, 4)
+        coeffs = []
+        for _ in range(ncoeff):
+            coeff = rng.randint(-10, 10)
+            if coeff == 0:
+                coeff = 1
+            coeffs.append(coeff)
+        solution = candidate(copy.deepcopy(coeffs))
+        assert math.fabs(poly(coeffs, solution)) < 1e-4
+
+",,,
+HumanEval/33,kam_Latn,python,"
+
+def sort_third(l: list):
+    """"""Ũndũ ũsu wĩtuma twenda kũmanya ethĩwa mĩsoa ĩla ĩwetetwe nthĩnĩ wa l nĩ mĩseo vyũ, na ethĩwa ti mĩseo vyũ, ve itumi nzeo sya kũmanya nĩkĩ twaĩle kũiatĩĩa.""""""
+","    l = list(l)
+    l[::3] = sorted(l[::3])
+    return l
+","def check(candidate):
+    assert tuple(candidate([1, 2, 3])) == tuple(sort_third([1, 2, 3]))
+    assert tuple(candidate([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])) == tuple(sort_third([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10]))
+    assert tuple(candidate([5, 8, -12, 4, 23, 2, 3, 11, 12, -10])) == tuple(sort_third([5, 8, -12, 4, 23, 2, 3, 11, 12, -10]))
+    assert tuple(candidate([5, 6, 3, 4, 8, 9, 2])) == tuple([2, 6, 3, 4, 8, 9, 5])
+    assert tuple(candidate([5, 8, 3, 4, 6, 9, 2])) == tuple([2, 8, 3, 4, 6, 9, 5])
+    assert tuple(candidate([5, 6, 9, 4, 8, 3, 2])) == tuple([2, 6, 9, 4, 8, 3, 5])
+    assert tuple(candidate([5, 6, 3, 4, 8, 9, 2, 1])) == tuple([2, 6, 3, 4, 8, 9, 5, 1])
+
+",,,
+HumanEval/34,kam_Latn,python,"
+
+def unique(l: list):
+    """"""(trg) =""s""> (Kavuku ka mathangũ ma kũsola syĩndũ , kala ke na mũandĩko wa langi kana ka kĩtinĩ kĩtawa "" white "" , vala veethĩwa na namba , namba , kana o namba sya mũandĩko wa ala matonekaa na langi)""""""
+","    return sorted(list(set(l)))
+","def check(candidate):
+    assert candidate([5, 3, 5, 2, 3, 3, 9, 0, 123]) == [0, 2, 3, 5, 9, 123]
+
+",,,
+HumanEval/35,kam_Latn,python,"
+
+def max_element(l: list):
+    """"""(trg) =""s28""> (Kavuku ka mathangũ ma kũsola syĩndũ , kala ke na kyongo "" Syĩndũ Ila Syũmbĩtwe kwa Nzĩa ya Kĩlisimasi "".)""""""
+","    m = l[0]
+    for e in l:
+        if e > m:
+            m = e
+    return m
+","def check(candidate):
+    assert candidate([1, 2, 3]) == 3
+    assert candidate([5, 3, -5, 2, -3, 3, 9, 0, 124, 1, -10]) == 124
+",,,
+HumanEval/36,kam_Latn,python,"
+
+def fizz_buzz(n: int):
+    """"""Ĩka kũalyũla namba ya kũndũ kũla kwanakavĩtw'e na mathangũ ala monanĩtw'e.""""""
+","    ns = []
+    for i in range(n):
+        if i % 11 == 0 or i % 13 == 0:
+            ns.append(i)
+    s = ''.join(list(map(str, ns)))
+    ans = 0
+    for c in s:
+        ans += (c == '7')
+    return ans
+","def check(candidate):
+    assert candidate(50) == 0
+    assert candidate(78) == 2
+    assert candidate(79) == 3
+    assert candidate(100) == 3
+    assert candidate(200) == 6
+    assert candidate(4000) == 192
+    assert candidate(10000) == 639
+    assert candidate(100000) == 8026
+
+",,,
+HumanEval/37,kam_Latn,python,"
+
+def sort_even(l: list):
+    """"""Ũndũ ũsu wĩtuma twenda kũmanya ethĩwa mĩsoa ĩla ĩwetetwe nthĩnĩ wa l nĩ mĩseo vyũ, kana ve mĩsoa ĩngĩ ĩtonya kũtũtethya.""""""
+","    evens = l[::2]
+    odds = l[1::2]
+    evens.sort()
+    ans = []
+    for e, o in zip(evens, odds):
+        ans.extend([e, o])
+    if len(evens) > len(odds):
+        ans.append(evens[-1])
+    return ans
+","def check(candidate):
+    assert tuple(candidate([1, 2, 3])) == tuple([1, 2, 3])
+    assert tuple(candidate([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])) == tuple([-10, 3, -5, 2, -3, 3, 5, 0, 9, 1, 123])
+    assert tuple(candidate([5, 8, -12, 4, 23, 2, 3, 11, 12, -10])) == tuple([-12, 8, 3, 4, 5, 2, 12, 11, 23, -10])
+
+",,,
+HumanEval/38,kam_Latn,python,"
+
+def encode_cyclic(s: str):
+    """"""takes as input string encoded with encode_cyclic function. Kũsyokea namba ĩla yonanĩtw'e na ya mũandĩko wa ala matonaa. """"""
+    # split string to groups. Each of length 3.
+    groups = [s[(3 * i):min((3 * i + 3), len(s))] for i in range((len(s) + 2) // 3)]
+    # cycle elements in each group. Unless group has fewer elements than 3.
+    groups = [(group[1:] + group[0]) if len(group) == 3 else group for group in groups]
+    return """".join(groups)
+
+
+def decode_cyclic(s: str):
+    """"""ĩkwonany'a maũndũ ala mekwonany'a mũvangĩle wa ũndũ mũna, na ĩndĩ ĩisyoka ĩyĩelesya wũmbo na ĩyĩelesya kyongo na ndeto kwa nzĩa ya ngelekany'o.""""""
+","    return encode_cyclic(encode_cyclic(s))
+","def check(candidate):
+    from random import randint, choice
+    import string
+
+    letters = string.ascii_lowercase
+    for _ in range(100):
+        str = ''.join(choice(letters) for i in range(randint(10, 20)))
+        encoded_str = encode_cyclic(str)
+        assert candidate(encoded_str) == str
+
+",,,
+HumanEval/39,kam_Latn,python,"
+
+def prime_fib(n: int):
+    """"""prime_fib nĩ ĩsyokaa namba namba n-th ĩla yĩtawa Fibonacci number na yĩtawa prime. >>> prime_fib(1) 2 >>> prime_fib(2) 3 >>> prime_fib(3) 5 >>> prime_fib(4) 13 >>> prime_fib(5) 89 """"""
+","    import math
+
+    def is_prime(p):
+        if p < 2:
+            return False
+        for k in range(2, min(int(math.sqrt(p)) + 1, p - 1)):
+            if p % k == 0:
+                return False
+        return True
+    f = [0, 1]
+    while True:
+        f.append(f[-1] + f[-2])
+        if is_prime(f[-1]):
+            n -= 1
+        if n == 0:
+            return f[-1]
+","def check(candidate):
+    assert candidate(1) == 2
+    assert candidate(2) == 3
+    assert candidate(3) == 5
+    assert candidate(4) == 13
+    assert candidate(5) == 89
+    assert candidate(6) == 233
+    assert candidate(7) == 1597
+    assert candidate(8) == 28657
+    assert candidate(9) == 514229
+    assert candidate(10) == 433494437
+
+",,,
+HumanEval/40,kam_Latn,python,"
+
+def triples_sum_to_zero(l: list):
+    """"""triples_sum_to_zero yosaa list ya integer ta input. nĩ ĩetae True ethĩwa ve syĩndũ itatũ nthĩnĩ wa list isu syĩ na sum ya zero, na False ethĩwa ti ũu. >>> triples_sum_to_zero([1, 3, 5, 0]) False >>> triples_sum_to_zero[(1, 3, -2, 1]) True >>> triples_sum_to_zero([1, 2, 3, 7]) False >>> triples_sum_to_zero([2, 4, -5, 3, 9, 7]) True >>> triples_sum_to_zero[1]) False """"""
+","    for i in range(len(l)):
+        for j in range(i + 1, len(l)):
+            for k in range(j + 1, len(l)):
+                if l[i] + l[j] + l[k] == 0:
+                    return True
+    return False
+","def check(candidate):
+    assert candidate([1, 3, 5, 0]) == False
+    assert candidate([1, 3, 5, -1]) == False
+    assert candidate([1, 3, -2, 1]) == True
+    assert candidate([1, 2, 3, 7]) == False
+    assert candidate([1, 2, 5, 7]) == False
+    assert candidate([2, 4, -5, 3, 9, 7]) == True
+    assert candidate([1]) == False
+    assert candidate([1, 3, 5, -100]) == False
+    assert candidate([100, 3, 5, -100]) == False
+
+",,,
+HumanEval/41,kam_Latn,python,"
+
+def car_race_collision(n: int):
+    """"""Kwasũanĩa lelũ ũmwe mũasa ũte na mũthya. ngalĩ n itembeaa kuma kw'oko kwa aka nginya kw'oko kwa aũme, na ngalĩ ingĩ n itembeaa kuma kw'oko kwa aũme nginya kwa aka. Syonthe syambĩĩaa savalĩ ũmwe ikathi vaasa mũno. Syonthe iendaa na mĩtũkĩ mũno.""""""
+","    return n**2
+","def check(candidate):
+    assert candidate(2) == 4
+    assert candidate(3) == 9
+    assert candidate(4) == 16
+    assert candidate(8) == 64
+    assert candidate(10) == 100
+
+",,,
+HumanEval/42,kam_Latn,python,"
+
+def incr_list(l: list):
+    """"""Ĩkũlyo yĩla yĩvo: We nũkwona ta ve vandũ tũtonya kũkwata ũvoo ũtonya kũtũtetheesya tũelewe mĩao mĩna?""""""
+","    return [(e + 1) for e in l]
+","def check(candidate):
+    assert candidate([]) == []
+    assert candidate([3, 2, 1]) == [4, 3, 2]
+    assert candidate([5, 2, 5, 2, 3, 3, 9, 0, 123]) == [6, 3, 6, 3, 4, 4, 10, 1, 124]
+
+",,,
+HumanEval/43,kam_Latn,python,"
+
+def pairs_sum_to_zero(l):
+    """"""pairs_sum_to_zero yosaa list ya integer ta input. yasyoka na True ethĩwa ve elements ilĩ syĩ kĩvathũkany'o nthĩnĩ wa list isu na sum to zero, na False ethĩwa ve imwe. >>> pairs_sum_to_zero([1, 3, 5, 0]) False >>> pairs_sum_to_zero[(1, 3, -2, 1]) False >>> pairs_sum_to_zero([1, 2, 3, 7]) False >>> pairs_sum_to_zero([2, 4, -5, 3, 5, 7]) True >>> pairs_sum_to_zero[1]) False """"""
+","    for i, l1 in enumerate(l):
+        for j in range(i + 1, len(l)):
+            if l1 + l[j] == 0:
+                return True
+    return False
+","def check(candidate):
+    assert candidate([1, 3, 5, 0]) == False
+    assert candidate([1, 3, -2, 1]) == False
+    assert candidate([1, 2, 3, 7]) == False
+    assert candidate([2, 4, -5, 3, 5, 7]) == True
+    assert candidate([1]) == False
+
+    assert candidate([-3, 9, -1, 3, 2, 30]) == True
+    assert candidate([-3, 9, -1, 3, 2, 31]) == True
+    assert candidate([-3, 9, -1, 4, 2, 30]) == False
+    assert candidate([-3, 9, -1, 4, 2, 31]) == False
+
+",,,
+HumanEval/44,kam_Latn,python,"
+
+def change_base(x: int, base: int):
+    """"""Change numerical base of input number x to base. return string representation after the conversion. namba sya mũsingi ni nini kwĩ 10. >>> change_base(8, 3) '22' >>> change_base(8, 2) '1000' >>> change_base(7, 2) '111' """"""
+","    ret = """"
+    while x > 0:
+        ret = str(x % base) + ret
+        x //= base
+    return ret
+","def check(candidate):
+    assert candidate(8, 3) == ""22""
+    assert candidate(9, 3) == ""100""
+    assert candidate(234, 2) == ""11101010""
+    assert candidate(16, 2) == ""10000""
+    assert candidate(8, 2) == ""1000""
+    assert candidate(7, 2) == ""111""
+    for x in range(2, 8):
+        assert candidate(x, x + 1) == str(x)
+
+",,,
+HumanEval/45,kam_Latn,python,"
+
+def triangle_area(a, h):
+    """"""Ũasa wa ĩvia yĩu na vala ĩvia yĩu yĩkomanĩte na yĩima yĩu yĩũngamĩwe nĩ kĩlungu kĩana ũndũ mũna kya kĩthangathĩ.""""""
+","    return a * h / 2.0
+","def check(candidate):
+    assert candidate(5, 3) == 7.5
+    assert candidate(2, 2) == 2.0
+    assert candidate(10, 8) == 40.0
+
+",,,
+HumanEval/46,kam_Latn,python,"
+
+def fib4(n: int):
+    """"""Fib4 namba sequence nĩ sequence o ta ya Fibbonacci sequence ĩla yĩthĩawa yĩilyĩ ta ũũ: fib4(0) -> 0 fib4(1) -> 0 fib4(2) -> 2 fib4(3) -> 0 fib4(n) -> fib4(n-1) + fib4(n-2) + fib4(n-3) + fib4(n-4). Tũmĩa nzĩa ĩno ya kũtala namba namba nthĩnĩ wa sequence. Ndũkatũmĩe nzĩa ya kũsyokea. >>> fib4(5) 4 >>> fib4(6) >>> 8 fib4(7) 14 """"""
+","    results = [0, 0, 2, 0]
+    if n < 4:
+        return results[n]
+
+    for _ in range(4, n + 1):
+        results.append(results[-1] + results[-2] + results[-3] + results[-4])
+        results.pop(0)
+
+    return results[-1]
+","def check(candidate):
+    assert candidate(5) == 4
+    assert candidate(8) == 28
+    assert candidate(10) == 104
+    assert candidate(12) == 386
+
+",,,
+HumanEval/47,kam_Latn,python,"
+
+def median(l: list):
+    """"""Kĩlungu kya mbee kĩeleetye ũndũ syĩndũ imwe sya vata ikwatanĩtw'e.""""""
+","    l = sorted(l)
+    if len(l) % 2 == 1:
+        return l[len(l) // 2]
+    else:
+        return (l[len(l) // 2 - 1] + l[len(l) // 2]) / 2.0
+","def check(candidate):
+    assert candidate([3, 1, 2, 4, 5]) == 3
+    assert candidate([-10, 4, 6, 1000, 10, 20]) == 8.0
+    assert candidate([5]) == 5
+    assert candidate([6, 5]) == 5.5
+    assert candidate([8, 1, 3, 9, 9, 2, 7]) == 7 
+
+",,,
+HumanEval/48,kam_Latn,python,"
+
+def is_palindrome(text: str):
+    """"""Checks if given string is a palindrome >>> is_palindrome('') True >>> is_palindrome('aba') True >>> is_palindrome('aaaaa') True >>> is_palindrome('zbcd') False """"""
+","    for i in range(len(text)):
+        if text[i] != text[len(text) - 1 - i]:
+            return False
+    return True
+","def check(candidate):
+    assert candidate('') == True
+    assert candidate('aba') == True
+    assert candidate('aaaaa') == True
+    assert candidate('zbcd') == False
+    assert candidate('xywyx') == True
+    assert candidate('xywyz') == False
+    assert candidate('xywzx') == False
+
+",,,
+HumanEval/49,kam_Latn,python,"
+
+def modp(n: int, p: int):
+    """"""Return 2^n modulo p (kethĩwa nĩ namba.) >>> modp(3, 5) 3 >>> modp(1101, 101) 2 >>> modp(0, 101) 1 >>> modp(3, 11) 8 >>> modp(100, 101) 1 """"""
+","    ret = 1
+    for i in range(n):
+        ret = (2 * ret) % p
+    return ret
+","def check(candidate):
+    assert candidate(3, 5) == 3
+    assert candidate(1101, 101) == 2
+    assert candidate(0, 101) == 1
+    assert candidate(3, 11) == 8
+    assert candidate(100, 101) == 1
+    assert candidate(30, 5) == 4
+    assert candidate(31, 5) == 3
+
+",,,
+HumanEval/50,kam_Latn,python,"
+
+def encode_shift(s: str):
+    """"""takes as input string encoded with encode_shift function. Kũsyokea namba ĩla yonanĩtw'e na ya mũandĩko wa ala matonaa. """"""
+    return """".join([chr(((ord(ch) + 5 - ord(""a"")) % 26) + ord(""a"")) for ch in s])
+
+
+def decode_shift(s: str):
+    """"""ĩalyũlaa kĩla ndeto ĩandĩkĩtwe na namba ikũmi na ĩmwe.""""""
+","    return """".join([chr(((ord(ch) - 5 - ord(""a"")) % 26) + ord(""a"")) for ch in s])
+","def check(candidate):
+    from random import randint, choice
+    import copy
+    import string
+
+    letters = string.ascii_lowercase
+    for _ in range(100):
+        str = ''.join(choice(letters) for i in range(randint(10, 20)))
+        encoded_str = encode_shift(str)
+        assert candidate(copy.deepcopy(encoded_str)) == str
+
+",,,
+HumanEval/51,kam_Latn,python,"
+
+def remove_vowels(text):
+    """"""remove_vowels nĩ ũndũ ũmwe ũtũmĩaa masinĩ sya kũalyũla na kũandĩka ndeto sya mũsingi itũmĩĩte ndeto ta syongo.""""""
+","    return """".join([s for s in text if s.lower() not in [""a"", ""e"", ""i"", ""o"", ""u""]])
+","def check(candidate):
+    assert candidate('') == ''
+    assert candidate(""abcdef\nghijklm"") == 'bcdf\nghjklm'
+    assert candidate('fedcba') == 'fdcb'
+    assert candidate('eeeee') == ''
+    assert candidate('acBAA') == 'cB'
+    assert candidate('EcBOO') == 'cB'
+    assert candidate('ybcd') == 'ybcd'
+
+",,,
+HumanEval/52,kam_Latn,python,"
+
+def below_threshold(l: list, t: int):
+    """"""Return True if all numbers in the list l are below threshold t. >>> below_threshold([1, 2, 4, 10], 100) True >>> below_threshold([1, 20, 4, 10], 5) False """"""
+","    for e in l:
+        if e >= t:
+            return False
+    return True
+","def check(candidate):
+    assert candidate([1, 2, 4, 10], 100)
+    assert not candidate([1, 20, 4, 10], 5)
+    assert candidate([1, 20, 4, 10], 21)
+    assert candidate([1, 20, 4, 10], 22)
+    assert candidate([1, 8, 4, 10], 11)
+    assert not candidate([1, 8, 4, 10], 10)
+
+",,,
+HumanEval/53,kam_Latn,python,"
+
+def add(x: int, y: int):
+    """"""Ongela namba ilĩ, x na y, ũyongeleela namba ((2, 3) 5 >>> ũyongeleela namba ((5, 7) 12 """"""
+","    return x + y
+","def check(candidate):
+    import random
+
+    assert candidate(0, 1) == 1
+    assert candidate(1, 0) == 1
+    assert candidate(2, 3) == 5
+    assert candidate(5, 7) == 12
+    assert candidate(7, 5) == 12
+
+    for i in range(100):
+        x, y = random.randint(0, 1000), random.randint(0, 1000)
+        assert candidate(x, y) == x + y
+
+",,,
+HumanEval/54,kam_Latn,python,"
+
+def same_chars(s0: str, s1: str):
+    """"""Kwoona kana ndeto ilĩ syĩ mĩandĩko yĩ kĩvathũkany'o. >>> same_chars('eabcdzzzz', 'dddzzzzzzzddeddabc') True >>> same_chars('abcd', 'dddddddabc') True >>> same_chars('dddddddabc', 'abcd') True >>> same_chars('eabcd', 'dddddddabc') False >>> same_chars('abcd', 'dddddddabce') False >>> same_chars'(abcdzzzz', 'dddzzzzzzzddabc') False """"""
+","    return set(s0) == set(s1)
+","def check(candidate):
+    assert candidate('eabcdzzzz', 'dddzzzzzzzddeddabc') == True
+    assert candidate('abcd', 'dddddddabc') == True
+    assert candidate('dddddddabc', 'abcd') == True
+    assert candidate('eabcd', 'dddddddabc') == False
+    assert candidate('abcd', 'dddddddabcf') == False
+    assert candidate('eabcdzzzz', 'dddzzzzzzzddddabc') == False
+    assert candidate('aabb', 'aaccc') == False
+
+",,,
+HumanEval/55,kam_Latn,python,"
+
+def fib(n: int):
+    """"""Nengane namba ya nth ya Fibonacci. >>> fib(10) 55 >>> fib(1) 1 >>> fib(8) 21 """"""
+","    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+    return fib(n - 1) + fib(n - 2)
+","def check(candidate):
+    assert candidate(10) == 55
+    assert candidate(1) == 1
+    assert candidate(8) == 21
+    assert candidate(11) == 89
+    assert candidate(12) == 144
+
+",,,
+HumanEval/56,kam_Latn,python,"
+
+def correct_bracketing(brackets: str):
+    """"""brackets nĩ mũsoa wa ""<"" na "">"". return True ethĩwa kĩla mũsoa ũvingũawa wĩ na mũsoa wa mũthya. >>> correct_bracketing(""<"") False >>> correct_bracketing(""<>"") True >>> correct_bracketing(""<><>"") True >>> correct_bracketing(""><<>"") False """"""
+","    depth = 0
+    for b in brackets:
+        if b == ""<"":
+            depth += 1
+        else:
+            depth -= 1
+        if depth < 0:
+            return False
+    return depth == 0
+","def check(candidate):
+    assert candidate(""<>"")
+    assert candidate(""<<><>>"")
+    assert candidate(""<><><<><>><>"")
+    assert candidate(""<><><<<><><>><>><<><><<>>>"")
+    assert not candidate(""<<<><>>>>"")
+    assert not candidate(""><<>"")
+    assert not candidate(""<"")
+    assert not candidate(""<<<<"")
+    assert not candidate("">"")
+    assert not candidate(""<<>"")
+    assert not candidate(""<><><<><>><>><<>"")
+    assert not candidate(""<><><<><>><>>><>"")
+
+",,,
+HumanEval/57,kam_Latn,python,"
+
+def monotonic(l: list):
+    """"""Return True is list elements are monotonically increasing or decreasing. >>> monotonic (([1, 2, 4, 20]) True >>> monotonic (([1, 20, 4, 10]) False >>> monotonic (([4, 1, 0, -10]) True """"""
+","    if l == sorted(l) or l == sorted(l, reverse=True):
+        return True
+    return False
+","def check(candidate):
+    assert candidate([1, 2, 4, 10]) == True
+    assert candidate([1, 2, 4, 20]) == True
+    assert candidate([1, 20, 4, 10]) == False
+    assert candidate([4, 1, 0, -10]) == True
+    assert candidate([4, 1, 1, 0]) == True
+    assert candidate([1, 2, 3, 2, 5, 60]) == False
+    assert candidate([1, 2, 3, 4, 5, 60]) == True
+    assert candidate([9, 9, 9, 9]) == True
+
+",,,
+HumanEval/58,kam_Latn,python,"
+
+def common(l1: list, l2: list):
+    """"""Ĩkũlyo: Nĩ kyaũ kĩtonya kũtetheesya mũndũ akaelewa kana Mbivilia ĩeleetye ĩũlũ wa kũsyawa kwa Yesũ?""""""
+","    ret = set()
+    for e1 in l1:
+        for e2 in l2:
+            if e1 == e2:
+                ret.add(e1)
+    return sorted(list(ret))
+","def check(candidate):
+    assert candidate([1, 4, 3, 34, 653, 2, 5], [5, 7, 1, 5, 9, 653, 121]) == [1, 5, 653]
+    assert candidate([5, 3, 2, 8], [3, 2]) == [2, 3]
+    assert candidate([4, 3, 2, 8], [3, 2, 4]) == [2, 3, 4]
+    assert candidate([4, 3, 2, 8], []) == []
+
+",,,
+HumanEval/59,kam_Latn,python,"
+
+def largest_prime_factor(n: int):
+    """"""Return the largest prime factor of n. Kwasya n > 1 na ti prime. >>> largest_prime_factor ((13195) 29 >>> largest_prime_factor ((2048) 2 """"""
+","    def is_prime(k):
+        if k < 2:
+            return False
+        for i in range(2, k - 1):
+            if k % i == 0:
+                return False
+        return True
+    largest = 1
+    for j in range(2, n + 1):
+        if n % j == 0 and is_prime(j):
+            largest = max(largest, j)
+    return largest
+","def check(candidate):
+    assert candidate(15) == 5
+    assert candidate(27) == 3
+    assert candidate(63) == 7
+    assert candidate(330) == 11
+    assert candidate(13195) == 29
+
+",,,
+HumanEval/60,kam_Latn,python,"
+
+def sum_to_n(n: int):
+    """"""sum_to_n nĩ ũndũ ũmwe ũtũmĩaa kwongeleela namba kuma 1 nginya n. >>> sum_to_n(30) 465 >>> sum_to_n(100) 5050 >>> sum_to_n(5) 15 >>> sum_to_n(10) 55 >>> sum_to_n(1) 1 """"""
+","    return sum(range(n + 1))
+","def check(candidate):
+    assert candidate(1) == 1
+    assert candidate(6) == 21
+    assert candidate(11) == 66
+    assert candidate(30) == 465
+    assert candidate(100) == 5050
+
+",,,
+HumanEval/61,kam_Latn,python,"
+
+def correct_bracketing(brackets: str):
+    """"""brackets nĩ mũandĩko wa ""("" na "")"". return True ethĩwa kĩla mũandĩko wa bracket wĩ na mũandĩko wa bracket wa mũthya. >>> correct_bracketing(""("") False >>> correct_bracketing(""() True >>> correct_bracketing(""() True >>> correct_bracketing("") False """"""
+","    depth = 0
+    for b in brackets:
+        if b == ""("":
+            depth += 1
+        else:
+            depth -= 1
+        if depth < 0:
+            return False
+    return depth == 0
+","def check(candidate):
+    assert candidate(""()"")
+    assert candidate(""(()())"")
+    assert candidate(""()()(()())()"")
+    assert candidate(""()()((()()())())(()()(()))"")
+    assert not candidate(""((()())))"")
+    assert not candidate("")(()"")
+    assert not candidate(""("")
+    assert not candidate(""(((("")
+    assert not candidate("")"")
+    assert not candidate(""(()"")
+    assert not candidate(""()()(()())())(()"")
+    assert not candidate(""()()(()())()))()"")
+
+",,,
+HumanEval/62,kam_Latn,python,"
+
+def derivative(xs: list):
+    """"""xs nĩ mũtalatala wa kũalyũla ndeto kwa ndeto. xs[0] + xs[1] * x + xs[2] * x^2 + .... Ĩĩnenganĩte mũtalatala wa kũalyũla ndeto kwa ndeto kwa nzĩa o ĩsu. >>> derivative (([3, 1, 2, 4, 5]) [1, 4, 12, 20] >>> derivative[(1, 2, 3]) [2, 6] """"""
+","    return [(i * x) for i, x in enumerate(xs)][1:]
+","def check(candidate):
+    assert candidate([3, 1, 2, 4, 5]) == [1, 4, 12, 20]
+    assert candidate([1, 2, 3]) == [2, 6]
+    assert candidate([3, 2, 1]) == [2, 2]
+    assert candidate([3, 2, 1, 0, 4]) == [2, 2, 0, 16]
+    assert candidate([1]) == []
+
+",,,
+HumanEval/63,kam_Latn,python,"
+
+def fibfib(n: int):
+    """"""FibFib namba namba sequence nĩ sequence o ta Fibbonacci sequence ĩla yĩthĩawa yĩilyĩ ta ũũ: fibfib(0) == 0 fibfib(1) == 0 fibfib(2) == 1 fibfib(n) == fibfib(n-1) + fibfib(n-2) + fibfib(n-3). Tũmĩa nzĩa ĩno kũtala namba namba ya nth nthĩnĩ wa sequence ya fibfib. >>> fibfib(1) 0 >>> fib(5) 4 >>> fibfib(8) 24 """"""
+","    if n == 0:
+        return 0
+    if n == 1:
+        return 0
+    if n == 2:
+        return 1
+    return fibfib(n - 1) + fibfib(n - 2) + fibfib(n - 3)
+","def check(candidate):
+    assert candidate(2) == 1
+    assert candidate(1) == 0
+    assert candidate(5) == 4
+    assert candidate(8) == 24
+    assert candidate(10) == 81
+    assert candidate(12) == 274
+    assert candidate(14) == 927
+
+",,,
+HumanEval/64,kam_Latn,python,"
+FIX = """"""Andĩka namba ya mũsingi (vowel) ĩla ĩketwa vowels_count na ĩisyoka yĩthĩwe nĩ namba ya mũsingi wa ndeto. Syĩtwa sya mũsingi ta 'a', 'e', 'i', 'o', 'u' vaa nĩ 'y' na 'y' no sya mũsingi o ta sya ndeto ila itũmĩĩtwe. Ngelekany'o: >>> vowels_count ((""abcde"") 2 >>> vowels_count ((""ACEDY"") 3 """"""
+
+def vowels_count(s):
+    """"""Ongela ũvoo ũngĩ ũtonya kũtetheesya mũsomi.""""""
+","    vowels = ""aeiouAEIOU""
+    n_vowels = sum(c in vowels for c in s)
+    if s[-1] == 'y' or s[-1] == 'Y':
+        n_vowels += 1
+    return n_vowels
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""abcde"") == 2, ""Test 1""
+    assert candidate(""Alone"") == 3, ""Test 2""
+    assert candidate(""key"") == 2, ""Test 3""
+    assert candidate(""bye"") == 1, ""Test 4""
+    assert candidate(""keY"") == 2, ""Test 5""
+    assert candidate(""bYe"") == 1, ""Test 6""
+    assert candidate(""ACEDY"") == 3, ""Test 7""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/65,kam_Latn,python,"
+def circular_shift(x, shift):
+    """"""move the digits of the integer x, move the digits right by shift and return the result as a string. If shift > number of digits, return digits reversed. >>> circular_shift(12, 1) ""21"" >>> circular_shift(12, 2) ""12"" """"""
+","    s = str(x)
+    if shift > len(s):
+        return s[::-1]
+    else:
+        return s[len(s) - shift:] + s[:len(s) - shift]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(100, 2) == ""001""
+    assert candidate(12, 2) == ""12""
+    assert candidate(97, 8) == ""79""
+    assert candidate(12, 1) == ""21"", ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(11, 101) == ""11"", ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/66,kam_Latn,python,"
+def digitSum(s):
+    """"""Task Andĩka fomu ĩtũmĩĩte string ta input na ũisũngĩa namba ya ASCII ya mũandĩko wa ala me mbee. Ngelekany'o: digitSum("""") => 0 digitSum(""abAB"") => 131 digitSum(""abcCd"") => 67 digitSum(""helloE"") => 69 digitSum(""woArBld"") => 131 digitSum(""aAaaaXa"") => 153 """"""
+","    if s == """": return 0
+    return sum(ord(char) if char.isupper() else 0 for char in s)
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate("""") == 0, ""Error""
+    assert candidate(""abAB"") == 131, ""Error""
+    assert candidate(""abcCd"") == 67, ""Error""
+    assert candidate(""helloE"") == 69, ""Error""
+    assert candidate(""woArBld"") == 131, ""Error""
+    assert candidate(""aAaaaXa"") == 153, ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate("" How are yOu?"") == 151, ""Error""
+    assert candidate(""You arE Very Smart"") == 327, ""Error""
+
+",,,
+HumanEval/67,kam_Latn,python,"
+def fruit_distribution(s,n):
+    """"""Ĩla wakũna visa tũtanamba kũthi wĩanĩ, ndwĩsa kwona mũndũ ũkwendeew'a, na kwoou no ũtate kũmanthĩthya kĩla ũkwenda kũseũvya. Kwa ngelekany'o, kwasũanĩa mũndũ ũkũseũvya kĩndũ kĩ na langi mũtune mũno, kana mũndũ ũkũseũvya itambaa nene sya mavisa atũmĩĩte langi ũte mũkundye langi.""""""
+","    lis = list()
+    for i in s.split(' '):
+        if i.isdigit():
+            lis.append(int(i))
+    return n - sum(lis)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""5 apples and 6 oranges"",19) == 8
+    assert candidate(""5 apples and 6 oranges"",21) == 10
+    assert candidate(""0 apples and 1 oranges"",3) == 2
+    assert candidate(""1 apples and 0 oranges"",3) == 2
+    assert candidate(""2 apples and 3 oranges"",100) == 95
+    assert candidate(""2 apples and 3 oranges"",5) == 0
+    assert candidate(""1 apples and 100 oranges"",120) == 19
+",,,
+HumanEval/68,kam_Latn,python,"
+def pluck(arr):
+    """"""""Nenge namba namba ila syĩ mũtiani wa mũtĩ na namba isu syĩ na namba itatũ ũiitianĩwa. Wĩa waku nĩ kũtila namba ĩmwe na ũisyoka nayo. No nginya namba ĩla ĩtiĩtwe yĩthĩwe no namba ĩla nini vyũ o na ethĩwa nĩ ĩmwe. Ethĩwa ve namba ivangĩtwe o ta ĩsu na namba ĩla nini vyũ, no nginya isyokee namba ĩla ĩtiĩtwe yĩ na namba ĩla nini vyũ. Ethĩwa namba ĩla ĩtiĩtwe yĩ o ĩmwe na ĩtiĩtwe yĩ o ĩlĩ, na namba ĩla ĩtiĩtwe yĩ o ĩmwe, no nginya isyokee []. Ngelekany'o ya 1: Input: [4,2,3] Output: [2, 1] Explanation: 2 is the smallest even value, and 2 is the smallest index. Ngelekany'o ya 2: Input: [1,2,3] Output: [2, 1] Explanation: 2 is the smallest even value, and 2 is the smallest even index. Ngelekany'o 3: Input: [] Output: [4:] Input: [5, 3, 4, 2] Output: 1 is the smallest even value.""""""
+","    if(len(arr) == 0): return []
+    evens = list(filter(lambda x: x%2 == 0, arr))
+    if(evens == []): return []
+    return [min(evens), arr.index(min(evens))]
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([4,2,3]) == [2, 1], ""Error""
+    assert candidate([1,2,3]) == [2, 1], ""Error""
+    assert candidate([]) == [], ""Error""
+    assert candidate([5, 0, 3, 0, 4, 2]) == [0, 1], ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([1, 2, 3, 0, 5, 3]) == [0, 3], ""Error""
+    assert candidate([5, 4, 8, 4 ,8]) == [4, 1], ""Error""
+    assert candidate([7, 6, 7, 1]) == [6, 1], ""Error""
+    assert candidate([7, 9, 7, 1]) == [], ""Error""
+
+",,,
+HumanEval/69,kam_Latn,python,"
+def search(lst):
+    '''Ve mũsoa ũeleetye ũndũ namba ĩkwatĩkanaa. Ethĩwa mũsoa ũsu ti mũamba, ũalyũlo w'onthe wa ndeto ĩsu nĩ -1.'''
+","    frq = [0] * (max(lst) + 1)
+    for i in lst:
+        frq[i] += 1;
+
+    ans = -1
+    for i in range(1, len(frq)):
+        if frq[i] >= i:
+            ans = i
+    
+    return ans
+","def check(candidate):
+
+    # manually generated tests
+    assert candidate([5, 5, 5, 5, 1]) == 1
+    assert candidate([4, 1, 4, 1, 4, 4]) == 4
+    assert candidate([3, 3]) == -1
+    assert candidate([8, 8, 8, 8, 8, 8, 8, 8]) == 8
+    assert candidate([2, 3, 3, 2, 2]) == 2
+
+    # automatically generated tests
+    assert candidate([2, 7, 8, 8, 4, 8, 7, 3, 9, 6, 5, 10, 4, 3, 6, 7, 1, 7, 4, 10, 8, 1]) == 1
+    assert candidate([3, 2, 8, 2]) == 2
+    assert candidate([6, 7, 1, 8, 8, 10, 5, 8, 5, 3, 10]) == 1
+    assert candidate([8, 8, 3, 6, 5, 6, 4]) == -1
+    assert candidate([6, 9, 6, 7, 1, 4, 7, 1, 8, 8, 9, 8, 10, 10, 8, 4, 10, 4, 10, 1, 2, 9, 5, 7, 9]) == 1
+    assert candidate([1, 9, 10, 1, 3]) == 1
+    assert candidate([6, 9, 7, 5, 8, 7, 5, 3, 7, 5, 10, 10, 3, 6, 10, 2, 8, 6, 5, 4, 9, 5, 3, 10]) == 5
+    assert candidate([1]) == 1
+    assert candidate([8, 8, 10, 6, 4, 3, 5, 8, 2, 4, 2, 8, 4, 6, 10, 4, 2, 1, 10, 2, 1, 1, 5]) == 4
+    assert candidate([2, 10, 4, 8, 2, 10, 5, 1, 2, 9, 5, 5, 6, 3, 8, 6, 4, 10]) == 2
+    assert candidate([1, 6, 10, 1, 6, 9, 10, 8, 6, 8, 7, 3]) == 1
+    assert candidate([9, 2, 4, 1, 5, 1, 5, 2, 5, 7, 7, 7, 3, 10, 1, 5, 4, 2, 8, 4, 1, 9, 10, 7, 10, 2, 8, 10, 9, 4]) == 4
+    assert candidate([2, 6, 4, 2, 8, 7, 5, 6, 4, 10, 4, 6, 3, 7, 8, 8, 3, 1, 4, 2, 2, 10, 7]) == 4
+    assert candidate([9, 8, 6, 10, 2, 6, 10, 2, 7, 8, 10, 3, 8, 2, 6, 2, 3, 1]) == 2
+    assert candidate([5, 5, 3, 9, 5, 6, 3, 2, 8, 5, 6, 10, 10, 6, 8, 4, 10, 7, 7, 10, 8]) == -1
+    assert candidate([10]) == -1
+    assert candidate([9, 7, 7, 2, 4, 7, 2, 10, 9, 7, 5, 7, 2]) == 2
+    assert candidate([5, 4, 10, 2, 1, 1, 10, 3, 6, 1, 8]) == 1
+    assert candidate([7, 9, 9, 9, 3, 4, 1, 5, 9, 1, 2, 1, 1, 10, 7, 5, 6, 7, 6, 7, 7, 6]) == 1
+    assert candidate([3, 10, 10, 9, 2]) == -1
+
+",,,
+HumanEval/70,kam_Latn,python,"
+def strange_sort_list(lst):
+    '''Veethĩwa ve namba ĩmwe ĩte ndĩkĩĩku, ũvangĩĩaa kĩla kĩatĩĩe. Ũvangĩĩaa namba itatũ na ũisyoka ũatĩĩe namba o ĩla ĩngĩ, na ũisyoka ũatĩĩe namba o ĩla ĩngĩ.'''
+","    res, switch = [], True
+    while lst:
+        res.append(min(lst) if switch else max(lst))
+        lst.remove(res[-1])
+        switch = not switch
+    return res
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1, 2, 3, 4]) == [1, 4, 2, 3]
+    assert candidate([5, 6, 7, 8, 9]) == [5, 9, 6, 8, 7]
+    assert candidate([1, 2, 3, 4, 5]) == [1, 5, 2, 4, 3]
+    assert candidate([5, 6, 7, 8, 9, 1]) == [1, 9, 5, 8, 6, 7]
+    assert candidate([5, 5, 5, 5]) == [5, 5, 5, 5]
+    assert candidate([]) == []
+    assert candidate([1,2,3,4,5,6,7,8]) == [1, 8, 2, 7, 3, 6, 4, 5]
+    assert candidate([0,2,2,2,5,5,-5,-5]) == [-5, 5, -5, 5, 0, 2, 2, 2]
+    assert candidate([111111]) == [111111]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/71,kam_Latn,python,"
+def triangle_area(a, b, c):
+    '''Ethĩwa kĩlungu kya mbee nĩ kya ũasa wa mĩongo ĩtatũ, kĩlungu kya kelĩ nĩ kya ũasa wa mĩongo ĩtatũ. Ethĩwa kĩlungu kya katatũ nĩ kya ũasa wa mĩongo ĩtatũ, kĩlungu kya katatũ nĩ kya ũasa wa mĩongo ĩtatũ. Ethĩwa kĩlungu kya katatũ ti kya ũasa wa mĩongo ĩtatũ, kĩlungu kya katatũ nĩ kya ũasa wa mĩongo ĩtatũ.'''
+","    if a + b <= c or a + c <= b or b + c <= a:
+        return -1 
+    s = (a + b + c)/2    
+    area = (s * (s - a) * (s - b) * (s - c)) ** 0.5
+    area = round(area, 2)
+    return area
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(3, 4, 5) == 6.00, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(1, 2, 10) == -1
+    assert candidate(4, 8, 5) == 8.18
+    assert candidate(2, 2, 2) == 1.73
+    assert candidate(1, 2, 3) == -1
+    assert candidate(10, 5, 7) == 16.25
+    assert candidate(2, 6, 3) == -1
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1, 1, 1) == 0.43, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(2, 2, 10) == -1
+
+",,,
+HumanEval/72,kam_Latn,python,"
+def will_it_fly(q,w):
+    '''Andĩka ũndũ ũtonya kũtũngwa na ũineena ũw'o ethĩwa kĩndũ kĩu kĩ na ũito wa vakuvĩ ta (million) na kĩi na ũito ta (million) wa w. Kwa ngelekany'o: will_it_fly (([1, 2], 5) â -> False # 1+2 is less than the maximum possible weight, but it's unbalanced. will_it_fly (([3, 2, 3], 1) â -> False # it's balanced, but 3+2+3 is more than the maximum possible weight. will_it_fly (([3, 2, 3], 9) â -> True # 3+23 is less than the maximum possible weight, and it's balanced. will_it_fly ((([3], 5) â -> True # 3 is less than the maximum possible weight, and it's balanced.'''
+","    if sum(q) > w:
+        return False
+
+    i, j = 0, len(q)-1
+    while i<j:
+        if q[i] != q[j]:
+            return False
+        i+=1
+        j-=1
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([3, 2, 3], 9) is True
+    assert candidate([1, 2], 5) is False
+    assert candidate([3], 5) is True
+    assert candidate([3, 2, 3], 1) is False
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1, 2, 3], 6) is False
+    assert candidate([5], 5) is True
+
+",,,
+HumanEval/73,kam_Latn,python,"
+def smallest_change(arr):
+    """"""Ve mũvangĩle wa syũmbe ila syĩ kw'o ĩũlũ wa nthĩ. Syũmbe isu syĩkalaa ilĩko sya andũ o ta andũ ma mũsyĩ ũmwe.""""""
+","    ans = 0
+    for i in range(len(arr) // 2):
+        if arr[i] != arr[len(arr) - i - 1]:
+            ans += 1
+    return ans
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,2,3,5,4,7,9,6]) == 4
+    assert candidate([1, 2, 3, 4, 3, 2, 2]) == 1
+    assert candidate([1, 4, 2]) == 1
+    assert candidate([1, 4, 4, 2]) == 1
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1, 2, 3, 2, 1]) == 0
+    assert candidate([3, 1, 1, 3]) == 0
+    assert candidate([1]) == 0
+    assert candidate([0, 1]) == 1
+
+",,,
+HumanEval/74,kam_Latn,python,"
+def total_match(lst1, lst2):
+    '''Andĩka namba ila syĩ nthĩnĩ wa list na ũisyoka na namba ĩla ĩkwonany'a kana namba ĩla ĩkwonany'a nĩ nini kwĩ ĩla ĩngĩ. Ethĩwa namba ila syĩ nthĩnĩ wa list nĩ imwe syĩana, weka namba ĩla ĩkwonany'a nĩ nini.'''
+","    l1 = 0
+    for st in lst1:
+        l1 += len(st)
+    
+    l2 = 0
+    for st in lst2:
+        l2 += len(st)
+    
+    if l1 <= l2:
+        return lst1
+    else:
+        return lst2
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([], []) == []
+    assert candidate(['hi', 'admin'], ['hi', 'hi']) == ['hi', 'hi']
+    assert candidate(['hi', 'admin'], ['hi', 'hi', 'admin', 'project']) == ['hi', 'admin']
+    assert candidate(['4'], ['1', '2', '3', '4', '5']) == ['4']
+    assert candidate(['hi', 'admin'], ['hI', 'Hi']) == ['hI', 'Hi']
+    assert candidate(['hi', 'admin'], ['hI', 'hi', 'hi']) == ['hI', 'hi', 'hi']
+    assert candidate(['hi', 'admin'], ['hI', 'hi', 'hii']) == ['hi', 'admin']
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([], ['this']) == []
+    assert candidate(['this'], []) == []
+
+",,,
+HumanEval/75,kam_Latn,python,"
+def is_multiply_prime(a):
+    """"""Andĩka namba ĩkwonany'a nĩ ũndũ namba ĩmwe ĩanene na ĩngĩ ĩte vo, na ĩndĩ ũiĩsũngĩa na nzĩa ĩno: == is_multiply_prime ((30) == True 30 = 2 * 3 * 5 """"""
+","    def is_prime(n):
+        for j in range(2,n):
+            if n%j == 0:
+                return False
+        return True
+
+    for i in range(2,101):
+        if not is_prime(i): continue
+        for j in range(2,101):
+            if not is_prime(j): continue
+            for k in range(2,101):
+                if not is_prime(k): continue
+                if i*j*k == a: return True
+    return False
+","def check(candidate):
+
+    assert candidate(5) == False
+    assert candidate(30) == True
+    assert candidate(8) == True
+    assert candidate(10) == False
+    assert candidate(125) == True
+    assert candidate(3 * 5 * 7) == True
+    assert candidate(3 * 6 * 7) == False
+    assert candidate(9 * 9 * 9) == False
+    assert candidate(11 * 9 * 9) == False
+    assert candidate(11 * 13 * 7) == True
+
+",,,
+HumanEval/76,kam_Latn,python,"
+def is_simple_power(x, n):
+    """"""Wĩa waku nĩ kũandĩka ũndũ ũtũngĩawa nĩ w'o ethĩwa namba x nĩ namba yĩ laisi ya nthimo na yĩ nthimo ya w'o ethĩwa namba n nĩ namba yĩ laisi ya nthimo na yĩ nthimo ya w'o ethĩwa namba n nĩ namba ya w'o na yĩ nthimo ya w'o. x nĩ namba yĩ laisi ya nthimo ya w'o ethĩwa n**int=x Kwa ngelekany'o: is_simple_power(1, 4) => true is_simple_power(2, 2) => true is_simple_power(8, 2) => true is_simple_power(3, 2) => false is_simple_power(3, 1) false => is_simple_power(5, 3) => false """"""
+","    if (n == 1): 
+        return (x == 1) 
+    power = 1
+    while (power < x): 
+        power = power * n 
+    return (power == x) 
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(16, 2)== True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(143214, 16)== False, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(4, 2)==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(9, 3)==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(16, 4)==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(24, 2)==False, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(128, 4)==False, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(12, 6)==False, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1, 1)==True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(1, 12)==True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/77,kam_Latn,python,"
+def iscube(a):
+    '''Andĩka ũndũ ũtonya kũtũngwa ethĩwa namba a nĩ ĩima na yĩi na ũima wa kũndũ kwĩlĩ kwa a. Kĩmanyĩthya: no ũtw'e kana namba ya mũsingi nĩ ĩima.'''
+","    a = abs(a)
+    return int(round(a ** (1. / 3))) ** 3 == a
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(1) == True, ""First test error: "" + str(candidate(1))
+    assert candidate(2) == False, ""Second test error: "" + str(candidate(2))
+    assert candidate(-1) == True, ""Third test error: "" + str(candidate(-1))
+    assert candidate(64) == True, ""Fourth test error: "" + str(candidate(64))
+    assert candidate(180) == False, ""Fifth test error: "" + str(candidate(180))
+    assert candidate(1000) == True, ""Sixth test error: "" + str(candidate(1000))
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(0) == True, ""1st edge test error: "" + str(candidate(0))
+    assert candidate(1729) == False, ""2nd edge test error: "" + str(candidate(1728))
+
+",,,
+HumanEval/78,kam_Latn,python,"
+def hex_key(num):
+    """"""No ũwete namba sya mũsingi (prime numbers) ila syĩthĩawa iandĩkĩtwe na namba ikũmi na ĩmwe na namba isu syĩ na namba namba ĩmwe na ĩana. Namba ikũmi na ĩmwe nĩ namba 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F. Namba ikũmi na ĩmwe nĩ namba 2, 3, 5, 7, 11, 13, 17,... Na kwoou namba isu syĩ na namba ii: 2, 3, 5, 7, 7, B (=decimal 11), D (=decimal 13).""""""
+","    primes = ('2', '3', '5', '7', 'B', 'D')
+    total = 0
+    for i in range(0, len(num)):
+        if num[i] in primes:
+            total += 1
+    return total
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""AB"") == 1, ""First test error: "" + str(candidate(""AB""))      
+    assert candidate(""1077E"") == 2, ""Second test error: "" + str(candidate(""1077E""))  
+    assert candidate(""ABED1A33"") == 4, ""Third test error: "" + str(candidate(""ABED1A33""))      
+    assert candidate(""2020"") == 2, ""Fourth test error: "" + str(candidate(""2020""))  
+    assert candidate(""123456789ABCDEF0"") == 6, ""Fifth test error: "" + str(candidate(""123456789ABCDEF0""))      
+    assert candidate(""112233445566778899AABBCCDDEEFF00"") == 12, ""Sixth test error: "" + str(candidate(""112233445566778899AABBCCDDEEFF00""))  
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([]) == 0
+
+",,,
+HumanEval/79,kam_Latn,python,"
+def decimal_to_binary(decimal):
+    """"""Ve mũsoa ũandĩkĩtwe na namba namba kuma kw'oko kwa aũme nginya kwa aka, na namba ĩsu no ĩalyũlwe na namba ikũmi na ĩmwe kana mĩongo ĩtano na ilĩ. Namba ikũmi na ĩmwe, mũsoa wa kelĩ, na namba ikũmi na ĩmwe. Namba ikũmi na ĩmwe, mũsoa wa kenda, na namba ikũmi na ilĩ. Namba ikũmi na ĩmwe, mũsoa wa thanthatũ. Namba ikũmi na ĩmwe, mũsoa wa thanthatũ. Namba ikũmi na ĩmwe, mũsoa wa thanthatũ. Namba ikũmi na ĩmwe, mũsoa wa thanthatũ. Namba ikũmi na ĩmwe, mũsoa wa thanthatũ. Namba ikũmi na ĩmwe, mũsoa wa thanthatũ. Namba ikũmi na ĩmwe, mũsoa wa thanthatũ. Namba ikũmi na ĩmwe, mũsoa wa thanthatũ. Namba ikũmi na ĩmwe, mũsoa wa thanthatũ. Namba ikũmi na ĩmwe, mũsoa wa thanthatũ. Namba ikũmi na ĩmwe, mũsoa wa thanthatũ. Namba ikũmi na ĩmwe, mũsoa wa thanthatũ.""""""
+","    return ""db"" + bin(decimal)[2:] + ""db""
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(0) == ""db0db""
+    assert candidate(32) == ""db100000db""
+    assert candidate(103) == ""db1100111db""
+    assert candidate(15) == ""db1111db"", ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/80,kam_Latn,python,"
+def is_happy(s):
+    """"""Ũkakwata mũandĩko wa nthoo s, ũkeethĩwa na wĩa wa kũsisya kana mũandĩko ũsu nĩ mũseo kana ti mũseo. Nguma ĩsu yaĩle kwĩthĩwa yĩandĩkĩtwe na nthoo itatũ ũtee wa kĩla ĩandĩko. Kwa ngelekany'o, is_happy (a) => False is_happy (a) => False is_happy (b) => True is_happy (a) => False is_happy (a) => False is_happy (b) => True is_happy (x) => False """"""
+","    if len(s) < 3:
+      return False
+
+    for i in range(len(s) - 2):
+      
+      if s[i] == s[i+1] or s[i+1] == s[i+2] or s[i] == s[i+2]:
+        return False
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""a"") == False , ""a""
+    assert candidate(""aa"") == False , ""aa""
+    assert candidate(""abcd"") == True , ""abcd""
+    assert candidate(""aabb"") == False , ""aabb""
+    assert candidate(""adb"") == True , ""adb""
+    assert candidate(""xyy"") == False , ""xyy""
+    assert candidate(""iopaxpoi"") == True , ""iopaxpoi""
+    assert candidate(""iopaxioi"") == False , ""iopaxioi""
+",,,
+HumanEval/81,kam_Latn,python,"
+def numerical_letter_grade(grades):
+    """"""ŨNDŨ ŨTONYA KWĨKĨĨA: Mbee, mũsomi nĩwaĩle kũandĩka kĩla mũsomi wĩkĩte. Kwa ngelekany'o, nĩ kana ũmanye ũndũ mũsomi ũtonya kwĩka nĩ kana atũngĩĩe kĩla ũkwĩsomea, no ũsũanĩe ũndũ ũtonya kũandĩka mũsoa ũla ũkwĩsomea.""""""
+","
+   
+    letter_grade = []
+    for gpa in grades:
+        if gpa == 4.0:
+            letter_grade.append(""A+"")
+        elif gpa > 3.7:
+            letter_grade.append(""A"")
+        elif gpa > 3.3:
+            letter_grade.append(""A-"")
+        elif gpa > 3.0:
+            letter_grade.append(""B+"")
+        elif gpa > 2.7:
+            letter_grade.append(""B"")
+        elif gpa > 2.3:
+            letter_grade.append(""B-"")
+        elif gpa > 2.0:
+            letter_grade.append(""C+"")
+        elif gpa > 1.7:
+            letter_grade.append(""C"")
+        elif gpa > 1.3:
+            letter_grade.append(""C-"")
+        elif gpa > 1.0:
+            letter_grade.append(""D+"")
+        elif gpa > 0.7:
+            letter_grade.append(""D"")
+        elif gpa > 0.0:
+            letter_grade.append(""D-"")
+        else:
+            letter_grade.append(""E"")
+    return letter_grade
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([4.0, 3, 1.7, 2, 3.5]) == ['A+', 'B', 'C-', 'C', 'A-']
+    assert candidate([1.2]) == ['D+']
+    assert candidate([0.5]) == ['D-']
+    assert candidate([0.0]) == ['E']
+    assert candidate([1, 0.3, 1.5, 2.8, 3.3]) == ['D', 'D-', 'C-', 'B', 'B+']
+    assert candidate([0, 0.7]) == ['E', 'D-']
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/82,kam_Latn,python,"
+def prime_length(string):
+    """"""Andĩka namba ĩkwonany'a nĩ namba ĩilyĩ ata na nĩ ya w'o kana nĩ ya ũvũngũ.""""""
+","    l = len(string)
+    if l == 0 or l == 1:
+        return False
+    for i in range(2, l):
+        if l % i == 0:
+            return False
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('Hello') == True
+    assert candidate('abcdcba') == True
+    assert candidate('kittens') == True
+    assert candidate('orange') == False
+    assert candidate('wow') == True
+    assert candidate('world') == True
+    assert candidate('MadaM') == True
+    assert candidate('Wow') == True
+    assert candidate('') == False
+    assert candidate('HI') == True
+    assert candidate('go') == True
+    assert candidate('gogo') == False
+    assert candidate('aaaaaaaaaaaaaaa') == False
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('Madam') == True
+    assert candidate('M') == False
+    assert candidate('0') == False
+
+",,,
+HumanEval/83,kam_Latn,python,"
+def starts_one_ends(n):
+    """"""Ĩĩ nĩ ĩkomano ĩnene, ĩndĩ yĩ na andũ anini.""""""
+","    if n == 1: return 1
+    return 18 * (10 ** (n - 2))
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(1) == 1
+    assert candidate(2) == 18
+    assert candidate(3) == 180
+    assert candidate(4) == 1800
+    assert candidate(5) == 18000
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/84,kam_Latn,python,"
+def solve(N):
+    """"""Ĩĩ nĩ ĩkomano ĩnene, ĩndĩ yĩ na andũ anini. Mũndũ ũla ũkomanaa na ĩkomano yĩu no akwate namba ĩmwe kana o ilĩ kwa mũthenya. Ethĩwa nĩvatonyeka, tũkũnĩa simũ ĩsu na simũ ĩsu na tũimĩandĩka.""""""
+","    return bin(sum(int(i) for i in str(N)))[2:]
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(1000) == ""1"", ""Error""
+    assert candidate(150) == ""110"", ""Error""
+    assert candidate(147) == ""1100"", ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(333) == ""1001"", ""Error""
+    assert candidate(963) == ""10010"", ""Error""
+
+",,,
+HumanEval/85,kam_Latn,python,"
+def add(lst):
+    """"""Twakwata namba iana ũna twĩ nasyo, namba isu syonthe vamwe na namba ila ingĩ nthĩnĩ wa namba isu, twongela namba o ila ingĩ nthĩnĩ wa namba ii, na ĩndĩ tũivanga namba isu syonthe na namba ila ingĩ nthĩnĩ wa namba ii.""""""
+","    return sum([lst[i] for i in range(1, len(lst), 2) if lst[i]%2 == 0])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([4, 88]) == 88
+    assert candidate([4, 5, 6, 7, 2, 122]) == 122
+    assert candidate([4, 0, 6, 7]) == 0
+    assert candidate([4, 4, 6, 8]) == 12
+
+    # Check some edge cases that are easy to work out by hand.
+    
+",,,
+HumanEval/86,kam_Latn,python,"
+def anti_shuffle(s):
+    """"""Andĩka na ũimantha vala waĩle kũtũngĩa ndeto sya mũsingi (string) na ĩndĩ ũimyananga ũndũ vaĩle. Ũndũ ũla waĩle nĩ kũandĩka ndeto sya mũsingi (string) vala ndeto syonthe iandĩkĩtwe na nthoo syĩ na namba kana maũndũ ala mawetetwe vau. Ũndũ ũngĩ nĩ kana, ũandĩke ndeto o ũndũ waĩle iatĩĩe namba ila iandĩkĩtwe. Kwa ngelekany'o, anti_shuffle ((('Hi') ĩkaũandĩka 'Hi' anti_shuffle ((('hello') ĩkaũandĩka 'ehllo' anti_shuffle (('Hello World!!!') ĩkaũandĩka 'Hello !!!Wdlor' """"""
+","    return ' '.join([''.join(sorted(list(i))) for i in s.split(' ')])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('Hi') == 'Hi'
+    assert candidate('hello') == 'ehllo'
+    assert candidate('number') == 'bemnru'
+    assert candidate('abcd') == 'abcd'
+    assert candidate('Hello World!!!') == 'Hello !!!Wdlor'
+    assert candidate('') == ''
+    assert candidate('Hi. My name is Mister Robot. How are you?') == '.Hi My aemn is Meirst .Rboot How aer ?ouy'
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/87,kam_Latn,python,"
+def get_row(lst, x):
+    """"""Ve mũsoa ũandĩkĩtwe ta wathi wĩ na kyongo ""Kwenda kwa Ngai"". Na ũandĩkĩtwe ta wathi wĩ na kyongo ""Kwenda kwa Ngai"". Na ũandĩkĩtwe ta wathi wĩ na kyongo ""Kwenda kwa Ngai"". Na ũandĩkĩtwe ta wathi wĩ na kyongo ""Kwenda kwa Ngai"". Na ũandĩkĩtwe ta wathi wĩ na kyongo ""Kwenda kwa Ngai"". Na ũandĩkĩtwe ta wathi wĩ na kyongo ""Kwenda kwa Ngai"".""""""
+","    coords = [(i, j) for i in range(len(lst)) for j in range(len(lst[i])) if lst[i][j] == x]
+    return sorted(sorted(coords, key=lambda x: x[1], reverse=True), key=lambda x: x[0])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([
+        [1,2,3,4,5,6],
+        [1,2,3,4,1,6],
+        [1,2,3,4,5,1]
+    ], 1) == [(0, 0), (1, 4), (1, 0), (2, 5), (2, 0)]
+    assert candidate([
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6]
+    ], 2) == [(0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (5, 1)]
+    assert candidate([
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,1,3,4,5,6],
+        [1,2,1,4,5,6],
+        [1,2,3,1,5,6],
+        [1,2,3,4,1,6],
+        [1,2,3,4,5,1]
+    ], 1) == [(0, 0), (1, 0), (2, 1), (2, 0), (3, 2), (3, 0), (4, 3), (4, 0), (5, 4), (5, 0), (6, 5), (6, 0)]
+    assert candidate([], 1) == []
+    assert candidate([[1]], 2) == []
+    assert candidate([[], [1], [1, 2, 3]], 3) == [(2, 2)]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/88,kam_Latn,python,"
+def sort_array(array):
+    """"""Ũtanamba kũvanga, ĩka kũvanga kũndũ kwĩ na namba namba namba mũsoanĩ ũsu, na ũikosea namba ikũatĩĩe mũsoa o ũsu ethĩwa namba ĩla ĩatĩĩe mũsoa ũsu nĩ namba ĩmwe.""""""
+","    return [] if len(array) == 0 else sorted(array, reverse= (array[0]+array[-1]) % 2 == 0) 
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([]) == [], ""Error""
+    assert candidate([5]) == [5], ""Error""
+    assert candidate([2, 4, 3, 0, 1, 5]) == [0, 1, 2, 3, 4, 5], ""Error""
+    assert candidate([2, 4, 3, 0, 1, 5, 6]) == [6, 5, 4, 3, 2, 1, 0], ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([2, 1]) == [1, 2], ""Error""
+    assert candidate([15, 42, 87, 32 ,11, 0]) == [0, 11, 15, 32, 42, 87], ""Error""
+    assert candidate([21, 14, 23, 11]) == [23, 21, 14, 11], ""Error""
+
+",,,
+HumanEval/89,kam_Latn,python,"
+def encrypt(s):
+    """"""O na ĩngĩ, nĩ kana ũelewe nĩ kĩla kĩũwetwa nthĩnĩ wa kĩlungu kĩĩ, no ũsũanĩe ũndũ maandĩko ala me kĩlungunĩ kĩu matonya kũtũmĩwa.""""""
+","    d = 'abcdefghijklmnopqrstuvwxyz'
+    out = ''
+    for c in s:
+        if c in d:
+            out += d[(d.index(c)+2*2) % 26]
+        else:
+            out += c
+    return out
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('hi') == 'lm', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('asdfghjkl') == 'ewhjklnop', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('gf') == 'kj', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('et') == 'ix', ""This prints if this assert fails 1 (good for debugging!)""
+
+    assert candidate('faewfawefaewg')=='jeiajeaijeiak', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('hellomyfriend')=='lippsqcjvmirh', ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate('dxzdlmnilfuhmilufhlihufnmlimnufhlimnufhfucufh')=='hbdhpqrmpjylqmpyjlpmlyjrqpmqryjlpmqryjljygyjl', ""This prints if this assert fails 3 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('a')=='e', ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/90,kam_Latn,python,"
+def next_smallest(lst):
+    """"""Nĩ kana ũmanye ũndũ ũtonya kũalyũla, no ũandĩke namba ya kelĩ vala veethĩwa ndeto ĩsu. Ethĩwa vai namba, ũandĩkaa namba ĩatĩĩe yĩla yĩatĩĩe.""""""
+","    lst = sorted(set(lst))
+    return None if len(lst) < 2 else lst[1]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1, 2, 3, 4, 5]) == 2
+    assert candidate([5, 1, 4, 3, 2]) == 2
+    assert candidate([]) == None
+    assert candidate([1, 1]) == None
+    assert candidate([1,1,1,1,0]) == 1
+    assert candidate([1, 0**0]) == None
+    assert candidate([-35, 34, 12, -45]) == -35
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/91,kam_Latn,python,"
+def is_bored(S):
+    """"""Ũkakwata ndeto, ũkeethĩwa na wĩa wa kũtala mavinda ala ũkwatĩte mũsoa ũsu. Wasya mũvũthũ nĩ ũla wambĩĩa na ndeto ""I"". Syongo ila itũmĩawa kũweta mũsoa ũsu syĩthĩawa na namba '.', '?' kana '!'. Kwa ngelekany'o: >>> is_bored(""Hello world"") 0 >>> is_bored(""The sky is blue. The sun is shining. I love this weather"") 1 """"""
+","    import re
+    sentences = re.split(r'[.?!]\s*', S)
+    return sum(sentence[0:2] == 'I ' for sentence in sentences)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""Hello world"") == 0, ""Test 1""
+    assert candidate(""Is the sky blue?"") == 0, ""Test 2""
+    assert candidate(""I love It !"") == 1, ""Test 3""
+    assert candidate(""bIt"") == 0, ""Test 4""
+    assert candidate(""I feel good today. I will be productive. will kill It"") == 2, ""Test 5""
+    assert candidate(""You and I are going for a walk"") == 0, ""Test 6""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/92,kam_Latn,python,"
+def any_int(x, y, z):
+    '''Mbee, ve namba itatũ sya mũsingi (digits) na namba ĩmwe ya mũsingi (digits) ĩla ĩkwosana na namba isu syonthe nĩ namba thanthatũ. Namba ĩmwe yĩ na mũsingi ũla ũelekanĩtw'e na namba ikũmi na ilĩ sya mũsingi ũla ũngĩ na namba isu syonthe nĩ namba itatũ. Namba o ĩla ĩelekanĩtw'e na namba ikũmi na ilĩ yĩ na mũsingi ũla ũelekanĩtw'e na namba ikũmi na ilĩ. Namba o ĩla ĩelekanĩtw'e na namba ikũmi na ilĩ yĩ na mũsingi ũla ũelekanĩtw'e na namba ikũmi na ilĩ.'''
+","    
+    if isinstance(x,int) and isinstance(y,int) and isinstance(z,int):
+        if (x+y==z) or (x+z==y) or (y+z==x):
+            return True
+        return False
+    return False
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(2, 3, 1)==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(2.5, 2, 3)==False, ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate(1.5, 5, 3.5)==False, ""This prints if this assert fails 3 (good for debugging!)""
+    assert candidate(2, 6, 2)==False, ""This prints if this assert fails 4 (good for debugging!)""
+    assert candidate(4, 2, 2)==True, ""This prints if this assert fails 5 (good for debugging!)""
+    assert candidate(2.2, 2.2, 2.2)==False, ""This prints if this assert fails 6 (good for debugging!)""
+    assert candidate(-4, 6, 2)==True, ""This prints if this assert fails 7 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(2,1,1)==True, ""This prints if this assert fails 8 (also good for debugging!)""
+    assert candidate(3,4,7)==True, ""This prints if this assert fails 9 (also good for debugging!)""
+    assert candidate(3.0,4,7)==False, ""This prints if this assert fails 10 (also good for debugging!)""
+
+",,,
+HumanEval/93,kam_Latn,python,"
+def encode(message):
+    """"""Andĩka ndeto sya mũsingi (function) ila syĩthĩawa na nthoo ila syĩthĩawa na namba kana syati syĩ na langi mũkwatu, na ĩndĩ ũiveta na wasya ũla ũkwĩw'ĩka mbee wa nthoo isu.""""""
+","    vowels = ""aeiouAEIOU""
+    vowels_replace = dict([(i, chr(ord(i) + 2)) for i in vowels])
+    message = message.swapcase()
+    return ''.join([vowels_replace[i] if i in vowels else i for i in message])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('TEST') == 'tgst', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('Mudasir') == 'mWDCSKR', ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate('YES') == 'ygs', ""This prints if this assert fails 3 (good for debugging!)""
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('This is a message') == 'tHKS KS C MGSSCGG', ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(""I DoNt KnOw WhAt tO WrItE"") == 'k dQnT kNqW wHcT Tq wRkTg', ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/94,kam_Latn,python,"
+
+def skjkasdkd(lst):
+    """"""Ve ngelekany'o ii: Kwa lst = [0,3,2,1,3,5,7,4,5,5,2,181,32,4,32,3,2,32,324,4,3] mũsoa wa 10 Kwa lst = [1,0,1,8,2,4597,2,1,3,40,1,2,1,2,4,2,5,1] mũsoa wa 25 Kwa lst = [1,3,1,32,5107,34,83278,109,163,23,2323,32,30,1,9,3] mũsoa wa 13 Kwa lst = [0,724,32,71,99,32,6,0,91,83,0,5,6] mũsoa wa 11 Kwa lst = [0,81,12,31,21] mũsoa wa 3 Kwa lst = [1,8,1,2,1,7] mũsoa wa 7""""""
+","    def isPrime(n):
+        for i in range(2,int(n**0.5)+1):
+            if n%i==0:
+                return False
+
+        return True
+    maxx = 0
+    i = 0
+    while i < len(lst):
+        if(lst[i] > maxx and isPrime(lst[i])):
+            maxx = lst[i]
+        i+=1
+    result = sum(int(digit) for digit in str(maxx))
+    return result
+
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([0,3,2,1,3,5,7,4,5,5,5,2,181,32,4,32,3,2,32,324,4,3]) == 10, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1,0,1,8,2,4597,2,1,3,40,1,2,1,2,4,2,5,1]) == 25, ""This prints if this assert fails 2 (also good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1,3,1,32,5107,34,83278,109,163,23,2323,32,30,1,9,3]) == 13, ""This prints if this assert fails 3 (also good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([0,724,32,71,99,32,6,0,5,91,83,0,5,6]) == 11, ""This prints if this assert fails 4 (also good for debugging!)""
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([0,81,12,3,1,21]) == 3, ""This prints if this assert fails 5 (also good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([0,8,1,2,1,7]) == 7, ""This prints if this assert fails 6 (also good for debugging!)""
+
+    assert candidate([8191]) == 19, ""This prints if this assert fails 7 (also good for debugging!)""
+    assert candidate([8191, 123456, 127, 7]) == 19, ""This prints if this assert fails 8 (also good for debugging!)""
+    assert candidate([127, 97, 8192]) == 10, ""This prints if this assert fails 9 (also good for debugging!)""
+",,,
+HumanEval/95,kam_Latn,python,"
+def check_dict_case(dict):
+    """"""Nĩ kana ũmanye ũndũ ũtonya kũalyũla, sisya ũndũ ũtonya kũalyũla ndeto sya mũsingi (ta kwa ngelekany'o, ""kĩthuma"", ""mũtĩ"", ""mũtĩ""), na ũndũ ũtonya kũalyũla ndeto sya mũsingi (ta kwa ngelekany'o, ""kĩthuma"", ""mũtĩ""), na ũndũ ũtonya kũalyũla ndeto sya mũsingi (ta kwa ngelekany'o, ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"", ""kĩthuma"",""""""
+","    if len(dict.keys()) == 0:
+        return False
+    else:
+        state = ""start""
+        for key in dict.keys():
+
+            if isinstance(key, str) == False:
+                state = ""mixed""
+                break
+            if state == ""start"":
+                if key.isupper():
+                    state = ""upper""
+                elif key.islower():
+                    state = ""lower""
+                else:
+                    break
+            elif (state == ""upper"" and not key.isupper()) or (state == ""lower"" and not key.islower()):
+                    state = ""mixed""
+                    break
+            else:
+                break
+        return state == ""upper"" or state == ""lower"" 
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate({""p"":""pineapple"", ""b"":""banana""}) == True, ""First test error: "" + str(candidate({""p"":""pineapple"", ""b"":""banana""}))
+    assert candidate({""p"":""pineapple"", ""A"":""banana"", ""B"":""banana""}) == False, ""Second test error: "" + str(candidate({""p"":""pineapple"", ""A"":""banana"", ""B"":""banana""}))
+    assert candidate({""p"":""pineapple"", 5:""banana"", ""a"":""apple""}) == False, ""Third test error: "" + str(candidate({""p"":""pineapple"", 5:""banana"", ""a"":""apple""}))
+    assert candidate({""Name"":""John"", ""Age"":""36"", ""City"":""Houston""}) == False, ""Fourth test error: "" + str(candidate({""Name"":""John"", ""Age"":""36"", ""City"":""Houston""}))
+    assert candidate({""STATE"":""NC"", ""ZIP"":""12345"" }) == True, ""Fifth test error: "" + str(candidate({""STATE"":""NC"", ""ZIP"":""12345"" }))      
+    assert candidate({""fruit"":""Orange"", ""taste"":""Sweet"" }) == True, ""Fourth test error: "" + str(candidate({""fruit"":""Orange"", ""taste"":""Sweet"" }))      
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate({}) == False, ""1st edge test error: "" + str(candidate({}))
+
+",,,
+HumanEval/96,kam_Latn,python,"
+def count_up_to(n):
+    """"""Tũmĩa nzĩa ĩno ya kũandĩka maũndũ wĩthĩe no wone namba ikũlilw'e. Ũndũ ũsu wĩtũmanyĩsya kana no nginya tũmanye vala vala kũndũ kũla kwaandĩkiwe Mbivilianĩ kwĩ na namba namba namba ikũlilw'e.""""""
+","    primes = []
+    for i in range(2, n):
+        is_prime = True
+        for j in range(2, i):
+            if i % j == 0:
+                is_prime = False
+                break
+        if is_prime:
+            primes.append(i)
+    return primes
+
+","def check(candidate):
+
+    assert candidate(5) == [2,3]
+    assert candidate(6) == [2,3,5]
+    assert candidate(7) == [2,3,5]
+    assert candidate(10) == [2,3,5,7]
+    assert candidate(0) == []
+    assert candidate(22) == [2,3,5,7,11,13,17,19]
+    assert candidate(1) == []
+    assert candidate(18) == [2,3,5,7,11,13,17]
+    assert candidate(47) == [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43]
+    assert candidate(101) == [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]
+
+",,,
+HumanEval/97,kam_Latn,python,"
+def multiply(a, b):
+    """"""Ve ngelekany'o ii: mũsoa wa 148, 412) waĩle kũelew'a ta 16. mũsoa wa 19 na 28 waĩle kũelew'a ta 72. mũsoa wa 2020 na 1851 waĩle kũelew'a ta 0. mũsoa wa 144, 15 waĩle kũelew'a ta 20.""""""
+","    return abs(a % 10) * abs(b % 10)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(148, 412) == 16, ""First test error: "" + str(candidate(148, 412))                    
+    assert candidate(19, 28) == 72, ""Second test error: "" + str(candidate(19, 28))           
+    assert candidate(2020, 1851) == 0, ""Third test error: "" + str(candidate(2020, 1851))
+    assert candidate(14,-15) == 20, ""Fourth test error: "" + str(candidate(14,-15))      
+    assert candidate(76, 67) == 42, ""Fifth test error: "" + str(candidate(76, 67))      
+    assert candidate(17, 27) == 49, ""Sixth test error: "" + str(candidate(17, 27))      
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(0, 1) == 0, ""1st edge test error: "" + str(candidate(0, 1))
+    assert candidate(0, 0) == 0, ""2nd edge test error: "" + str(candidate(0, 0))
+
+",,,
+HumanEval/98,kam_Latn,python,"
+def count_upper(s):
+    """"""ŨNDŨ ŨTETHETYE ATA? ŨTETHETYE ATA? ŨTETHETYE ATA?""""""
+","    count = 0
+    for i in range(0,len(s),2):
+        if s[i] in ""AEIOU"":
+            count += 1
+    return count
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('aBCdEf')  == 1
+    assert candidate('abcdefg') == 0
+    assert candidate('dBBE') == 0
+    assert candidate('B')  == 0
+    assert candidate('U')  == 1
+    assert candidate('') == 0
+    assert candidate('EEEE') == 2
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/99,kam_Latn,python,"
+def closest_integer(value):
+    '''Mbee, sũanĩa ũndũ maũndũ mailyĩ nthĩnĩ wa kĩlungu kĩĩ: Ethĩwa ve namba ĩũngamĩwe nĩ namba ĩmwe, namba ĩsu no ĩalyũlwe na namba ĩngĩ. Ethĩwa ve namba ĩũngamĩwe nĩ namba ĩngĩ, namba ĩsu no ĩalyũlwe na namba ĩngĩ. Ethĩwa ve namba ĩũngamĩwe nĩ namba ĩngĩ, namba ĩla ĩalyũlĩtwe nĩ namba ĩngĩ, namba ĩla ĩalyũlĩtwe nĩ namba ĩngĩ, na namba ĩla ĩalyũlĩtwe nĩ namba ĩngĩ, no ĩalyũlwe na namba ĩngĩ.'''
+","    from math import floor, ceil
+
+    if value.count('.') == 1:
+        # remove trailing zeros
+        while (value[-1] == '0'):
+            value = value[:-1]
+
+    num = float(value)
+    if value[-2:] == '.5':
+        if num > 0:
+            res = ceil(num)
+        else:
+            res = floor(num)
+    elif len(value) > 0:
+        res = int(round(num))
+    else:
+        res = 0
+
+    return res
+
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""10"") == 10, ""Test 1""
+    assert candidate(""14.5"") == 15, ""Test 2""
+    assert candidate(""-15.5"") == -16, ""Test 3""
+    assert candidate(""15.3"") == 15, ""Test 3""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""0"") == 0, ""Test 0""
+
+",,,
+HumanEval/100,kam_Latn,python,"
+def make_a_pile(n):
+    """"""ŨNDŨ ŨTONYA KWĨKĨĨSYA: Wenda kũmanya ũndũ mbisũ ya ĩvia yĩilyĩ, sisya ũndũ ũtonya kũyĩkĩa kĩanĩonĩ kya mbisũ ya ĩvia.""""""
+","    return [n + 2*i for i in range(n)]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(3) == [3, 5, 7], ""Test 3""
+    assert candidate(4) == [4,6,8,10], ""Test 4""
+    assert candidate(5) == [5, 7, 9, 11, 13]
+    assert candidate(6) == [6, 8, 10, 12, 14, 16]
+    assert candidate(8) == [8, 10, 12, 14, 16, 18, 20, 22]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/101,kam_Latn,python,"
+def words_string(s):
+    """"""Ve ndeto syĩ mũvangonĩ ũsu ĩndĩ ndũnasũngĩwe nũndũ syumanĩte na ndeto syĩ kĩvathũkany'o. Kwa ngelekany'o, ndeto imwe syĩ mũvangonĩ ũsu nĩ ta: ""'Naamwĩta John.'""""""""
+","    if not s:
+        return []
+
+    s_list = []
+
+    for letter in s:
+        if letter == ',':
+            s_list.append(' ')
+        else:
+            s_list.append(letter)
+
+    s_list = """".join(s_list)
+    return s_list.split()
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(""Hi, my name is John"") == [""Hi"", ""my"", ""name"", ""is"", ""John""]
+    assert candidate(""One, two, three, four, five, six"") == [""One"", ""two"", ""three"", ""four"", ""five"", ""six""]
+    assert candidate(""Hi, my name"") == [""Hi"", ""my"", ""name""]
+    assert candidate(""One,, two, three, four, five, six,"") == [""One"", ""two"", ""three"", ""four"", ""five"", ""six""]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate("""") == []
+    assert candidate(""ahmed     , gamal"") == [""ahmed"", ""gamal""]
+
+",,,
+HumanEval/102,kam_Latn,python,"
+def choose_num(x, y):
+    """"""Ĩtambya yĩĩ yĩkuaa namba ilĩ nzeo x na y na yasyoka yĩitw'ĩka namba ĩnene mũamba mũamba ĩla yĩ vala [x, y] ĩlilikana. Ethĩwa namba ĩsu ti vo, yu yĩsyoka yĩ na namba -1. Kwa ngelekany'o:""""""
+","    if x > y:
+        return -1
+    if y % 2 == 0:
+        return y
+    if x == y:
+        return -1
+    return y - 1
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(12, 15) == 14
+    assert candidate(13, 12) == -1
+    assert candidate(33, 12354) == 12354
+    assert candidate(5234, 5233) == -1
+    assert candidate(6, 29) == 28
+    assert candidate(27, 10) == -1
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(7, 7) == -1
+    assert candidate(546, 546) == 546
+
+",,,
+HumanEval/103,kam_Latn,python,"
+def rounded_avg(n, m):
+    """"""ŨNDŨ ŨTONYA KWĨKĨĨSYA: ŨNDŨ ŨTONYA KŨTŨNGĨSYA: Weta ũndũ ũtũmĩĩte nzĩa ĩno:""""""
+","    if m < n:
+        return -1
+    summation = 0
+    for i in range(n, m+1):
+        summation += i
+    return bin(round(summation/(m - n + 1)))
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(1, 5) == ""0b11""
+    assert candidate(7, 13) == ""0b1010""
+    assert candidate(964,977) == ""0b1111001010""
+    assert candidate(996,997) == ""0b1111100100""
+    assert candidate(560,851) == ""0b1011000010""
+    assert candidate(185,546) == ""0b101101110""
+    assert candidate(362,496) == ""0b110101101""
+    assert candidate(350,902) == ""0b1001110010""
+    assert candidate(197,233) == ""0b11010111""
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(7, 5) == -1
+    assert candidate(5, 1) == -1
+    assert candidate(5, 5) == ""0b101""
+
+",,,
+HumanEval/104,kam_Latn,python,"
+def unique_digits(x):
+    """"""Kwoona ũndũ maũndũ mailyĩ nthĩnĩ wa kĩlungu kĩĩ: ""Kĩla kĩlungu kĩ na namba namba ikũmi na ĩmwe"".""""""
+","    odd_digit_elements = []
+    for i in x:
+        if all (int(c) % 2 == 1 for c in str(i)):
+            odd_digit_elements.append(i)
+    return sorted(odd_digit_elements)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([15, 33, 1422, 1]) == [1, 15, 33]
+    assert candidate([152, 323, 1422, 10]) == []
+    assert candidate([12345, 2033, 111, 151]) == [111, 151]
+    assert candidate([135, 103, 31]) == [31, 135]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/105,kam_Latn,python,"
+def by_length(arr):
+    """"""Ve mũvangĩle wa syĩtwa sya namba iũ, namba ila syĩ katĩ wa 1 na 9, na namba ila ikũlilw'e iũvĩndũawa o ĩmwe, na namba ila ikũlilw'e iũvĩndũawa o ĩngĩ. Na ĩndĩ kĩla mũvangĩle wesa kũalyũka ũyosa namba ĩngĩ, na ũiendeea kũsyoka vala yaandĩkĩtwe, na ũiendeea kũsyoka vala yaandĩkĩtwe.""""""
+","    dic = {
+        1: ""One"",
+        2: ""Two"",
+        3: ""Three"",
+        4: ""Four"",
+        5: ""Five"",
+        6: ""Six"",
+        7: ""Seven"",
+        8: ""Eight"",
+        9: ""Nine"",
+    }
+    sorted_arr = sorted(arr, reverse=True)
+    new_arr = []
+    for var in sorted_arr:
+        try:
+            new_arr.append(dic[var])
+        except:
+            pass
+    return new_arr
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([2, 1, 1, 4, 5, 8, 2, 3]) == [""Eight"", ""Five"", ""Four"", ""Three"", ""Two"", ""Two"", ""One"", ""One""], ""Error""
+    assert candidate([]) == [], ""Error""
+    assert candidate([1, -1 , 55]) == ['One'], ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([1, -1, 3, 2]) == [""Three"", ""Two"", ""One""]
+    assert candidate([9, 4, 8]) == [""Nine"", ""Eight"", ""Four""]
+
+",,,
+HumanEval/106,kam_Latn,python,"
+def f(n):
+    """"""Tũmĩa nzĩa f kwambĩĩa na namba n, na ũisyoka na namba nene n, na ũisyoka na namba nene i, na ũisyoka na namba nene i, na ũisyoka na namba nene i.""""""
+","    ret = []
+    for i in range(1,n+1):
+        if i%2 == 0:
+            x = 1
+            for j in range(1,i+1): x *= j
+            ret += [x]
+        else:
+            x = 0
+            for j in range(1,i+1): x += j
+            ret += [x]
+    return ret
+","def check(candidate):
+
+    assert candidate(5) == [1, 2, 6, 24, 15]
+    assert candidate(7) == [1, 2, 6, 24, 15, 720, 28]
+    assert candidate(1) == [1]
+    assert candidate(3) == [1, 2, 6]
+",,,
+HumanEval/107,kam_Latn,python,"
+def even_odd_palindrome(n):
+    """"""Ĩkũlyo: Ethĩwa namba n nĩ ĩima, ũelekanasya ata? Ĩkũlyo: Namba n na namba ii nĩ namba syĩva? Ĩkũlyo: Namba ĩmwe nĩ namba iana, na namba ilĩ nĩ namba iana. Ĩkũlyo: Namba ĩmwe nĩ namba iana, na namba ilĩ nĩ namba iana. Ĩkũlyo: Namba ĩmwe nĩ namba iana, na namba ilĩ nĩ namba iana. Ĩkũlyo: Namba ilĩ nĩ namba iana, na namba ilĩ nĩ namba iana. Ĩkũlyo: Namba ĩmwe nĩ namba iana, na namba ilĩ nĩ namba iana. Ĩkũlyo: Namba ĩmwe nĩ namba iana, na namba ilĩ nĩ namba iana. Ĩkũlyo: Namba ĩmwe nĩ namba iana, na namba thanthatũ nĩ namba iana, na namba thanthatũ nĩ namba iana. Ĩkũlyo: Namba ĩmwe nĩ namba iana, na namba thanthatũ nĩ namba iana. Ĩkũlyo: Namba ĩmwe nĩ namba iana, na namba thanthatũ nĩ namba iana. Ĩkũlyo: Namba ĩmwe nĩ namba iana, na namba thanthatũ nĩ namba iana.""""""
+","    def is_palindrome(n):
+        return str(n) == str(n)[::-1]
+
+    even_palindrome_count = 0
+    odd_palindrome_count = 0
+
+    for i in range(1, n+1):
+        if i%2 == 1 and is_palindrome(i):
+                odd_palindrome_count += 1
+        elif i%2 == 0 and is_palindrome(i):
+            even_palindrome_count += 1
+    return (even_palindrome_count, odd_palindrome_count)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(123) == (8, 13)
+    assert candidate(12) == (4, 6)
+    assert candidate(3) == (1, 2)
+    assert candidate(63) == (6, 8)
+    assert candidate(25) == (5, 6)
+    assert candidate(19) == (4, 6)
+    assert candidate(9) == (4, 5), ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1) == (0, 1), ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/108,kam_Latn,python,"
+def count_nums(arr):
+    """"""Andĩka namba count_nums ĩla yĩthĩawa na namba mũamba na ĩisyoka na namba namba ĩngĩ yĩ na namba mũamba na namba ĩngĩ. Namba ĩsu nĩ ĩkuvĩ kwĩ ũndũ ĩilyĩ na namba ĩla ĩngĩ nĩ ĩnini kwĩ ũndũ ĩilyĩ.""""""
+","    def digits_sum(n):
+        neg = 1
+        if n < 0: n, neg = -1 * n, -1 
+        n = [int(i) for i in str(n)]
+        n[0] = n[0] * neg
+        return sum(n)
+    return len(list(filter(lambda x: x > 0, [digits_sum(i) for i in arr])))
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([]) == 0
+    assert candidate([-1, -2, 0]) == 0
+    assert candidate([1, 1, 2, -2, 3, 4, 5]) == 6
+    assert candidate([1, 6, 9, -6, 0, 1, 5]) == 5
+    assert candidate([1, 100, 98, -7, 1, -1]) == 4
+    assert candidate([12, 23, 34, -45, -56, 0]) == 5
+    assert candidate([-0, 1**0]) == 1
+    assert candidate([1]) == 1
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/109,kam_Latn,python,"
+def move_one_ball(arr):
+    """"""Ve mũvangĩle wa maũndũ ala matonya kũatĩĩwa nĩ kana ala me mũvangonĩ ũsu matetheke. Ũndũ ũla ũtonya kwĩka nĩ: Kũtũmĩa nzĩa ĩla ũkwenda (Array) nĩ kana wĩthĩe mũvangĩle wa maũndũ ndũthingĩthĩka. Ũndũ ũla ũtonya kwĩka nĩ: Kũtũmĩa nzĩa ĩla ũkwenda (Right shift operation) nĩ kana wĩthĩe maũndũ ala me mũvangonĩ ũsu maialyũka kũndũ kwĩ na mbee na kwa ĩtina. Ũndũ ũla wa mũthya ũtonya kwĩka nĩ kũvĩndũa kyati kĩthĩwe nĩ kya mbee kana kĩthĩwe nĩ kya kelĩ. Ũndũ ũla ũngĩ nĩ kwambĩĩa na kwambĩĩa ĩngĩ.""""""
+","    if len(arr)==0:
+      return True
+    sorted_array=sorted(arr)
+    my_arr=[]
+    
+    min_value=min(arr)
+    min_index=arr.index(min_value)
+    my_arr=arr[min_index:]+arr[0:min_index]
+    for i in range(len(arr)):
+      if my_arr[i]!=sorted_array[i]:
+        return False
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([3, 4, 5, 1, 2])==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([3, 5, 10, 1, 2])==True
+    assert candidate([4, 3, 1, 2])==False
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([3, 5, 4, 1, 2])==False, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([])==True
+",,,
+HumanEval/110,kam_Latn,python,"
+def exchange(lst1, lst2):
+    """"""Ĩkũlyo: We nũkwona ta ve ũndũ ũngĩ ũtonya kwĩka nĩ kana ũĩkĩĩthye kana kĩla kĩandĩkĩtwe vau nĩ kya w'o? Ethĩwa ve ũndũ ũtonya kwĩka nĩ kana ũĩkĩĩthye kana kĩla kĩandĩkĩtwe vau nĩ kya w'o, no ũvange kũvĩndũa kĩla kĩandĩkĩtwe vau na kĩkethĩwa kya w'o.""""""
+","    odd = 0
+    even = 0
+    for i in lst1:
+        if i%2 == 1:
+            odd += 1
+    for i in lst2:
+        if i%2 == 0:
+            even += 1
+    if even >= odd:
+        return ""YES""
+    return ""NO""
+            
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1, 2, 3, 4], [1, 2, 3, 4]) == ""YES""
+    assert candidate([1, 2, 3, 4], [1, 5, 3, 4]) == ""NO""
+    assert candidate([1, 2, 3, 4], [2, 1, 4, 3]) == ""YES"" 
+    assert candidate([5, 7, 3], [2, 6, 4]) == ""YES""
+    assert candidate([5, 7, 3], [2, 6, 3]) == ""NO"" 
+    assert candidate([3, 2, 6, 1, 8, 9], [3, 5, 5, 1, 1, 1]) == ""NO""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([100, 200], [200, 200]) == ""YES""
+
+",,,
+HumanEval/111,kam_Latn,python,"
+def histogram(test):
+    """"""Ethĩwa nthoo ila syĩ mũsoanĩ mũna syĩ na namba ikonanĩtw'e na itina, ĩka kũsyoka na nthoo ila iwetetwe vala iandĩkĩtwe na namba ikonanĩtw'e. Ethĩwa nthoo ila iwetetwe iilyĩ ũndũ ũmwe, ĩka kũsyoka na namba ikonanĩtw'e.""""""
+","    dict1={}
+    list1=test.split("" "")
+    t=0
+
+    for i in list1:
+        if(list1.count(i)>t) and i!='':
+            t=list1.count(i)
+    if t>0:
+        for i in list1:
+            if(list1.count(i)==t):
+                
+                dict1[i]=t
+    return dict1
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('a b b a') == {'a':2,'b': 2}, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('a b c a b') == {'a': 2, 'b': 2}, ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate('a b c d g') == {'a': 1, 'b': 1, 'c': 1, 'd': 1, 'g': 1}, ""This prints if this assert fails 3 (good for debugging!)""
+    assert candidate('r t g') == {'r': 1,'t': 1,'g': 1}, ""This prints if this assert fails 4 (good for debugging!)""
+    assert candidate('b b b b a') == {'b': 4}, ""This prints if this assert fails 5 (good for debugging!)""
+    assert candidate('r t g') == {'r': 1,'t': 1,'g': 1}, ""This prints if this assert fails 6 (good for debugging!)""
+    
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('') == {}, ""This prints if this assert fails 7 (also good for debugging!)""
+    assert candidate('a') == {'a': 1}, ""This prints if this assert fails 8 (also good for debugging!)""
+
+",,,
+HumanEval/112,kam_Latn,python,"
+def reverse_delete(s,c):
+    """"""Tũlũnge maũndũ elĩ s na c, ũvetange maũndũ onthe ala me nthĩnĩ wa s ala monanĩtw'e na mũandĩko o na wĩva wa c na ĩndĩ ũisisya ethĩwa ndeto ĩla ĩatĩĩe nĩ palindrome. Ndeto ĩla ĩatĩĩe nĩ palindrome ethĩwa ĩsomekaa ũndũ ũmwe na kũsisya nthĩnĩ wa ndeto ĩla ĩatĩĩe. Nĩ kana ũsisye nesa maũndũ asu, no nginya ũandĩke namba ila syĩ nthĩnĩ wa kĩla kavalũa kavalũa kavalũa kavalũa kau, na ũisisya ethĩwa nĩ kavalũa kavalũa kavalũa kavalũa kau kethĩawa na ndeto sya ũalyũlo ũla ũkwona. Kwa ngelekany'o, s = ""abcde"", c = ""ae"", na ũisisya ethĩwa ndeto ila syĩ nthĩnĩ wa kavalũa kavalũa kau nĩ sya w'o kana nĩ sya ũvũngũ.""""""
+","    s = ''.join([char for char in s if char not in c])
+    return (s,s[::-1] == s)
+","def check(candidate):
+
+    assert candidate(""abcde"",""ae"") == ('bcd',False)
+    assert candidate(""abcdef"", ""b"") == ('acdef',False)
+    assert candidate(""abcdedcba"",""ab"") == ('cdedc',True)
+    assert candidate(""dwik"",""w"") == ('dik',False)
+    assert candidate(""a"",""a"") == ('',True)
+    assert candidate(""abcdedcba"","""") == ('abcdedcba',True)
+    assert candidate(""abcdedcba"",""v"") == ('abcdedcba',True)
+    assert candidate(""vabba"",""v"") == ('abba',True)
+    assert candidate(""mamma"", ""mia"") == ("""", True)
+",,,
+HumanEval/113,kam_Latn,python,"
+def odd_count(lst):
+    """"""Ĩkũlyo: Wesa kwona namba iũ iũandĩkĩtwe na namba namba iũ, umya mũsoa ũũ: ""O na ethĩwa namba iũ ti namba iũ, namba iũ nĩ namba o ĩsu"". Namba iũ nĩ namba namba namba o ĩsu.""""""
+","    res = []
+    for arr in lst:
+        n = sum(int(d)%2==1 for d in arr)
+        res.append(""the number of odd elements "" + str(n) + ""n the str""+ str(n) +""ng ""+ str(n) +"" of the ""+ str(n) +""nput."")
+    return res
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(['1234567']) == [""the number of odd elements 4n the str4ng 4 of the 4nput.""], ""Test 1""
+    assert candidate(['3',""11111111""]) == [""the number of odd elements 1n the str1ng 1 of the 1nput."", ""the number of odd elements 8n the str8ng 8 of the 8nput.""], ""Test 2""
+    assert candidate(['271', '137', '314']) == [
+        'the number of odd elements 2n the str2ng 2 of the 2nput.',
+        'the number of odd elements 3n the str3ng 3 of the 3nput.',
+        'the number of odd elements 2n the str2ng 2 of the 2nput.'
+    ]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/114,kam_Latn,python,"
+def minSubArraySum(nums):
+    """"""Nĩtũnengetwe mũtalatala wa namba n, tũmanthe mũtalatala ũla mũnini vyũ wa namba syonthe ila itatavanĩtw'e.""""""
+","    max_sum = 0
+    s = 0
+    for num in nums:
+        s += -num
+        if (s < 0):
+            s = 0
+        max_sum = max(s, max_sum)
+    if max_sum == 0:
+        max_sum = max(-i for i in nums)
+    min_sum = -max_sum
+    return min_sum
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([2, 3, 4, 1, 2, 4]) == 1, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([-1, -2, -3]) == -6
+    assert candidate([-1, -2, -3, 2, -10]) == -14
+    assert candidate([-9999999999999999]) == -9999999999999999
+    assert candidate([0, 10, 20, 1000000]) == 0
+    assert candidate([-1, -2, -3, 10, -5]) == -6
+    assert candidate([100, -1, -2, -3, 10, -5]) == -6
+    assert candidate([10, 11, 13, 8, 3, 4]) == 3
+    assert candidate([100, -33, 32, -1, 0, -2]) == -33
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([-10]) == -10, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([7]) == 7
+    assert candidate([1, -1]) == -1
+",,,
+HumanEval/115,kam_Latn,python,"
+def max_fill(grid, capacity):
+    import math
+    """"""Ĩsandũkũ ya mbee yonanĩtye kĩla kĩsese kya kĩw'ũ, na kĩla kĩsese kĩ na kalaĩ ka kĩw'ũ. Kĩla kĩsese kĩ na kalaĩ ka kĩw'ũ, na kalaĩ kau ke na kĩw'ũ kĩlingĩlĩtwe nĩ kalaĩ kau. Kĩsese kĩu kĩ na itambaa ila itetheeasya kĩw'ũ kũlika na nthĩnĩ.""""""
+","    return sum([math.ceil(sum(arr)/capacity) for arr in grid])
+","def check(candidate):
+
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([[0,0,1,0], [0,1,0,0], [1,1,1,1]], 1) == 6, ""Error""
+    assert candidate([[0,0,1,1], [0,0,0,0], [1,1,1,1], [0,1,1,1]], 2) == 5, ""Error""
+    assert candidate([[0,0,0], [0,0,0]], 5) == 0, ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([[1,1,1,1], [1,1,1,1]], 2) == 4, ""Error""
+    assert candidate([[1,1,1,1], [1,1,1,1]], 9) == 2, ""Error""
+
+",,,
+HumanEval/116,kam_Latn,python,"
+def sort_array(arr):
+    """"""Ve mũsoa wa vata mũno Mbivilianĩ ũeleetye ĩũlũ wa kũvangwa kwa syina na namba. Syina syina syina nĩsyo syĩkalaa syĩkĩanw'a na kĩla syina ũandĩkĩtwe mbee wa syina. Syina syina nĩsyo syĩkalaa kuma kw'oko kwa aka, na ĩndĩ syĩkalaa kuma kw'oko kwa aũme nginya kwa aka. Syina syina syina syatũmĩwa kũvangĩĩa namba, nĩsyo syĩkalaa kuma kw'oko kwa aũme nginya kwa aka. Syina syatũmĩawa kũvangĩĩa namba, na ĩndĩ syatũmĩwa kũvangĩĩa namba. Syina syatũmĩwa kũvangĩĩa namba, na ĩndĩ syatũmĩwa kũvangĩĩa namba. Syina syatũmĩwa kũvangĩĩa namba. Syina syatũmĩwa kũvangĩĩa namba. Syina syatũmĩwa kũvangĩĩa namba. Syina syatũmĩwa kũvangĩĩa namba. Syina syatũmĩwa kũvangĩĩa namba. Syina syatũmĩwa kũvangĩĩa namba. Syina syatũmĩwa kũvangĩĩa namba. Syina syatũmĩwa kũvangĩĩa namba. Syina syatũmĩwa kũvangĩĩa namba. Syina syatũmĩwa kũvangĩĩa namba.""""""
+","    return sorted(sorted(arr), key=lambda x: bin(x)[2:].count('1'))
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1,5,2,3,4]) == [1, 2, 4, 3, 5]
+    assert candidate([-2,-3,-4,-5,-6]) == [-4, -2, -6, -5, -3]
+    assert candidate([1,0,2,3,4]) == [0, 1, 2, 4, 3]
+    assert candidate([]) == []
+    assert candidate([2,5,77,4,5,3,5,7,2,3,4]) == [2, 2, 4, 4, 3, 3, 5, 5, 5, 7, 77]
+    assert candidate([3,6,44,12,32,5]) == [32, 3, 5, 6, 12, 44]
+    assert candidate([2,4,8,16,32]) == [2, 4, 8, 16, 32]
+    assert candidate([2,4,8,16,32]) == [2, 4, 8, 16, 32]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/117,kam_Latn,python,"
+def select_words(s, n):
+    """"""Ethĩwa ndeto sya mũsingi s na namba namba n, we nũnengetwe wĩa wa kũandĩka mũtalatala ũla ũkonetye ndeto syonthe ila syĩ mũsingi s na namba namba n, nĩ kana ndeto isu syosanĩte syume mũtalatala ũla ũatĩĩe. Ethĩwa mũtalatala s ndwĩ na ndeto, ndeto ila syĩ mũsingi s s no iandĩke ta syĩ na ndeto mbũthũ.""""""
+","    result = []
+    for word in s.split():
+        n_consonants = 0
+        for i in range(0, len(word)):
+            if word[i].lower() not in [""a"",""e"",""i"",""o"",""u""]:
+                n_consonants += 1 
+        if n_consonants == n:
+            result.append(word)
+    return result
+
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""Mary had a little lamb"", 4) == [""little""], ""First test error: "" + str(candidate(""Mary had a little lamb"", 4))      
+    assert candidate(""Mary had a little lamb"", 3) == [""Mary"", ""lamb""], ""Second test error: "" + str(candidate(""Mary had a little lamb"", 3))  
+    assert candidate(""simple white space"", 2) == [], ""Third test error: "" + str(candidate(""simple white space"", 2))      
+    assert candidate(""Hello world"", 4) == [""world""], ""Fourth test error: "" + str(candidate(""Hello world"", 4))  
+    assert candidate(""Uncle sam"", 3) == [""Uncle""], ""Fifth test error: "" + str(candidate(""Uncle sam"", 3))
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate("""", 4) == [], ""1st edge test error: "" + str(candidate("""", 4))
+    assert candidate(""a b c d e f"", 1) == [""b"", ""c"", ""d"", ""f""], ""2nd edge test error: "" + str(candidate(""a b c d e f"", 1))
+
+",,,
+HumanEval/118,kam_Latn,python,"
+def get_closest_vowel(word):
+    """"""ŨNDŨ ŨTETHETYE ATA? Ndeto ĩla ũkwenda kũtũmĩa nĩ ndeto ikwonany'a syĩtwa ĩandĩkĩtwe na nthoo syĩ kĩvathũkany'o, na kwoou ndũketĩkĩle ndeto o na ĩmwe ĩalyũlwe ũndũ ũmwe ĩndĩ ti o kĩla ndeto yonanĩtye.""""""
+","    if len(word) < 3:
+        return """"
+
+    vowels = {""a"", ""e"", ""i"", ""o"", ""u"", ""A"", ""E"", 'O', 'U', 'I'}
+    for i in range(len(word)-2, 0, -1):
+        if word[i] in vowels:
+            if (word[i+1] not in vowels) and (word[i-1] not in vowels):
+                return word[i]
+    return """"
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""yogurt"") == ""u""
+    assert candidate(""full"") == ""u""
+    assert candidate(""easy"") == """"
+    assert candidate(""eAsy"") == """"
+    assert candidate(""ali"") == """"
+    assert candidate(""bad"") == ""a""
+    assert candidate(""most"") == ""o""
+    assert candidate(""ab"") == """"
+    assert candidate(""ba"") == """"
+    assert candidate(""quick"") == """"
+    assert candidate(""anime"") == ""i""
+    assert candidate(""Asia"") == """"
+    assert candidate(""Above"") == ""o""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/119,kam_Latn,python,"
+def match_parens(lst):
+    '''Ve mũsoa ũandĩkĩtwe w'oka ĩndĩ w'onthe wosanĩte na ũndũ ũandĩkĩtwe. Ethĩwa we nũkwona ve mũsoa mũseo, we ũkeethĩa nĩ mĩsoa yĩva ĩandĩkĩtwe w'oka ĩndĩ ĩte mĩsoa yonthe ĩandĩkĩtwe w'oka?'''
+","    def check(s):
+        val = 0
+        for i in s:
+            if i == '(':
+                val = val + 1
+            else:
+                val = val - 1
+            if val < 0:
+                return False
+        return True if val == 0 else False
+
+    S1 = lst[0] + lst[1]
+    S2 = lst[1] + lst[0]
+    return 'Yes' if check(S1) or check(S2) else 'No'
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(['()(', ')']) == 'Yes'
+    assert candidate([')', ')']) == 'No'
+    assert candidate(['(()(())', '())())']) == 'No'
+    assert candidate([')())', '(()()(']) == 'Yes'
+    assert candidate(['(())))', '(()())((']) == 'Yes'
+    assert candidate(['()', '())']) == 'No'
+    assert candidate(['(()(', '()))()']) == 'Yes'
+    assert candidate(['((((', '((())']) == 'No'
+    assert candidate([')(()', '(()(']) == 'No'
+    assert candidate([')(', ')(']) == 'No'
+    
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(['(', ')']) == 'Yes'
+    assert candidate([')', '(']) == 'Yes' 
+
+",,,
+HumanEval/120,kam_Latn,python,"
+def maximum(arr, k):
+    """"""Ĩkũlyo: Weta ũndũ ũmwe wonanĩtye kana mũndũ aĩle kwĩthĩwa na ndaĩa. Kwa ngelekany'o, sũanĩa ũndũ ũilyĩ. Ĩkũlyo: Weta ũndũ ũtonya kwĩka nĩ kana ũtanĩe kwĩkala vandũ ve andũ aingĩ.""""""
+","    if k == 0:
+        return []
+    arr.sort()
+    ans = arr[-k:]
+    return ans
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([-3, -4, 5], 3) == [-4, -3, 5]
+    assert candidate([4, -4, 4], 2) == [4, 4]
+    assert candidate([-3, 2, 1, 2, -1, -2, 1], 1) == [2]
+    assert candidate([123, -123, 20, 0 , 1, 2, -3], 3) == [2, 20, 123]
+    assert candidate([-123, 20, 0 , 1, 2, -3], 4) == [0, 1, 2, 20]
+    assert candidate([5, 15, 0, 3, -13, -8, 0], 7) == [-13, -8, 0, 0, 3, 5, 15]
+    assert candidate([-1, 0, 2, 5, 3, -10], 2) == [3, 5]
+    assert candidate([1, 0, 5, -7], 1) == [5]
+    assert candidate([4, -4], 2) == [-4, 4]
+    assert candidate([-10, 10], 2) == [-10, 10]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1, 2, 3, -23, 243, -400, 0], 0) == []
+
+",,,
+HumanEval/121,kam_Latn,python,"
+def solution(lst):
+    """"""Ĩĩ nĩ ĩkomano ĩnene, ĩndĩ yĩ na andũ anini na me kĩvathũkany'o.""""""
+","    return sum([x for idx, x in enumerate(lst) if idx%2==0 and x%2==1])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([5, 8, 7, 1])    == 12
+    assert candidate([3, 3, 3, 3, 3]) == 9
+    assert candidate([30, 13, 24, 321]) == 0
+    assert candidate([5, 9]) == 5
+    assert candidate([2, 4, 8]) == 0
+    assert candidate([30, 13, 23, 32]) == 23
+    assert candidate([3, 13, 2, 9]) == 3
+
+    # Check some edge cases that are easy to work out by hand.
+
+",,,
+HumanEval/122,kam_Latn,python,"
+def add_elements(arr, k):
+    """"""Nĩtũnengetwe mũamba ũte ũte ũteela wa namba arr na namba k, na kwoou tũisyoka na mũamba wa syikiti ilĩ sya namba arr sya mbee. Ngelekany'o: Kĩoko: arr = [111,21,3,4000,5,6,7,8,9], k = 4 Kĩoko: 24 # mũamba wa 21 + 3 Mĩvaka: 1. 1 <= lenarr) <= 100 2. 1 <= k <= lenarr)""""""
+","    return sum(elem for elem in arr[:k] if len(str(elem)) <= 2)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,-2,-3,41,57,76,87,88,99], 3) == -4
+    assert candidate([111,121,3,4000,5,6], 2) == 0
+    assert candidate([11,21,3,90,5,6,7,8,9], 4) == 125
+    assert candidate([111,21,3,4000,5,6,7,8,9], 4) == 24, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1], 1) == 1, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/123,kam_Latn,python,"
+def get_odd_collatz(n):
+    """"""Nĩ kana ũmanye ũndũ wosanĩte na ũndũ ũsu, soma na ũineenea ũndũ maũndũ matonya kwĩthĩwa mailyĩ nthĩnĩ wa kĩlungu kĩla kĩatĩĩe. Ethĩwa kĩlungu kĩla kĩatĩĩe nĩ kya mwanya, ve namba ĩmwe ya mwanya ĩkwatĩkanaa. Ethĩwa kĩlungu kĩla kĩatĩĩe nĩ kya mwanya, ve namba ĩngĩ ya mwanya ĩkwatĩkanaa.""""""
+","    if n%2==0:
+        odd_collatz = [] 
+    else:
+        odd_collatz = [n]
+    while n > 1:
+        if n % 2 == 0:
+            n = n/2
+        else:
+            n = n*3 + 1
+            
+        if n%2 == 1:
+            odd_collatz.append(int(n))
+
+    return sorted(odd_collatz)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(14) == [1, 5, 7, 11, 13, 17]
+    assert candidate(5) == [1, 5]
+    assert candidate(12) == [1, 3, 5], ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1) == [1], ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/124,kam_Latn,python,"
+def valid_date(date):
+    """"""No nginya ũandĩke mũtalatala ũla ũkwonany'a ũndũ matukũ ala maandĩkĩtwe maatĩanĩe, na ũndũ matukũ ala me vo maatĩanĩe. Ethĩwa matukũ ala maandĩkĩtwe maitonya kũtũmĩwa, namba ĩla ĩkwonany'a matukũ ala maandĩkĩtwe nĩ mĩsoa ĩsu nĩ True ethĩwa nĩ myei mĩna na ĩla ĩtialĩte ti true. Ethĩwa matukũ ala maandĩkĩtwe matũmĩawa nĩ mĩsoa ĩsu nĩ ma mĩthenya ĩtatũ na thanthatũ, nĩ ma mĩthenya ĩtatũ na thanthatũ. Ethĩwa matukũ ala maandĩkĩtwe matũmĩawa nĩ myei ĩna na thanthatũ, nĩ ma mĩthenya ĩtatũ na thanthatũ. Ethĩwa matukũ ala maandĩkĩtwe matũmĩawa nĩ myei ĩna na thanthatũ, nĩ ma mĩthenya ĩtatũ na thanthatũ. Ethĩwa matukũ ala maandĩkĩtwe matũmĩawa nĩ myei ĩna na thanthatũ, nĩ ma mĩthenya ĩtatũ na thanthatũ. Ethĩwa matukũ ala maandĩkĩtwe matũmĩawa nĩ myei ĩna na thanthatũ, nĩ ma mĩthenya ĩtatũ na thanthatũ. Ethĩwa matukũ ala maandĩkĩtwe matũmĩawa nĩ myei ĩna na thanthatũ, nĩ ma mĩthenya ĩtatũ na thanthatũ.""""""
+","    try:
+        date = date.strip()
+        month, day, year = date.split('-')
+        month, day, year = int(month), int(day), int(year)
+        if month < 1 or month > 12:
+            return False
+        if month in [1,3,5,7,8,10,12] and day < 1 or day > 31:
+            return False
+        if month in [4,6,9,11] and day < 1 or day > 30:
+            return False
+        if month == 2 and day < 1 or day > 29:
+            return False
+    except:
+        return False
+
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('03-11-2000') == True
+
+    assert candidate('15-01-2012') == False
+
+    assert candidate('04-0-2040') == False
+
+    assert candidate('06-04-2020') == True
+
+    assert candidate('01-01-2007') == True
+
+    assert candidate('03-32-2011') == False
+
+    assert candidate('') == False
+
+    assert candidate('04-31-3000') == False
+
+    assert candidate('06-06-2005') == True
+
+    assert candidate('21-31-2000') == False
+
+    assert candidate('04-12-2003') == True
+
+    assert candidate('04122003') == False
+
+    assert candidate('20030412') == False
+
+    assert candidate('2003-04') == False
+
+    assert candidate('2003-04-12') == False
+
+    assert candidate('04-2003') == False
+",,,
+HumanEval/125,kam_Latn,python,"
+def split_words(txt):
+    '''Ndeto sya mũsingi (string) syĩ mũo, ĩndĩ syatũmĩawa kwa nzĩa syĩ kĩvathũkany'o. Kwa ngelekany'o, syatũmĩawa kũandĩka ndeto ila sya vata sya mũsingi (word) kĩla vandũ. Syatũmĩawa kũandĩka ndeto syĩ kĩvathũkany'o ta mũsingi (word) na ndeto ila nene ta mũsingi (word).'''
+","    if "" "" in txt:
+        return txt.split()
+    elif "","" in txt:
+        return txt.replace(',',' ').split()
+    else:
+        return len([i for i in txt if i.islower() and ord(i)%2 == 0])
+","def check(candidate):
+
+    assert candidate(""Hello world!"") == [""Hello"",""world!""]
+    assert candidate(""Hello,world!"") == [""Hello"",""world!""]
+    assert candidate(""Hello world,!"") == [""Hello"",""world,!""]
+    assert candidate(""Hello,Hello,world !"") == [""Hello,Hello,world"",""!""]
+    assert candidate(""abcdef"") == 3
+    assert candidate(""aaabb"") == 2
+    assert candidate(""aaaBb"") == 1
+    assert candidate("""") == 0
+",,,
+HumanEval/126,kam_Latn,python,"
+def is_sorted(lst):
+    '''Ĩĩ nĩyaũ? Nĩ kana ũmanye ũndũ ũtonya kũalyũla mũsoa ũla wĩ Mbivilianĩ, sisya ũndũ ũtonya kũalyũla mĩsoa ĩngĩ ya Mbivilia kwa kĩthyomo kya Kĩsũngũ.'''
+","    count_digit = dict([(i, 0) for i in lst])
+    for i in lst:
+        count_digit[i]+=1 
+    if any(count_digit[i] > 2 for i in lst):
+        return False
+    if all(lst[i-1] <= lst[i] for i in range(1, len(lst))):
+        return True
+    else:
+        return False
+    
+    
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([5]) == True
+    assert candidate([1, 2, 3, 4, 5]) == True
+    assert candidate([1, 3, 2, 4, 5]) == False
+    assert candidate([1, 2, 3, 4, 5, 6]) == True
+    assert candidate([1, 2, 3, 4, 5, 6, 7]) == True
+    assert candidate([1, 3, 2, 4, 5, 6, 7]) == False, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([]) == True, ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate([1]) == True, ""This prints if this assert fails 3 (good for debugging!)""
+    assert candidate([3, 2, 1]) == False, ""This prints if this assert fails 4 (good for debugging!)""
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1, 2, 2, 2, 3, 4]) == False, ""This prints if this assert fails 5 (good for debugging!)""
+    assert candidate([1, 2, 3, 3, 3, 4]) == False, ""This prints if this assert fails 6 (good for debugging!)""
+    assert candidate([1, 2, 2, 3, 3, 4]) == True, ""This prints if this assert fails 7 (good for debugging!)""
+    assert candidate([1, 2, 3, 4]) == True, ""This prints if this assert fails 8 (good for debugging!)""
+
+",,,
+HumanEval/127,kam_Latn,python,"
+def intersection(interval1, interval2):
+    """"""ŨNDŨ ŨTONYA KWĨKĨĨSYA: Wamina kũandĩka ndeto sya mbee, namba ĩla yonekaa yĩ vaasa na ĩla yĩthĩawa yĩ vaasa nĩ ĩvĩndũe. Ethĩwa vala ĩvĩndũe ve namba, namba ĩla yonekaa yĩ vaasa na ĩla yĩthĩawa yĩ vaasa nĩ ĩvĩndũe. Ethĩwa vala ĩvĩndũe ve namba ĩla ĩilyĩ, namba ĩla yonekaa yĩthĩawa yĩ o vala ĩvĩndũe. Ethĩwa vala ĩvĩndũe ve namba, namba ĩla yonekaa yĩthĩawa yĩ o vala ĩvĩndũe. Ethĩwa vala ĩvĩndũe ve namba namba namba, namba ĩla yonekaa yĩthĩawa yĩ o vala ĩvĩndũe. Ethĩwa vala ĩvĩndũe ve namba, namba ĩla yonekaa yĩthĩawa yĩ o vala ĩvĩndũe. Ethĩwa vala ĩvĩndũe ve namba, namba ĩla yonekaa yĩthĩawa yĩ o vala ĩvĩndũe.""""""
+","    def is_prime(num):
+        if num == 1 or num == 0:
+            return False
+        if num == 2:
+            return True
+        for i in range(2, num):
+            if num%i == 0:
+                return False
+        return True
+
+    l = max(interval1[0], interval2[0])
+    r = min(interval1[1], interval2[1])
+    length = r - l
+    if length > 0 and is_prime(length):
+        return ""YES""
+    return ""NO""
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate((1, 2), (2, 3)) == ""NO""
+    assert candidate((-1, 1), (0, 4)) == ""NO""
+    assert candidate((-3, -1), (-5, 5)) == ""YES""
+    assert candidate((-2, 2), (-4, 0)) == ""YES""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate((-11, 2), (-1, -1)) == ""NO""
+    assert candidate((1, 2), (3, 5)) == ""NO""
+    assert candidate((1, 2), (1, 2)) == ""NO""
+    assert candidate((-2, -2), (-3, -2)) == ""NO""
+
+",,,
+HumanEval/128,kam_Latn,python,"
+def prod_signs(arr):
+    """"""ŨNDŨ ŨTONYA KWĨKĨĨSYA: ŨNDŨ ŨTONYA KŨTŨMĨSYA: ŨNDŨ ŨTONYA KŨTŨMĨSYA: ŨNDŨ ŨTONYA KŨTŨMĨSYA: Ĩĩ, namba sya mũsingi sya kĩla namba nĩ namba ikũmi.""""""
+","    if not arr: return None
+    prod = 0 if 0 in arr else (-1) ** len(list(filter(lambda x: x < 0, arr)))
+    return prod * sum([abs(i) for i in arr])
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1, 2, 2, -4]) == -9
+    assert candidate([0, 1]) == 0
+    assert candidate([1, 1, 1, 2, 3, -1, 1]) == -10
+    assert candidate([]) == None
+    assert candidate([2, 4,1, 2, -1, -1, 9]) == 20
+    assert candidate([-1, 1, -1, 1]) == 4
+    assert candidate([-1, 1, 1, 1]) == -4
+    assert candidate([-1, 1, 1, 0]) == 0
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/129,kam_Latn,python,"
+def minPath(grid, k):
+    """"""No wambĩĩe na sele o ĩla, na ĩndĩ ũithi vala ve sele syonthe ila syĩ vakuvĩ naku. Ethĩwa ve sele o ĩla, manya kana sele syonthe ila syĩ ũtee wa k syĩ ũtee wa k (nde kana nĩsyo syonanĩtye kĩla syĩkwenda). Ndũkasisye vala waĩle kwia sele syonthe. Seli ĩmwe yĩ ũasa wa k yĩthĩawa na ũasa wa k (ndyaĩ lasima yĩthĩwe yĩ ndaasa kwĩ kĩla ĩngĩ). Seli ĩmwe yĩ ũasa wa k yĩthĩawa na ũasa wa k (ndyaĩ lasima yĩthĩwe yĩ ndaasa kwĩ kĩla ĩngĩ). Seli ĩmwe yĩ ũasa wa k yĩthĩawa na ũasa wa k (ndyaĩ lasima yĩthĩwe yĩ ndaasa kwĩ kĩla ĩngĩ). Seli ĩmwe yĩ ũasa wa k yĩthĩawa na ũasa wa k (ndyaĩ lasima yĩthĩwe yĩ ndaasa kwĩ B). Seli ĩmwe yĩ ũasa wa k yĩthĩawa na ũasa wa k (ndyaĩ lasima yĩthĩwe yĩ ndaasa kwĩ B) Ethĩwa ve seli ĩseũvĩtw'e ĩatĩanĩe na vala seli isu ikwenda kwia seli, veele syonthe ila syĩ ũasa na ũasa wa k syĩ ũasa kwĩ kĩla ĩngĩ. Seli ĩla ĩseũvĩtw'e nĩ seli ĩmwe yĩ ũasa kwĩ kĩla ĩngĩ. Seli ĩla ĩseũvĩtw'e nĩ seli ĩmwe yĩ ũasa na ũasa na ũasa kwĩ kĩla ĩngĩ. Seli ĩla ĩseũvĩtw'e nĩ seli ĩmwe yĩ ndaasa na ũasa kwĩ kĩla kĩna ũasa kwĩ kĩla kĩseũvĩtw'e.""""""
+","    n = len(grid)
+    val = n * n + 1
+    for i in range(n):
+        for j in range(n):
+            if grid[i][j] == 1:
+                temp = []
+                if i != 0:
+                    temp.append(grid[i - 1][j])
+
+                if j != 0:
+                    temp.append(grid[i][j - 1])
+
+                if i != n - 1:
+                    temp.append(grid[i + 1][j])
+
+                if j != n - 1:
+                    temp.append(grid[i][j + 1])
+
+                val = min(temp)
+
+    ans = []
+    for i in range(k):
+        if i % 2 == 0:
+            ans.append(1)
+        else:
+            ans.append(val)
+    return ans
+","def check(candidate):
+
+    # Check some simple cases
+    print
+    assert candidate([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 3) == [1, 2, 1]
+    assert candidate([[5, 9, 3], [4, 1, 6], [7, 8, 2]], 1) == [1]
+    assert candidate([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]], 4) == [1, 2, 1, 2]
+    assert candidate([[6, 4, 13, 10], [5, 7, 12, 1], [3, 16, 11, 15], [8, 14, 9, 2]], 7) == [1, 10, 1, 10, 1, 10, 1]
+    assert candidate([[8, 14, 9, 2], [6, 4, 13, 15], [5, 7, 1, 12], [3, 10, 11, 16]], 5) == [1, 7, 1, 7, 1]
+    assert candidate([[11, 8, 7, 2], [5, 16, 14, 4], [9, 3, 15, 6], [12, 13, 10, 1]], 9) == [1, 6, 1, 6, 1, 6, 1, 6, 1]
+    assert candidate([[12, 13, 10, 1], [9, 3, 15, 6], [5, 16, 14, 4], [11, 8, 7, 2]], 12) == [1, 6, 1, 6, 1, 6, 1, 6, 1, 6, 1, 6]
+    assert candidate([[2, 7, 4], [3, 1, 5], [6, 8, 9]], 8) == [1, 3, 1, 3, 1, 3, 1, 3]
+    assert candidate([[6, 1, 5], [3, 8, 9], [2, 7, 4]], 8) == [1, 5, 1, 5, 1, 5, 1, 5]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([[1, 2], [3, 4]], 10) == [1, 2, 1, 2, 1, 2, 1, 2, 1, 2]
+    assert candidate([[1, 3], [3, 2]], 10) == [1, 3, 1, 3, 1, 3, 1, 3, 1, 3]
+
+",,,
+HumanEval/130,kam_Latn,python,"
+def tri(n):
+    """"""Mbee, ve namba itatũ syĩ kĩvathũkany'o ila ielekanĩtw'e na isu iandĩkĩtwe na namba ikũmi na ilĩ. Namba ikũmi na ilĩ nĩ namba ikũmi na ilĩ, na namba ikũmi na ilĩ nĩ namba ikũmi na ilĩ. Namba ikũmi na ilĩ nĩ namba ikũmi na ilĩ. Namba ikũmi na ilĩ nĩ namba ikũmi na ilĩ. Namba ikũmi na ilĩ nĩ namba ikũmi na ilĩ. Namba ikũmi na ilĩ nĩ namba ikũmi na ilĩ. Namba ikũmi na ilĩ nĩ namba ikũmi na ilĩ. Namba ikũmi na ilĩ nĩ namba ikũmi na ilĩ. Namba ikũmi na ilĩ nĩ namba ikũmi na ilĩ. Namba ikũmi na ilĩ nĩ namba ikũmi na ilĩ. Namba ikũmi na ilĩ nĩ namba ikũmi na ilĩ. Namba ikũmi na ilĩ nĩ namba ikũmi na ilĩ. Namba ikũmi na ilĩ nĩ namba ikũmi na ilĩ. Namba ikũmi na ilĩ nĩ namba ikũmi na ilĩ. Namba ikũmi na ilĩ nĩ namba ikũmi na ilĩ. Namba ikũmi na ilĩ nĩ namba ikũmi na ilĩ. Namba ikũmi na ilĩ nĩ namba ikũmi na ilĩ. Namba ikũmi na ilĩ nĩ namba ikũmi na ilĩ. Namba ikũmi nĩ namba ilĩ. Namba ikũmi na ilĩ nĩ namba ilĩ. Namba ikũmi na ilĩ nĩ namba ilĩ. Namba ikũmi na ilĩ nĩ ilĩ.""""""
+","    if n == 0:
+        return [1]
+    my_tri = [1, 3]
+    for i in range(2, n + 1):
+        if i % 2 == 0:
+            my_tri.append(i / 2 + 1)
+        else:
+            my_tri.append(my_tri[i - 1] + my_tri[i - 2] + (i + 3) / 2)
+    return my_tri
+","def check(candidate):
+
+    # Check some simple cases
+    
+    assert candidate(3) == [1, 3, 2.0, 8.0]
+    assert candidate(4) == [1, 3, 2.0, 8.0, 3.0]
+    assert candidate(5) == [1, 3, 2.0, 8.0, 3.0, 15.0]
+    assert candidate(6) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0]
+    assert candidate(7) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0, 24.0]
+    assert candidate(8) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0, 24.0, 5.0]
+    assert candidate(9) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0, 24.0, 5.0, 35.0]
+    assert candidate(20) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0, 24.0, 5.0, 35.0, 6.0, 48.0, 7.0, 63.0, 8.0, 80.0, 9.0, 99.0, 10.0, 120.0, 11.0]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(0) == [1]
+    assert candidate(1) == [1, 3]
+",,,
+HumanEval/131,kam_Latn,python,"
+def digits(n):
+    """"""Ĩĩ nĩ namba namba mũkuvĩ, namba ĩmwe ĩte namba, namba ĩmwe nĩ ĩlĩ, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ ĩkũmi, namba ĩmwe nĩ kenda kenda kenda kenda kenda kenda kenda, namba ĩmwe nĩ kenda, namba ĩmwe nĩ kenda, namba kenda, namba kenda, namba kenda, namba kenda, namba kenda, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba,""""""
+","    product = 1
+    odd_count = 0
+    for digit in str(n):
+        int_digit = int(digit)
+        if int_digit%2 == 1:
+            product= product*int_digit
+            odd_count+=1
+    if odd_count ==0:
+        return 0
+    else:
+        return product
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(5) == 5
+    assert candidate(54) == 5
+    assert candidate(120) ==1
+    assert candidate(5014) == 5
+    assert candidate(98765) == 315
+    assert candidate(5576543) == 2625
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(2468) == 0
+
+",,,
+HumanEval/132,kam_Latn,python,"
+def is_nested(string):
+    '''Ve vata wa kũandĩka ũndũ mũna Mbivilianĩ nĩ kana ũĩkĩĩthye kana nĩ ũndũ wa w'o. Ũndũ ũsu no wĩkwe kwa kũtũmĩa nzĩa ĩkũeleeka nesa na ĩkũeleeka nĩ andũ aingĩ.'''
+","    opening_bracket_index = []
+    closing_bracket_index = []
+    for i in range(len(string)):
+        if string[i] == '[':
+            opening_bracket_index.append(i)
+        else:
+            closing_bracket_index.append(i)
+    closing_bracket_index.reverse()
+    cnt = 0
+    i = 0
+    l = len(closing_bracket_index)
+    for idx in opening_bracket_index:
+        if i < l and idx < closing_bracket_index[i]:
+            cnt += 1
+            i += 1
+    return cnt >= 2
+
+    
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('[[]]') == True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('[]]]]]]][[[[[]') == False
+    assert candidate('[][]') == False
+    assert candidate(('[]')) == False
+    assert candidate('[[[[]]]]') == True
+    assert candidate('[]]]]]]]]]]') == False
+    assert candidate('[][][[]]') == True
+    assert candidate('[[]') == False
+    assert candidate('[]]') == False
+    assert candidate('[[]][[') == True
+    assert candidate('[[][]]') == True
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('') == False, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate('[[[[[[[[') == False
+    assert candidate(']]]]]]]]') == False
+
+",,,
+HumanEval/133,kam_Latn,python,"
+
+def sum_squares(lst):
+    """"""Ve mũsoa wa mũonza ũandĩkĩtwe na langi mũkwatu. Wa mũsoa ũsu nĩwonanĩtye kana namba ila syĩ mũsoanĩ ũsu nĩ namba ikũmi na inya, na namba isu syonthe syĩ inya inya na imwe syĩ inya.""""""
+","    import math
+    squared = 0
+    for i in lst:
+        squared += math.ceil(i)**2
+    return squared
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,2,3])==14, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1.0,2,3])==14, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1,3,5,7])==84, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1.4,4.2,0])==29, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([-2.4,1,1])==6, ""This prints if this assert fails 1 (good for debugging!)""
+
+    assert candidate([100,1,15,2])==10230, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([10000,10000])==200000000, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([-1.4,4.6,6.3])==75, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([-1.4,17.9,18.9,19.9])==1086, ""This prints if this assert fails 1 (good for debugging!)""
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([0])==0, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([-1])==1, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([-1,1,0])==2, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/134,kam_Latn,python,"
+def check_if_last_char_is_a_letter(txt):
+    '''Mbee, ""word"" nĩ namba yĩandĩkĩtwe na nthoo sya ndeto na ĩndĩ ĩisyoka yĩ na ndeto ingĩ eka ""true"" (ũvoo wa ala mate kw'o).'''
+"," 
+    check = txt.split(' ')[-1]
+    return True if len(check) == 1 and (97 <= ord(check.lower()) <= 122) else False
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""apple"") == False
+    assert candidate(""apple pi e"") == True
+    assert candidate(""eeeee"") == False
+    assert candidate(""A"") == True
+    assert candidate(""Pumpkin pie "") == False
+    assert candidate(""Pumpkin pie 1"") == False
+    assert candidate("""") == False
+    assert candidate(""eeeee e "") == False
+    assert candidate(""apple pie"") == False
+    assert candidate(""apple pi e "") == False
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/135,kam_Latn,python,"
+def can_arrange(arr):
+    """"""Mbee, ve namba yonanasya namba ya ũndũ mũna, na ĩndĩ namba ĩsu ĩisyoka yĩthĩawa yĩ o kũndũ kwĩlĩ kwa ĩsu ĩngĩ ya ũndũ ũsu.""""""
+","    ind=-1
+    i=1
+    while i<len(arr):
+      if arr[i]<arr[i-1]:
+        ind=i
+      i+=1
+    return ind
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,2,4,3,5])==3
+    assert candidate([1,2,4,5])==-1
+    assert candidate([1,4,2,5,6,7,8,9,10])==2
+    assert candidate([4,8,5,7,3])==4
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([])==-1
+
+",,,
+HumanEval/136,kam_Latn,python,"
+def largest_smallest_integers(lst):
+    '''Mbee, a, b, na c nĩ namba nini nthĩnĩ wa ithyomo ila syĩ vo. Ethĩwa vai namba nini nthĩnĩ wa ithyomo ila syĩ vo, namba ĩsu nĩ ĩanene na ĩla ĩwetetwe nthĩnĩ wa ithyomo ila syĩ vo.'''
+","    smallest = list(filter(lambda x: x < 0, lst))
+    largest = list(filter(lambda x: x > 0, lst))
+    return (max(smallest) if smallest else None, min(largest) if largest else None)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([2, 4, 1, 3, 5, 7]) == (None, 1)
+    assert candidate([2, 4, 1, 3, 5, 7, 0]) == (None, 1)
+    assert candidate([1, 3, 2, 4, 5, 6, -2]) == (-2, 1)
+    assert candidate([4, 5, 3, 6, 2, 7, -7]) == (-7, 2)
+    assert candidate([7, 3, 8, 4, 9, 2, 5, -9]) == (-9, 2)
+    assert candidate([]) == (None, None)
+    assert candidate([0]) == (None, None)
+    assert candidate([-1, -3, -5, -6]) == (-1, None)
+    assert candidate([-1, -3, -5, -6, 0]) == (-1, None)
+    assert candidate([-6, -4, -4, -3, 1]) == (-3, 1)
+    assert candidate([-6, -4, -4, -3, -100, 1]) == (-3, 1)
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+",,,
+HumanEval/137,kam_Latn,python,"
+def compare_one(a, b):
+    """"""Ũndũ ũngĩ ũtonya kwĩka nĩ kwosa namba syĩ kĩvathũkany'o ta mũamba na ũiĩanĩsya kĩla ũkwenda, na ĩndĩ ũiĩanĩsya namba ikethĩwa syĩ kĩvathũkany'o ta mũamba na kĩla kĩkũĩanĩwa.""""""
+","    temp_a, temp_b = a, b
+    if isinstance(temp_a, str): temp_a = temp_a.replace(',','.')
+    if isinstance(temp_b, str): temp_b = temp_b.replace(',','.')
+    if float(temp_a) == float(temp_b): return None
+    return a if float(temp_a) > float(temp_b) else b 
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(1, 2) == 2
+    assert candidate(1, 2.5) == 2.5
+    assert candidate(2, 3) == 3
+    assert candidate(5, 6) == 6
+    assert candidate(1, ""2,3"") == ""2,3""
+    assert candidate(""5,1"", ""6"") == ""6""
+    assert candidate(""1"", ""2"") == ""2""
+    assert candidate(""1"", 1) == None
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/138,kam_Latn,python,"
+def is_equal_to_sum_even(n):
+    """"""Sisya kana namba n no ĩandĩkwe ta mũtalatala wa namba 4 sya mũamba mũseo. Ngelekany'o nĩ_ĩanene na_ĩanene na_ĩanene na ((4) == Ũvũngũ nĩ_ĩanene na_ĩanene na)) == Ũvũngũ nĩ_ĩanene na_ĩanene na_ĩanene na ((8) == W'o """"""
+","    return n%2 == 0 and n >= 8
+","def check(candidate):
+    assert candidate(4) == False
+    assert candidate(6) == False
+    assert candidate(8) == True
+    assert candidate(10) == True
+    assert candidate(11) == False
+    assert candidate(12) == True
+    assert candidate(13) == False
+    assert candidate(16) == True
+",,,
+HumanEval/139,kam_Latn,python,"
+def special_factorial(n):
+    """"""Brazil factor n = n! * (n-1)! * (n-2)! * ... * 1! vala n > 0 Kwa ngelekany'o: >>> special_factorial ((4) 288 Wĩa ũũ ũkeethĩawa na namba ĩte maana na waĩle kũete namba ĩte maana ya namba ĩsu. """"""
+","    fact_i = 1
+    special_fact = 1
+    for i in range(1, n+1):
+        fact_i *= i
+        special_fact *= fact_i
+    return special_fact
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(4) == 288, ""Test 4""
+    assert candidate(5) == 34560, ""Test 5""
+    assert candidate(7) == 125411328000, ""Test 7""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1) == 1, ""Test 1""
+
+",,,
+HumanEval/140,kam_Latn,python,"
+def fix_spaces(text):
+    """"""_Kavuku ka kwĩmanyĩsyahĩwa ve ndeto syĩ ndetonĩ, lekany'a itumi ila itakonanĩtw'e, na ũiendeea kũiita ila itakonanĩtw'e, weka itumi ila itakonanĩtw'e itũmĩĩte - fix_spaces (((""Kwa ngelekany'o"") == ""Kwa ngelekany'o"" fix_spaces (((""Kwa ngelekany'o1"") == ""Kwa ngelekany'o1"" fix_spaces (((""Kwa ngelekany'o2"") == ""_Example_2"" fix_spaces (((""Kwa ngelekany'o3"") == ""_Example-3"" ""
+    """"""
+","    new_text = """"
+    i = 0
+    start, end = 0, 0
+    while i < len(text):
+        if text[i] == "" "":
+            end += 1
+        else:
+            if end - start > 2:
+                new_text += ""-""+text[i]
+            elif end - start > 0:
+                new_text += ""_""*(end - start)+text[i]
+            else:
+                new_text += text[i]
+            start, end = i+1, i+1
+        i+=1
+    if end - start > 2:
+        new_text += ""-""
+    elif end - start > 0:
+        new_text += ""_""
+    return new_text
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""Example"") == ""Example"", ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(""Mudasir Hanif "") == ""Mudasir_Hanif_"", ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate(""Yellow Yellow  Dirty  Fellow"") == ""Yellow_Yellow__Dirty__Fellow"", ""This prints if this assert fails 3 (good for debugging!)""
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""Exa   mple"") == ""Exa-mple"", ""This prints if this assert fails 4 (good for debugging!)""
+    assert candidate(""   Exa 1 2 2 mple"") == ""-Exa_1_2_2_mple"", ""This prints if this assert fails 4 (good for debugging!)""
+
+",,,
+HumanEval/141,kam_Latn,python,"
+def file_name_check(file_name):
+    """"""Ve fomu yumĩtw'e ya kũtũngĩĩa ĩsyĩtwa ya faili, na yĩ na namba ikwonany'a vala yĩĩ yĩandĩkĩtwe, na vala yĩĩ yĩandĩkĩtwe yĩthĩawa yonanĩtye vala yĩĩ yĩandĩkĩtwe. - Ĩsyĩtwa ya faili yĩ na namba itatũ (0-9). - Ĩsyĩtwa ya faili yĩ na namba ĩmwe na vala yĩĩ yĩandĩkĩtwe. - Mbee wa namba ĩsu vaĩle kwĩthĩwa na namba namba namba (""a""-""z"" na ""A""-""Z""). - Mbee wa namba ĩla yĩthĩawa yonanĩtye namba ya file nĩ ta ĩno: ['txt', 'exe', 'lld'] Example: file_name_check""{""example.txt""} # => 'Yes' => 'file_name_check""{""example.ll1"") => 'No' => '#' (the name should start with a Latin alphabet)""""""
+","    suf = ['txt', 'exe', 'dll']
+    lst = file_name.split(sep='.')
+    if len(lst) != 2:
+        return 'No'
+    if not lst[1] in suf:
+        return 'No'
+    if len(lst[0]) == 0:
+        return 'No'
+    if not lst[0][0].isalpha():
+        return 'No'
+    t = len([x for x in lst[0] if x.isdigit()])
+    if t > 3:
+        return 'No'
+    return 'Yes'
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""example.txt"") == 'Yes'
+    assert candidate(""1example.dll"") == 'No'
+    assert candidate('s1sdf3.asd') == 'No'
+    assert candidate('K.dll') == 'Yes'
+    assert candidate('MY16FILE3.exe') == 'Yes'
+    assert candidate('His12FILE94.exe') == 'No'
+    assert candidate('_Y.txt') == 'No'
+    assert candidate('?aREYA.exe') == 'No'
+    assert candidate('/this_is_valid.dll') == 'No'
+    assert candidate('this_is_valid.wow') == 'No'
+    assert candidate('this_is_valid.txt') == 'Yes'
+    assert candidate('this_is_valid.txtexe') == 'No'
+    assert candidate('#this2_i4s_5valid.ten') == 'No'
+    assert candidate('@this1_is6_valid.exe') == 'No'
+    assert candidate('this_is_12valid.6exe4.txt') == 'No'
+    assert candidate('all.exe.txt') == 'No'
+    assert candidate('I563_No.exe') == 'Yes'
+    assert candidate('Is3youfault.txt') == 'Yes'
+    assert candidate('no_one#knows.dll') == 'Yes'
+    assert candidate('1I563_Yes3.exe') == 'No'
+    assert candidate('I563_Yes3.txtt') == 'No'
+    assert candidate('final..txt') == 'No'
+    assert candidate('final132') == 'No'
+    assert candidate('_f4indsartal132.') == 'No'
+    
+        
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('.txt') == 'No'
+    assert candidate('s.') == 'No'
+
+",,,
+HumanEval/142,kam_Latn,python,"
+
+
+def sum_squares(lst):
+    """""""" Wĩa ũũ ũkuaa namba syonthe sya nthoo. Syĩndũ syonthe ila syĩ nthĩnĩ wa list, itina wa namba, vala namba ĩandĩkĩtwe nĩ namba 3, na namba ĩandĩkĩtwe nĩ namba, vala namba ĩandĩkĩtwe nĩ namba 4, vala namba ĩandĩkĩtwe nĩ namba 3. Syĩndũ ila itina wa namba ielekanĩtw'e na namba, vala namba ĩandĩkĩtwe nĩ namba, vala namba ĩandĩkĩtwe nĩ namba, na vala namba ĩandĩkĩtwe nĩ namba, vala namba ĩandĩkĩtwe nĩ namba, vala namba ĩandĩkĩtwe nĩ namba, na vala namba ĩandĩkĩtwe nĩ namba, vala namba ĩandĩkĩtwe nĩ namba, vala namba ĩandĩkĩtwe nĩ namba, na vala namba ĩandĩkĩtwe nĩ namba, vala namba ĩandĩkĩtwe nĩ namba, vala namba ĩandĩkĩtwe nĩ namba, na vala namba ĩandĩkĩtwe nĩ namba, vala namba ĩandĩkĩtwe nĩ namba, vala namba ĩandĩkĩtwe nĩ namba, na vala namba ĩandĩkĩtwe nĩ namba, vala namba ĩandĩkĩtwe nĩ namba, na vala namba ĩandĩkĩtwe nĩ namba, vala namba ĩandĩkĩtwe nĩ namba, na vala namba ĩandĩkĩtwe nĩ namba, vala namba ĩandĩkĩtwe nĩ namba"".""""""
+","    result =[]
+    for i in range(len(lst)):
+        if i %3 == 0:
+            result.append(lst[i]**2)
+        elif i % 4 == 0 and i%3 != 0:
+            result.append(lst[i]**3)
+        else:
+            result.append(lst[i])
+    return sum(result)
+","def check(candidate):
+
+    # Check some simple cases
+    
+    assert candidate([1,2,3]) == 6
+    assert candidate([1,4,9]) == 14
+    assert candidate([]) == 0
+    assert candidate([1,1,1,1,1,1,1,1,1]) == 9
+    assert candidate([-1,-1,-1,-1,-1,-1,-1,-1,-1]) == -3
+    assert candidate([0]) == 0
+    assert candidate([-1,-5,2,-1,-5]) == -126
+    assert candidate([-56,-99,1,0,-2]) == 3030
+    assert candidate([-1,0,0,0,0,0,0,0,-1]) == 0
+    assert candidate([-16, -9, -2, 36, 36, 26, -20, 25, -40, 20, -4, 12, -26, 35, 37]) == -14196
+    assert candidate([-1, -3, 17, -1, -15, 13, -1, 14, -14, -12, -5, 14, -14, 6, 13, 11, 16, 16, 4, 10]) == -1448
+    
+    
+    # Don't remove this line:
+",,,
+HumanEval/143,kam_Latn,python,"
+def words_in_sentence(sentence):
+    """"""Ve ngelekany'o ĩkwonany'a ũndũ tũtonya kũtũmĩa syĩndũ ta simũ, kombiũta, na kombiũta nĩ kana tũtetheesye andũ kũelewa Mbivilia. Ngelekany'o ĩsu nĩ ta, kwakya tene mũndũ atũmĩa simũ kavola, simũ ĩsu nĩtonya kwĩthĩwa na maũndũ elĩ (space) matonya kũtuma ũvoo ũla ũkwĩmanyĩsya wĩthĩwa wĩ mũasa.""""""
+","    new_lst = []
+    for word in sentence.split():
+        flg = 0
+        if len(word) == 1:
+            flg = 1
+        for i in range(2, len(word)):
+            if len(word)%i == 0:
+                flg = 1
+        if flg == 0 or len(word) == 2:
+            new_lst.append(word)
+    return "" "".join(new_lst)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""This is a test"") == ""is""
+    assert candidate(""lets go for swimming"") == ""go for""
+    assert candidate(""there is no place available here"") == ""there is no place""
+    assert candidate(""Hi I am Hussein"") == ""Hi am Hussein""
+    assert candidate(""go for it"") == ""go for it""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""here"") == """"
+    assert candidate(""here is"") == ""is""
+
+",,,
+HumanEval/144,kam_Latn,python,"
+def simplify(x, n):
+    """"""Ũndũ ũla waĩle kwĩka nĩ kũandĩka mũtalatala ũla ũkwonany'a ũndũ ve kĩvathũkany'o katĩ wa ũndũ waĩle kũandĩka na ũndũ ũtaĩle kũandĩka. Ũndũ ũsu no ũelekanw'e na ũũ: x * n nĩ namba ĩte maana, na yesa kũandĩka mũtalatala ũsu ũndũ ũmwe, ĩthĩwa na w'o.""""""
+","    a, b = x.split(""/"")
+    c, d = n.split(""/"")
+    numerator = int(a) * int(c)
+    denom = int(b) * int(d)
+    if (numerator/denom == int(numerator/denom)):
+        return True
+    return False
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""1/5"", ""5/1"") == True, 'test1'
+    assert candidate(""1/6"", ""2/1"") == False, 'test2'
+    assert candidate(""5/1"", ""3/1"") == True, 'test3'
+    assert candidate(""7/10"", ""10/2"") == False, 'test4'
+    assert candidate(""2/10"", ""50/10"") == True, 'test5'
+    assert candidate(""7/2"", ""4/2"") == True, 'test6'
+    assert candidate(""11/6"", ""6/1"") == True, 'test7'
+    assert candidate(""2/3"", ""5/2"") == False, 'test8'
+    assert candidate(""5/2"", ""3/5"") == False, 'test9'
+    assert candidate(""2/4"", ""8/4"") == True, 'test10'
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""2/4"", ""4/2"") == True, 'test11'
+    assert candidate(""1/5"", ""5/1"") == True, 'test12'
+    assert candidate(""1/5"", ""1/5"") == False, 'test13'
+
+",,,
+HumanEval/145,kam_Latn,python,"
+def order_by_points(nums):
+    """"""Andĩka namba ĩla ĩkwonany'a mũvangĩle wa syĩtwa ya ũndũ namba ĩmwe ya ũndũ mũna ĩelekanĩtw'e na namba ĩngĩ ya ũndũ mũna, na ĩndĩ ũilikany'a na namba ĩngĩ ya ũndũ ũsu.""""""
+","    def digits_sum(n):
+        neg = 1
+        if n < 0: n, neg = -1 * n, -1 
+        n = [int(i) for i in str(n)]
+        n[0] = n[0] * neg
+        return sum(n)
+    return sorted(nums, key=digits_sum)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1, 11, -1, -11, -12]) == [-1, -11, 1, -12, 11]
+    assert candidate([1234,423,463,145,2,423,423,53,6,37,3457,3,56,0,46]) == [0, 2, 3, 6, 53, 423, 423, 423, 1234, 145, 37, 46, 56, 463, 3457]
+    assert candidate([]) == []
+    assert candidate([1, -11, -32, 43, 54, -98, 2, -3]) == [-3, -32, -98, -11, 1, 2, 43, 54]
+    assert candidate([1,2,3,4,5,6,7,8,9,10,11]) == [1, 10, 2, 11, 3, 4, 5, 6, 7, 8, 9]
+    assert candidate([0,6,6,-76,-21,23,4]) == [-76, -21, 0, 4, 23, 6, 6]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/146,kam_Latn,python,"
+def specialFilter(nums):
+    """"""Andĩka namba ĩla ĩatĩĩe mũtalatala wa ũndũ ũtonya kwĩka nĩ kana ũmanye ethĩwa mĩtalatala ĩla ũatĩĩe nĩyaĩle.""""""
+","    
+    count = 0
+    for num in nums:
+        if num > 10:
+            odd_digits = (1, 3, 5, 7, 9)
+            number_as_string = str(num)
+            if int(number_as_string[0]) in odd_digits and int(number_as_string[-1]) in odd_digits:
+                count += 1
+        
+    return count 
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([5, -2, 1, -5]) == 0  
+    assert candidate([15, -73, 14, -15]) == 1
+    assert candidate([33, -2, -3, 45, 21, 109]) == 2
+    assert candidate([43, -12, 93, 125, 121, 109]) == 4
+    assert candidate([71, -2, -33, 75, 21, 19]) == 3
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1]) == 0              
+    assert candidate([]) == 0                   
+
+",,,
+HumanEval/147,kam_Latn,python,"
+def get_max_triples(n):
+    """"""Nĩ kana ũmanye ũndũ veana, sisya ũndũ mũsoa ũla wa mbee waĩtye. Ethĩwa ve namba ĩmwe, namba ĩsu nĩ ĩana, na ethĩwa ve namba ĩngĩ, namba ĩsu nĩ ĩana. Ethĩwa ve namba ĩmwe, namba ĩsu nĩ ĩana, na ethĩwa ve namba ĩngĩ, namba ĩsu nĩ ĩana.""""""
+","    A = [i*i - i + 1 for i in range(1,n+1)]
+    ans = []
+    for i in range(n):
+        for j in range(i+1,n):
+            for k in range(j+1,n):
+                if (A[i]+A[j]+A[k])%3 == 0:
+                    ans += [(A[i],A[j],A[k])]
+    return len(ans)
+","def check(candidate):
+
+    assert candidate(5) == 1
+    assert candidate(6) == 4
+    assert candidate(10) == 36
+    assert candidate(100) == 53361
+",,,
+HumanEval/148,kam_Latn,python,"
+def bf(planet1, planet2):
+    '''Ve ndata nyanya syĩkalaa syũa yitũ: ya mbee nĩ Mercury, ya kelĩ nĩ Venus, ya katatũ nĩ Earth, ya katatũ nĩ Mars, ya kana nĩ Jupiter, ya kana nĩ Saturn, ya kana nĩ Uranus, na ya kana nĩ Neptune. Andĩka kĩlungu kĩ na masyĩtwa ma ndata ilĩ.'''
+","    planet_names = (""Mercury"", ""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn"", ""Uranus"", ""Neptune"")
+    if planet1 not in planet_names or planet2 not in planet_names or planet1 == planet2:
+        return ()
+    planet1_index = planet_names.index(planet1)
+    planet2_index = planet_names.index(planet2)
+    if planet1_index < planet2_index:
+        return (planet_names[planet1_index + 1: planet2_index])
+    else:
+        return (planet_names[planet2_index + 1 : planet1_index])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""Jupiter"", ""Neptune"") == (""Saturn"", ""Uranus""), ""First test error: "" + str(len(candidate(""Jupiter"", ""Neptune"")))      
+    assert candidate(""Earth"", ""Mercury"") == (""Venus"",), ""Second test error: "" + str(candidate(""Earth"", ""Mercury""))  
+    assert candidate(""Mercury"", ""Uranus"") == (""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn""), ""Third test error: "" + str(candidate(""Mercury"", ""Uranus""))      
+    assert candidate(""Neptune"", ""Venus"") == (""Earth"", ""Mars"", ""Jupiter"", ""Saturn"", ""Uranus""), ""Fourth test error: "" + str(candidate(""Neptune"", ""Venus""))  
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""Earth"", ""Earth"") == ()
+    assert candidate(""Mars"", ""Earth"") == ()
+    assert candidate(""Jupiter"", ""Makemake"") == ()
+
+",,,
+HumanEval/149,kam_Latn,python,"
+def sorted_list_sum(lst):
+    """"""Andĩka namba ila syĩ na ũasa wa inzi kana namba ikilyĩ inaelekanw'a. Namba ikilyĩ inaelekanw'a na kĩla ndeto ĩatĩĩe ũasa wayo, na ĩndĩ ũivĩndũka na ũiiti wa mwanya. Ethĩwa ndeto ila syĩ ũasa wa inzi nĩ ngamu, ũiiti ũsu ũiũngamĩa namba ila syĩ nthĩnĩ wa inzi ta isu, na ĩndĩ ũiũandĩka.""""""
+","    lst.sort()
+    new_lst = []
+    for i in lst:
+        if len(i)%2 == 0:
+            new_lst.append(i)
+    return sorted(new_lst, key=len)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([""aa"", ""a"", ""aaa""]) == [""aa""]
+    assert candidate([""school"", ""AI"", ""asdf"", ""b""]) == [""AI"", ""asdf"", ""school""]
+    assert candidate([""d"", ""b"", ""c"", ""a""]) == []
+    assert candidate([""d"", ""dcba"", ""abcd"", ""a""]) == [""abcd"", ""dcba""]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([""AI"", ""ai"", ""au""]) == [""AI"", ""ai"", ""au""]
+    assert candidate([""a"", ""b"", ""b"", ""c"", ""c"", ""a""]) == []
+    assert candidate(['aaaa', 'bbbb', 'dd', 'cc']) == [""cc"", ""dd"", ""aaaa"", ""bbbb""]
+
+",,,
+HumanEval/150,kam_Latn,python,"
+def x_or_y(n, x, y):
+    """"""Ĩĩ nĩ namba namba namba, na namba ĩsu nĩ namba namba namba, na namba ĩsu nĩ namba namba namba, na namba ĩsu nĩ namba namba, na namba ĩsu nĩ namba, na namba ĩsu nĩ namba, na namba ĩsu nĩ namba, na namba ĩsu nĩ namba, na namba ĩsu nĩ namba, na namba ĩsu nĩ namba, na namba ĩsu nĩ namba, na namba ĩsu nĩ namba, na namba ĩsu nĩ namba, na namba ĩsu nĩ namba, na namba ĩsu nĩ namba, na namba ĩsu nĩ namba, na namba ĩsu nĩ namba, na namba ĩsu nĩ namba, na namba ĩsu nĩ namba, na namba ĩsu nĩ namba, na namba ĩsu nĩ namba, na namba ĩsu nĩ namba, na namba ĩsu nĩ namba, na namba ĩsu nĩ namba, na namba ĩsu nĩ namba, na namba ĩsu nĩ namba, na namba ĩsu nĩ namba, na namba ĩsu nĩ namba, na namba ĩsu nĩ namba, na namba ĩsu nĩ namba, na namba ĩsu nĩ namba, na namba ĩsu nĩ namba, na namba ĩsu nĩ namba, na namba ĩsu nĩ namba, o na namba ĩsu nĩ namba ĩngĩ.""""""
+","    if n == 1:
+        return y
+    for i in range(2, n):
+        if n % i == 0:
+            return y
+            break
+    else:
+        return x
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(7, 34, 12) == 34
+    assert candidate(15, 8, 5) == 5
+    assert candidate(3, 33, 5212) == 33
+    assert candidate(1259, 3, 52) == 3
+    assert candidate(7919, -1, 12) == -1
+    assert candidate(3609, 1245, 583) == 583
+    assert candidate(91, 56, 129) == 129
+    assert candidate(6, 34, 1234) == 1234
+    
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1, 2, 0) == 0
+    assert candidate(2, 2, 0) == 2
+
+",,,
+HumanEval/151,kam_Latn,python,"
+def double_the_difference(lst):
+    '''Ĩĩ nĩ namba namba namba, namba nĩ namba namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ namba, namba nĩ, namba nĩ, namba nĩ, namba nĩ, namba nĩ, namba nĩ, namba nĩ, namba nĩ, namba nĩ, namba nĩ, namba nĩ, namba nĩ, namba nĩ, namba nĩ, namba nĩ, namba nĩ, namba nĩ, namba, namba nĩ, namba, namba nĩ, namba, namba, namba nĩ, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba, namba,'''
+","    return sum([i**2 for i in lst if i > 0 and i%2!=0 and ""."" not in str(i)])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([]) == 0 , ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([5, 4]) == 25 , ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate([0.1, 0.2, 0.3]) == 0 , ""This prints if this assert fails 3 (good for debugging!)""
+    assert candidate([-10, -20, -30]) == 0 , ""This prints if this assert fails 4 (good for debugging!)""
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([-1, -2, 8]) == 0, ""This prints if this assert fails 5 (also good for debugging!)""
+    assert candidate([0.2, 3, 5]) == 34, ""This prints if this assert fails 6 (also good for debugging!)""
+    lst = list(range(-99, 100, 2))
+    odd_sum = sum([i**2 for i in lst if i%2!=0 and i > 0])
+    assert candidate(lst) == odd_sum , ""This prints if this assert fails 7 (good for debugging!)""
+
+",,,
+HumanEval/152,kam_Latn,python,"
+def compare(game,guess):
+    """"""No kwĩthĩwa kĩla ũmwe witũ esĩ ũndũ wĩw'aa ĩla ũvoo mũna wesa kũsiw'a, kana ĩla woona maũndũ mavw'anene na ala angĩ, na ũndũ ũkwĩw'a nĩw'o waĩle. Ũndũ ũla waĩle kwĩka nĩ kũsisya kana ve ũmwe katĩ wa ala mathangũ elĩ mainenganĩtwe wasisya ethĩwa mosũanĩo ala methĩawa mũndũnĩ ũsu nĩmalũngalu kana nde ma w'o.""""""
+","    return [abs(x-y) for x,y in zip(game,guess)]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,2,3,4,5,1],[1,2,3,4,2,-2])==[0,0,0,0,3,3], ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([0,0,0,0,0,0],[0,0,0,0,0,0])==[0,0,0,0,0,0], ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1,2,3],[-1,-2,-3])==[2,4,6], ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1,2,3,5],[-1,2,3,4])==[2,0,0,1], ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/153,kam_Latn,python,"
+def Strongest_Extension(class_name, extensions):
+    """"""Ũkesa kwona vandũ ve kyongo kĩũweta ""class name"" (kyongo kya ndeto) na ũisisya ndeto sya nthoo ila ikũatĩĩwe vo, ũisisya ndeto ta ""slices"" (ndeto syĩ na kyongo kĩmwe) na ũisisya ndeto ta ""extend"". Syongo isu syĩũweta namba ila ikũatĩĩwa kĩlungunĩ kĩu. Syongo isu syĩũweta namba ikũatĩĩwa kĩlungunĩ kĩu.""""""
+","    strong = extensions[0]
+    my_val = len([x for x in extensions[0] if x.isalpha() and x.isupper()]) - len([x for x in extensions[0] if x.isalpha() and x.islower()])
+    for s in extensions:
+        val = len([x for x in s if x.isalpha() and x.isupper()]) - len([x for x in s if x.isalpha() and x.islower()])
+        if val > my_val:
+            strong = s
+            my_val = val
+
+    ans = class_name + ""."" + strong
+    return ans
+
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('Watashi', ['tEN', 'niNE', 'eIGHt8OKe']) == 'Watashi.eIGHt8OKe'
+    assert candidate('Boku123', ['nani', 'NazeDa', 'YEs.WeCaNe', '32145tggg']) == 'Boku123.YEs.WeCaNe'
+    assert candidate('__YESIMHERE', ['t', 'eMptY', 'nothing', 'zeR00', 'NuLl__', '123NoooneB321']) == '__YESIMHERE.NuLl__'
+    assert candidate('K', ['Ta', 'TAR', 't234An', 'cosSo']) == 'K.TAR'
+    assert candidate('__HAHA', ['Tab', '123', '781345', '-_-']) == '__HAHA.123'
+    assert candidate('YameRore', ['HhAas', 'okIWILL123', 'WorkOut', 'Fails', '-_-']) == 'YameRore.okIWILL123'
+    assert candidate('finNNalLLly', ['Die', 'NowW', 'Wow', 'WoW']) == 'finNNalLLly.WoW'
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('_', ['Bb', '91245']) == '_.Bb'
+    assert candidate('Sp', ['671235', 'Bb']) == 'Sp.671235'
+    
+",,,
+HumanEval/154,kam_Latn,python,"
+def cycpattern_check(a , b):
+    """"""Nĩwaũnengwa ndeto ilĩ. Ethĩwa ndeto ya kelĩ kana o ĩla ĩngĩ ũalyũlĩte nĩ ndeto ĩla ĩatĩĩe mũsoa ũla wĩ mbee wa ndeto ĩsu, ũalyũlo wayo nĩ True.""""""
+","    l = len(b)
+    pat = b + b
+    for i in range(len(a) - l + 1):
+        for j in range(l + 1):
+            if a[i:i+l] == pat[j:j+l]:
+                return True
+    return False
+","def check(candidate):
+
+    # Check some simple cases
+    #assert True, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    #assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert  candidate(""xyzw"",""xyw"") == False , ""test #0""
+    assert  candidate(""yello"",""ell"") == True , ""test #1""
+    assert  candidate(""whattup"",""ptut"") == False , ""test #2""
+    assert  candidate(""efef"",""fee"") == True , ""test #3""
+    assert  candidate(""abab"",""aabb"") == False , ""test #4""
+    assert  candidate(""winemtt"",""tinem"") == True , ""test #5""
+
+",,,
+HumanEval/155,kam_Latn,python,"
+def even_odd_count(num):
+    """"""given an integer. return a tuple that has the number of even and odd digits respectively. Example: even_odd_count(-12) ==> (1, 1) even_odd_count(123) ==> (1, 2) """"""
+","    even_count = 0
+    odd_count = 0
+    for i in str(abs(num)):
+        if int(i)%2==0:
+            even_count +=1
+        else:
+            odd_count +=1
+    return (even_count, odd_count)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(7) == (0, 1)
+    assert candidate(-78) == (1, 1)
+    assert candidate(3452) == (2, 2)
+    assert candidate(346211) == (3, 3)
+    assert candidate(-345821) == (3, 3)
+    assert candidate(-2) == (1, 0)
+    assert candidate(-45347) == (2, 3)
+    assert candidate(0) == (1, 0)
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/156,kam_Latn,python,"
+def int_to_mini_roman(number):
+    """"""Kwoona ũndũ namba ĩmwe yonekaa yĩ ĩseo, sisya ũndũ ĩtonya kũtũngwa yĩ ndetonĩ syĩ na namba nini.""""""
+","    num = [1, 4, 5, 9, 10, 40, 50, 90,  
+           100, 400, 500, 900, 1000] 
+    sym = [""I"", ""IV"", ""V"", ""IX"", ""X"", ""XL"",  
+           ""L"", ""XC"", ""C"", ""CD"", ""D"", ""CM"", ""M""] 
+    i = 12
+    res = ''
+    while number: 
+        div = number // num[i] 
+        number %= num[i] 
+        while div: 
+            res += sym[i] 
+            div -= 1
+        i -= 1
+    return res.lower()
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(19) == 'xix'
+    assert candidate(152) == 'clii'
+    assert candidate(251) == 'ccli'
+    assert candidate(426) == 'cdxxvi'
+    assert candidate(500) == 'd'
+    assert candidate(1) == 'i'
+    assert candidate(4) == 'iv'
+    assert candidate(43) == 'xliii'
+    assert candidate(90) == 'xc'
+    assert candidate(94) == 'xciv'
+    assert candidate(532) == 'dxxxii'
+    assert candidate(900) == 'cm'
+    assert candidate(994) == 'cmxciv'
+    assert candidate(1000) == 'm'
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/157,kam_Latn,python,"
+def right_angle_triangle(a, b, c):
+    '''given the lengths of the three sides of a triangle. Return True if the three sides form a right-angled triangle, False otherwise. A right-angled triangle is a triangle in which one angle is right angle or 90 degree. Example: right_angle_triangle ((3, 4, 5) == True right_angle_triangle ((1, 2, 3) == False '''
+","    return a*a == b*b + c*c or b*b == a*a + c*c or c*c == a*a + b*b
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(3, 4, 5) == True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(1, 2, 3) == False
+    assert candidate(10, 6, 8) == True
+    assert candidate(2, 2, 2) == False
+    assert candidate(7, 24, 25) == True
+    assert candidate(10, 5, 7) == False
+    assert candidate(5, 12, 13) == True
+    assert candidate(15, 8, 17) == True
+    assert candidate(48, 55, 73) == True
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1, 1, 1) == False, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(2, 2, 10) == False
+
+",,,
+HumanEval/158,kam_Latn,python,"
+def find_max(words):
+    """"""Andĩka ndeto syĩ na namba nene kana nini. Ethĩwa ndeto ila syĩ namba nene kana nini, na namba ĩsu nĩ namba ĩmwe, na namba ĩsu nĩ namba ĩla ĩatĩĩe kĩla kaũndũ, sisya vala ve kaũndũ.""""""
+","    return sorted(words, key = lambda x: (-len(set(x)), x))[0]
+","def check(candidate):
+
+    # Check some simple cases
+    assert (candidate([""name"", ""of"", ""string""]) == ""string""), ""t1""
+    assert (candidate([""name"", ""enam"", ""game""]) == ""enam""), 't2'
+    assert (candidate([""aaaaaaa"", ""bb"", ""cc""]) == ""aaaaaaa""), 't3'
+    assert (candidate([""abc"", ""cba""]) == ""abc""), 't4'
+    assert (candidate([""play"", ""this"", ""game"", ""of"",""footbott""]) == ""footbott""), 't5'
+    assert (candidate([""we"", ""are"", ""gonna"", ""rock""]) == ""gonna""), 't6'
+    assert (candidate([""we"", ""are"", ""a"", ""mad"", ""nation""]) == ""nation""), 't7'
+    assert (candidate([""this"", ""is"", ""a"", ""prrk""]) == ""this""), 't8'
+
+    # Check some edge cases that are easy to work out by hand.
+    assert (candidate([""b""]) == ""b""), 't9'
+    assert (candidate([""play"", ""play"", ""play""]) == ""play""), 't10'
+
+",,,
+HumanEval/159,kam_Latn,python,"
+def eat(number, need, remaining):
+    """"""We wĩona ata? Ũkeethĩwa wĩ mũnyambũ wĩ na nzaa na wĩthĩwa ũya ĩia ya kũya, ĩndĩ yu nĩwaĩle kũya ĩia ĩngĩ nĩ kana ũye lĩu w'onthe wa mũthenya ũsu. Ethĩwa nũuĩte ĩia ya kũya, no nginya ũsyoke na [aima ĩia ya kũya, ĩia ya kũya yĩla ĩtialĩte ĩtina wa kũya] ethĩwa ĩia ya kũya nĩ ĩnini, ũkeethĩwa ũya ĩia yonthe yĩla ĩtialĩte, ĩndĩ o na ũu wĩ o vo wĩ na nzaa. Kwa ngelekany'o: * eat ((5, 6, 10) -> [11, 4] * eat ((4, 8, 9) -> [12, 1] * eat ((1, 10, 10) -> [11, 0] * eat ((2, 11, 5) -> [7, 0] Variables: @number: integer the number of carrots that you have eaten. @need:: integer the number of carrots that you need to eat. @remaining:: remaining integer the number of remaining carrots in stock Constrain: * 0= <= 0 * 0 = <= 1000 * 0 = <= 1000 * 0 = <= 1000 remaining stock: have fun = 1000 =""""""
+","    if(need <= remaining):
+        return [ number + need , remaining-need ]
+    else:
+        return [ number + remaining , 0]
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(5, 6, 10) == [11, 4], ""Error""
+    assert candidate(4, 8, 9) == [12, 1], ""Error""
+    assert candidate(1, 10, 10) == [11, 0], ""Error""
+    assert candidate(2, 11, 5) == [7, 0], ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(4, 5, 7) == [9, 2], ""Error""
+    assert candidate(4, 5, 1) == [5, 0], ""Error""
+
+",,,
+HumanEval/160,kam_Latn,python,"
+def do_algebra(operator, operand):
+    """"""Ve maũndũ elĩ me nthĩnĩ wa operand. Ũndũ wa mbee nĩ kũandĩka mũtalatala wa ũndũ waĩle kwĩka maũndũ mana nthĩnĩ wa algebra, na ũndũ wa kelĩ nĩ kũandĩka namba ila itatũ sya mũtalatala ũsu. Ũndũ ũla ũngĩ nĩ kũandĩka mũtalatala wa ũndũ waĩle kwĩka maũndũ mana nthĩnĩ wa algebra. Ũndũ ũla wa mbee nĩ kũandĩka mũtalatala wa ũndũ waĩle kwĩka maũndũ mana nthĩnĩ wa algebra. Ũndũ ũla ũngĩ nĩ kũandĩka mũtalatala wa ũndũ waĩle kwĩka maũndũ mana nthĩnĩ wa algebra. Ũndũ ũla wa mbee nĩ kũandĩka mũtalatala wa ũndũ waĩle kwĩka maũndũ mana nthĩnĩ wa algebra. Ũndũ ũla ũngĩ nĩ kũandĩka mũtalatala wa ũndũ waĩle kwĩka maũndũ mana nthĩnĩ wa algebra. Ũndũ ũla wa mbee nĩ kũandĩka mũtalatala wa ũndũ waĩle kwĩka maũndũ mana nthĩnĩ wa algebra. Ũndũ ũla wa kelĩ nĩ kũandĩka mũtalatala wa ũndũ waĩle kwĩka maũndũ mana nthĩnĩ wa algebra. Ũndũ ũla ũngĩ nĩ kũandĩka mũtalatala wa ũndũ waĩle kwĩka maũndũ mana nthĩnĩ wa algebra. Ũndũ ũla ũngĩ nĩ kũandĩka mũtalatala wa ũndũ waĩle kwĩka maũndũ mana nthĩnĩ wa algebra. Ũndũ ũla ũngĩ nĩ kũandĩka mũtalatala wa ũndũ waĩle kwĩka maũndũ mana nthĩnĩ wa algebra.""""""
+","    expression = str(operand[0])
+    for oprt, oprn in zip(operator, operand[1:]):
+        expression+= oprt + str(oprn)
+    return eval(expression)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(['**', '*', '+'], [2, 3, 4, 5]) == 37
+    assert candidate(['+', '*', '-'], [2, 3, 4, 5]) == 9
+    assert candidate(['//', '*'], [7, 3, 4]) == 8, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/161,kam_Latn,python,"
+def solve(s):
+    """"""Ũkesa kwona vandũ vate nthoo, ũvĩndũa kĩla kĩandĩkĩtwe vau ĩũlũ. Ethĩwa nthoo isu nĩ nthoo s, ũvĩndũa kĩla kĩandĩkĩtwe vau ĩũlũ, na ũikĩvĩndũa na kw'oko. Ethĩwa nthoo isu ieleekaa ta syĩ na nthoo ii, ũvĩndũa kĩla kĩandĩkĩtwe vau ĩũlũ.""""""
+","    flg = 0
+    idx = 0
+    new_str = list(s)
+    for i in s:
+        if i.isalpha():
+            new_str[idx] = i.swapcase()
+            flg = 1
+        idx += 1
+    s = """"
+    for i in new_str:
+        s += i
+    if flg == 0:
+        return s[len(s)::-1]
+    return s
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""AsDf"") == ""aSdF""
+    assert candidate(""1234"") == ""4321""
+    assert candidate(""ab"") == ""AB""
+    assert candidate(""#a@C"") == ""#A@c""
+    assert candidate(""#AsdfW^45"") == ""#aSDFw^45""
+    assert candidate(""#6@2"") == ""2@6#""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""#$a^D"") == ""#$A^d""
+    assert candidate(""#ccc"") == ""#CCC""
+
+    # Don't remove this line:
+",,,
+HumanEval/162,kam_Latn,python,"
+def string_to_md5(text):
+    """"""'text' nĩ ndeto, ĩĩmĩka 'none' nĩ ndeto, ĩĩmĩka 'none' nĩ ndeto, ĩĩmĩka 'none' nĩ ndeto, ĩĩmĩka 'none' nĩ ndeto, ĩĩmĩka 'none' nĩ ndeto, ĩĩmĩka 'none' nĩ ndeto, ĩĩmĩka 'none' nĩ ndeto, ĩĩmĩka 'none' nĩ ndeto, ĩmĩka 'none' nĩ ndeto, ĩmĩka 'none' nĩ ndeto, ĩmĩka 'none' nĩ ndeto, ĩmĩka 'none' nĩ ndeto, ĩmĩka 'none' nĩ ndeto, ĩmĩka 'none' nĩ ndeto, ĩmĩka 'none' nĩ ndeto, ĩmĩka 'none' nĩ ndeto, ĩmĩka 'none' nĩ ndeto, ĩmĩka 'none' nĩ ndeto, ĩmĩka 'none' nĩ ndeto, ĩmĩka 'none' nĩ ndeto, ĩmĩka 'none' nĩ ndeto, ĩmĩka 'none' nĩ ndeto, ĩmĩka 'none' nĩ ndeto, ĩmĩka 'none' nĩ ndeto, ĩmĩka 'none' nĩ ndeto, ĩmĩka 'none'""""""
+","    import hashlib
+    return hashlib.md5(text.encode('ascii')).hexdigest() if text else None
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('Hello world') == '3e25960a79dbc69b674cd4ec67a72c62'
+    assert candidate('') == None
+    assert candidate('A B C') == '0ef78513b0cb8cef12743f5aeb35f888'
+    assert candidate('password') == '5f4dcc3b5aa765d61d8327deb882cf99'
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/163,kam_Latn,python,"
+def generate_integers(a, b):
+    """"""ŨNDŨ TŨTONYA KWĨKĨĨSYA: Ũkethĩwa wĩ na namba ilĩ sya mũsingi (a, b), umya itho ila syĩ katĩ wa namba a na b, na ũisyoka ũatĩĩe mũamba ũsu ũendeee kwongeleka. Kwa ngelekany'o: generate_integers(2, 8) => [2, 4, 6, 8] generate_integers(8, 2) => [2, 4, 6, 8] generate_integers(10, 14) => [] """"""
+","    lower = max(2, min(a, b))
+    upper = min(8, max(a, b))
+
+    return [i for i in range(lower, upper+1) if i % 2 == 0]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(2, 10) == [2, 4, 6, 8], ""Test 1""
+    assert candidate(10, 2) == [2, 4, 6, 8], ""Test 2""
+    assert candidate(132, 2) == [2, 4, 6, 8], ""Test 3""
+    assert candidate(17,89) == [], ""Test 4""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,

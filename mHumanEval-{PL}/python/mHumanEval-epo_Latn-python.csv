@@ -1,0 +1,3843 @@
+task_id,nl,pl,prompt,canonical_solution,test,Unnamed: 6,Unnamed: 7,Unnamed: 8
+HumanEval/0,epo_Latn,python,"from typing import List
+
+
+def has_close_elements(numbers: List[float], threshold: float) -> bool:
+    """"""Kontrolu ĉu en donita listo de nombroj, estas iuj du nombroj pli proksimaj unu al la alia ol donita sojlo. Ekzemplo: >>> havas_proksimajn_elementojn (([1.0, 2.0, 3.0], 0.5) Falsa >>> havas_proksimajn_elementojn (([1.0, 2.8, 3.0, 4.0, 5.0, 2.0], 0.3) Vera """"""
+","for idx, elem in enumerate(numbers):
+    for idx2, elem2 in enumerate(numbers):
+        if idx != idx2:
+            distance = abs(elem - elem2)
+            if distance < threshold:
+                return True
+return False
+","def check(candidate):
+    assert candidate([1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.3) == True
+    assert candidate([1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.05) == False
+    assert candidate([1.0, 2.0, 5.9, 4.0, 5.0], 0.95) == True
+    assert candidate([1.0, 2.0, 5.9, 4.0, 5.0], 0.8) == False
+    assert candidate([1.0, 2.0, 3.0, 4.0, 5.0, 2.0], 0.1) == True
+    assert candidate([1.1, 2.2, 3.1, 4.1, 5.1], 1.0) == True
+    assert candidate([1.1, 2.2, 3.1, 4.1, 5.1], 0.5) == False
+
+",,,
+HumanEval/1,epo_Latn,python,"from typing import List
+
+
+def separate_paren_groups(paren_string: str) -> List[str]:
+    """"""Enigu ĉi tiun funkcion estas ĉeno enhavanta multoblajn grupojn de nestitaj krampoj. Via celo estas apartigi tiujn grupojn en apartajn ĉenojn kaj resendi la liston de tiuj. Apartaj grupoj estas ekvilibraj (ĉiu malfermita krampo estas konvene fermita) kaj ne nestitaj ene de unu la alian Ignoru iujn ajn spacojn en la eniga ĉeno. Ekzemplo: >>> separate_paren_groups' ((( ) (() (()))))) ['() ', '(()) ', '((()) ']""""""
+","    result = []
+    current_string = []
+    current_depth = 0
+
+    for c in paren_string:
+        if c == '(':
+            current_depth += 1
+            current_string.append(c)
+        elif c == ')':
+            current_depth -= 1
+            current_string.append(c)
+
+            if current_depth == 0:
+                result.append(''.join(current_string))
+                current_string.clear()
+
+    return result
+","def check(candidate):
+    assert candidate('(()()) ((())) () ((())()())') == [
+        '(()())', '((()))', '()', '((())()())'
+    ]
+    assert candidate('() (()) ((())) (((())))') == [
+        '()', '(())', '((()))', '(((())))'
+    ]
+    assert candidate('(()(())((())))') == [
+        '(()(())((())))'
+    ]
+    assert candidate('( ) (( )) (( )( ))') == ['()', '(())', '(()())']
+",,,
+HumanEval/2,epo_Latn,python,"
+
+def truncate_number(number: float) -> float:
+    """"""Donita pozitiva flosanta punkto nombro, ĝi povas esti malkonstruita en kaj entjera parto (plej granda entjero pli malgranda ol donita nombro) kaj decimaloj (restanta parto ĉiam pli malgranda ol 1).""""""
+","    return number % 1.0
+","def check(candidate):
+    assert candidate(3.5) == 0.5
+    assert abs(candidate(1.33) - 0.33) < 1e-6
+    assert abs(candidate(123.456) - 0.456) < 1e-6
+",,,
+HumanEval/3,epo_Latn,python,"from typing import List
+
+
+def below_zero(operations: List[int]) -> bool:
+    """"""Vi ricevas liston de deponejo kaj retiro operacioj sur banka konto kiu komenciĝas kun nul ekvilibro. Via tasko estas detekti se ĉe ajna punkto la ekvilibro de konto falas sub nul, kaj en tiu punkto funkcio devus resendi True. Alie ĝi devus resendi False. Ekzemplo: >>> below_zero([1, 2, 3]) False >>> below_zero([1, 2, -4, 5]) True """"""
+","    balance = 0
+
+    for op in operations:
+        balance += op
+        if balance < 0:
+            return True
+
+    return False
+","def check(candidate):
+    assert candidate([]) == False
+    assert candidate([1, 2, -3, 1, 2, -3]) == False
+    assert candidate([1, 2, -4, 5, 6]) == True
+    assert candidate([1, -1, 2, -2, 5, -5, 4, -4]) == False
+    assert candidate([1, -1, 2, -2, 5, -5, 4, -5]) == True
+    assert candidate([1, -2, 2, -2, 5, -5, 4, -4]) == True
+",,,
+HumanEval/4,epo_Latn,python,"from typing import List
+
+
+def mean_absolute_deviation(numbers: List[float]) -> float:
+    """"""Por donita listo de enigaj nombroj, kalkulu Mean Absolute Deviation ĉirkaŭ la meznombro de ĉi tiu datumserio. Mean Absolute Deviation estas la averaĝa absoluta diferenco inter ĉiu elemento kaj centro (averaĝo en ĉi tiu kazo): MAD = averaĝo. x - x_mean. Ekzemplo: >>> mean_absolute_deviation ({1.0, 2.0, 3.0, 4.0]) 1.0 """"""
+","    mean = sum(numbers) / len(numbers)
+    return sum(abs(x - mean) for x in numbers) / len(numbers)
+","def check(candidate):
+    assert abs(candidate([1.0, 2.0, 3.0]) - 2.0/3.0) < 1e-6
+    assert abs(candidate([1.0, 2.0, 3.0, 4.0]) - 1.0) < 1e-6
+    assert abs(candidate([1.0, 2.0, 3.0, 4.0, 5.0]) - 6.0/5.0) < 1e-6
+
+",,,
+HumanEval/5,epo_Latn,python,"from typing import List
+
+
+def intersperse(numbers: List[int], delimeter: int) -> List[int]:
+    """"""Enmetu nombron ""dilimon"" inter ĉiu du sinsekvaj elementoj de eniga listo `numbers' >>> intersperse (([], 4) [] >>> intersperse (([1, 2, 3], 4) [1, 4, 2, 4, 3] """"""
+","    if not numbers:
+        return []
+
+    result = []
+
+    for n in numbers[:-1]:
+        result.append(n)
+        result.append(delimeter)
+
+    result.append(numbers[-1])
+
+    return result
+","def check(candidate):
+    assert candidate([], 7) == []
+    assert candidate([5, 6, 3, 2], 8) == [5, 8, 6, 8, 3, 8, 2]
+    assert candidate([2, 2, 2], 2) == [2, 2, 2, 2, 2]
+",,,
+HumanEval/6,epo_Latn,python,"from typing import List
+
+
+def parse_nested_parens(paren_string: str) -> List[int]:
+    """"""Eniri ĉi tiun funkcion estas ŝnuro reprezentita multoblaj grupoj por nestitaj krampoj apartigitaj per spacoj. Por ĉiu el la grupo, eligu la plej profunda nivelo de nestado de krampoj. Ekzemple (() (()) havas maksimume du nivelojn de nestado dum ((())) havas tri. >>> parse_nested_parens (('((()) ((())) (((()) (((()) [2, 3, 1, 3] """"""
+","    def parse_paren_group(s):
+        depth = 0
+        max_depth = 0
+        for c in s:
+            if c == '(':
+                depth += 1
+                max_depth = max(depth, max_depth)
+            else:
+                depth -= 1
+
+        return max_depth
+
+    return [parse_paren_group(x) for x in paren_string.split(' ') if x]
+","def check(candidate):
+    assert candidate('(()()) ((())) () ((())()())') == [2, 3, 1, 3]
+    assert candidate('() (()) ((())) (((())))') == [1, 2, 3, 4]
+    assert candidate('(()(())((())))') == [4]
+",,,
+HumanEval/7,epo_Latn,python,"from typing import List
+
+
+def filter_by_substring(strings: List[str], substring: str) -> List[str]:
+    """"""Filtru enir-liston de ŝnuroj nur por tiuj, kiuj enhavas donitan subŝnuron >>> filter_by_substring([], 'a') [] >>> filter_by_substring(['abc', 'bacd', 'cde', 'array'], 'a') ['abc', 'bacd', 'array'] """"""
+","    return [x for x in strings if substring in x]
+","def check(candidate):
+    assert candidate([], 'john') == []
+    assert candidate(['xxx', 'asd', 'xxy', 'john doe', 'xxxAAA', 'xxx'], 'xxx') == ['xxx', 'xxxAAA', 'xxx']
+    assert candidate(['xxx', 'asd', 'aaaxxy', 'john doe', 'xxxAAA', 'xxx'], 'xx') == ['xxx', 'aaaxxy', 'xxxAAA', 'xxx']
+    assert candidate(['grunt', 'trumpet', 'prune', 'gruesome'], 'run') == ['grunt', 'prune']
+",,,
+HumanEval/8,epo_Latn,python,"from typing import List, Tuple
+
+
+def sum_product(numbers: List[int]) -> Tuple[int, int]:
+    """"""Por donita listo de entjeroj, redonu tuplo konsistanta el sumo kaj produkto de ĉiuj entjeroj en listo. Malplena sumo devas esti egala al 0 kaj malplena produkto devas esti egala al 1. >>> sum_produkto (([]) (0, 1) >>> sum_produkto (([1, 2, 3, 4]) (10, 24) """"""
+","    sum_value = 0
+    prod_value = 1
+
+    for n in numbers:
+        sum_value += n
+        prod_value *= n
+    return sum_value, prod_value
+","def check(candidate):
+    assert candidate([]) == (0, 1)
+    assert candidate([1, 1, 1]) == (3, 1)
+    assert candidate([100, 0]) == (100, 0)
+    assert candidate([3, 5, 7]) == (3 + 5 + 7, 3 * 5 * 7)
+    assert candidate([10]) == (10, 10)
+",,,
+HumanEval/9,epo_Latn,python,"from typing import List, Tuple
+
+
+def rolling_max(numbers: List[int]) -> List[int]:
+    """"""De donita listo de entjeroj, generu liston de ruliĝanta maksimuma elemento trovita ĝis donita momento en la sekvenco. >>> rolling_max (([1, 2, 3, 2, 3, 4, 2]) [1, 2, 3, 3, 3, 4, 4] """"""
+","    running_max = None
+    result = []
+
+    for n in numbers:
+        if running_max is None:
+            running_max = n
+        else:
+            running_max = max(running_max, n)
+
+        result.append(running_max)
+
+    return result
+","def check(candidate):
+    assert candidate([]) == []
+    assert candidate([1, 2, 3, 4]) == [1, 2, 3, 4]
+    assert candidate([4, 3, 2, 1]) == [4, 4, 4, 4]
+    assert candidate([3, 2, 3, 100, 3]) == [3, 3, 3, 100, 100]
+",,,
+HumanEval/10,epo_Latn,python,"
+
+def is_palindrome(string: str) -> bool:
+    """"""Trovu la plej mallongan palindromon kiu komenciĝas per provizita ŝnuro. Algoritmo ideo estas simpla: - Trovu la plej longa postfikso de provizita ŝnuro kiu estas palindromo. - Alklaku al la fino de la ŝnuro inversa de ŝnuro prefikso kiu venas antaŭ la palindroma sufikso. >>> make_palindrome ((('') ' ' >>> make_palindrome ((('cat') 'catac' >>> make_palindrome ((('cata') 'catac' """"""
+    return string == string[::-1]
+
+
+def make_palindrome(string: str) -> str:
+    """"""Test se donita ŝnuro estas palindromo """"""
+","    if not string:
+        return ''
+
+    beginning_of_suffix = 0
+
+    while not is_palindrome(string[beginning_of_suffix:]):
+        beginning_of_suffix += 1
+
+    return string + string[:beginning_of_suffix][::-1]
+","def check(candidate):
+    assert candidate('') == ''
+    assert candidate('x') == 'x'
+    assert candidate('xyz') == 'xyzyx'
+    assert candidate('xyx') == 'xyx'
+    assert candidate('jerry') == 'jerryrrej'
+",,,
+HumanEval/11,epo_Latn,python,"from typing import List
+
+
+def string_xor(a: str, b: str) -> str:
+    """"""Enigaĵo estas du ŝnuroj a kaj b konsistantaj nur el 1s kaj 0s. Plenumu binaran XOR sur ĉi tiuj enigaĵoj kaj resendu rezulton ankaŭ kiel ŝnuro.""""""
+","    def xor(i, j):
+        if i == j:
+            return '0'
+        else:
+            return '1'
+
+    return ''.join(xor(x, y) for x, y in zip(a, b))
+","def check(candidate):
+    assert candidate('111000', '101010') == '010010'
+    assert candidate('1', '1') == '0'
+    assert candidate('0101', '0000') == '0101'
+",,,
+HumanEval/12,epo_Latn,python,"from typing import List, Optional
+
+
+def longest(strings: List[str]) -> Optional[str]:
+    """"""El la listo de ŝnuroj, redonu la plej longan. Redonu la unuan en kazo de multoblaj ŝnuroj de la sama longo. Redonu Nenion en kazo de malplena eniga listo. >>> longest([]) >>> longest(['a', 'b', 'c']) 'a' >>> longest(['a', 'bb', 'ccc']) 'ccc' """"""
+","    if not strings:
+        return None
+
+    maxlen = max(len(x) for x in strings)
+    for s in strings:
+        if len(s) == maxlen:
+            return s
+","def check(candidate):
+    assert candidate([]) == None
+    assert candidate(['x', 'y', 'z']) == 'x'
+    assert candidate(['x', 'yyy', 'zzzz', 'www', 'kkkk', 'abc']) == 'zzzz'
+",,,
+HumanEval/13,epo_Latn,python,"
+
+def greatest_common_divisor(a: int, b: int) -> int:
+    """"""Redonu plej grandan komunan dividanton de du entjeroj a kaj b >>> plej granda_komuna_dividanto ((3, 5) 1 >>> plej granda_komuna_dividanto ((25, 15) 5 """"""
+","    while b:
+        a, b = b, a % b
+    return a
+","def check(candidate):
+    assert candidate(3, 7) == 1
+    assert candidate(10, 15) == 5
+    assert candidate(49, 14) == 7
+    assert candidate(144, 60) == 12
+",,,
+HumanEval/14,epo_Latn,python,"from typing import List
+
+
+def all_prefixes(string: str) -> List[str]:
+    """"""Revenigas liston de ĉiuj prefiksoj de plej mallonga ĝis plej longa de la eniga ŝnuro >>> all_prefixes (('abc') ['a', 'ab', 'abc'] """"""
+","    result = []
+
+    for i in range(len(string)):
+        result.append(string[:i+1])
+    return result
+","def check(candidate):
+    assert candidate('') == []
+    assert candidate('asdfgh') == ['a', 'as', 'asd', 'asdf', 'asdfg', 'asdfgh']
+    assert candidate('WWW') == ['W', 'WW', 'WWW']
+",,,
+HumanEval/15,epo_Latn,python,"
+
+def string_sequence(n: int) -> str:
+    """"""Redonu ŝnuron enhavanta spac-limigitajn nombrojn komencantajn de 0 ĝis n inkluzive. >>> string_sequence(0) '0' >>> string_sequence(5) '0 1 2 3 4 5' """"""
+","    return ' '.join([str(x) for x in range(n + 1)])
+","def check(candidate):
+    assert candidate(0) == '0'
+    assert candidate(3) == '0 1 2 3'
+    assert candidate(10) == '0 1 2 3 4 5 6 7 8 9 10'
+",,,
+HumanEval/16,epo_Latn,python,"
+
+def count_distinct_characters(string: str) -> int:
+    """"""Donu al vi ĉenon, trovu kiom da apartaj signoj (sendepende de kazo) ĝi konsistas el >>> count_distinct_characters (('xyzXYZ') 3 >>> count_distinct_characters (('Jerry') 4 """"""
+","    return len(set(string.lower()))
+","def check(candidate):
+    assert candidate('') == 0
+    assert candidate('abcde') == 5
+    assert candidate('abcde' + 'cade' + 'CADE') == 5
+    assert candidate('aaaaAAAAaaaa') == 1
+    assert candidate('Jerry jERRY JeRRRY') == 5
+",,,
+HumanEval/17,epo_Latn,python,"from typing import List
+
+
+def parse_music(music_string: str) -> List[int]:
+    """"""Enigu al tiu funkcio estas ŝnuro reprezentanta muzikajn notojn en speciala ASCII formato. Via tasko estas analizi ŝnuro listo de entjeroj egalrilatantaj al multaj taktoj faras. Jen legendo: 'o' noto, lastaj taktoj kvar 'o' rakoto - duono noto, lastaj du taktoj - kvar noto, lastaj unu takto >>> parse_music. 'o o .""""""
+","    note_map = {'o': 4, 'o|': 2, '.|': 1}
+    return [note_map[x] for x in music_string.split(' ') if x]
+","def check(candidate):
+    assert candidate('') == []
+    assert candidate('o o o o') == [4, 4, 4, 4]
+    assert candidate('.| .| .| .|') == [1, 1, 1, 1]
+    assert candidate('o| o| .| .| o o o o') == [2, 2, 1, 1, 4, 4, 4, 4]
+    assert candidate('o| .| o| .| o o| o o|') == [2, 1, 2, 1, 4, 2, 4, 2]
+",,,
+HumanEval/18,epo_Latn,python,"
+
+def how_many_times(string: str, substring: str) -> int:
+    """"""Trovu kiom da fojoj la donita subĉeno povas esti trovita en la origina ĉeno. Kalkulu la superkuŝantajn kazojn. >>> how_many_times('', 'a') 0 >>> how_many_times('aaa', 'a') 3 >>> how_many_times('aaaa', 'aa') 3 """"""
+","    times = 0
+
+    for i in range(len(string) - len(substring) + 1):
+        if string[i:i+len(substring)] == substring:
+            times += 1
+
+    return times
+","def check(candidate):
+    assert candidate('', 'x') == 0
+    assert candidate('xyxyxyx', 'x') == 4
+    assert candidate('cacacacac', 'cac') == 4
+    assert candidate('john doe', 'john') == 1
+",,,
+HumanEval/19,epo_Latn,python,"from typing import List
+
+
+def sort_numbers(numbers: str) -> str:
+    """"""Enirvorto estas spaco-difinita ŝnuro de numerals de 'nulo' al 'naŭ'. Validaj elektoj estas 'nulo', 'unu', 'du', 'tri', 'kvar', 'kvin', 'ses', 'sep', 'ok' kaj 'naŭ'. Revenigas la ŝnuron kun nombroj ordigitaj de plej malgranda ĝis plej granda >>> sort_numbers (('tri unu kvin') 'unu tri kvin' """"""
+","    value_map = {
+        'zero': 0,
+        'one': 1,
+        'two': 2,
+        'three': 3,
+        'four': 4,
+        'five': 5,
+        'six': 6,
+        'seven': 7,
+        'eight': 8,
+        'nine': 9
+    }
+    return ' '.join(sorted([x for x in numbers.split(' ') if x], key=lambda x: value_map[x]))
+","def check(candidate):
+    assert candidate('') == ''
+    assert candidate('three') == 'three'
+    assert candidate('three five nine') == 'three five nine'
+    assert candidate('five zero four seven nine eight') == 'zero four five seven eight nine'
+    assert candidate('six five four three two one zero') == 'zero one two three four five six'
+",,,
+HumanEval/20,epo_Latn,python,"from typing import List, Tuple
+
+
+def find_closest_elements(numbers: List[float]) -> Tuple[float, float]:
+    """"""De provizita listo de nombroj (de longo almenaŭ du) elektu kaj redonu du, kiuj estas la plej proksimaj unu al la alia kaj redonu ilin en ordo (pli malgranda nombro, pli granda nombro). >>> find_closest_elements (([1.0, 2.0, 3.0, 4.0, 5.0, 2.2]) (2.0, 2.2) >>> find_closest_elements (([1.0, 2.0, 3.0, 4.0, 5.0, 2.0]) (2.0, 2.0) """"""
+","    closest_pair = None
+    distance = None
+
+    for idx, elem in enumerate(numbers):
+        for idx2, elem2 in enumerate(numbers):
+            if idx != idx2:
+                if distance is None:
+                    distance = abs(elem - elem2)
+                    closest_pair = tuple(sorted([elem, elem2]))
+                else:
+                    new_distance = abs(elem - elem2)
+                    if new_distance < distance:
+                        distance = new_distance
+                        closest_pair = tuple(sorted([elem, elem2]))
+
+    return closest_pair
+","def check(candidate):
+    assert candidate([1.0, 2.0, 3.9, 4.0, 5.0, 2.2]) == (3.9, 4.0)
+    assert candidate([1.0, 2.0, 5.9, 4.0, 5.0]) == (5.0, 5.9)
+    assert candidate([1.0, 2.0, 3.0, 4.0, 5.0, 2.2]) == (2.0, 2.2)
+    assert candidate([1.0, 2.0, 3.0, 4.0, 5.0, 2.0]) == (2.0, 2.0)
+    assert candidate([1.1, 2.2, 3.1, 4.1, 5.1]) == (2.2, 3.1)
+
+",,,
+HumanEval/21,epo_Latn,python,"from typing import List
+
+
+def rescale_to_unit(numbers: List[float]) -> List[float]:
+    """"""Donita listo de nombroj (de almenaŭ du elementoj), apliki linian transformon al tiu listo, tia ke la plej malgranda nombro fariĝos 0 kaj la plej granda fariĝos 1 >>> rescale_to_unit (([1.0, 2.0, 3.0, 4.0, 5.0]) [0.0, 0.25, 0.5, 0.75, 1.0] """"""
+","    min_number = min(numbers)
+    max_number = max(numbers)
+    return [(x - min_number) / (max_number - min_number) for x in numbers]
+","def check(candidate):
+    assert candidate([2.0, 49.9]) == [0.0, 1.0]
+    assert candidate([100.0, 49.9]) == [1.0, 0.0]
+    assert candidate([1.0, 2.0, 3.0, 4.0, 5.0]) == [0.0, 0.25, 0.5, 0.75, 1.0]
+    assert candidate([2.0, 1.0, 5.0, 3.0, 4.0]) == [0.25, 0.0, 1.0, 0.5, 0.75]
+    assert candidate([12.0, 11.0, 15.0, 13.0, 14.0]) == [0.25, 0.0, 1.0, 0.5, 0.75]
+",,,
+HumanEval/22,epo_Latn,python,"from typing import List, Any
+
+
+def filter_integers(values: List[Any]) -> List[int]:
+    """"""Filtrilo donita listo de ajnaj pitonaj valoroj nur por entjeroj >>> filter_integers ((['a', 3.14, 5]) [5] >>> filter_integers (([1, 2, 3, 'abc', {}, []]) [1, 2, 3] """"""
+","    return [x for x in values if isinstance(x, int)]
+","def check(candidate):
+    assert candidate([]) == []
+    assert candidate([4, {}, [], 23.2, 9, 'adasd']) == [4, 9]
+    assert candidate([3, 'c', 3, 3, 'a', 'b']) == [3, 3, 3]
+",,,
+HumanEval/23,epo_Latn,python,"
+
+def strlen(string: str) -> int:
+    """"""Revenanta longo de donita ŝnuro >>> strlen('') 0 >>> strlen('abc') 3 """"""
+","    return len(string)
+","def check(candidate):
+    assert candidate('') == 0
+    assert candidate('x') == 1
+    assert candidate('asdasnakj') == 9
+",,,
+HumanEval/24,epo_Latn,python,"
+
+def largest_divisor(n: int) -> int:
+    """"""Por donita nombro n, trovu la plej grandan nombron kiu dividas n egale, pli malgranda ol n >>> plej granda_dividanto ((15) 5 """"""
+","    for i in reversed(range(n)):
+        if n % i == 0:
+            return i
+","def check(candidate):
+    assert candidate(3) == 1
+    assert candidate(7) == 1
+    assert candidate(10) == 5
+    assert candidate(100) == 50
+    assert candidate(49) == 7
+",,,
+HumanEval/25,epo_Latn,python,"from typing import List
+
+
+def factorize(n: int) -> List[int]:
+    """"""Revenigu liston de la primofaktoroj de donita entjero en la ordo de plej malgranda ĝis plej granda. Ĉiu el la faktoroj devus esti listigita nombro da tempoj egalrilatantaj al kiom da fojoj ĝi aperas en faktorigo. Enirnombro devus esti egala al la produkto de ĉiuj faktoroj >>> faktorigi ((8) [2, 2, 2] >>> faktorigi ((25) [5, 5] >>> faktorigi ((70) [2, 5, 7] """"""
+","    import math
+    fact = []
+    i = 2
+    while i <= int(math.sqrt(n) + 1):
+        if n % i == 0:
+            fact.append(i)
+            n //= i
+        else:
+            i += 1
+
+    if n > 1:
+        fact.append(n)
+    return fact
+","def check(candidate):
+    assert candidate(2) == [2]
+    assert candidate(4) == [2, 2]
+    assert candidate(8) == [2, 2, 2]
+    assert candidate(3 * 19) == [3, 19]
+    assert candidate(3 * 19 * 3 * 19) == [3, 3, 19, 19]
+    assert candidate(3 * 19 * 3 * 19 * 3 * 19) == [3, 3, 3, 19, 19, 19]
+    assert candidate(3 * 19 * 19 * 19) == [3, 19, 19, 19]
+    assert candidate(3 * 2 * 3) == [2, 3, 3]
+",,,
+HumanEval/26,epo_Latn,python,"from typing import List
+
+
+def remove_duplicates(numbers: List[int]) -> List[int]:
+    """"""El listo de entjeroj, forigu ĉiujn elementojn kiuj okazas pli ol unufoje. Konservu ordo de elementoj maldekstre la sama kiel en la enigaĵo. >>> remove_duplicates (([1, 2, 3, 2, 4]) [1, 3, 4] """"""
+","    import collections
+    c = collections.Counter(numbers)
+    return [n for n in numbers if c[n] <= 1]
+","def check(candidate):
+    assert candidate([]) == []
+    assert candidate([1, 2, 3, 4]) == [1, 2, 3, 4]
+    assert candidate([1, 2, 3, 2, 4, 3, 5]) == [1, 4, 5]
+",,,
+HumanEval/27,epo_Latn,python,"
+
+def flip_case(string: str) -> str:
+    """"""Por donita ŝnuro, turnu minusklojn al majusklo kaj majusklojn al minusklo. >>> flip_case ((('Hello') 'HELLO' """"""
+","    return string.swapcase()
+","def check(candidate):
+    assert candidate('') == ''
+    assert candidate('Hello!') == 'hELLO!'
+    assert candidate('These violent delights have violent ends') == 'tHESE VIOLENT DELIGHTS HAVE VIOLENT ENDS'
+",,,
+HumanEval/28,epo_Latn,python,"from typing import List
+
+
+def concatenate(strings: List[str]) -> str:
+    """"""Konkatenigi liston de ŝnuroj en unu ŝnuro >>> konkatenigi (([]) '' >>> konkatenigi ((['a', 'b', 'c']) 'abc' """"""
+","    return ''.join(strings)
+","def check(candidate):
+    assert candidate([]) == ''
+    assert candidate(['x', 'y', 'z']) == 'xyz'
+    assert candidate(['x', 'y', 'z', 'w', 'k']) == 'xyzwk'
+",,,
+HumanEval/29,epo_Latn,python,"from typing import List
+
+
+def filter_by_prefix(strings: List[str], prefix: str) -> List[str]:
+    """"""Filtru enir-liston de ŝnuroj nur por tiuj, kiuj komenciĝas per antaŭfikso. >>> filter_by_prefix([], 'a') [] >>> filter_by_prefix(['abc', 'bcd', 'cde', 'array'], 'a') ['abc', 'array'] """"""
+","    return [x for x in strings if x.startswith(prefix)]
+","def check(candidate):
+    assert candidate([], 'john') == []
+    assert candidate(['xxx', 'asd', 'xxy', 'john doe', 'xxxAAA', 'xxx'], 'xxx') == ['xxx', 'xxxAAA', 'xxx']
+",,,
+HumanEval/30,epo_Latn,python,"
+
+def get_positive(l: list):
+    """"""Redonu nur pozitivajn nombrojn en la listo. >>> get_positive (([-1, 2, -4, 5, 6]) [2, 5, 6] >>> get_positive (([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10]) [5, 3, 2, 3, 9, 123, 1] """"""
+","    return [e for e in l if e > 0]
+","def check(candidate):
+    assert candidate([-1, -2, 4, 5, 6]) == [4, 5, 6]
+    assert candidate([5, 3, -5, 2, 3, 3, 9, 0, 123, 1, -10]) == [5, 3, 2, 3, 3, 9, 123, 1]
+    assert candidate([-1, -2]) == []
+    assert candidate([]) == []
+
+",,,
+HumanEval/31,epo_Latn,python,"
+
+def is_prime(n):
+    """"""Revenigu veran se donita nombro estas primo, kaj malvera alie. >>> estas_primo (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (n) (""""""
+","    if n < 2:
+        return False
+    for k in range(2, n - 1):
+        if n % k == 0:
+            return False
+    return True
+","def check(candidate):
+    assert candidate(6) == False
+    assert candidate(101) == True
+    assert candidate(11) == True
+    assert candidate(13441) == True
+    assert candidate(61) == True
+    assert candidate(4) == False
+    assert candidate(1) == False
+    assert candidate(5) == True
+    assert candidate(11) == True
+    assert candidate(17) == True
+    assert candidate(5 * 17) == False
+    assert candidate(11 * 7) == False
+    assert candidate(13441 * 19) == False
+
+",,,
+HumanEval/32,epo_Latn,python,"import math
+
+
+def poly(xs: list, x: float):
+    """"""xs estas koeficientoj de polinomo. find_zero find x tia ke poly ((x) = 0. find_zero donas nur nur nulpunkton, eĉ se estas multaj. Krome, find_zero nur prenas liston xs havanta parnombron de koeficientoj kaj plej grandan ne-nulan koeficienton ĉar ĝi garantias solvon. >>> rondo (((find_zero[1, 2]), 2) # f ((x) = 1 + 2x -0.5 >>> rondo (((find_zero([-6, 11, -6, 1]), 2) # (x - 1) * (x - 2) * (x - 3) = -6 + 11x - 6x ^ 2 + x ^ 3  1.0""""""
+    return sum([coeff * math.pow(x, i) for i, coeff in enumerate(xs)])
+
+
+def find_zero(xs: list):
+    """"""Evalutas polinomion kun koeficientoj xs ĉe punkto x. revenas xs[0] + xs[1] * x + xs[1] * x^2 + .... xs[n] * x^n """"""
+","    begin, end = -1., 1.
+    while poly(xs, begin) * poly(xs, end) > 0:
+        begin *= 2.0
+        end *= 2.0
+    while end - begin > 1e-10:
+        center = (begin + end) / 2.0
+        if poly(xs, center) * poly(xs, begin) > 0:
+            begin = center
+        else:
+            end = center
+    return begin
+","def check(candidate):
+    import math
+    import random
+    rng = random.Random(42)
+    import copy
+    for _ in range(100):
+        ncoeff = 2 * rng.randint(1, 4)
+        coeffs = []
+        for _ in range(ncoeff):
+            coeff = rng.randint(-10, 10)
+            if coeff == 0:
+                coeff = 1
+            coeffs.append(coeff)
+        solution = candidate(copy.deepcopy(coeffs))
+        assert math.fabs(poly(coeffs, solution)) < 1e-4
+
+",,,
+HumanEval/33,epo_Latn,python,"
+
+def sort_third(l: list):
+    """"""Tiu funkcio prenas liston l kaj resendas liston l' tia ke l' estas identa al l en la indeksoj kiuj ne estas divideblaj per tri, dum ĝiaj valoroj ĉe la indeksoj kiuj estas divideblaj per tri estas egalaj al la valoroj de la ekvivalentaj indeksoj de l, sed ordigitaj. >>> sort_third (([1, 2, 3]) [1, 2, 3] >>> sort_third (([5, 6, 3, 4, 8, 9, 2]) [2, 6, 3, 4, 8, 9, 5] """"""
+","    l = list(l)
+    l[::3] = sorted(l[::3])
+    return l
+","def check(candidate):
+    assert tuple(candidate([1, 2, 3])) == tuple(sort_third([1, 2, 3]))
+    assert tuple(candidate([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])) == tuple(sort_third([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10]))
+    assert tuple(candidate([5, 8, -12, 4, 23, 2, 3, 11, 12, -10])) == tuple(sort_third([5, 8, -12, 4, 23, 2, 3, 11, 12, -10]))
+    assert tuple(candidate([5, 6, 3, 4, 8, 9, 2])) == tuple([2, 6, 3, 4, 8, 9, 5])
+    assert tuple(candidate([5, 8, 3, 4, 6, 9, 2])) == tuple([2, 8, 3, 4, 6, 9, 5])
+    assert tuple(candidate([5, 6, 9, 4, 8, 3, 2])) == tuple([2, 6, 9, 4, 8, 3, 5])
+    assert tuple(candidate([5, 6, 3, 4, 8, 9, 2, 1])) == tuple([2, 6, 3, 4, 8, 9, 5, 1])
+
+",,,
+HumanEval/34,epo_Latn,python,"
+
+def unique(l: list):
+    """"""Revenigas ordigitajn unikajn elementojn en listo >>> unikaj (([5, 3, 5, 2, 3, 3, 9, 0, 123]) [0, 2, 3, 5, 9, 123] """"""
+","    return sorted(list(set(l)))
+","def check(candidate):
+    assert candidate([5, 3, 5, 2, 3, 3, 9, 0, 123]) == [0, 2, 3, 5, 9, 123]
+
+",,,
+HumanEval/35,epo_Latn,python,"
+
+def max_element(l: list):
+    """"""Revenigas la plej grandan elementon en la listo. >>> max_element (([1, 2, 3]) 3 >>> max_element (([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10)) 123 """"""
+","    m = l[0]
+    for e in l:
+        if e > m:
+            m = e
+    return m
+","def check(candidate):
+    assert candidate([1, 2, 3]) == 3
+    assert candidate([5, 3, -5, 2, -3, 3, 9, 0, 124, 1, -10]) == 124
+",,,
+HumanEval/36,epo_Latn,python,"
+
+def fizz_buzz(n: int):
+    """"""Redonu la nombron de fojoj, kiam la cifero 7 aperas en entjeroj malpli ol n, kiuj estas divideblaj per 11 aŭ 13. >>> fizz_buzz(50) 0 >>> fizz_buzz(78) 2 >>> fizz_buzz(79) 3 """"""
+","    ns = []
+    for i in range(n):
+        if i % 11 == 0 or i % 13 == 0:
+            ns.append(i)
+    s = ''.join(list(map(str, ns)))
+    ans = 0
+    for c in s:
+        ans += (c == '7')
+    return ans
+","def check(candidate):
+    assert candidate(50) == 0
+    assert candidate(78) == 2
+    assert candidate(79) == 3
+    assert candidate(100) == 3
+    assert candidate(200) == 6
+    assert candidate(4000) == 192
+    assert candidate(10000) == 639
+    assert candidate(100000) == 8026
+
+",,,
+HumanEval/37,epo_Latn,python,"
+
+def sort_even(l: list):
+    """"""Tiu funkcio prenas liston l kaj resendas liston l' tia ke l' estas identa al l en la neparaj indeksoj, dum ĝiaj valoroj ĉe la paraj indeksoj estas egalaj al la valoroj de la paraj indeksoj de l, sed ordigitaj. >>> sort_even (([1, 2, 3]) [1, 2, 3] >>> sort_even (([5, 6, 3, 4]) [3, 6, 5, 4] """"""
+","    evens = l[::2]
+    odds = l[1::2]
+    evens.sort()
+    ans = []
+    for e, o in zip(evens, odds):
+        ans.extend([e, o])
+    if len(evens) > len(odds):
+        ans.append(evens[-1])
+    return ans
+","def check(candidate):
+    assert tuple(candidate([1, 2, 3])) == tuple([1, 2, 3])
+    assert tuple(candidate([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])) == tuple([-10, 3, -5, 2, -3, 3, 5, 0, 9, 1, 123])
+    assert tuple(candidate([5, 8, -12, 4, 23, 2, 3, 11, 12, -10])) == tuple([-12, 8, 3, 4, 5, 2, 12, 11, 23, -10])
+
+",,,
+HumanEval/38,epo_Latn,python,"
+
+def encode_cyclic(s: str):
+    """"""prenas kiel eniga ŝnuro ĉifrita kun encode_cyclic funkcio. Revenigas malĉifritan ŝnuron.""""""
+    # split string to groups. Each of length 3.
+    groups = [s[(3 * i):min((3 * i + 3), len(s))] for i in range((len(s) + 2) // 3)]
+    # cycle elements in each group. Unless group has fewer elements than 3.
+    groups = [(group[1:] + group[0]) if len(group) == 3 else group for group in groups]
+    return """".join(groups)
+
+
+def decode_cyclic(s: str):
+    """"""returnas ĉifrita ŝnuro de ciklaj grupoj de tri karakteroj. """"""
+","    return encode_cyclic(encode_cyclic(s))
+","def check(candidate):
+    from random import randint, choice
+    import string
+
+    letters = string.ascii_lowercase
+    for _ in range(100):
+        str = ''.join(choice(letters) for i in range(randint(10, 20)))
+        encoded_str = encode_cyclic(str)
+        assert candidate(encoded_str) == str
+
+",,,
+HumanEval/39,epo_Latn,python,"
+
+def prime_fib(n: int):
+    """"""prime_fib redonas n-an nombron kiu estas nombro de Fibonacci kaj ĝi ankaŭ estas primo. >>> prime_fib(1) 2 >>> prime_fib(2) 3 >>> prime_fib(3) 5 >>> prime_fib(4) 13 >>> prime_fib(5) 89 """"""
+","    import math
+
+    def is_prime(p):
+        if p < 2:
+            return False
+        for k in range(2, min(int(math.sqrt(p)) + 1, p - 1)):
+            if p % k == 0:
+                return False
+        return True
+    f = [0, 1]
+    while True:
+        f.append(f[-1] + f[-2])
+        if is_prime(f[-1]):
+            n -= 1
+        if n == 0:
+            return f[-1]
+","def check(candidate):
+    assert candidate(1) == 2
+    assert candidate(2) == 3
+    assert candidate(3) == 5
+    assert candidate(4) == 13
+    assert candidate(5) == 89
+    assert candidate(6) == 233
+    assert candidate(7) == 1597
+    assert candidate(8) == 28657
+    assert candidate(9) == 514229
+    assert candidate(10) == 433494437
+
+",,,
+HumanEval/40,epo_Latn,python,"
+
+def triples_sum_to_zero(l: list):
+    """"""triples_sum_to_zero prenas liston de entjeroj kiel enigaĵo. ĝi resendas Vera se estas tri apartaj elementoj en la listo kiuj sumigas al nulo, kaj Falsa alie. >>> triples_sum_to_zero([1, 3, 5, 0]) Falsa >>> triples_sum_to_zero[(1, 3, -2, 1]) Vera >>> triples_sum_to_zero([1, 2, 3, 7]) Falsa >>> triples_sum_to_zero([2, 4, -5, 3, 9, 7]) Vera >>> triples_sum_to_zero[1]) Falsa """"""
+","    for i in range(len(l)):
+        for j in range(i + 1, len(l)):
+            for k in range(j + 1, len(l)):
+                if l[i] + l[j] + l[k] == 0:
+                    return True
+    return False
+","def check(candidate):
+    assert candidate([1, 3, 5, 0]) == False
+    assert candidate([1, 3, 5, -1]) == False
+    assert candidate([1, 3, -2, 1]) == True
+    assert candidate([1, 2, 3, 7]) == False
+    assert candidate([1, 2, 5, 7]) == False
+    assert candidate([2, 4, -5, 3, 9, 7]) == True
+    assert candidate([1]) == False
+    assert candidate([1, 3, 5, -100]) == False
+    assert candidate([100, 3, 5, -100]) == False
+
+",,,
+HumanEval/41,epo_Latn,python,"
+
+def car_race_collision(n: int):
+    """"""Imagu vojon, kiu estas senfine longa linio. n aŭtoj veturas de maldekstre dekstren; samtempe, malsama aro de n aŭtoj veturas de dekstre maldekstren. La du paroj de aŭtoj komencas esti tre malproksimaj unu de la alia. Ĉiuj aŭtoj moviĝas kun la sama rapideco. Du aŭtoj kolizias kiam aŭto, kiu moviĝas de maldekstre dekstren, trafas aŭton, kiu moviĝas de dekstre maldekstren. Tamen, la aŭtoj estas senfine fortikaj kaj fortaj; rezulte, ili daŭre moviĝas laŭ sia trajektorio kvazaŭ ili ne kolizius. Tiu funkcio eldonas la nombron de tiaj kolizioj.""""""
+","    return n**2
+","def check(candidate):
+    assert candidate(2) == 4
+    assert candidate(3) == 9
+    assert candidate(4) == 16
+    assert candidate(8) == 64
+    assert candidate(10) == 100
+
+",,,
+HumanEval/42,epo_Latn,python,"
+
+def incr_list(l: list):
+    """"""Revenigu liston kun elementoj pliigitaj per 1. >>> incr_list (([1, 2, 3]) [2, 3, 4] >>> incr_list (([5, 3, 5, 2, 3, 3, 9, 0, 123]) [6, 4, 6, 3, 4, 4, 10, 1, 124] """"""
+","    return [(e + 1) for e in l]
+","def check(candidate):
+    assert candidate([]) == []
+    assert candidate([3, 2, 1]) == [4, 3, 2]
+    assert candidate([5, 2, 5, 2, 3, 3, 9, 0, 123]) == [6, 3, 6, 3, 4, 4, 10, 1, 124]
+
+",,,
+HumanEval/43,epo_Latn,python,"
+
+def pairs_sum_to_zero(l):
+    """"""pairs_sum_to_zero prenas liston de entjeroj kiel enigaĵo. ĝi resendas True se estas du apartaj elementoj en la listo kiuj sumigas al nulo, kaj False alie. >>> pairs_sum_to_zero (([1, 3, 5, 0]) False >>> pairs_sum_to_zero (([1, 3, -2, 1]) False >>> pairs_sum_to_zero (([1, 2, 3, 7]) False >>> pairs_sum_to_zero (([2, 4, -5, 3, 5, 7]) True >>> pairs_sum_to_zero (([1]) False """"""
+","    for i, l1 in enumerate(l):
+        for j in range(i + 1, len(l)):
+            if l1 + l[j] == 0:
+                return True
+    return False
+","def check(candidate):
+    assert candidate([1, 3, 5, 0]) == False
+    assert candidate([1, 3, -2, 1]) == False
+    assert candidate([1, 2, 3, 7]) == False
+    assert candidate([2, 4, -5, 3, 5, 7]) == True
+    assert candidate([1]) == False
+
+    assert candidate([-3, 9, -1, 3, 2, 30]) == True
+    assert candidate([-3, 9, -1, 3, 2, 31]) == True
+    assert candidate([-3, 9, -1, 4, 2, 30]) == False
+    assert candidate([-3, 9, -1, 4, 2, 31]) == False
+
+",,,
+HumanEval/44,epo_Latn,python,"
+
+def change_base(x: int, base: int):
+    """"""Ŝanĝu la ciferecan bazon de eniga nombro x al bazo. redonu la reprezentadon de ŝnuro post la konvertiĝo. Bazaj nombroj estas malpli ol 10. >>> change_base(8, 3) '22' >>> change_base(8, 2) '1000' >>> change_base(7, 2) '111' """"""
+","    ret = """"
+    while x > 0:
+        ret = str(x % base) + ret
+        x //= base
+    return ret
+","def check(candidate):
+    assert candidate(8, 3) == ""22""
+    assert candidate(9, 3) == ""100""
+    assert candidate(234, 2) == ""11101010""
+    assert candidate(16, 2) == ""10000""
+    assert candidate(8, 2) == ""1000""
+    assert candidate(7, 2) == ""111""
+    for x in range(2, 8):
+        assert candidate(x, x + 1) == str(x)
+
+",,,
+HumanEval/45,epo_Latn,python,"
+
+def triangle_area(a, h):
+    """"""Donita longo de flanko kaj alta revenareo por triangulo. >>> triangulo_areo""""""
+","    return a * h / 2.0
+","def check(candidate):
+    assert candidate(5, 3) == 7.5
+    assert candidate(2, 2) == 2.0
+    assert candidate(10, 8) == 40.0
+
+",,,
+HumanEval/46,epo_Latn,python,"
+
+def fib4(n: int):
+    """"""La Fib4-numera sekvenco estas sekvenco simila al la Fibbonacci-sekvenco kiu estas difinita kiel sekvas: fib4(0) -> 0 fib4(1) -> 0 fib4(2) -> 2 fib4(3) -> 0 fib4(n) -> fib4(n-1) + fib4(n-2) + fib4(n-3) + fib4(n-4). Bonvolu skribi funkcion por efike kalkuli la n-an elementon de la fib4-numera sekvenco. Ne uzu rekursion. >>> fib4(5) 4 >>> fib4(6) >>> 8 fib4(7) 14 """"""
+","    results = [0, 0, 2, 0]
+    if n < 4:
+        return results[n]
+
+    for _ in range(4, n + 1):
+        results.append(results[-1] + results[-2] + results[-3] + results[-4])
+        results.pop(0)
+
+    return results[-1]
+","def check(candidate):
+    assert candidate(5) == 4
+    assert candidate(8) == 28
+    assert candidate(10) == 104
+    assert candidate(12) == 386
+
+",,,
+HumanEval/47,epo_Latn,python,"
+
+def median(l: list):
+    """"""Revendigu medianon de elementoj en la listo l. >>> mediano (([3, 1, 2, 4, 5]) 3 >>> mediano (([-10, 4, 6, 1000, 10, 20]) 15.0 """"""
+","    l = sorted(l)
+    if len(l) % 2 == 1:
+        return l[len(l) // 2]
+    else:
+        return (l[len(l) // 2 - 1] + l[len(l) // 2]) / 2.0
+","def check(candidate):
+    assert candidate([3, 1, 2, 4, 5]) == 3
+    assert candidate([-10, 4, 6, 1000, 10, 20]) == 8.0
+    assert candidate([5]) == 5
+    assert candidate([6, 5]) == 5.5
+    assert candidate([8, 1, 3, 9, 9, 2, 7]) == 7 
+
+",,,
+HumanEval/48,epo_Latn,python,"
+
+def is_palindrome(text: str):
+    """"""Kontrolu ĉu donita ŝnuro estas palindromo >>> is_palindromo (('') Vera >>> is_palindromo (('aba') Vera >>> is_palindromo (('aaaaa') Vera >>> is_palindromo (('zbcd') Falsa """"""
+","    for i in range(len(text)):
+        if text[i] != text[len(text) - 1 - i]:
+            return False
+    return True
+","def check(candidate):
+    assert candidate('') == True
+    assert candidate('aba') == True
+    assert candidate('aaaaa') == True
+    assert candidate('zbcd') == False
+    assert candidate('xywyx') == True
+    assert candidate('xywyz') == False
+    assert candidate('xywzx') == False
+
+",,,
+HumanEval/49,epo_Latn,python,"
+
+def modp(n: int, p: int):
+    """"""Revenas 2^n modulo p (konsciiĝu pri numerikoj). >>> modp(3, 5) 3 >>> modp(1101, 101) 2 >>> modp(0, 101) 1 >>> modp(3, 11) 8 >>> modp(100, 101) 1 """"""
+","    ret = 1
+    for i in range(n):
+        ret = (2 * ret) % p
+    return ret
+","def check(candidate):
+    assert candidate(3, 5) == 3
+    assert candidate(1101, 101) == 2
+    assert candidate(0, 101) == 1
+    assert candidate(3, 11) == 8
+    assert candidate(100, 101) == 1
+    assert candidate(30, 5) == 4
+    assert candidate(31, 5) == 3
+
+",,,
+HumanEval/50,epo_Latn,python,"
+
+def encode_shift(s: str):
+    """"""prenas kiel eniga ŝnuro ĉifrita per encode_shift funkcio. Revenigas malĉifritan ŝnuron. """"""
+    return """".join([chr(((ord(ch) + 5 - ord(""a"")) % 26) + ord(""a"")) for ch in s])
+
+
+def decode_shift(s: str):
+    """"""returnas ĉifrita ŝnuro per ŝanĝo de ĉiu signo je 5 en la alfabeto.""""""
+","    return """".join([chr(((ord(ch) - 5 - ord(""a"")) % 26) + ord(""a"")) for ch in s])
+","def check(candidate):
+    from random import randint, choice
+    import copy
+    import string
+
+    letters = string.ascii_lowercase
+    for _ in range(100):
+        str = ''.join(choice(letters) for i in range(randint(10, 20)))
+        encoded_str = encode_shift(str)
+        assert candidate(copy.deepcopy(encoded_str)) == str
+
+",,,
+HumanEval/51,epo_Latn,python,"
+
+def remove_vowels(text):
+    """"""remove_vowels estas funkcio kiu prenas ŝnuron kaj resendas ŝnuron sen vokaloj. >>> remove_vowels('') '' >>> remove_vowels(""abcdef\nghijklm"") 'bcdf\nghjklm' >>> remove_vowels('abcdef') 'bcdf' >>> remove_vowels('aaaaa') '' >>> remove_vowels('aaBAA') 'B' >>> remove_vowels('zbcd') 'zbcd' """"""
+","    return """".join([s for s in text if s.lower() not in [""a"", ""e"", ""i"", ""o"", ""u""]])
+","def check(candidate):
+    assert candidate('') == ''
+    assert candidate(""abcdef\nghijklm"") == 'bcdf\nghjklm'
+    assert candidate('fedcba') == 'fdcb'
+    assert candidate('eeeee') == ''
+    assert candidate('acBAA') == 'cB'
+    assert candidate('EcBOO') == 'cB'
+    assert candidate('ybcd') == 'ybcd'
+
+",,,
+HumanEval/52,epo_Latn,python,"
+
+def below_threshold(l: list, t: int):
+    """"""Return True if all numbers in the list l are below threshold t. >>> below_threshold (([1, 2, 4, 10], 100) True >>> below_threshold (([1, 20, 4, 10], 5) False """"""
+","    for e in l:
+        if e >= t:
+            return False
+    return True
+","def check(candidate):
+    assert candidate([1, 2, 4, 10], 100)
+    assert not candidate([1, 20, 4, 10], 5)
+    assert candidate([1, 20, 4, 10], 21)
+    assert candidate([1, 20, 4, 10], 22)
+    assert candidate([1, 8, 4, 10], 11)
+    assert not candidate([1, 8, 4, 10], 10)
+
+",,,
+HumanEval/53,epo_Latn,python,"
+
+def add(x: int, y: int):
+    """"""Aldonu du nombrojn x kaj y. Aldonu (x, 2) aldonu (x, 3) aldonu (x, 4) aldonu (x, 5) aldonu (x, 5) aldonu (x, 5) aldonu (x, 6) aldonu (x, 7) aldonu (x, 7) aldonu (x, 7) aldonu (x, 7) aldonu (x, 7) aldonu (x, 7) aldonu (x, 1) aldonu (x, 2) aldonu (x, 3) aldonu (x, 7)""""""
+","    return x + y
+","def check(candidate):
+    import random
+
+    assert candidate(0, 1) == 1
+    assert candidate(1, 0) == 1
+    assert candidate(2, 3) == 5
+    assert candidate(5, 7) == 12
+    assert candidate(7, 5) == 12
+
+    for i in range(100):
+        x, y = random.randint(0, 1000), random.randint(0, 1000)
+        assert candidate(x, y) == x + y
+
+",,,
+HumanEval/54,epo_Latn,python,"
+
+def same_chars(s0: str, s1: str):
+    """"""Kontrolu, ĉu du vortoj havas la samajn signojn. >>> same_chars (('eabcdzzzz', 'dddzzzzzzdeddabc') Vera >>> same_chars (('abcd', 'dddddddabc') Vera >>> same_chars (('dddddddabc', 'abcd') Vera >>> same_chars (('eabcd', 'dddddddabc') Falsa >>> same_chars ((('abcd', 'dddddddabddce') Falsa >>> same_chars (((abcdzzzz', 'dddzzzzzzdddabc') Falsa """"""
+","    return set(s0) == set(s1)
+","def check(candidate):
+    assert candidate('eabcdzzzz', 'dddzzzzzzzddeddabc') == True
+    assert candidate('abcd', 'dddddddabc') == True
+    assert candidate('dddddddabc', 'abcd') == True
+    assert candidate('eabcd', 'dddddddabc') == False
+    assert candidate('abcd', 'dddddddabcf') == False
+    assert candidate('eabcdzzzz', 'dddzzzzzzzddddabc') == False
+    assert candidate('aabb', 'aaccc') == False
+
+",,,
+HumanEval/55,epo_Latn,python,"
+
+def fib(n: int):
+    """"""Redonu la n-an nombron de Fibonacci. >>> fib(10) 55 >>> fib(1) 1 >>> fib(8) 21 """"""
+","    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+    return fib(n - 1) + fib(n - 2)
+","def check(candidate):
+    assert candidate(10) == 55
+    assert candidate(1) == 1
+    assert candidate(8) == 21
+    assert candidate(11) == 89
+    assert candidate(12) == 144
+
+",,,
+HumanEval/56,epo_Latn,python,"
+
+def correct_bracketing(brackets: str):
+    """"""brackets estas ŝnuro de ""<"" kaj "">"". return True se ĉiu malferma bracket havas korespondan ferman bracket. >>> correct_bracketing ((""<"") False >>> correct_bracketing ((""<>"") True >>> correct_bracketing ((""<><>>"") True >>> correct_bracketing ((""><<>"") False """"""
+","    depth = 0
+    for b in brackets:
+        if b == ""<"":
+            depth += 1
+        else:
+            depth -= 1
+        if depth < 0:
+            return False
+    return depth == 0
+","def check(candidate):
+    assert candidate(""<>"")
+    assert candidate(""<<><>>"")
+    assert candidate(""<><><<><>><>"")
+    assert candidate(""<><><<<><><>><>><<><><<>>>"")
+    assert not candidate(""<<<><>>>>"")
+    assert not candidate(""><<>"")
+    assert not candidate(""<"")
+    assert not candidate(""<<<<"")
+    assert not candidate("">"")
+    assert not candidate(""<<>"")
+    assert not candidate(""<><><<><>><>><<>"")
+    assert not candidate(""<><><<><>><>>><>"")
+
+",,,
+HumanEval/57,epo_Latn,python,"
+
+def monotonic(l: list):
+    """"""Return True is list elements are monotonically increasing or decreasing. >>> monotona (([1, 2, 4, 20]) True >>> monotona (([1, 20, 4, 10]) False >>> monotona (([4, 1, 0, -10]) True """"""
+","    if l == sorted(l) or l == sorted(l, reverse=True):
+        return True
+    return False
+","def check(candidate):
+    assert candidate([1, 2, 4, 10]) == True
+    assert candidate([1, 2, 4, 20]) == True
+    assert candidate([1, 20, 4, 10]) == False
+    assert candidate([4, 1, 0, -10]) == True
+    assert candidate([4, 1, 1, 0]) == True
+    assert candidate([1, 2, 3, 2, 5, 60]) == False
+    assert candidate([1, 2, 3, 4, 5, 60]) == True
+    assert candidate([9, 9, 9, 9]) == True
+
+",,,
+HumanEval/58,epo_Latn,python,"
+
+def common(l1: list, l2: list):
+    """"""Revenigas ordigitajn unikajn komunajn elementojn por du listoj. >>> komuna (([1, 4, 3, 34, 653, 2, 5], [5, 7, 1, 5, 9, 653, 121]) [1, 5, 653] >>> komuna (([5, 3, 2, 8], [3, 2]) [2, 3] """"""
+","    ret = set()
+    for e1 in l1:
+        for e2 in l2:
+            if e1 == e2:
+                ret.add(e1)
+    return sorted(list(ret))
+","def check(candidate):
+    assert candidate([1, 4, 3, 34, 653, 2, 5], [5, 7, 1, 5, 9, 653, 121]) == [1, 5, 653]
+    assert candidate([5, 3, 2, 8], [3, 2]) == [2, 3]
+    assert candidate([4, 3, 2, 8], [3, 2, 4]) == [2, 3, 4]
+    assert candidate([4, 3, 2, 8], []) == []
+
+",,,
+HumanEval/59,epo_Latn,python,"
+
+def largest_prime_factor(n: int):
+    """"""Redonu la plej grandan priman faktoron de n. Supozu, ke n > 1 kaj ne estas primo. >>> plej granda_primfaktoro ((13195) 29 >>> plej granda_primfaktoro ((2048) 2 """"""
+","    def is_prime(k):
+        if k < 2:
+            return False
+        for i in range(2, k - 1):
+            if k % i == 0:
+                return False
+        return True
+    largest = 1
+    for j in range(2, n + 1):
+        if n % j == 0 and is_prime(j):
+            largest = max(largest, j)
+    return largest
+","def check(candidate):
+    assert candidate(15) == 5
+    assert candidate(27) == 3
+    assert candidate(63) == 7
+    assert candidate(330) == 11
+    assert candidate(13195) == 29
+
+",,,
+HumanEval/60,epo_Latn,python,"
+
+def sum_to_n(n: int):
+    """"""sum_to_n estas funkcio, kiu sumigas nombrojn de 1 ĝis n. >>> sum_to_n(30) 465 >>> sum_to_n(100) 5050 >>> sum_to_n(5) 15 >>> sum_to_n(10) 55 >>> sum_to_n(1) 1 """"""
+","    return sum(range(n + 1))
+","def check(candidate):
+    assert candidate(1) == 1
+    assert candidate(6) == 21
+    assert candidate(11) == 66
+    assert candidate(30) == 465
+    assert candidate(100) == 5050
+
+",,,
+HumanEval/61,epo_Latn,python,"
+
+def correct_bracketing(brackets: str):
+    """"""parentezo estas ŝnuro de ""("" kaj "")"". return True se ĉiu malferma parentezo havas korespondan ferman parentezon. >>> correct_bracketing(""("") False >>> correct_bracketing(""() True >>> correct_bracketing(""() True >>> correct_bracketing("") False """"""
+","    depth = 0
+    for b in brackets:
+        if b == ""("":
+            depth += 1
+        else:
+            depth -= 1
+        if depth < 0:
+            return False
+    return depth == 0
+","def check(candidate):
+    assert candidate(""()"")
+    assert candidate(""(()())"")
+    assert candidate(""()()(()())()"")
+    assert candidate(""()()((()()())())(()()(()))"")
+    assert not candidate(""((()())))"")
+    assert not candidate("")(()"")
+    assert not candidate(""("")
+    assert not candidate(""(((("")
+    assert not candidate("")"")
+    assert not candidate(""(()"")
+    assert not candidate(""()()(()())())(()"")
+    assert not candidate(""()()(()())()))()"")
+
+",,,
+HumanEval/62,epo_Latn,python,"
+
+def derivative(xs: list):
+    """"""xs reprezentas koeficientojn de polinomo. xs[0] + xs[1] * x + xs[2] * x^2 + .... Redonu derivaĵon de ĉi tiu polinomo en la sama formo. >>> derivaĵo (([3, 1, 2, 4, 5]) [1, 4, 12, 20] >>> derivaĵo ([1, 2, 3]) [2, 6] """"""
+","    return [(i * x) for i, x in enumerate(xs)][1:]
+","def check(candidate):
+    assert candidate([3, 1, 2, 4, 5]) == [1, 4, 12, 20]
+    assert candidate([1, 2, 3]) == [2, 6]
+    assert candidate([3, 2, 1]) == [2, 2]
+    assert candidate([3, 2, 1, 0, 4]) == [2, 2, 0, 16]
+    assert candidate([1]) == []
+
+",,,
+HumanEval/63,epo_Latn,python,"
+
+def fibfib(n: int):
+    """"""La FibFib-numera sekvenco estas sekvenco simila al la Fibbonacci-sekvenco kiu estas difinita kiel sekvas: fibfib(0) == 0 fibfib(1) == 0 fibfib(2) == 1 fibfib(n) == fibfib(n-1) + fibfib(n-2) + fibfib(n-3). Bonvolu skribi funkcion por efike kalkuli la n-an elementon de la fibfib-numera sekvenco. >>> fibfib(1) 0 >>> fib(5) 4 >>> fibfib(8) 24 """"""
+","    if n == 0:
+        return 0
+    if n == 1:
+        return 0
+    if n == 2:
+        return 1
+    return fibfib(n - 1) + fibfib(n - 2) + fibfib(n - 3)
+","def check(candidate):
+    assert candidate(2) == 1
+    assert candidate(1) == 0
+    assert candidate(5) == 4
+    assert candidate(8) == 24
+    assert candidate(10) == 81
+    assert candidate(12) == 274
+    assert candidate(14) == 927
+
+",,,
+HumanEval/64,epo_Latn,python,"
+FIX = """"""Skribu funkcion vowels_count kiu prenas ŝnuron reprezentantan vorton kiel enigaĵon kaj redonas la nombron de vokaloj en la ŝnuro. Vokaloj en ĉi tiu kazo estas 'a', 'e', 'i', 'o', 'u'. Ĉi tie, 'y' ankaŭ estas vokalo, sed nur kiam ĝi estas ĉe la fino de la donita vorto. Ekzemplo: >>> vowels_count ((""abcde"") 2 >>> vowels_count ((""ACEDY"") 3 """"""
+
+def vowels_count(s):
+    """"""Aldonu pli da testokazoj.""""""
+","    vowels = ""aeiouAEIOU""
+    n_vowels = sum(c in vowels for c in s)
+    if s[-1] == 'y' or s[-1] == 'Y':
+        n_vowels += 1
+    return n_vowels
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""abcde"") == 2, ""Test 1""
+    assert candidate(""Alone"") == 3, ""Test 2""
+    assert candidate(""key"") == 2, ""Test 3""
+    assert candidate(""bye"") == 1, ""Test 4""
+    assert candidate(""keY"") == 2, ""Test 5""
+    assert candidate(""bYe"") == 1, ""Test 6""
+    assert candidate(""ACEDY"") == 3, ""Test 7""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/65,epo_Latn,python,"
+def circular_shift(x, shift):
+    """"""Cirkla ŝanĝo de ciferoj de la entjero x, ŝanĝo de ciferoj dekstren per ŝanĝo kaj redonu la rezulton kiel ŝnuro. Se ŝanĝo > nombro de ciferoj, redonu ciferojn inversigitajn. >>> cirkla_ŝanĝo""""""
+","    s = str(x)
+    if shift > len(s):
+        return s[::-1]
+    else:
+        return s[len(s) - shift:] + s[:len(s) - shift]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(100, 2) == ""001""
+    assert candidate(12, 2) == ""12""
+    assert candidate(97, 8) == ""79""
+    assert candidate(12, 1) == ""21"", ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(11, 101) == ""11"", ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/66,epo_Latn,python,"
+def digitSum(s):
+    """"""Tasko Skribu funkcion kiu prenas ŝnuron kiel enigaĵon kaj resendas la sumon de la supraj karakteroj nur ASCII-kodoj. Ekzemploj: digitSum ((("""") => 0 digitSum (((""abAB"") => 131 digitSum (((""abcCd"") => 67 digitSum (((""helloE"") => 69 digitSum (((""woArBld"") => 131 digitSum (((""aAaaaXa"") => 153 """"""
+","    if s == """": return 0
+    return sum(ord(char) if char.isupper() else 0 for char in s)
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate("""") == 0, ""Error""
+    assert candidate(""abAB"") == 131, ""Error""
+    assert candidate(""abcCd"") == 67, ""Error""
+    assert candidate(""helloE"") == 69, ""Error""
+    assert candidate(""woArBld"") == 131, ""Error""
+    assert candidate(""aAaaaXa"") == 153, ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate("" How are yOu?"") == 151, ""Error""
+    assert candidate(""You arE Very Smart"") == 327, ""Error""
+
+",,,
+HumanEval/67,epo_Latn,python,"
+def fruit_distribution(s,n):
+    """"""En tiu tasko, vi ricevos ĉenon kiu reprezentas nombron da pomoj kaj oranĝoj kiuj estas distribuitaj en korbo de fruktoj ĉi tiu korbo enhavas pomojn, oranĝojn, kaj mango fruktoj. Surbaze de la ĉenon kiu reprezentas la totalan nombron de la oranĝoj kaj pomoj kaj entjero kiu reprezentas la totalan nombron de la fruktoj en la korbo resendi la nombron de la mango fruktoj en la korbo. ekzemple: fruit_distribution""5( pomoj kaj 6 oranĝoj"", 19) ->19 - 5 - 6 = 8 fruit_distribution""0 pomoj kaj 1 oranĝo"",3) -> 3 - 0 - 1 = 2 fruit_distribution""2 pomoj kaj 3 oranĝoj"", 100) -> 100 - 2 - 3 = 95 fruit_distribution""100 pomoj kaj 1 oranĝo"",1 -> 120 - 100 - 1 = 19 """"""
+","    lis = list()
+    for i in s.split(' '):
+        if i.isdigit():
+            lis.append(int(i))
+    return n - sum(lis)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""5 apples and 6 oranges"",19) == 8
+    assert candidate(""5 apples and 6 oranges"",21) == 10
+    assert candidate(""0 apples and 1 oranges"",3) == 2
+    assert candidate(""1 apples and 0 oranges"",3) == 2
+    assert candidate(""2 apples and 3 oranges"",100) == 95
+    assert candidate(""2 apples and 3 oranges"",5) == 0
+    assert candidate(""1 apples and 100 oranges"",120) == 19
+",,,
+HumanEval/68,epo_Latn,python,"
+def pluck(arr):
+    """"""""Date de aro reprezentanta branĉon de arbo kiu havas ne-negativajn entjerajn nodojn via tasko estas pluki unu el la nodoj kaj redoni ĝin. La plukita nodo devus esti la nodo kun la plej malgranda eĉ valoro. Se pluraj nodoj kun la sama plej malgranda eĉ valoro estas trovitaj redonu la nodo kiu havas plej malgrandan indekson. La plukita nodo devus esti redonita en listo, [plej malgranda_valoro, ĝia indekso] , Se ne estas eĉ valoroj aŭ la donita aro estas malplena, redonu []. Ekzemplo 1: Enigo: [4,2,3] Eliro: [2, 1] Klarigo: 2 havas la plej malgrandan eĉ valoron, kaj 2 havas la plej malgrandan indekson. Ekzemplo 2: Enigo: [1,2,3] Eliro: [2, 1] Klarigo: 2 havas la plej malgrandan eĉ valoron, kaj 2 havas la plej malgrandan eĉ indekson. Ekzemplo 3: Enigo: [] Eliro: [] Enigo: [4: [5, 3, 4] Enigo: [0, 2] Eliro: 1 La plej malgranda nodo kun indekso havas du nuloj, sed la plej malgranda nodo estas la unua, kiu havas nulon. * = 0 = 1""""""
+","    if(len(arr) == 0): return []
+    evens = list(filter(lambda x: x%2 == 0, arr))
+    if(evens == []): return []
+    return [min(evens), arr.index(min(evens))]
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([4,2,3]) == [2, 1], ""Error""
+    assert candidate([1,2,3]) == [2, 1], ""Error""
+    assert candidate([]) == [], ""Error""
+    assert candidate([5, 0, 3, 0, 4, 2]) == [0, 1], ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([1, 2, 3, 0, 5, 3]) == [0, 3], ""Error""
+    assert candidate([5, 4, 8, 4 ,8]) == [4, 1], ""Error""
+    assert candidate([7, 6, 7, 1]) == [6, 1], ""Error""
+    assert candidate([7, 9, 7, 1]) == [], ""Error""
+
+",,,
+HumanEval/69,epo_Latn,python,"
+def search(lst):
+    '''La frekvenco de entjero estas la nombro de fojoj, kiam ĝi aperas en la listo. Se tia valoro ne ekzistas, redonu -1. Ekzemploj: serĉo: [4, 1, 2, 2, 3, 1]) == 2 serĉo: [1, 2, 2, 3, 3, 3, 4, 4]) == 3 serĉo: [5, 5, 4, 4, 4]) == -1 '''
+","    frq = [0] * (max(lst) + 1)
+    for i in lst:
+        frq[i] += 1;
+
+    ans = -1
+    for i in range(1, len(frq)):
+        if frq[i] >= i:
+            ans = i
+    
+    return ans
+","def check(candidate):
+
+    # manually generated tests
+    assert candidate([5, 5, 5, 5, 1]) == 1
+    assert candidate([4, 1, 4, 1, 4, 4]) == 4
+    assert candidate([3, 3]) == -1
+    assert candidate([8, 8, 8, 8, 8, 8, 8, 8]) == 8
+    assert candidate([2, 3, 3, 2, 2]) == 2
+
+    # automatically generated tests
+    assert candidate([2, 7, 8, 8, 4, 8, 7, 3, 9, 6, 5, 10, 4, 3, 6, 7, 1, 7, 4, 10, 8, 1]) == 1
+    assert candidate([3, 2, 8, 2]) == 2
+    assert candidate([6, 7, 1, 8, 8, 10, 5, 8, 5, 3, 10]) == 1
+    assert candidate([8, 8, 3, 6, 5, 6, 4]) == -1
+    assert candidate([6, 9, 6, 7, 1, 4, 7, 1, 8, 8, 9, 8, 10, 10, 8, 4, 10, 4, 10, 1, 2, 9, 5, 7, 9]) == 1
+    assert candidate([1, 9, 10, 1, 3]) == 1
+    assert candidate([6, 9, 7, 5, 8, 7, 5, 3, 7, 5, 10, 10, 3, 6, 10, 2, 8, 6, 5, 4, 9, 5, 3, 10]) == 5
+    assert candidate([1]) == 1
+    assert candidate([8, 8, 10, 6, 4, 3, 5, 8, 2, 4, 2, 8, 4, 6, 10, 4, 2, 1, 10, 2, 1, 1, 5]) == 4
+    assert candidate([2, 10, 4, 8, 2, 10, 5, 1, 2, 9, 5, 5, 6, 3, 8, 6, 4, 10]) == 2
+    assert candidate([1, 6, 10, 1, 6, 9, 10, 8, 6, 8, 7, 3]) == 1
+    assert candidate([9, 2, 4, 1, 5, 1, 5, 2, 5, 7, 7, 7, 3, 10, 1, 5, 4, 2, 8, 4, 1, 9, 10, 7, 10, 2, 8, 10, 9, 4]) == 4
+    assert candidate([2, 6, 4, 2, 8, 7, 5, 6, 4, 10, 4, 6, 3, 7, 8, 8, 3, 1, 4, 2, 2, 10, 7]) == 4
+    assert candidate([9, 8, 6, 10, 2, 6, 10, 2, 7, 8, 10, 3, 8, 2, 6, 2, 3, 1]) == 2
+    assert candidate([5, 5, 3, 9, 5, 6, 3, 2, 8, 5, 6, 10, 10, 6, 8, 4, 10, 7, 7, 10, 8]) == -1
+    assert candidate([10]) == -1
+    assert candidate([9, 7, 7, 2, 4, 7, 2, 10, 9, 7, 5, 7, 2]) == 2
+    assert candidate([5, 4, 10, 2, 1, 1, 10, 3, 6, 1, 8]) == 1
+    assert candidate([7, 9, 9, 9, 3, 4, 1, 5, 9, 1, 2, 1, 1, 10, 7, 5, 6, 7, 6, 7, 7, 6]) == 1
+    assert candidate([3, 10, 10, 9, 2]) == -1
+
+",,,
+HumanEval/70,epo_Latn,python,"
+def strange_sort_list(lst):
+    '''La stranga ordo estas kiam vi komencas per la minimuma valoro, tiam maksimumo de la ceteraj entjeroj, tiam minimumo kaj tiel plu. Ekzemploj: stranga_ordo_listo (([1, 2, 3, 4]) == [1, 4, 2, 3] stranga_ordo_listo (([5, 5, 5, 5]) == [5, 5, 5, 5] stranga_ordo_listo (([]) == [] '''
+","    res, switch = [], True
+    while lst:
+        res.append(min(lst) if switch else max(lst))
+        lst.remove(res[-1])
+        switch = not switch
+    return res
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1, 2, 3, 4]) == [1, 4, 2, 3]
+    assert candidate([5, 6, 7, 8, 9]) == [5, 9, 6, 8, 7]
+    assert candidate([1, 2, 3, 4, 5]) == [1, 5, 2, 4, 3]
+    assert candidate([5, 6, 7, 8, 9, 1]) == [1, 9, 5, 8, 6, 7]
+    assert candidate([5, 5, 5, 5]) == [5, 5, 5, 5]
+    assert candidate([]) == []
+    assert candidate([1,2,3,4,5,6,7,8]) == [1, 8, 2, 7, 3, 6, 4, 5]
+    assert candidate([0,2,2,2,5,5,-5,-5]) == [-5, 5, -5, 5, 0, 2, 2, 2]
+    assert candidate([111111]) == [111111]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/71,epo_Latn,python,"
+def triangle_area(a, b, c):
+    '''Donita la longoj de la tri flankoj de triangulo. Redonu la areon de la triangulo rondiĝis al 2 dekumaj punktoj se la tri flankoj formas validan triangulon. Alie redonu -1 Tri flankoj faras validan triangulon kiam la sumo de iuj du flankoj estas pli granda ol la tria flanko. Ekzemplo: triangulo_areo{\displaystyle {\displaystyle {\displaystyle {\mathbf {r}}} , {\displaystyle {\displaystyle {\mathbf {r}}} , {\displaystyle {\mathbf {r}}} , {\displaystyle {\mathbf {r}}} , {\displaystyle {\mathbf {r}}} , {\displaystyle {\mathbf {r}}} , {\displaystyle {\mathbf {r}}} , {\displaystyle {\mathbf {r}}} ,} } , {\displaystyle {\mathbf {r}}} ,} }'''
+","    if a + b <= c or a + c <= b or b + c <= a:
+        return -1 
+    s = (a + b + c)/2    
+    area = (s * (s - a) * (s - b) * (s - c)) ** 0.5
+    area = round(area, 2)
+    return area
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(3, 4, 5) == 6.00, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(1, 2, 10) == -1
+    assert candidate(4, 8, 5) == 8.18
+    assert candidate(2, 2, 2) == 1.73
+    assert candidate(1, 2, 3) == -1
+    assert candidate(10, 5, 7) == 16.25
+    assert candidate(2, 6, 3) == -1
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1, 1, 1) == 0.43, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(2, 2, 10) == -1
+
+",,,
+HumanEval/72,epo_Latn,python,"
+def will_it_fly(q,w):
+    '''Skribu funkcion kiu resendas True se la objekto q flugos, kaj False alie. La objekto q flugos se ĝi estas ekvilibra (ĝi estas palindroma listo) kaj la sumo de ĝiaj elementoj estas malpli ol aŭ egala al la maksimuma ebla pezo w. Ekzemplo: will_it_fly (([1, 2], 5) â -> False # 1+2 estas malpli ol la maksimuma ebla pezo, sed ĝi estas malbalancita. will_it_fly (([3, 2, 3], 1) â -> False # ĝi estas ekvilibra, sed 3+2+3 estas pli ol la maksimuma ebla pezo. will_it_fly (([3, 2, 3], 9) â -> True # 3+23 estas malpli ol la maksimuma ebla pezo, kaj ĝi estas ekvilibra. will_it_fly ((([3], â 5) -> True # 3 estas malpli ol la maksimuma ebla pezo, kaj ĝi estas ekvilibra.'''
+","    if sum(q) > w:
+        return False
+
+    i, j = 0, len(q)-1
+    while i<j:
+        if q[i] != q[j]:
+            return False
+        i+=1
+        j-=1
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([3, 2, 3], 9) is True
+    assert candidate([1, 2], 5) is False
+    assert candidate([3], 5) is True
+    assert candidate([3, 2, 3], 1) is False
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1, 2, 3], 6) is False
+    assert candidate([5], 5) is True
+
+",,,
+HumanEval/73,epo_Latn,python,"
+def smallest_change(arr):
+    """"""Laŭ la metodo de la matematiko, la plej malgranda numero de elementoj, kiujn oni povas ŝanĝi en la matrico, estas la nombro de elementoj, kiujn oni povas ŝanĝi en la matrico.""""""
+","    ans = 0
+    for i in range(len(arr) // 2):
+        if arr[i] != arr[len(arr) - i - 1]:
+            ans += 1
+    return ans
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,2,3,5,4,7,9,6]) == 4
+    assert candidate([1, 2, 3, 4, 3, 2, 2]) == 1
+    assert candidate([1, 4, 2]) == 1
+    assert candidate([1, 4, 4, 2]) == 1
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1, 2, 3, 2, 1]) == 0
+    assert candidate([3, 1, 1, 3]) == 0
+    assert candidate([1]) == 0
+    assert candidate([0, 1]) == 1
+
+",,,
+HumanEval/74,epo_Latn,python,"
+def total_match(lst1, lst2):
+    '''Skribu funkcion kiu akceptas du listojn de ŝnuroj kaj resendas la liston kiu havas totalnombron de karakteroj en ĉiuj ŝnuroj de la listo malpli ol la alia listo. se la du listoj havas la saman nombron da karakteroj, resendas la unuan liston. Ekzemploj total_match (([], []) â -> [] total_match ((['hi', 'admin'], ['hI', 'Hi']) â -> ['hI', 'Hi'] total_match ((['hi', 'admin'], ['hi', 'hi', 'admin', 'project']) â -> ['hi', 'admin'] total_match ((['hi', 'admin'], ['I', 'hi', 'hi']) â -> ['hI', 'hi', 'hi'] total_match ((['4'], ['1'', '2'', '3'', '4' , '5' -> ['4'])'''
+","    l1 = 0
+    for st in lst1:
+        l1 += len(st)
+    
+    l2 = 0
+    for st in lst2:
+        l2 += len(st)
+    
+    if l1 <= l2:
+        return lst1
+    else:
+        return lst2
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([], []) == []
+    assert candidate(['hi', 'admin'], ['hi', 'hi']) == ['hi', 'hi']
+    assert candidate(['hi', 'admin'], ['hi', 'hi', 'admin', 'project']) == ['hi', 'admin']
+    assert candidate(['4'], ['1', '2', '3', '4', '5']) == ['4']
+    assert candidate(['hi', 'admin'], ['hI', 'Hi']) == ['hI', 'Hi']
+    assert candidate(['hi', 'admin'], ['hI', 'hi', 'hi']) == ['hI', 'hi', 'hi']
+    assert candidate(['hi', 'admin'], ['hI', 'hi', 'hii']) == ['hi', 'admin']
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([], ['this']) == []
+    assert candidate(['this'], []) == []
+
+",,,
+HumanEval/75,epo_Latn,python,"
+def is_multiply_prime(a):
+    """"""Skribu funkcion kiu resendas la rezulton vera se la donita nombro estas la multipliko de 3 primoj kaj malvera alie.""""""
+","    def is_prime(n):
+        for j in range(2,n):
+            if n%j == 0:
+                return False
+        return True
+
+    for i in range(2,101):
+        if not is_prime(i): continue
+        for j in range(2,101):
+            if not is_prime(j): continue
+            for k in range(2,101):
+                if not is_prime(k): continue
+                if i*j*k == a: return True
+    return False
+","def check(candidate):
+
+    assert candidate(5) == False
+    assert candidate(30) == True
+    assert candidate(8) == True
+    assert candidate(10) == False
+    assert candidate(125) == True
+    assert candidate(3 * 5 * 7) == True
+    assert candidate(3 * 6 * 7) == False
+    assert candidate(9 * 9 * 9) == False
+    assert candidate(11 * 9 * 9) == False
+    assert candidate(11 * 13 * 7) == True
+
+",,,
+HumanEval/76,epo_Latn,python,"
+def is_simple_power(x, n):
+    """"""Via tasko estas skribi funkcion kiu resendas veran se nombro x estas simpla potenco de n kaj malvera en aliaj kazoj. x estas simpla potenco de n se n**int=x Ekzemple: is_simple_power(1, 4) => vera is_simple_power(2, 2) => vera is_simple_power(8, 2) => vera is_simple_power(3, 2) => malvera is_simple_power(3, 1) falsa => is_simple_power(5, 3) => malvera """"""
+","    if (n == 1): 
+        return (x == 1) 
+    power = 1
+    while (power < x): 
+        power = power * n 
+    return (power == x) 
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(16, 2)== True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(143214, 16)== False, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(4, 2)==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(9, 3)==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(16, 4)==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(24, 2)==False, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(128, 4)==False, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(12, 6)==False, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1, 1)==True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(1, 12)==True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/77,epo_Latn,python,"
+def iscube(a):
+    '''Skribu funkcion kiu prenas entjeron a kaj resendas True se tiu ingeger estas kubo de iu entjera nombro. Noto: vi povas supozi ke la enigaĵo ĉiam estas valida. Ekzemploj: iscube ((1) ==> True iscube ((2) ==> False iscube ((-1) ==> True iscube ((64) ==> True iscube ((0) ==> True iscube ((180) ==> False '''
+","    a = abs(a)
+    return int(round(a ** (1. / 3))) ** 3 == a
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(1) == True, ""First test error: "" + str(candidate(1))
+    assert candidate(2) == False, ""Second test error: "" + str(candidate(2))
+    assert candidate(-1) == True, ""Third test error: "" + str(candidate(-1))
+    assert candidate(64) == True, ""Fourth test error: "" + str(candidate(64))
+    assert candidate(180) == False, ""Fifth test error: "" + str(candidate(180))
+    assert candidate(1000) == True, ""Sixth test error: "" + str(candidate(1000))
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(0) == True, ""1st edge test error: "" + str(candidate(0))
+    assert candidate(1729) == False, ""2nd edge test error: "" + str(candidate(1728))
+
+",,,
+HumanEval/78,epo_Latn,python,"
+def hex_key(num):
+    """"""Vi estis taskita skribi funkcion kiu ricevas deksimalan nombron kiel ŝnuro kaj nombras la nombron da deksimalaj ciferoj kiuj estas primoj (prima nombro, aŭ primo, estas natura nombro pli granda ol 1 kiu ne estas produkto de du pli malgrandaj naturaj nombroj). Deksimalaj ciferoj estas 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F. Primaj nombroj estas 2, 3, 5, 7, 11, 13, 17,... Do vi devas determini nombron de la sekvaj ciferoj: 2, 3, 5, 7, B (= deksimala 11), D (= deksimala 13). Noto: vi povas supozi ke la enigaĵo ĉiam estas ĝusta aŭ malplena ŝnuro, kaj simboloj A, B, C, D, E, F ĉiam estas majuskroj. Ekzemploj: Por num ""AB"" la produktaĵo devus esti num = 1. Por num ""1077E"" la produktaĵo devus esti 2. Por num ""AB"" = 1 333 ""AED"" la produktaĵo devus esti num = 4. ""ABC"" = 6.01289 ""D"" = 6.045 ""EF"" por la produktaĵo devus esti num = 2.2020 """"""""
+","    primes = ('2', '3', '5', '7', 'B', 'D')
+    total = 0
+    for i in range(0, len(num)):
+        if num[i] in primes:
+            total += 1
+    return total
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""AB"") == 1, ""First test error: "" + str(candidate(""AB""))      
+    assert candidate(""1077E"") == 2, ""Second test error: "" + str(candidate(""1077E""))  
+    assert candidate(""ABED1A33"") == 4, ""Third test error: "" + str(candidate(""ABED1A33""))      
+    assert candidate(""2020"") == 2, ""Fourth test error: "" + str(candidate(""2020""))  
+    assert candidate(""123456789ABCDEF0"") == 6, ""Fifth test error: "" + str(candidate(""123456789ABCDEF0""))      
+    assert candidate(""112233445566778899AABBCCDDEEFF00"") == 12, ""Sixth test error: "" + str(candidate(""112233445566778899AABBCCDDEEFF00""))  
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([]) == 0
+
+",,,
+HumanEval/79,epo_Latn,python,"
+def decimal_to_binary(decimal):
+    """"""La funkcio devas redoni ŝnuron, kie ĉiu signo reprezentas binaran nombron. Ĉiu signo en la ŝnuro estos '0' aŭ '1'. Ekzistos ekstra paro de signoj 'db' komence kaj fine de la ŝnuro. La ekstraj signoj estas tie por helpi kun la formato. Ekzemploj: decimal_to_binary ((15) # redonas ""db1111db"" decimal_to_binary32) # redonas ""db100000db"" """"""
+","    return ""db"" + bin(decimal)[2:] + ""db""
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(0) == ""db0db""
+    assert candidate(32) == ""db100000db""
+    assert candidate(103) == ""db1100111db""
+    assert candidate(15) == ""db1111db"", ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/80,epo_Latn,python,"
+def is_happy(s):
+    """"""Vi ricevas ŝnuron s. Via tasko estas kontroli ĉu la ŝnuro estas feliĉa aŭ ne. Ŝnuro estas feliĉa se ĝia longo estas almenaŭ 3 kaj ĉiu 3 sinsekvaj literoj estas apartaj Ekzemple: is_happy (a) => False is_happy (aa) => False is_happy (abcd) => True is_happy (aabb) => False is_happy (adb) => True is_happy (xyy) => False """"""
+","    if len(s) < 3:
+      return False
+
+    for i in range(len(s) - 2):
+      
+      if s[i] == s[i+1] or s[i+1] == s[i+2] or s[i] == s[i+2]:
+        return False
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""a"") == False , ""a""
+    assert candidate(""aa"") == False , ""aa""
+    assert candidate(""abcd"") == True , ""abcd""
+    assert candidate(""aabb"") == False , ""aabb""
+    assert candidate(""adb"") == True , ""adb""
+    assert candidate(""xyy"") == False , ""xyy""
+    assert candidate(""iopaxpoi"") == True , ""iopaxpoi""
+    assert candidate(""iopaxioi"") == False , ""iopaxioi""
+",,,
+HumanEval/81,epo_Latn,python,"
+def numerical_letter_grade(grades):
+    """"""Estas la lasta semajno de la semestro kaj la instruisto devas doni la notojn al la studentoj. La instruisto faris sian propran algoritmon por la notado. La sola problemo estas, ke ŝi perdis la kodon, kiun ŝi uzis por la notado. Ŝi donis al vi liston de GPAj por iuj studentoj kaj vi devas skribi funkcion, kiu povas produkti liston de leteroj per la sekva tabelo: GPA.""""""
+","
+   
+    letter_grade = []
+    for gpa in grades:
+        if gpa == 4.0:
+            letter_grade.append(""A+"")
+        elif gpa > 3.7:
+            letter_grade.append(""A"")
+        elif gpa > 3.3:
+            letter_grade.append(""A-"")
+        elif gpa > 3.0:
+            letter_grade.append(""B+"")
+        elif gpa > 2.7:
+            letter_grade.append(""B"")
+        elif gpa > 2.3:
+            letter_grade.append(""B-"")
+        elif gpa > 2.0:
+            letter_grade.append(""C+"")
+        elif gpa > 1.7:
+            letter_grade.append(""C"")
+        elif gpa > 1.3:
+            letter_grade.append(""C-"")
+        elif gpa > 1.0:
+            letter_grade.append(""D+"")
+        elif gpa > 0.7:
+            letter_grade.append(""D"")
+        elif gpa > 0.0:
+            letter_grade.append(""D-"")
+        else:
+            letter_grade.append(""E"")
+    return letter_grade
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([4.0, 3, 1.7, 2, 3.5]) == ['A+', 'B', 'C-', 'C', 'A-']
+    assert candidate([1.2]) == ['D+']
+    assert candidate([0.5]) == ['D-']
+    assert candidate([0.0]) == ['E']
+    assert candidate([1, 0.3, 1.5, 2.8, 3.3]) == ['D', 'D-', 'C-', 'B', 'B+']
+    assert candidate([0, 0.7]) == ['E', 'D-']
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/82,epo_Latn,python,"
+def prime_length(string):
+    """"""Skribu funkcion kiu prenas ŝnuron kaj resendas True se la ŝnuro longas estas primo aŭ False alie Ekzemploj prime_length{'Hello') == True prime_length{'abcdcba') == True prime_length{'kittens') == True prime_length{'orange') == False """"""
+","    l = len(string)
+    if l == 0 or l == 1:
+        return False
+    for i in range(2, l):
+        if l % i == 0:
+            return False
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('Hello') == True
+    assert candidate('abcdcba') == True
+    assert candidate('kittens') == True
+    assert candidate('orange') == False
+    assert candidate('wow') == True
+    assert candidate('world') == True
+    assert candidate('MadaM') == True
+    assert candidate('Wow') == True
+    assert candidate('') == False
+    assert candidate('HI') == True
+    assert candidate('go') == True
+    assert candidate('gogo') == False
+    assert candidate('aaaaaaaaaaaaaaa') == False
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('Madam') == True
+    assert candidate('M') == False
+    assert candidate('0') == False
+
+",,,
+HumanEval/83,epo_Latn,python,"
+def starts_one_ends(n):
+    """"""Donita pozitiva entjero n, redonu la nombron de la nombroj de n-ciferaj pozitiva entjeroj kiuj komencas aŭ finiĝas per 1. """"""
+","    if n == 1: return 1
+    return 18 * (10 ** (n - 2))
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(1) == 1
+    assert candidate(2) == 18
+    assert candidate(3) == 180
+    assert candidate(4) == 1800
+    assert candidate(5) == 18000
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/84,epo_Latn,python,"
+def solve(N):
+    """"""Ekzemplo Por N = 1000, la sumo de ciferoj estos 1 la produktaĵo devus esti ""1"". Por N = 150, la sumo de ciferoj estos 6 la produktaĵo devus esti ""110"". Por N = 147, la sumo de ciferoj estos 12 la produktaĵo devus esti ""1100"". Variabloj: @N entjeroj Limigoj: 0 â‰¤ N â‰¤ 10000. Produktaĵo: ŝnuro de binara nombro """"""
+","    return bin(sum(int(i) for i in str(N)))[2:]
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(1000) == ""1"", ""Error""
+    assert candidate(150) == ""110"", ""Error""
+    assert candidate(147) == ""1100"", ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(333) == ""1001"", ""Error""
+    assert candidate(963) == ""10010"", ""Error""
+
+",,,
+HumanEval/85,epo_Latn,python,"
+def add(lst):
+    """"""Donita ne-malplena listo de entjeroj lst. aldonu la parajn elementojn kiuj estas en strangaj indeksoj. Ekzemploj: aldonu (([4, 2, 6, 7]) ==> 2 """"""
+","    return sum([lst[i] for i in range(1, len(lst), 2) if lst[i]%2 == 0])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([4, 88]) == 88
+    assert candidate([4, 5, 6, 7, 2, 122]) == 122
+    assert candidate([4, 0, 6, 7]) == 0
+    assert candidate([4, 4, 6, 8]) == 12
+
+    # Check some edge cases that are easy to work out by hand.
+    
+",,,
+HumanEval/86,epo_Latn,python,"
+def anti_shuffle(s):
+    """"""Skribu funkcion kiu prenas ŝnuron kaj resendas ordonitan version de ĝi. Ordigita versio de ŝnuro, estas ŝnuro kie ĉiuj vortoj (apartigitaj per spaco) estas anstataŭigitaj per nova vorto kie ĉiuj signoj estas aranĝitaj en kreskanta sinsekvo bazita sur ascii valoro. Noto: Vi devas konservi la ordon de vortoj kaj malplenaj spacoj en la frazo. Ekzemple: anti_shuffle ((('Hi') resendas 'Hi' anti_shuffle ((('saluton') resendas 'ehllo' anti_shuffle (('Saluton Mondo!!!') resendas 'Saluton !!!Wdlor' """"""
+","    return ' '.join([''.join(sorted(list(i))) for i in s.split(' ')])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('Hi') == 'Hi'
+    assert candidate('hello') == 'ehllo'
+    assert candidate('number') == 'bemnru'
+    assert candidate('abcd') == 'abcd'
+    assert candidate('Hello World!!!') == 'Hello !!!Wdlor'
+    assert candidate('') == ''
+    assert candidate('Hi. My name is Mister Robot. How are you?') == '.Hi My aemn is Meirst .Rboot How aer ?ouy'
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/87,epo_Latn,python,"
+def get_row(lst, x):
+    """"""Vi ricevas 2 dimensian daton, kiel nestitajn listojn, kiu similas al matrico, tamen, male al matricoj, ĉiu vico povas enhavi malsaman nombron da kolumnoj. Surbaze de lst, kaj entjero x, trovu entjerojn x en la listo, kaj redonu liston de tuploj, [(x1, y1), (x2, y2) ...] tia ke ĉiu tuplo estas koordinato - (vico, kolumnoj), komencante kun 0.""""""
+","    coords = [(i, j) for i in range(len(lst)) for j in range(len(lst[i])) if lst[i][j] == x]
+    return sorted(sorted(coords, key=lambda x: x[1], reverse=True), key=lambda x: x[0])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([
+        [1,2,3,4,5,6],
+        [1,2,3,4,1,6],
+        [1,2,3,4,5,1]
+    ], 1) == [(0, 0), (1, 4), (1, 0), (2, 5), (2, 0)]
+    assert candidate([
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6]
+    ], 2) == [(0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (5, 1)]
+    assert candidate([
+        [1,2,3,4,5,6],
+        [1,2,3,4,5,6],
+        [1,1,3,4,5,6],
+        [1,2,1,4,5,6],
+        [1,2,3,1,5,6],
+        [1,2,3,4,1,6],
+        [1,2,3,4,5,1]
+    ], 1) == [(0, 0), (1, 0), (2, 1), (2, 0), (3, 2), (3, 0), (4, 3), (4, 0), (5, 4), (5, 0), (6, 5), (6, 0)]
+    assert candidate([], 1) == []
+    assert candidate([[1]], 2) == []
+    assert candidate([[], [1], [1, 2, 3]], 3) == [(2, 2)]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/88,epo_Latn,python,"
+def sort_array(array):
+    """"""Surbaze de aro de ne-negativaj entjeroj, redonu kopion de la donita aro post ordigo, vi ordigos la donitan aron en kreskanta ordo se la sumo ((unua indekso valoro, lasta indekso valoro) estas nepara, aŭ ordigi ĝin en malkreskanta ordo se la sumo ((unua indekso valoro, lasta indekso valoro) estas para. Noto: * ne ŝanĝu la donitan aron. Ekzemploj: * sort_array[(]) => [] * sort_array[5]) => [5] * sort_array[2, 4, 3, 0, 1, 5]) => [0, 1, 2, 3, 4, 5] * sort_array[2, 4, 3, 0, 1, 5, 6]) => [6, 5, 4, 3, 2, 1, 5, 0] """"""
+","    return [] if len(array) == 0 else sorted(array, reverse= (array[0]+array[-1]) % 2 == 0) 
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([]) == [], ""Error""
+    assert candidate([5]) == [5], ""Error""
+    assert candidate([2, 4, 3, 0, 1, 5]) == [0, 1, 2, 3, 4, 5], ""Error""
+    assert candidate([2, 4, 3, 0, 1, 5, 6]) == [6, 5, 4, 3, 2, 1, 0], ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([2, 1]) == [1, 2], ""Error""
+    assert candidate([15, 42, 87, 32 ,11, 0]) == [0, 11, 15, 32, 42, 87], ""Error""
+    assert candidate([21, 14, 23, 11]) == [23, 21, 14, 11], ""Error""
+
+",,,
+HumanEval/89,epo_Latn,python,"
+def encrypt(s):
+    """"""Krei funkcio encrypt kiu prenas ŝnuron kiel argumenton kaj resendas ŝnuron ĉifrita kun la alfabeto rotaciita. La alfabeto devus esti rotaciita en tia maniero ke la leteroj ŝanĝas malsupren de du multobligita al du lokoj. Ekzemple: encrypt('hi') resendas 'lm' encrypt('asdfghjkl') resendas 'ewhjklnop' encrypt('gf') resendas 'kj' encrypt('et') resendas 'ix' """"""
+","    d = 'abcdefghijklmnopqrstuvwxyz'
+    out = ''
+    for c in s:
+        if c in d:
+            out += d[(d.index(c)+2*2) % 26]
+        else:
+            out += c
+    return out
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('hi') == 'lm', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('asdfghjkl') == 'ewhjklnop', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('gf') == 'kj', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('et') == 'ix', ""This prints if this assert fails 1 (good for debugging!)""
+
+    assert candidate('faewfawefaewg')=='jeiajeaijeiak', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('hellomyfriend')=='lippsqcjvmirh', ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate('dxzdlmnilfuhmilufhlihufnmlimnufhlimnufhfucufh')=='hbdhpqrmpjylqmpyjlpmlyjrqpmqryjlpmqryjljygyjl', ""This prints if this assert fails 3 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('a')=='e', ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/90,epo_Latn,python,"
+def next_smallest(lst):
+    """"""Vi ricevas liston de entjeroj. Skribu funkcion next_smallest (() kiu resendas la duan plej malgrandan elementon de la listo. Returnu Neniun se tia elemento ne ekzistas. next_smallest (([1, 2, 3, 4, 5]) == 2 next_smallest (([5, 1, 4, 3, 2]) == 2 next_smallest (([]) == Neniu next_smallest (([1, 1]) == Neniu """"""
+","    lst = sorted(set(lst))
+    return None if len(lst) < 2 else lst[1]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1, 2, 3, 4, 5]) == 2
+    assert candidate([5, 1, 4, 3, 2]) == 2
+    assert candidate([]) == None
+    assert candidate([1, 1]) == None
+    assert candidate([1,1,1,1,0]) == 1
+    assert candidate([1, 0**0]) == None
+    assert candidate([-35, 34, 12, -45]) == -35
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/91,epo_Latn,python,"
+def is_bored(S):
+    """"""Vi ricevos parolŝnuron, kaj via tasko estas kalkuli la nombron de laciĝoj. Laciĝo estas frazo, kiu komenciĝas per la vorto ""mi"". Frazoj estas limigitaj per '.', '?' aŭ '!'. Ekzemple: >>> estas_enuiĝis{""Saluton mondo"") 0 >>> estas_enuiĝis{""La ĉielo estas blua. La suno brilas. Mi amas tiun veteron"") 1 """"""
+","    import re
+    sentences = re.split(r'[.?!]\s*', S)
+    return sum(sentence[0:2] == 'I ' for sentence in sentences)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""Hello world"") == 0, ""Test 1""
+    assert candidate(""Is the sky blue?"") == 0, ""Test 2""
+    assert candidate(""I love It !"") == 1, ""Test 3""
+    assert candidate(""bIt"") == 0, ""Test 4""
+    assert candidate(""I feel good today. I will be productive. will kill It"") == 2, ""Test 5""
+    assert candidate(""You and I are going for a walk"") == 0, ""Test 6""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/92,epo_Latn,python,"
+def any_int(x, y, z):
+    '''Krei funkcio kiu prenas 3 nombrojn. Redonas veran se unu el la nombroj estas egala al la sumo de la aliaj du, kaj ĉiuj nombroj estas entjeroj. Redonas malvera en iuj aliaj kazoj. Ekzemploj any_int{\displaystyle any_int{\displaystyle any_int{\displaystyle any_{\displaystyle {\displaystyle {\displaystyle {\mathbf {y}}{\displaystyle any_{\mathbf {y}}{\displaystyle any_{\mathbf {y}}{\mathbf {y}}{\mathbf {y}}{\mathbf {y}}}}{\mathbf {y}}{\mathbf {y}}{\mathbf {y}}{\mathbf {y}}{\mathbf {y}}{\mathbf {y}}{\mathbf {y}}{\mathbf {y}}{\mathbf {y}}{\mathbf {y}}{\mathbf {y}}{\mathbf {y}}{\mathbf {y}}{\mathbf {y}}{\mathbf {y}}{\mathbf {y}}}}{\mathbf {y}}{\mathbf {y}}}}}}}'''
+","    
+    if isinstance(x,int) and isinstance(y,int) and isinstance(z,int):
+        if (x+y==z) or (x+z==y) or (y+z==x):
+            return True
+        return False
+    return False
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(2, 3, 1)==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(2.5, 2, 3)==False, ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate(1.5, 5, 3.5)==False, ""This prints if this assert fails 3 (good for debugging!)""
+    assert candidate(2, 6, 2)==False, ""This prints if this assert fails 4 (good for debugging!)""
+    assert candidate(4, 2, 2)==True, ""This prints if this assert fails 5 (good for debugging!)""
+    assert candidate(2.2, 2.2, 2.2)==False, ""This prints if this assert fails 6 (good for debugging!)""
+    assert candidate(-4, 6, 2)==True, ""This prints if this assert fails 7 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(2,1,1)==True, ""This prints if this assert fails 8 (also good for debugging!)""
+    assert candidate(3,4,7)==True, ""This prints if this assert fails 9 (also good for debugging!)""
+    assert candidate(3.0,4,7)==False, ""This prints if this assert fails 10 (also good for debugging!)""
+
+",,,
+HumanEval/93,epo_Latn,python,"
+def encode(message):
+    """"""Skribu funkcion kiu prenas mesaĝon, kaj ĉifras ĝin tiel ke ĝi interŝanĝas kazojn de ĉiuj literoj, anstataŭigas ĉiujn vokalojn en la mesaĝo per la litero kiu aperas 2 lokojn antaŭ tiu vokalo en la angla alfabeto. Supozu nur literojn. Ekzemploj: >>> ĉifrado (test) 'TGST' >>> ĉifrado (test) 'TGST' 'THKS KS C MGSSCGG' """"""
+","    vowels = ""aeiouAEIOU""
+    vowels_replace = dict([(i, chr(ord(i) + 2)) for i in vowels])
+    message = message.swapcase()
+    return ''.join([vowels_replace[i] if i in vowels else i for i in message])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('TEST') == 'tgst', ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('Mudasir') == 'mWDCSKR', ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate('YES') == 'ygs', ""This prints if this assert fails 3 (good for debugging!)""
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('This is a message') == 'tHKS KS C MGSSCGG', ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(""I DoNt KnOw WhAt tO WrItE"") == 'k dQnT kNqW wHcT Tq wRkTg', ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/94,epo_Latn,python,"
+
+def skjkasdkd(lst):
+    """"""Ekzemploj: Por lst = [0,3,2,1,3,5,7,4,5,5,5,2,181,32,4,32,3,2,32,324,4,3] la produktaĵo devus esti 10 Por lst = [1,0,1,8,2,4597,2,1,3,40,1,2,1,2,4,2,5,1] la produktaĵo devus esti 25 Por lst = [1,3,1,32,5107,34,83278,109,163,23,2323,32,30,1,9,3] la produktaĵo devus esti 13 Por lst = [0,724,32,71,99,32,6,0,5,91,83,0,5,6] la produktaĵo devus esti 11 Por lst = [0,81,12,31,21] la produktaĵo devus esti 3 Por lst = [1,0,8,1,2,7] la produktaĵo devus esti """"""
+","    def isPrime(n):
+        for i in range(2,int(n**0.5)+1):
+            if n%i==0:
+                return False
+
+        return True
+    maxx = 0
+    i = 0
+    while i < len(lst):
+        if(lst[i] > maxx and isPrime(lst[i])):
+            maxx = lst[i]
+        i+=1
+    result = sum(int(digit) for digit in str(maxx))
+    return result
+
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([0,3,2,1,3,5,7,4,5,5,5,2,181,32,4,32,3,2,32,324,4,3]) == 10, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1,0,1,8,2,4597,2,1,3,40,1,2,1,2,4,2,5,1]) == 25, ""This prints if this assert fails 2 (also good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1,3,1,32,5107,34,83278,109,163,23,2323,32,30,1,9,3]) == 13, ""This prints if this assert fails 3 (also good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([0,724,32,71,99,32,6,0,5,91,83,0,5,6]) == 11, ""This prints if this assert fails 4 (also good for debugging!)""
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([0,81,12,3,1,21]) == 3, ""This prints if this assert fails 5 (also good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([0,8,1,2,1,7]) == 7, ""This prints if this assert fails 6 (also good for debugging!)""
+
+    assert candidate([8191]) == 19, ""This prints if this assert fails 7 (also good for debugging!)""
+    assert candidate([8191, 123456, 127, 7]) == 19, ""This prints if this assert fails 8 (also good for debugging!)""
+    assert candidate([127, 97, 8192]) == 10, ""This prints if this assert fails 9 (also good for debugging!)""
+",,,
+HumanEval/95,epo_Latn,python,"
+def check_dict_case(dict):
+    """"""La funkcio devas redoni False estas la donita vortaro estas malplena. Ekzemploj: check_dict_case{""a"":""pomo"", ""b"":""banano""}) devas redoni True. check_dict_case{""a"":""pomo"", ""A"":""banano"", ""B"":""banano""}) devas redoni False. check_dict_case{""a"":""pomo"", 8:""banano"", ""a"":""pomo""}) devas redoni False. check_dict_case{""Nomo"", ""John"", ""Aĝo"", ""36"", ""Urbo"", ""Houston""}) False devus redoni check_dict_case{""NC"":""STATE"", ""ZIP:""12345""}) devus redoni True.""""""
+","    if len(dict.keys()) == 0:
+        return False
+    else:
+        state = ""start""
+        for key in dict.keys():
+
+            if isinstance(key, str) == False:
+                state = ""mixed""
+                break
+            if state == ""start"":
+                if key.isupper():
+                    state = ""upper""
+                elif key.islower():
+                    state = ""lower""
+                else:
+                    break
+            elif (state == ""upper"" and not key.isupper()) or (state == ""lower"" and not key.islower()):
+                    state = ""mixed""
+                    break
+            else:
+                break
+        return state == ""upper"" or state == ""lower"" 
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate({""p"":""pineapple"", ""b"":""banana""}) == True, ""First test error: "" + str(candidate({""p"":""pineapple"", ""b"":""banana""}))
+    assert candidate({""p"":""pineapple"", ""A"":""banana"", ""B"":""banana""}) == False, ""Second test error: "" + str(candidate({""p"":""pineapple"", ""A"":""banana"", ""B"":""banana""}))
+    assert candidate({""p"":""pineapple"", 5:""banana"", ""a"":""apple""}) == False, ""Third test error: "" + str(candidate({""p"":""pineapple"", 5:""banana"", ""a"":""apple""}))
+    assert candidate({""Name"":""John"", ""Age"":""36"", ""City"":""Houston""}) == False, ""Fourth test error: "" + str(candidate({""Name"":""John"", ""Age"":""36"", ""City"":""Houston""}))
+    assert candidate({""STATE"":""NC"", ""ZIP"":""12345"" }) == True, ""Fifth test error: "" + str(candidate({""STATE"":""NC"", ""ZIP"":""12345"" }))      
+    assert candidate({""fruit"":""Orange"", ""taste"":""Sweet"" }) == True, ""Fourth test error: "" + str(candidate({""fruit"":""Orange"", ""taste"":""Sweet"" }))      
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate({}) == False, ""1st edge test error: "" + str(candidate({}))
+
+",,,
+HumanEval/96,epo_Latn,python,"
+def count_up_to(n):
+    """"""Implementi funkcio kiu prenas ne-negativa entjero kaj revenas aro de la unuaj n entjeroj kiuj estas primoj kaj malpli ol n. ekzemple: count_up_to(5) => [2,3] count_up_to(11) => [2,3,5,7] count_up_to(0) => [] count_up_to(20) => [2,3,5,7,11,13,17,19] count_up_to(1) => [] count_up_to(18) => [2,3,5,7,11,13,17] """"""
+","    primes = []
+    for i in range(2, n):
+        is_prime = True
+        for j in range(2, i):
+            if i % j == 0:
+                is_prime = False
+                break
+        if is_prime:
+            primes.append(i)
+    return primes
+
+","def check(candidate):
+
+    assert candidate(5) == [2,3]
+    assert candidate(6) == [2,3,5]
+    assert candidate(7) == [2,3,5]
+    assert candidate(10) == [2,3,5,7]
+    assert candidate(0) == []
+    assert candidate(22) == [2,3,5,7,11,13,17,19]
+    assert candidate(1) == []
+    assert candidate(18) == [2,3,5,7,11,13,17]
+    assert candidate(47) == [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43]
+    assert candidate(101) == [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]
+
+",,,
+HumanEval/97,epo_Latn,python,"
+def multiply(a, b):
+    """"""Kompletigu la funkcion kiu prenas du entjerojn kaj resendas la produkton de iliaj unuociferoj. Supozu ke la enigaĵo ĉiam estas valida. Ekzemploj: multobligo{\displaystyle \mathrm {148} ,412} devus resendi 16. multobligo{\displaystyle \mathrm {19} ,28} devus resendi 72. multobligo{\displaystyle \mathrm {2020} ,1851} devus resendi 0. multobligo{\displaystyle \mathrm {14} ,415} devus resendi 20. """"""
+","    return abs(a % 10) * abs(b % 10)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(148, 412) == 16, ""First test error: "" + str(candidate(148, 412))                    
+    assert candidate(19, 28) == 72, ""Second test error: "" + str(candidate(19, 28))           
+    assert candidate(2020, 1851) == 0, ""Third test error: "" + str(candidate(2020, 1851))
+    assert candidate(14,-15) == 20, ""Fourth test error: "" + str(candidate(14,-15))      
+    assert candidate(76, 67) == 42, ""Fifth test error: "" + str(candidate(76, 67))      
+    assert candidate(17, 27) == 49, ""Sixth test error: "" + str(candidate(17, 27))      
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(0, 1) == 0, ""1st edge test error: "" + str(candidate(0, 1))
+    assert candidate(0, 0) == 0, ""2nd edge test error: "" + str(candidate(0, 0))
+
+",,,
+HumanEval/98,epo_Latn,python,"
+def count_upper(s):
+    """"""Donita ŝnuro s, kalkulu la nombron de majusklaj vokaloj en paraj indeksoj. Ekzemple: count_upper (('aBCdEf') redonas 1 count_upper (('abcdefg') redonas 0 count_upper (('dBBE') redonas 0 """"""
+","    count = 0
+    for i in range(0,len(s),2):
+        if s[i] in ""AEIOU"":
+            count += 1
+    return count
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('aBCdEf')  == 1
+    assert candidate('abcdefg') == 0
+    assert candidate('dBBE') == 0
+    assert candidate('B')  == 0
+    assert candidate('U')  == 1
+    assert candidate('') == 0
+    assert candidate('EEEE') == 2
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/99,epo_Latn,python,"
+def closest_integer(value):
+    '''Krei funkcio kiu prenas valoron (ĉenon) reprezentantan nombron kaj resendas la plej proksiman entjeron al ĝi. Se la nombro estas egala de du entjeroj, rondigu ĝin for de nulo. Ekzemploj >>> plej proksima_entjero (((""10"") 10 >>> plej proksima_entjero ((""15.3"") 15 Noto: Rondiĝado for de nulo signifas, ke se la donita nombro estas egala de du entjeroj, tiu, kiun vi devas resendi, estas tiu, kiu estas plej malproksima de nulo. Ekzemple, plej proksima_entjero "" ((14.5"") devas resendi 15 kaj plej proksima_entjero "" ((-14.5"") devas resendi -15. '''
+","    from math import floor, ceil
+
+    if value.count('.') == 1:
+        # remove trailing zeros
+        while (value[-1] == '0'):
+            value = value[:-1]
+
+    num = float(value)
+    if value[-2:] == '.5':
+        if num > 0:
+            res = ceil(num)
+        else:
+            res = floor(num)
+    elif len(value) > 0:
+        res = int(round(num))
+    else:
+        res = 0
+
+    return res
+
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""10"") == 10, ""Test 1""
+    assert candidate(""14.5"") == 15, ""Test 2""
+    assert candidate(""-15.5"") == -16, ""Test 3""
+    assert candidate(""15.3"") == 15, ""Test 3""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""0"") == 0, ""Test 0""
+
+",,,
+HumanEval/100,epo_Latn,python,"
+def make_a_pile(n):
+    """"""La unua nivelo havas n ŝtonojn. La nombro de ŝtonoj en la sekva nivelo estas: - la sekva nepara nombro se n estas nepara. - la sekva para nombro se n estas para. Redonu la nombron de ŝtonoj en ĉiu nivelo en listo, kie elemento ĉe indekso i reprezentas la nombron de ŝtonoj en la nivelo (i+1). Ekzemploj: >>> make_a_pile (n) [3, 5, 7] """"""
+","    return [n + 2*i for i in range(n)]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(3) == [3, 5, 7], ""Test 3""
+    assert candidate(4) == [4,6,8,10], ""Test 4""
+    assert candidate(5) == [5, 7, 9, 11, 13]
+    assert candidate(6) == [6, 8, 10, 12, 14, 16]
+    assert candidate(8) == [8, 10, 12, 14, 16, 18, 20, 22]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/101,epo_Latn,python,"
+def words_string(s):
+    """"""Vi ricevos strekon de vortoj apartigitaj per komo aŭ spacoj. Via tasko estas dividi la ŝnuron en vortojn kaj resendi aron de la vortoj. Ekzemple: words_string (saluton, mia nomo estas John) == [""Saluton"", ""mia"", ""nomo"", ""estas"", ""John""] words_string (unu, du, tri, kvar, kvin, ses) == [""Unu"", ""du"", ""tri"", ""kvar"", ""kvin"", ""ses""] """"""
+","    if not s:
+        return []
+
+    s_list = []
+
+    for letter in s:
+        if letter == ',':
+            s_list.append(' ')
+        else:
+            s_list.append(letter)
+
+    s_list = """".join(s_list)
+    return s_list.split()
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(""Hi, my name is John"") == [""Hi"", ""my"", ""name"", ""is"", ""John""]
+    assert candidate(""One, two, three, four, five, six"") == [""One"", ""two"", ""three"", ""four"", ""five"", ""six""]
+    assert candidate(""Hi, my name"") == [""Hi"", ""my"", ""name""]
+    assert candidate(""One,, two, three, four, five, six,"") == [""One"", ""two"", ""three"", ""four"", ""five"", ""six""]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate("""") == []
+    assert candidate(""ahmed     , gamal"") == [""ahmed"", ""gamal""]
+
+",,,
+HumanEval/102,epo_Latn,python,"
+def choose_num(x, y):
+    """"""Tiu funkcio prenas du pozitivajn nombrojn x kaj y kaj resendas la plej grandan parnombron, kiu estas en la intervalo [x, y] inkluzive. Se tia nombro ne ekzistas, tiam la funkcio devas resendi -1. Ekzemple: elektu_nombron{\displaystyle {}{{{{{}}}{\displaystyle {}{{{}}{\displaystyle {}{{{{}}}{\displaystyle {}{{{{{}}}{{{{{{}}}}}{{{{\displaystyle {}{{{{}}}{{{{{\displaystyle {}{{{}}}{{\displaystyle {}{{{{{}}}}{\displaystyle {}{{{{}}}}{\displaystyle {}{{{{}}}}{\displaystyle {}{{{}}}}{\displaystyle {}{\displaystyle {}{\displaystyle {}{\displaystyle {}{\displaystyle {}{{}}}}{1}}}{1}}}{1}}}{1}}}{1}}}{1}}}{1}}}{1}}}{1}}}{1}}}{1}}}{1}}}{1}}}{1}}}{1}}}{1}}}}}""""""
+","    if x > y:
+        return -1
+    if y % 2 == 0:
+        return y
+    if x == y:
+        return -1
+    return y - 1
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(12, 15) == 14
+    assert candidate(13, 12) == -1
+    assert candidate(33, 12354) == 12354
+    assert candidate(5234, 5233) == -1
+    assert candidate(6, 29) == 28
+    assert candidate(27, 10) == -1
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(7, 7) == -1
+    assert candidate(546, 546) == 546
+
+",,,
+HumanEval/103,epo_Latn,python,"
+def rounded_avg(n, m):
+    """"""Vi ricevas du pozitivajn entjerojn n kaj m, kaj via tasko estas kalkuli la mezon de la entjeroj de n ĝis m (inkluzive de n kaj m). Rondigu la respondon al la plej proksima entjero kaj konvertu ĝin al binara. Se n estas pli granda ol m, redonu -1. Ekzemplo: rounded_avg ((1, 5) => ""0b11"" rounded_avg ((7, 5) => -1 rounded_avg ((10, 20) => ""0b1111"" rounded_avg ((20, 33) => ""0b11010"" """"""
+","    if m < n:
+        return -1
+    summation = 0
+    for i in range(n, m+1):
+        summation += i
+    return bin(round(summation/(m - n + 1)))
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(1, 5) == ""0b11""
+    assert candidate(7, 13) == ""0b1010""
+    assert candidate(964,977) == ""0b1111001010""
+    assert candidate(996,997) == ""0b1111100100""
+    assert candidate(560,851) == ""0b1011000010""
+    assert candidate(185,546) == ""0b101101110""
+    assert candidate(362,496) == ""0b110101101""
+    assert candidate(350,902) == ""0b1001110010""
+    assert candidate(197,233) == ""0b11010111""
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(7, 5) == -1
+    assert candidate(5, 1) == -1
+    assert candidate(5, 5) == ""0b101""
+
+",,,
+HumanEval/104,epo_Latn,python,"
+def unique_digits(x):
+    """"""Donita listo de pozitivaj entjeroj x. redonu ordigitan liston de ĉiuj elementoj, kiuj ne havas eĉ ciferojn. Noto: La redonita listo devas esti ordigita laŭ kreskanta ordo. Ekzemple: >>> unikaj_ciferoj (([15, 33, 1422, 1]) [1, 15, 33] >>> unikaj_ciferoj (([152, 323, 1422, 10]) [] """"""
+","    odd_digit_elements = []
+    for i in x:
+        if all (int(c) % 2 == 1 for c in str(i)):
+            odd_digit_elements.append(i)
+    return sorted(odd_digit_elements)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([15, 33, 1422, 1]) == [1, 15, 33]
+    assert candidate([152, 323, 1422, 10]) == []
+    assert candidate([12345, 2033, 111, 151]) == [111, 151]
+    assert candidate([135, 103, 31]) == [31, 135]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/105,epo_Latn,python,"
+def by_length(arr):
+    """"""Se oni donas al vi aron da entjeroj, ordigu la entjerojn inter 1 kaj 9, inversu la rezultan aron, kaj poste anstataŭigu ĉiun ciferon per ĝia ekvivalenta nomo de ""Unu"", ""Du"", ""Tri"", ""Kvar"", ""Kvin"", ""Ses"", ""Sep"", ""Ok"", ""Naŭ"". Ekzemple: arr = [2, 1, 1, 4, 5, 8, 2, 3] -> ordigu arr -> [1, 1, 2, 2, 3, 4, 5, 8] -> inversu arr -> [8, 5, 4, 3, 2, 2, 1, 1] revenigu [""Oko"", ""Kvar"", ""Tri"", ""Du"", ""Du"", ""Unu"", ""Unu""] Se la aro estas malplena, redonu malplenan aron: arr = [] revenigu [] Se la aro havas ajnan strangan nombron, ignoru ĝin: arr = [1, -1 , 55] -> arr -> [1, 55] -> reverse arr = [55,1] - revenigu ['One' 1,'] """"""
+","    dic = {
+        1: ""One"",
+        2: ""Two"",
+        3: ""Three"",
+        4: ""Four"",
+        5: ""Five"",
+        6: ""Six"",
+        7: ""Seven"",
+        8: ""Eight"",
+        9: ""Nine"",
+    }
+    sorted_arr = sorted(arr, reverse=True)
+    new_arr = []
+    for var in sorted_arr:
+        try:
+            new_arr.append(dic[var])
+        except:
+            pass
+    return new_arr
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([2, 1, 1, 4, 5, 8, 2, 3]) == [""Eight"", ""Five"", ""Four"", ""Three"", ""Two"", ""Two"", ""One"", ""One""], ""Error""
+    assert candidate([]) == [], ""Error""
+    assert candidate([1, -1 , 55]) == ['One'], ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([1, -1, 3, 2]) == [""Three"", ""Two"", ""One""]
+    assert candidate([9, 4, 8]) == [""Nine"", ""Eight"", ""Four""]
+
+",,,
+HumanEval/106,epo_Latn,python,"
+def f(n):
+    """"""Implementigu la funkcion f kiu prenas n kiel parametron, kaj resendas liston de grandeco n, tia ke la valoro de la elemento ĉe indekso i estas la faktoriala de i se i estas para aŭ la sumo de nombroj de 1 ĝis i alie. i komenciĝas de 1. la faktoriala de i estas la multipliko de la nombroj de 1 ĝis i (1 * 2 * ... * i). Ekzemplo: f (((5) == [1, 2, 6, 24, 15] """"""
+","    ret = []
+    for i in range(1,n+1):
+        if i%2 == 0:
+            x = 1
+            for j in range(1,i+1): x *= j
+            ret += [x]
+        else:
+            x = 0
+            for j in range(1,i+1): x += j
+            ret += [x]
+    return ret
+","def check(candidate):
+
+    assert candidate(5) == [1, 2, 6, 24, 15]
+    assert candidate(7) == [1, 2, 6, 24, 15, 720, 28]
+    assert candidate(1) == [1]
+    assert candidate(3) == [1, 2, 6]
+",,,
+HumanEval/107,epo_Latn,python,"
+def even_odd_palindrome(n):
+    """"""Donita pozitiva entjero n, redonu tuplo kiu havas la nombron de paraj kaj neparaj entjeroj palindromoj kiuj falas ene de la intervalo ((1, n), inkluzive. Ekzemplo1: Enigo: 3 Eliro: (1, 2) Klarigo: Entjeroj palindromoj estas 1, 2, 3. unu el ili estas para, kaj du el ili estas neparaj. Ekzemplo2: Enigo: 12 Eliro: (4, 6) Klarigo: Entjeroj palindromoj estas 1, 2, 3, 4, 5, 6, 7, 8, 9, 11. kvar el ili estas paraj, kaj 6 el ili estas neparaj. Noto: 1. 1 <= n <= 10^3 2. tuplo redonis la nombron de paraj kaj neparaj entjeroj palindromoj respektive. """"""
+","    def is_palindrome(n):
+        return str(n) == str(n)[::-1]
+
+    even_palindrome_count = 0
+    odd_palindrome_count = 0
+
+    for i in range(1, n+1):
+        if i%2 == 1 and is_palindrome(i):
+                odd_palindrome_count += 1
+        elif i%2 == 0 and is_palindrome(i):
+            even_palindrome_count += 1
+    return (even_palindrome_count, odd_palindrome_count)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(123) == (8, 13)
+    assert candidate(12) == (4, 6)
+    assert candidate(3) == (1, 2)
+    assert candidate(63) == (6, 8)
+    assert candidate(25) == (5, 6)
+    assert candidate(19) == (4, 6)
+    assert candidate(9) == (4, 5), ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1) == (0, 1), ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/108,epo_Latn,python,"
+def count_nums(arr):
+    """"""Skribu funkcio count_nums kiu prenas aron de entjeroj kaj resendas la nombron de elementoj, kiu havas sumon de ciferoj > 0. Se nombro estas negativa, tiam ĝia unua subskribita cifero estos negativa: ekz. -123 havas subskribitajn ciferojn -1, 2, kaj 3. >>> count_nums (([]) == 0 >>> count_nums (([-1, 11, -11]) == 1 >>> count_nums ([(1, 1, 2]) == 3 """"""
+","    def digits_sum(n):
+        neg = 1
+        if n < 0: n, neg = -1 * n, -1 
+        n = [int(i) for i in str(n)]
+        n[0] = n[0] * neg
+        return sum(n)
+    return len(list(filter(lambda x: x > 0, [digits_sum(i) for i in arr])))
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([]) == 0
+    assert candidate([-1, -2, 0]) == 0
+    assert candidate([1, 1, 2, -2, 3, 4, 5]) == 6
+    assert candidate([1, 6, 9, -6, 0, 1, 5]) == 5
+    assert candidate([1, 100, 98, -7, 1, -1]) == 4
+    assert candidate([12, 23, 34, -45, -56, 0]) == 5
+    assert candidate([-0, 1**0]) == 1
+    assert candidate([1]) == 1
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/109,epo_Latn,python,"
+def move_one_ball(arr):
+    """"""Ni havas aron 'arr' de N entjeroj arr[1], arr[2], ..., arr[N].La nombroj en la aro estos hazarde ordigitaj. Via tasko estas determini ĉu eblas akiri aron ordigitan en ne-malkreskanta ordo per la sekva operacio sur la donita aro: Vi rajtas plenumi dekstruman operacion ajnan nombron da fojoj. Unu dekstraŝanĝo-operacio signifas ŝanĝi ĉiujn elementojn de la aro je unu pozicio en la dekstra direkto. La lasta elemento de la aro estos movita al la komenca pozicio en la aro t.e. 0a indekso. Se eblas akiri la ordigitan aron per la supra operacio tiam revenas Vera alie revenas Falsa. Se la donita aro estas malplena tiam revenas Vera. Noto: La donita listo garantias havi unikajn elementojn. Ekzemple: mov_unu_{\displaystyle \mathrm {one_{\ball_{3}}}, {{{4}}}, {{{4}}}, {{{2}}}, {{{2}}}, {{{2}}}, {{{2}}}, {{{2}}}, {{{2}}}, {{{2}}}, {{{2}}}, {{{1}}}, {{{1}}}, {{{1}}}, {{{1}}}, {{{1}}}, {{{1}}}}}}}}}}}}} {{{1}}}, {{{1}}}, {{{1}}}, {{{1}}}, {{{1}}}}}}}}} {{{1}}}, {{{1}}}, {{{1}}}}}}} {{{1}}}, {{{1}}}}} {{{1}}}}} {{{1}}}}} {{{1}}}}} {{{1}}}}} {{{1}}}}} {{{1}}}}} {{{1}}}}} {{{1}}} {{{1}}}}} {{{1}}}}} {{{1}}} {{{1}}}}} {{{1}}}}} {{{1}}} {{{1}}}}} {{{1}}}}} {{{1}}}}} {{{1}}}}} {{{1}}}}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}}""""""
+","    if len(arr)==0:
+      return True
+    sorted_array=sorted(arr)
+    my_arr=[]
+    
+    min_value=min(arr)
+    min_index=arr.index(min_value)
+    my_arr=arr[min_index:]+arr[0:min_index]
+    for i in range(len(arr)):
+      if my_arr[i]!=sorted_array[i]:
+        return False
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([3, 4, 5, 1, 2])==True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([3, 5, 10, 1, 2])==True
+    assert candidate([4, 3, 1, 2])==False
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([3, 5, 4, 1, 2])==False, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([])==True
+",,,
+HumanEval/110,epo_Latn,python,"
+def exchange(lst1, lst2):
+    """"""En tiu problemo, vi efektivigos funkcion kiu prenas du listojn de nombroj, kaj determinas ĉu eblas elfari interŝanĝon de elementoj inter ili por fari lst1 nur listo de paraj nombroj. Ne estas limo sur la nombro de interŝanĝitaj elementoj inter lst1 kaj lst2. Se eblas interŝanĝi elementojn inter lst1 kaj lst2 por fari ĉiujn elementojn de lst1 paraj, redonu ""Jes"". Alie, redonu ""Ne"". Ekzemple: interŝanĝo [1, 2, 3, 4], [1, 2, 3, 4]) => ""Jes"" interŝanĝo [1, 2, 3, 4], [1, 5, 3, 4]) => ""Ne"" Estas supozite ke la enigaj listoj estos ne-senplenaj. """"""
+","    odd = 0
+    even = 0
+    for i in lst1:
+        if i%2 == 1:
+            odd += 1
+    for i in lst2:
+        if i%2 == 0:
+            even += 1
+    if even >= odd:
+        return ""YES""
+    return ""NO""
+            
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1, 2, 3, 4], [1, 2, 3, 4]) == ""YES""
+    assert candidate([1, 2, 3, 4], [1, 5, 3, 4]) == ""NO""
+    assert candidate([1, 2, 3, 4], [2, 1, 4, 3]) == ""YES"" 
+    assert candidate([5, 7, 3], [2, 6, 4]) == ""YES""
+    assert candidate([5, 7, 3], [2, 6, 3]) == ""NO"" 
+    assert candidate([3, 2, 6, 1, 8, 9], [3, 5, 5, 1, 1, 1]) == ""NO""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([100, 200], [200, 200]) == ""YES""
+
+",,,
+HumanEval/111,epo_Latn,python,"
+def histogram(test):
+    """"""Se estas vico da leteroj, kiu reprezentas interspacajn minusklojn, redonu vortaron de la letero kun la plej granda nombro da ripetoj kaj la ekvivalenta nombro. Se pluraj literoj havas la saman okazon, redonu ilin ĉiujn. Ekzemplo: histogramo: {{{a}}}: {'a': 1, 'b': 1, 'c': 1} histogramo: {{{a}}}: {'a': 2, 'b': 2} histogramo: {{{a}}}: {{{a}}}: {'a': 2, 'b': 2} histogramo: {{{b}}}: {{{b}}}: {{{b}}}: {{{b}}}: {{{b}}}: {{{b}}}: {{{b}}}: {{{b}}}: {{{b}}}: {{{b}}}: {{{b}}}: {{{b}}}: {{{b}}}: {{{b}}}: {{{b}}}: {{{b}}}: {{{b}}}}}}} {{{b}}}: {{{b}}}: {{{b}}}: {{{b}}}: {{{b}}}}}}} {{{b}}}: {{{b}}}: {{{b}}}}}}} {{{b}}}: {{{b}}}}}}} {{{b}}} {{{b}}}}}}} {{{b}}} {{{b}}}}}}}}} {{{b}}} {{{b}}}}}}}}}}} {{}} {{}}}} {{}} {{}}}} {{}}}} {{}} {{}}}} {{}}}} {{}} {{}} {{}} {{}}}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}} {{}}""""""
+","    dict1={}
+    list1=test.split("" "")
+    t=0
+
+    for i in list1:
+        if(list1.count(i)>t) and i!='':
+            t=list1.count(i)
+    if t>0:
+        for i in list1:
+            if(list1.count(i)==t):
+                
+                dict1[i]=t
+    return dict1
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('a b b a') == {'a':2,'b': 2}, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('a b c a b') == {'a': 2, 'b': 2}, ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate('a b c d g') == {'a': 1, 'b': 1, 'c': 1, 'd': 1, 'g': 1}, ""This prints if this assert fails 3 (good for debugging!)""
+    assert candidate('r t g') == {'r': 1,'t': 1,'g': 1}, ""This prints if this assert fails 4 (good for debugging!)""
+    assert candidate('b b b b a') == {'b': 4}, ""This prints if this assert fails 5 (good for debugging!)""
+    assert candidate('r t g') == {'r': 1,'t': 1,'g': 1}, ""This prints if this assert fails 6 (good for debugging!)""
+    
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('') == {}, ""This prints if this assert fails 7 (also good for debugging!)""
+    assert candidate('a') == {'a': 1}, ""This prints if this assert fails 8 (also good for debugging!)""
+
+",,,
+HumanEval/112,epo_Latn,python,"
+def reverse_delete(s,c):
+    """"""Tasko Ni ricevas du ŝnurojn s kaj c, vi devas forigi ĉiujn signojn en s, kiuj egalas al iu ajn signo en c, tiam kontrolu ĉu la rezulta ŝnuro estas palindroma. Ŝnuro estas nomata palindroma se ĝi legas la saman malantaŭen kiel antaŭen. Vi devas resendi tuplon enhavanta la rezulta ŝnuro kaj True/False por la kontrolo. Ekzemplo Por s = ""abcde"", c = ""ae"", la rezulto devas esti ('bcd', False) Por s = ""abcdef"", c = ""b"" la rezulto devas esti ('acdef', False) Por s = ""abcdedcba"", c = ""ab"", la rezulto devas esti ('cdedc', True)""""""
+","    s = ''.join([char for char in s if char not in c])
+    return (s,s[::-1] == s)
+","def check(candidate):
+
+    assert candidate(""abcde"",""ae"") == ('bcd',False)
+    assert candidate(""abcdef"", ""b"") == ('acdef',False)
+    assert candidate(""abcdedcba"",""ab"") == ('cdedc',True)
+    assert candidate(""dwik"",""w"") == ('dik',False)
+    assert candidate(""a"",""a"") == ('',True)
+    assert candidate(""abcdedcba"","""") == ('abcdedcba',True)
+    assert candidate(""abcdedcba"",""v"") == ('abcdedcba',True)
+    assert candidate(""vabba"",""v"") == ('abba',True)
+    assert candidate(""mamma"", ""mia"") == ("""", True)
+",,,
+HumanEval/113,epo_Latn,python,"
+def odd_count(lst):
+    """"""Donita listo de ŝnuroj, kie ĉiu ŝnuro konsistas nur el ciferoj, redonu liston. Ĉiu elemento i de la produktaĵo devus esti ""la nombro da neparaj elementoj en la ŝnuro i de la enigaĵo"". kie ĉiuj i'oj devus esti anstataŭigitaj per la nombro da neparaj ciferoj en la i'a ŝnuro de la enigaĵo. >>> odd_count['1234567']) [""la nombro da neparaj elementoj 4n la str4ng 4 de la 4nput.""] >>> odd_count['3',""111111""]) [""la nombro da neparaj elementoj 1n la str1ng 1 de la 1nput. "", ""la nombro da neparaj elementoj 8n la str8ng 8 de la 8nput.""] """"""
+","    res = []
+    for arr in lst:
+        n = sum(int(d)%2==1 for d in arr)
+        res.append(""the number of odd elements "" + str(n) + ""n the str""+ str(n) +""ng ""+ str(n) +"" of the ""+ str(n) +""nput."")
+    return res
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(['1234567']) == [""the number of odd elements 4n the str4ng 4 of the 4nput.""], ""Test 1""
+    assert candidate(['3',""11111111""]) == [""the number of odd elements 1n the str1ng 1 of the 1nput."", ""the number of odd elements 8n the str8ng 8 of the 8nput.""], ""Test 2""
+    assert candidate(['271', '137', '314']) == [
+        'the number of odd elements 2n the str2ng 2 of the 2nput.',
+        'the number of odd elements 3n the str3ng 3 of the 3nput.',
+        'the number of odd elements 2n the str2ng 2 of the 2nput.'
+    ]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/114,epo_Latn,python,"
+def minSubArraySum(nums):
+    """"""Donita aro de entjeroj n, trovu la minimuman sumon de iu ne-malplena subaro de n. Ekzemplo minSubArraySum (([2, 3, 4, 1, 2, 4]) == 1 minSubArraySum (([-1, -2, -3]) == -6 """"""
+","    max_sum = 0
+    s = 0
+    for num in nums:
+        s += -num
+        if (s < 0):
+            s = 0
+        max_sum = max(s, max_sum)
+    if max_sum == 0:
+        max_sum = max(-i for i in nums)
+    min_sum = -max_sum
+    return min_sum
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([2, 3, 4, 1, 2, 4]) == 1, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([-1, -2, -3]) == -6
+    assert candidate([-1, -2, -3, 2, -10]) == -14
+    assert candidate([-9999999999999999]) == -9999999999999999
+    assert candidate([0, 10, 20, 1000000]) == 0
+    assert candidate([-1, -2, -3, 10, -5]) == -6
+    assert candidate([100, -1, -2, -3, 10, -5]) == -6
+    assert candidate([10, 11, 13, 8, 3, 4]) == 3
+    assert candidate([100, -33, 32, -1, 0, -2]) == -33
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([-10]) == -10, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([7]) == 7
+    assert candidate([1, -1]) == -1
+",,,
+HumanEval/115,epo_Latn,python,"
+def max_fill(grid, capacity):
+    import math
+    """"""Vi ricevas rektangulan kradon de putoj. Ĉiu vico reprezentas unu puton, kaj ĉiu 1 en vico reprezentas unu unuon da akvo. Ĉiu puto havas korespondan sitelon, kiu povas esti uzata por eltiri akvon el ĝi, kaj ĉiuj siteloj havas la saman kapaciton. Via tasko estas uzi la sitelojn por malplenigi la putojn. Elportu la nombron da fojoj, kiujn vi bezonas malaltigi la sitelojn. Ekzemplo 1: Enigo: krado: [[0,0,1,0], [0,1,0,0], [1,1,1,1]] bucket_capacity: 1 Elporto: 6 Ekzemplo 2: Enigo: krado: [[0,0,1,1], [0,0,0,0], [1,1,1], [0,1,1]] bucket_capacity: 2 Elporto: 5 Ekzemplo 3: Enigo: [[:0,0,0], [0,0,0]] bucket_capacity: 5 Elporto: 0 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *""""""
+","    return sum([math.ceil(sum(arr)/capacity) for arr in grid])
+","def check(candidate):
+
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([[0,0,1,0], [0,1,0,0], [1,1,1,1]], 1) == 6, ""Error""
+    assert candidate([[0,0,1,1], [0,0,0,0], [1,1,1,1], [0,1,1,1]], 2) == 5, ""Error""
+    assert candidate([[0,0,0], [0,0,0]], 5) == 0, ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([[1,1,1,1], [1,1,1,1]], 2) == 4, ""Error""
+    assert candidate([[1,1,1,1], [1,1,1,1]], 9) == 2, ""Error""
+
+",,,
+HumanEval/116,epo_Latn,python,"
+def sort_array(arr):
+    """"""En ĉi tiu Kata, vi devas ordigi aro de ne-negativaj entjeroj laŭ nombro de unuoj en ilia binara reprezentado en kreskanta ordo. Por simila nombro de unuoj, ordi surbaze de decimala valoro. Ĝi devas esti efektivigita kiel ĉi: >>> sort_array (([1, 5, 2, 3, 4]) == [1, 2, 3, 4, 5] >>> sort_array (([-2, -3, -4, -5, -6]) == [-6, -5, -4, -3, -2] >>> sort_array (([1, 0, 2, 3, 4]) [0, 1, 2, 3, 4] """"""
+","    return sorted(sorted(arr), key=lambda x: bin(x)[2:].count('1'))
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1,5,2,3,4]) == [1, 2, 4, 3, 5]
+    assert candidate([-2,-3,-4,-5,-6]) == [-4, -2, -6, -5, -3]
+    assert candidate([1,0,2,3,4]) == [0, 1, 2, 4, 3]
+    assert candidate([]) == []
+    assert candidate([2,5,77,4,5,3,5,7,2,3,4]) == [2, 2, 4, 4, 3, 3, 5, 5, 5, 7, 77]
+    assert candidate([3,6,44,12,32,5]) == [32, 3, 5, 6, 12, 44]
+    assert candidate([2,4,8,16,32]) == [2, 4, 8, 16, 32]
+    assert candidate([2,4,8,16,32]) == [2, 4, 8, 16, 32]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/117,epo_Latn,python,"
+def select_words(s, n):
+    """"""Donita ŝnuro s kaj natura nombro n, vi estis taskita efektivigi funkcion kiu resendas liston de ĉiuj vortoj de ŝnuro s kiuj enhavas precize n konsonantojn, por ke tiuj vortoj aperu en la ŝnuro s. Se la ŝnuro s estas malplena tiam la funkcio devus resendi malplenan liston. Noto: vi povas supozi la eniga ŝnuro enhavas nur leterojn kaj spacojn. Ekzemploj: select_words (((""Marjo havis malgrandan ŝafidon"", 4) ==> [""malgranda""] select_words (((""Marjo havis malgrandan ŝafidon"", 3) ==> [""Marjo"", ""ŝafido""] select_words"" (((simpla blanka spaco"", 2) ==> [] select_words (((""Saluton mondo"", 4) ==> [""mondo""] select_words (((""Onklo Sam"", 3) ==> [""Onklo""] """"""
+","    result = []
+    for word in s.split():
+        n_consonants = 0
+        for i in range(0, len(word)):
+            if word[i].lower() not in [""a"",""e"",""i"",""o"",""u""]:
+                n_consonants += 1 
+        if n_consonants == n:
+            result.append(word)
+    return result
+
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""Mary had a little lamb"", 4) == [""little""], ""First test error: "" + str(candidate(""Mary had a little lamb"", 4))      
+    assert candidate(""Mary had a little lamb"", 3) == [""Mary"", ""lamb""], ""Second test error: "" + str(candidate(""Mary had a little lamb"", 3))  
+    assert candidate(""simple white space"", 2) == [], ""Third test error: "" + str(candidate(""simple white space"", 2))      
+    assert candidate(""Hello world"", 4) == [""world""], ""Fourth test error: "" + str(candidate(""Hello world"", 4))  
+    assert candidate(""Uncle sam"", 3) == [""Uncle""], ""Fifth test error: "" + str(candidate(""Uncle sam"", 3))
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate("""", 4) == [], ""1st edge test error: "" + str(candidate("""", 4))
+    assert candidate(""a b c d e f"", 1) == [""b"", ""c"", ""d"", ""f""], ""2nd edge test error: "" + str(candidate(""a b c d e f"", 1))
+
+",,,
+HumanEval/118,epo_Latn,python,"
+def get_closest_vowel(word):
+    """"""Vi ricevas vorton. Via tasko estas trovi la plej proksiman vokalon kiu staras inter du konsonantoj de la dekstra flanko de la vorto (kazo sentema). Vokaloj en la komenco kaj fino ne kalkuliĝas. Redonu malplenan ŝnuron se vi ne trovis iun vokalon plenumitan la supra kondiĉo. Vi povas supozi ke la donita ŝnuro enhavas nur anglan literon. Ekzemplo: get_closest_vowel (((""yogurt"") ==> ""u"" get_closest_vowel (((""F"") ==> ""U"" get_closest_vowel (((""quick"") ==> """" get_closest_vowel"" (((ab"") ==> """" """"""
+","    if len(word) < 3:
+        return """"
+
+    vowels = {""a"", ""e"", ""i"", ""o"", ""u"", ""A"", ""E"", 'O', 'U', 'I'}
+    for i in range(len(word)-2, 0, -1):
+        if word[i] in vowels:
+            if (word[i+1] not in vowels) and (word[i-1] not in vowels):
+                return word[i]
+    return """"
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""yogurt"") == ""u""
+    assert candidate(""full"") == ""u""
+    assert candidate(""easy"") == """"
+    assert candidate(""eAsy"") == """"
+    assert candidate(""ali"") == """"
+    assert candidate(""bad"") == ""a""
+    assert candidate(""most"") == ""o""
+    assert candidate(""ab"") == """"
+    assert candidate(""ba"") == """"
+    assert candidate(""quick"") == """"
+    assert candidate(""anime"") == ""i""
+    assert candidate(""Asia"") == """"
+    assert candidate(""Above"") == ""o""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/119,epo_Latn,python,"
+def match_parens(lst):
+    '''Vi ricevas liston de du ŝnuroj, ambaŭ ŝnuroj konsistas el malfermaj krampoj '(' aŭ fermaj krampoj ') '. Via tasko estas kontroli ĉu eblas kunligi la du ŝnurojn en iu ordo, ke la rezulta ŝnuro estos bona. Ŝnuro S estas konsiderata bona se kaj nur se ĉiuj krampoj en S estas ekvilibraj. Ekzemple: la ŝnuro '((()) ' estas bona, dum la ŝnuro '()) ' ne estas. Redonu 'Jes' se ekzistas maniero fari bonan ŝnuron, kaj redonu 'Ne' alie. Ekzemploj: match_parens [('() ', ') ']) == 'Jes' match_parens [(') ', ') ']) == 'Ne' '''
+","    def check(s):
+        val = 0
+        for i in s:
+            if i == '(':
+                val = val + 1
+            else:
+                val = val - 1
+            if val < 0:
+                return False
+        return True if val == 0 else False
+
+    S1 = lst[0] + lst[1]
+    S2 = lst[1] + lst[0]
+    return 'Yes' if check(S1) or check(S2) else 'No'
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(['()(', ')']) == 'Yes'
+    assert candidate([')', ')']) == 'No'
+    assert candidate(['(()(())', '())())']) == 'No'
+    assert candidate([')())', '(()()(']) == 'Yes'
+    assert candidate(['(())))', '(()())((']) == 'Yes'
+    assert candidate(['()', '())']) == 'No'
+    assert candidate(['(()(', '()))()']) == 'Yes'
+    assert candidate(['((((', '((())']) == 'No'
+    assert candidate([')(()', '(()(']) == 'No'
+    assert candidate([')(', ')(']) == 'No'
+    
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(['(', ')']) == 'Yes'
+    assert candidate([')', '(']) == 'Yes' 
+
+",,,
+HumanEval/120,epo_Latn,python,"
+def maximum(arr, k):
+    """"""Donita aro de entjeroj kaj pozitiva entjero k, redonu ordigitan liston de longo k kun la maksimumaj k nombroj en aro. Ekzemplo1: Eniro: arr = [-3, -4, 5], k = 3 Eliro: [-4, -3, 5] Ekzemplo2: Eniro: arr = [4, -4, 4], k = 2 Eliro: [4, 4] Ekzemplo3: Eniro: arr = [-3, 2, 1, 2, -1, -2, 1], k = 1 Eliro: [2] Noto: 1. La longo de la aro estos en la intervalo de [1, 1000]. 2. La elementoj en la aro estos en la intervalo de [-1000, 1000]. 3. 0 <= k <= len ((arr) """"""
+","    if k == 0:
+        return []
+    arr.sort()
+    ans = arr[-k:]
+    return ans
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([-3, -4, 5], 3) == [-4, -3, 5]
+    assert candidate([4, -4, 4], 2) == [4, 4]
+    assert candidate([-3, 2, 1, 2, -1, -2, 1], 1) == [2]
+    assert candidate([123, -123, 20, 0 , 1, 2, -3], 3) == [2, 20, 123]
+    assert candidate([-123, 20, 0 , 1, 2, -3], 4) == [0, 1, 2, 20]
+    assert candidate([5, 15, 0, 3, -13, -8, 0], 7) == [-13, -8, 0, 0, 3, 5, 15]
+    assert candidate([-1, 0, 2, 5, 3, -10], 2) == [3, 5]
+    assert candidate([1, 0, 5, -7], 1) == [5]
+    assert candidate([4, -4], 2) == [-4, 4]
+    assert candidate([-10, 10], 2) == [-10, 10]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1, 2, 3, -23, 243, -400, 0], 0) == []
+
+",,,
+HumanEval/121,epo_Latn,python,"
+def solution(lst):
+    """"""Donita ne-malplena listo de entjeroj, redonu la sumon de ĉiuj neparaj elementoj, kiuj estas en egalaj pozicioj. Ekzemploj solvo (([5, 8, 7, 1]) ==> 12 solvo (([3, 3, 3, 3]) ==> 9 solvo (([30, 13, 24, 321]) ==> 0 """"""
+","    return sum([x for idx, x in enumerate(lst) if idx%2==0 and x%2==1])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([5, 8, 7, 1])    == 12
+    assert candidate([3, 3, 3, 3, 3]) == 9
+    assert candidate([30, 13, 24, 321]) == 0
+    assert candidate([5, 9]) == 5
+    assert candidate([2, 4, 8]) == 0
+    assert candidate([30, 13, 23, 32]) == 23
+    assert candidate([3, 13, 2, 9]) == 3
+
+    # Check some edge cases that are easy to work out by hand.
+
+",,,
+HumanEval/122,epo_Latn,python,"
+def add_elements(arr, k):
+    """"""Donita ne-malplena aro de entjeroj arr kaj entjero k, redonu la sumon de la elementoj kun maksimume du ciferoj de la unuaj k elementoj de arr. Ekzemplo: Enigo: arr = [111,21,3,4000,5,6,7,8,9], k = 4 Eligo: 24 # sumo de 21 + 3 Limigoj: 1. 1 <= lenarr) <= 100 2. 1 <= k <= lenarr)""""""
+","    return sum(elem for elem in arr[:k] if len(str(elem)) <= 2)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,-2,-3,41,57,76,87,88,99], 3) == -4
+    assert candidate([111,121,3,4000,5,6], 2) == 0
+    assert candidate([11,21,3,90,5,6,7,8,9], 4) == 125
+    assert candidate([111,21,3,4000,5,6,7,8,9], 4) == 24, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1], 1) == 1, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/123,epo_Latn,python,"
+def get_odd_collatz(n):
+    """"""La Collatz-konjekto estas konjekto en matematiko kiu koncernas sekvencon difinitan jene: komenci kun iu ajn pozitiva entjero n. Tiam ĉiu termino estas akirita de la antaŭa termino jene: se la antaŭa termino estas para, la sekva termino estas duono de la antaŭa termino. Se la antaŭa termino estas nepara, la sekva termino estas 3 fojojn la antaŭa termino plus 1. La konjekto estas ke ne gravas kiu valoro de n, la sekvenco ĉiam atingos 1.""""""
+","    if n%2==0:
+        odd_collatz = [] 
+    else:
+        odd_collatz = [n]
+    while n > 1:
+        if n % 2 == 0:
+            n = n/2
+        else:
+            n = n*3 + 1
+            
+        if n%2 == 1:
+            odd_collatz.append(int(n))
+
+    return sorted(odd_collatz)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(14) == [1, 5, 7, 11, 13, 17]
+    assert candidate(5) == [1, 5]
+    assert candidate(12) == [1, 3, 5], ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1) == [1], ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/124,epo_Latn,python,"
+def valid_date(date):
+    """"""Vi devas skribi funkcion kiu validas daton kaj resendas True se la dato estas valida alie False. La dato estas valida se ĉiuj el la sekvaj reguloj estas plenumitaj: 1. La daton ne malplenigas. 2. La nombro de tagoj ne estas malpli ol 1 aŭ pli ol 31 tagoj por monatoj 1,3,5,7,8,10,12. Kaj la nombro de tagoj ne estas malpli ol 1 aŭ pli ol 30 tagoj por monatoj 4,6,9,11. Kaj, la nombro de tagoj ne estas malpli ol 1 aŭ pli ol 29 por la monato 2. 3. La monatoj ne devas esti malpli ol 1 aŭ pli ol 12. 4. La dato devas esti en la formato: mm-dd-yyyy ekzemple: valid_date ({0}-10001-03-10) => valid_date ({0}-10001-04-10) => valid_date ({0}-01-2012) => valid_date ({0}-01-2040') => valid_date ({0}-04-06-2020) => valid_date ({0}-06-04-2020) => valid_date ({0}-06-04-2020) => False""""""
+","    try:
+        date = date.strip()
+        month, day, year = date.split('-')
+        month, day, year = int(month), int(day), int(year)
+        if month < 1 or month > 12:
+            return False
+        if month in [1,3,5,7,8,10,12] and day < 1 or day > 31:
+            return False
+        if month in [4,6,9,11] and day < 1 or day > 30:
+            return False
+        if month == 2 and day < 1 or day > 29:
+            return False
+    except:
+        return False
+
+    return True
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('03-11-2000') == True
+
+    assert candidate('15-01-2012') == False
+
+    assert candidate('04-0-2040') == False
+
+    assert candidate('06-04-2020') == True
+
+    assert candidate('01-01-2007') == True
+
+    assert candidate('03-32-2011') == False
+
+    assert candidate('') == False
+
+    assert candidate('04-31-3000') == False
+
+    assert candidate('06-06-2005') == True
+
+    assert candidate('21-31-2000') == False
+
+    assert candidate('04-12-2003') == True
+
+    assert candidate('04122003') == False
+
+    assert candidate('20030412') == False
+
+    assert candidate('2003-04') == False
+
+    assert candidate('2003-04-12') == False
+
+    assert candidate('04-2003') == False
+",,,
+HumanEval/125,epo_Latn,python,"
+def split_words(txt):
+    '''Donita ŝnuro de vortoj, redonu liston de vortoj dividitaj per blanka spaco, se ne ekzistas blankaj spacoj en la teksto, vi devas dividi per komo ',' se ne ekzistas komo vi devas redoni la nombron de minuskloj kun nepara ordo en la alfabeto, ord (a) = 0, ord (b) = 1, ... ord (z) = 25 Ekzemploj divid_vortoj (a) -> (b)'''
+","    if "" "" in txt:
+        return txt.split()
+    elif "","" in txt:
+        return txt.replace(',',' ').split()
+    else:
+        return len([i for i in txt if i.islower() and ord(i)%2 == 0])
+","def check(candidate):
+
+    assert candidate(""Hello world!"") == [""Hello"",""world!""]
+    assert candidate(""Hello,world!"") == [""Hello"",""world!""]
+    assert candidate(""Hello world,!"") == [""Hello"",""world,!""]
+    assert candidate(""Hello,Hello,world !"") == [""Hello,Hello,world"",""!""]
+    assert candidate(""abcdef"") == 3
+    assert candidate(""aaabb"") == 2
+    assert candidate(""aaaBb"") == 1
+    assert candidate("""") == 0
+",,,
+HumanEval/126,epo_Latn,python,"
+def is_sorted(lst):
+    '''Se la listo havas pli ol unu duoblon de la sama nombro, ĝi resendas False. Supozu neniujn negativajn nombrojn kaj nur entjerojn. Ekzemploj estas_sorted ({})'''
+","    count_digit = dict([(i, 0) for i in lst])
+    for i in lst:
+        count_digit[i]+=1 
+    if any(count_digit[i] > 2 for i in lst):
+        return False
+    if all(lst[i-1] <= lst[i] for i in range(1, len(lst))):
+        return True
+    else:
+        return False
+    
+    
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([5]) == True
+    assert candidate([1, 2, 3, 4, 5]) == True
+    assert candidate([1, 3, 2, 4, 5]) == False
+    assert candidate([1, 2, 3, 4, 5, 6]) == True
+    assert candidate([1, 2, 3, 4, 5, 6, 7]) == True
+    assert candidate([1, 3, 2, 4, 5, 6, 7]) == False, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([]) == True, ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate([1]) == True, ""This prints if this assert fails 3 (good for debugging!)""
+    assert candidate([3, 2, 1]) == False, ""This prints if this assert fails 4 (good for debugging!)""
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1, 2, 2, 2, 3, 4]) == False, ""This prints if this assert fails 5 (good for debugging!)""
+    assert candidate([1, 2, 3, 3, 3, 4]) == False, ""This prints if this assert fails 6 (good for debugging!)""
+    assert candidate([1, 2, 2, 3, 3, 4]) == True, ""This prints if this assert fails 7 (good for debugging!)""
+    assert candidate([1, 2, 3, 4]) == True, ""This prints if this assert fails 8 (good for debugging!)""
+
+",,,
+HumanEval/127,epo_Latn,python,"
+def intersection(interval1, interval2):
+    """"""Ekzemple, intersekciĝo inter inter intervaloj (1, 3), (2, 4) estas (2, 3) kies longo estas 1, kiu ne estas primo. Se la longo de la intersekciĝo estas primo, redonu ""Jes"", alie redonu ""Ne"". Se la du intervaloj ne intersekcas, redonu ""Ne"". [eniro/eliro] specimenoj: intersekciĝo ({\\displaystyle {\\displaystyle {\\displaystyle {\\displaystyle {\\displaystyle {\\displaystyle {\\mathcal {\\mathcal {\\mathcal {\\mathcal {\\mathcal {\\mathcal {\\mathcal {\\mathcal {\\mathcal {\\mathcal {\\mathcal {\\mathcal {\\mathcal {\\mathcal {\\mathcal {\\mathcal {\\mathcal {\\mathcal {\\mathcal {\\mathcal {\\mathcal {\\mathcal {\\mathcal {\\mathcal {\\mathcal {\\mathcal {\\mathcal {\\mathcal {\\mathcal {1}}} }{2}}}{2}}}{2}}}{2}}}{2}}}{2}}}{2}}}{2}}}{2}}}{2}}}{2}}}{2}}}{3}}}{4}}}{5}}}{5}}}{6}}}{6}}}{6}}}{6}}}{6}}}{6}}}{7}}}{7}}}{7}}}{7}}}{7}}}{7}}}{7}}}{7}}}{8}}}{8}}}{8}}}{8}}}{8}}}{9}}}{9}}}{9}}}{9}}}{9}}}{9}}}{9}}}{9}}}{9}}}{9}}}}{9}}}{9}}}{9}}}}{9}}}}{9}}}}{9}}}{9}}}}{9}}}}{9}}}}{9}}}}""""""
+","    def is_prime(num):
+        if num == 1 or num == 0:
+            return False
+        if num == 2:
+            return True
+        for i in range(2, num):
+            if num%i == 0:
+                return False
+        return True
+
+    l = max(interval1[0], interval2[0])
+    r = min(interval1[1], interval2[1])
+    length = r - l
+    if length > 0 and is_prime(length):
+        return ""YES""
+    return ""NO""
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate((1, 2), (2, 3)) == ""NO""
+    assert candidate((-1, 1), (0, 4)) == ""NO""
+    assert candidate((-3, -1), (-5, 5)) == ""YES""
+    assert candidate((-2, 2), (-4, 0)) == ""YES""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate((-11, 2), (-1, -1)) == ""NO""
+    assert candidate((1, 2), (3, 5)) == ""NO""
+    assert candidate((1, 2), (1, 2)) == ""NO""
+    assert candidate((-2, -2), (-3, -2)) == ""NO""
+
+",,,
+HumanEval/128,epo_Latn,python,"
+def prod_signs(arr):
+    """"""Vi ricevas aron da entjeroj kaj vi devas redoni sumon de grandecoj de entjeroj multobligitaj per produkto de ĉiuj signoj de ĉiu nombro en la aro, reprezentita per 1, -1 aŭ 0. Noto: redoni Nenion por malplena aro. Ekzemplo: >>> prod_signs (([1, 2, 2, -4]) == -9 >>> prod_signs (([0, 1]) == 0 >>> prod_signs (([]) == Nenion """"""
+","    if not arr: return None
+    prod = 0 if 0 in arr else (-1) ** len(list(filter(lambda x: x < 0, arr)))
+    return prod * sum([abs(i) for i in arr])
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1, 2, 2, -4]) == -9
+    assert candidate([0, 1]) == 0
+    assert candidate([1, 1, 1, 2, 3, -1, 1]) == -10
+    assert candidate([]) == None
+    assert candidate([2, 4,1, 2, -1, -1, 9]) == 20
+    assert candidate([-1, 1, -1, 1]) == 4
+    assert candidate([-1, 1, 1, 1]) == -4
+    assert candidate([-1, 1, 1, 0]) == 0
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/129,epo_Latn,python,"
+def minPath(grid, k):
+    """"""Donita krado kun N vicoj kaj N kolumnoj (N >= 2) kaj pozitiva entjero k, ĉiu ĉelo de la krado enhavas valoron. Ĉiu entjero en la intervalo [1, N * N] inkluzive aperas precize unufoje sur la ĉeloj de la krado. Vi devas trovi la minimuman padon de longo k en la krado. Vi povas komenci de iu ĉelo, kaj en ĉiu paŝo vi povas moviĝi al iu ajn el la najbaraj ĉeloj, en aliaj vortoj, vi povas iri al ĉeloj kiuj dividas randon kun vi nuna ĉelo. Bonvolu noti, ke padon de longo k signifas viziti precize k ĉelojn (ne nepre distingajn). Vi NE PUTAS eliri el la krado. Padon A (de longo k) estas konsiderata malpli ol padon B (de longo k) se post farado de la ordigitaj listoj de la valoroj sur la ĉeloj kiuj trairas A kaj B (ni nomas ilin l_stA kaj l_stB), la l_stA estas laŭleksikografe malpli ol l_stB, alivorte, en aliaj vortoj, unu el la najbaraj ĉeloj, en aliaj vortoj, vi povas iri al ĉeloj kiuj dividas randon kun vi aktuala ĉelo. Bonvolu noti, ke padon de longo k (ne necese ne estas malsamaj).""""""
+","    n = len(grid)
+    val = n * n + 1
+    for i in range(n):
+        for j in range(n):
+            if grid[i][j] == 1:
+                temp = []
+                if i != 0:
+                    temp.append(grid[i - 1][j])
+
+                if j != 0:
+                    temp.append(grid[i][j - 1])
+
+                if i != n - 1:
+                    temp.append(grid[i + 1][j])
+
+                if j != n - 1:
+                    temp.append(grid[i][j + 1])
+
+                val = min(temp)
+
+    ans = []
+    for i in range(k):
+        if i % 2 == 0:
+            ans.append(1)
+        else:
+            ans.append(val)
+    return ans
+","def check(candidate):
+
+    # Check some simple cases
+    print
+    assert candidate([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 3) == [1, 2, 1]
+    assert candidate([[5, 9, 3], [4, 1, 6], [7, 8, 2]], 1) == [1]
+    assert candidate([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]], 4) == [1, 2, 1, 2]
+    assert candidate([[6, 4, 13, 10], [5, 7, 12, 1], [3, 16, 11, 15], [8, 14, 9, 2]], 7) == [1, 10, 1, 10, 1, 10, 1]
+    assert candidate([[8, 14, 9, 2], [6, 4, 13, 15], [5, 7, 1, 12], [3, 10, 11, 16]], 5) == [1, 7, 1, 7, 1]
+    assert candidate([[11, 8, 7, 2], [5, 16, 14, 4], [9, 3, 15, 6], [12, 13, 10, 1]], 9) == [1, 6, 1, 6, 1, 6, 1, 6, 1]
+    assert candidate([[12, 13, 10, 1], [9, 3, 15, 6], [5, 16, 14, 4], [11, 8, 7, 2]], 12) == [1, 6, 1, 6, 1, 6, 1, 6, 1, 6, 1, 6]
+    assert candidate([[2, 7, 4], [3, 1, 5], [6, 8, 9]], 8) == [1, 3, 1, 3, 1, 3, 1, 3]
+    assert candidate([[6, 1, 5], [3, 8, 9], [2, 7, 4]], 8) == [1, 5, 1, 5, 1, 5, 1, 5]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([[1, 2], [3, 4]], 10) == [1, 2, 1, 2, 1, 2, 1, 2, 1, 2]
+    assert candidate([[1, 3], [3, 2]], 10) == [1, 3, 1, 3, 1, 3, 1, 3, 1, 3]
+
+",,,
+HumanEval/130,epo_Latn,python,"
+def tri(n):
+    """"""Ĉiu konas la Fibonaĉian sekvencon, ĝi estis studita profunde de matematikistoj en la lastaj du jarcentoj. Tamen, kion homoj ne scias estas la sekvenco de Tribonaĉjo. La sekvenco de Tribonaĉjo estas difinita per la ripetiĝo: tri(1) = 3 tri(n) = 1 + n / 2, se n estas para. tri(n) = tri(n - 1) + tri(n - 2) + tri(n + 1), se n estas nepara. Ekzemple: tri(2) = 1 + (2 / 2) = 2 tri(4) = 3 tri(3) = tri(2) + tri(1) + tri(4) = 2 + 3 + 3 = 8 Vi ricevas ne-negativan entjeran nombron n, vi devas redoni liston de la unuaj n + 1 nombroj de la sekvenco de Tribonaĉjo. Ekzemploj: tri(3) = [1, 3, 2, 8]""""""
+","    if n == 0:
+        return [1]
+    my_tri = [1, 3]
+    for i in range(2, n + 1):
+        if i % 2 == 0:
+            my_tri.append(i / 2 + 1)
+        else:
+            my_tri.append(my_tri[i - 1] + my_tri[i - 2] + (i + 3) / 2)
+    return my_tri
+","def check(candidate):
+
+    # Check some simple cases
+    
+    assert candidate(3) == [1, 3, 2.0, 8.0]
+    assert candidate(4) == [1, 3, 2.0, 8.0, 3.0]
+    assert candidate(5) == [1, 3, 2.0, 8.0, 3.0, 15.0]
+    assert candidate(6) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0]
+    assert candidate(7) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0, 24.0]
+    assert candidate(8) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0, 24.0, 5.0]
+    assert candidate(9) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0, 24.0, 5.0, 35.0]
+    assert candidate(20) == [1, 3, 2.0, 8.0, 3.0, 15.0, 4.0, 24.0, 5.0, 35.0, 6.0, 48.0, 7.0, 63.0, 8.0, 80.0, 9.0, 99.0, 10.0, 120.0, 11.0]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(0) == [1]
+    assert candidate(1) == [1, 3]
+",,,
+HumanEval/131,epo_Latn,python,"
+def digits(n):
+    """"""Donita pozitiva entjero n, redonu la produktadon de la neparaj ciferoj. Redonu 0 se ĉiuj ciferoj estas paraj. Ekzemple: ciferoj""""""
+","    product = 1
+    odd_count = 0
+    for digit in str(n):
+        int_digit = int(digit)
+        if int_digit%2 == 1:
+            product= product*int_digit
+            odd_count+=1
+    if odd_count ==0:
+        return 0
+    else:
+        return product
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(5) == 5
+    assert candidate(54) == 5
+    assert candidate(120) ==1
+    assert candidate(5014) == 5
+    assert candidate(98765) == 315
+    assert candidate(5576543) == 2625
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(2468) == 0
+
+",,,
+HumanEval/132,epo_Latn,python,"
+def is_nested(string):
+    '''Krei funkcio kiu prenas ŝnuron kiel enigaĵo kiu enhavas nur kvadratajn krampoj. La funkcio devas resendi Vera se kaj nur se ekzistas valida subsekvenco de krampoj kie almenaŭ unu krampo en la subsekvenco estas nestita. estas_nestita '[[]]') â -> Vera estas_nestita '[[]]]]]]]]]]]]]] [[[[[[]]]] ' â -> Falsa estas_nestita '[]]]]') â -> Falsa estas_nestita '[[]') â -> Falsa estas_nestita '[[]]') â -> Falsa estas_nestita '[[]]]]]]') â -> Vera estas_nestita '[[]]]]]]]]'''
+","    opening_bracket_index = []
+    closing_bracket_index = []
+    for i in range(len(string)):
+        if string[i] == '[':
+            opening_bracket_index.append(i)
+        else:
+            closing_bracket_index.append(i)
+    closing_bracket_index.reverse()
+    cnt = 0
+    i = 0
+    l = len(closing_bracket_index)
+    for idx in opening_bracket_index:
+        if i < l and idx < closing_bracket_index[i]:
+            cnt += 1
+            i += 1
+    return cnt >= 2
+
+    
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('[[]]') == True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate('[]]]]]]][[[[[]') == False
+    assert candidate('[][]') == False
+    assert candidate(('[]')) == False
+    assert candidate('[[[[]]]]') == True
+    assert candidate('[]]]]]]]]]]') == False
+    assert candidate('[][][[]]') == True
+    assert candidate('[[]') == False
+    assert candidate('[]]') == False
+    assert candidate('[[]][[') == True
+    assert candidate('[[][]]') == True
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('') == False, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate('[[[[[[[[') == False
+    assert candidate(']]]]]]]]') == False
+
+",,,
+HumanEval/133,epo_Latn,python,"
+
+def sum_squares(lst):
+    """"""Vi ricevas liston de nombroj. Vi devas redoni la sumon de la kvadratoj de la nombroj en la donita listo, ĉirkaŭrondi ĉiun elementon en la listo al la supra int ((Telono) unue. Ekzemploj: Por lst = [1,2,3] la produktaĵo devus esti 14 Por lst = [1,4,9] la produktaĵo devus esti 98 Por lst = [1,3,5,7] la produktaĵo devus esti 84 Por lst = [1.4,4.2,0] la produktaĵo devus esti 29 Por lst = [-2.4,1,1] la produktaĵo devus esti 6 """"""
+","    import math
+    squared = 0
+    for i in lst:
+        squared += math.ceil(i)**2
+    return squared
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,2,3])==14, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1.0,2,3])==14, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1,3,5,7])==84, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1.4,4.2,0])==29, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([-2.4,1,1])==6, ""This prints if this assert fails 1 (good for debugging!)""
+
+    assert candidate([100,1,15,2])==10230, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([10000,10000])==200000000, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([-1.4,4.6,6.3])==75, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([-1.4,17.9,18.9,19.9])==1086, ""This prints if this assert fails 1 (good for debugging!)""
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([0])==0, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([-1])==1, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate([-1,1,0])==2, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/134,epo_Latn,python,"
+def check_if_last_char_is_a_letter(txt):
+    '''Krei funkcion kiu resendas True se la lasta karaktero de donita ŝnuro estas alfabeta karaktero kaj ne estas parto de vorto, kaj False alie. Noto: ""vorto"" estas grupo de karakteroj apartigitaj per spaco. Ekzemploj: check_if_last_char_is_a_letter ((""apla torto"") â -> False check_if_last_char_is_a_letter ((""apla pi e"") â -> True check_if_last_char_is_a_letter ((""apla pi e"") â -> False check_if_last_char_is_a_letter"" ((("") â -> False '''
+"," 
+    check = txt.split(' ')[-1]
+    return True if len(check) == 1 and (97 <= ord(check.lower()) <= 122) else False
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""apple"") == False
+    assert candidate(""apple pi e"") == True
+    assert candidate(""eeeee"") == False
+    assert candidate(""A"") == True
+    assert candidate(""Pumpkin pie "") == False
+    assert candidate(""Pumpkin pie 1"") == False
+    assert candidate("""") == False
+    assert candidate(""eeeee e "") == False
+    assert candidate(""apple pie"") == False
+    assert candidate(""apple pi e "") == False
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/135,epo_Latn,python,"
+def can_arrange(arr):
+    """"""Krei funkcio kiu resendas la plej grandan indekson de elemento kiu ne estas pli granda ol aŭ egala al la elemento tuj antaŭ ĝi. Se tia elemento ne ekzistas tiam resendi -1. La donita aro ne enhavos duoblajn valorojn. Ekzemploj: can_arrange ({1,2,4,3,5]) = 3 can_arrange ({1,2,3]) = -1 """"""
+","    ind=-1
+    i=1
+    while i<len(arr):
+      if arr[i]<arr[i-1]:
+        ind=i
+      i+=1
+    return ind
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,2,4,3,5])==3
+    assert candidate([1,2,4,5])==-1
+    assert candidate([1,4,2,5,6,7,8,9,10])==2
+    assert candidate([4,8,5,7,3])==4
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([])==-1
+
+",,,
+HumanEval/136,epo_Latn,python,"
+def largest_smallest_integers(lst):
+    '''Krei funkcio kiu resendas tuple (a, b), kie 'a' estas la plej granda de negativaj entjeroj, kaj 'b' estas la plej malgranda de pozitivaj entjeroj en listo. Se ne estas negativaj aŭ pozitivaj entjeroj, resendas ilin kiel Neniu. Ekzemploj: plej granda_plej malgranda_entjeroj[2, 4, 1, 3, 5, 7]) == (Neniu, 1) plej granda_plej malgranda_entjeroj (([]) == (Neniu, Neniu) plej granda_plej malgranda_entjeroj (([0]) == (Neniu, Neniu) '''
+","    smallest = list(filter(lambda x: x < 0, lst))
+    largest = list(filter(lambda x: x > 0, lst))
+    return (max(smallest) if smallest else None, min(largest) if largest else None)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([2, 4, 1, 3, 5, 7]) == (None, 1)
+    assert candidate([2, 4, 1, 3, 5, 7, 0]) == (None, 1)
+    assert candidate([1, 3, 2, 4, 5, 6, -2]) == (-2, 1)
+    assert candidate([4, 5, 3, 6, 2, 7, -7]) == (-7, 2)
+    assert candidate([7, 3, 8, 4, 9, 2, 5, -9]) == (-9, 2)
+    assert candidate([]) == (None, None)
+    assert candidate([0]) == (None, None)
+    assert candidate([-1, -3, -5, -6]) == (-1, None)
+    assert candidate([-1, -3, -5, -6, 0]) == (-1, None)
+    assert candidate([-6, -4, -4, -3, 1]) == (-3, 1)
+    assert candidate([-6, -4, -4, -3, -100, 1]) == (-3, 1)
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+",,,
+HumanEval/137,epo_Latn,python,"
+def compare_one(a, b):
+    """"""Krei funkcion kiu prenas entjerojn, flosas, aŭ ŝnuroj reprezentantaj realajn nombrojn, kaj resendas la pli grandan variablon en ĝia donita variabla tipo. Revenas Neniun se la valoroj estas egalaj. Noto: Se reala nombro estas reprezentita kiel ŝnuro, la flosanta punkto povus esti . aŭ , kompari_unu, 1, 2,5) â -> 2,5 kompari_unu, 1, ""2,3"") â -> ""2,3"" kompari_unu, 5,1"", 6"") â -> ""6"" kompari_unu, 1, 1) â -> Neniun """"""
+","    temp_a, temp_b = a, b
+    if isinstance(temp_a, str): temp_a = temp_a.replace(',','.')
+    if isinstance(temp_b, str): temp_b = temp_b.replace(',','.')
+    if float(temp_a) == float(temp_b): return None
+    return a if float(temp_a) > float(temp_b) else b 
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(1, 2) == 2
+    assert candidate(1, 2.5) == 2.5
+    assert candidate(2, 3) == 3
+    assert candidate(5, 6) == 6
+    assert candidate(1, ""2,3"") == ""2,3""
+    assert candidate(""5,1"", ""6"") == ""6""
+    assert candidate(""1"", ""2"") == ""2""
+    assert candidate(""1"", 1) == None
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/138,epo_Latn,python,"
+def is_equal_to_sum_even(n):
+    """"""Evaluu ĉu la donita nombro n povas esti skribita kiel la sumo de precize 4 pozitivaj paraj nombroj Ekzemplo estas_ekvivalenta_al_sumo_eĉe ({}) 4) == Falsa estas_ekvivalenta_al_sumo_eĉe ({}) 6) == Falsa estas_ekvivalenta_al_sumo_eĉe ({}) 8) == Vera """"""
+","    return n%2 == 0 and n >= 8
+","def check(candidate):
+    assert candidate(4) == False
+    assert candidate(6) == False
+    assert candidate(8) == True
+    assert candidate(10) == True
+    assert candidate(11) == False
+    assert candidate(12) == True
+    assert candidate(13) == False
+    assert candidate(16) == True
+",,,
+HumanEval/139,epo_Latn,python,"
+def special_factorial(n):
+    """"""La brazila faktoriala estas difinita kiel: brazila_faktoriala ((n) = n! * (n-1)! * (n-2)! * ... * 1! kie n > 0 Ekzemple: >>> special_factorial ((4) 288 La funkcio ricevos entjero kiel enigaĵo kaj devus resendi la specialan faktoriala de tiu entjero. """"""
+","    fact_i = 1
+    special_fact = 1
+    for i in range(1, n+1):
+        fact_i *= i
+        special_fact *= fact_i
+    return special_fact
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(4) == 288, ""Test 4""
+    assert candidate(5) == 34560, ""Test 5""
+    assert candidate(7) == 125411328000, ""Test 7""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1) == 1, ""Test 1""
+
+",,,
+HumanEval/140,epo_Latn,python,"
+def fix_spaces(text):
+    """"""_Ekzemplo-3ngaĵo, anstataŭigu ĉiujn spacojn en ĝi per substrekoj, kaj se ŝnuro havas pli ol 2 sinsekvajn spacojn, tiam anstataŭigu ĉiujn sinsekvajn spacojn per - fix_spacoj (ekzemple) == ""Ekzemplo"" fix_spacoj (ekzemple) == ""Ekzemplo1"" fix_spacoj (ekzemple) == ""Ekzemplo2"" fix_spacoj (ekzemple) == ""Ekzemplo-3""""
+    """"""
+","    new_text = """"
+    i = 0
+    start, end = 0, 0
+    while i < len(text):
+        if text[i] == "" "":
+            end += 1
+        else:
+            if end - start > 2:
+                new_text += ""-""+text[i]
+            elif end - start > 0:
+                new_text += ""_""*(end - start)+text[i]
+            else:
+                new_text += text[i]
+            start, end = i+1, i+1
+        i+=1
+    if end - start > 2:
+        new_text += ""-""
+    elif end - start > 0:
+        new_text += ""_""
+    return new_text
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""Example"") == ""Example"", ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(""Mudasir Hanif "") == ""Mudasir_Hanif_"", ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate(""Yellow Yellow  Dirty  Fellow"") == ""Yellow_Yellow__Dirty__Fellow"", ""This prints if this assert fails 3 (good for debugging!)""
+    
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""Exa   mple"") == ""Exa-mple"", ""This prints if this assert fails 4 (good for debugging!)""
+    assert candidate(""   Exa 1 2 2 mple"") == ""-Exa_1_2_2_mple"", ""This prints if this assert fails 4 (good for debugging!)""
+
+",,,
+HumanEval/141,epo_Latn,python,"
+def file_name_check(file_name):
+    """"""Krei funkcion kiu prenas ŝnuron reprezentantan la nomon de dosiero, kaj resendas 'Jes' se la nomo de la dosiero estas valida, kaj resendas 'Ne' alie. Nomo de dosiero estas konsiderata valida se kaj nur se ĉiuj sekvaj kondiĉoj estas plenumitaj: - Ne estu pli ol tri ciferoj ('0'-'9') en la nomo de la dosiero. - La nomo de la dosiero enhavas precize unu punkton '.' - La subŝnuro antaŭ la punkto ne devas esti malplena, kaj ĝi komenciĝas per litero de la latina alfabeto ('a'-'z' kaj 'A'-Z'). - La subŝnuro post la punkto devas esti unu el tiuj: ['txt', 'exe', 'll'd'] Ekzemploj: file_name_check""{""ekzemple.txt""} # => 'Jes' file_name_check""{""ekzemple.txt""} => 'Ne' (la nomo devas komenciĝi per latina alfabeta litero) # => 'No'""""""
+","    suf = ['txt', 'exe', 'dll']
+    lst = file_name.split(sep='.')
+    if len(lst) != 2:
+        return 'No'
+    if not lst[1] in suf:
+        return 'No'
+    if len(lst[0]) == 0:
+        return 'No'
+    if not lst[0][0].isalpha():
+        return 'No'
+    t = len([x for x in lst[0] if x.isdigit()])
+    if t > 3:
+        return 'No'
+    return 'Yes'
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""example.txt"") == 'Yes'
+    assert candidate(""1example.dll"") == 'No'
+    assert candidate('s1sdf3.asd') == 'No'
+    assert candidate('K.dll') == 'Yes'
+    assert candidate('MY16FILE3.exe') == 'Yes'
+    assert candidate('His12FILE94.exe') == 'No'
+    assert candidate('_Y.txt') == 'No'
+    assert candidate('?aREYA.exe') == 'No'
+    assert candidate('/this_is_valid.dll') == 'No'
+    assert candidate('this_is_valid.wow') == 'No'
+    assert candidate('this_is_valid.txt') == 'Yes'
+    assert candidate('this_is_valid.txtexe') == 'No'
+    assert candidate('#this2_i4s_5valid.ten') == 'No'
+    assert candidate('@this1_is6_valid.exe') == 'No'
+    assert candidate('this_is_12valid.6exe4.txt') == 'No'
+    assert candidate('all.exe.txt') == 'No'
+    assert candidate('I563_No.exe') == 'Yes'
+    assert candidate('Is3youfault.txt') == 'Yes'
+    assert candidate('no_one#knows.dll') == 'Yes'
+    assert candidate('1I563_Yes3.exe') == 'No'
+    assert candidate('I563_Yes3.txtt') == 'No'
+    assert candidate('final..txt') == 'No'
+    assert candidate('final132') == 'No'
+    assert candidate('_f4indsartal132.') == 'No'
+    
+        
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('.txt') == 'No'
+    assert candidate('s.') == 'No'
+
+",,,
+HumanEval/142,epo_Latn,python,"
+
+
+def sum_squares(lst):
+    """""""" Tiu funkcio prenas liston de entjeroj. Por ĉiuj eniroj en la listo, la funkcio kvadratigos la entjeran eniron se ĝia indekso estas multoblo de 3 kaj kubos la entjeran eniron se ĝia indekso estas multoblo de 4 kaj ne multoblo de 3. La funkcio ne ŝanĝos la enirojn en la listo kies indeksoj ne estas multoblo de 3 aŭ 4. La funkcio tiam redonos la sumon de ĉiuj eniroj. Ekzemploj: Por lst = [1,2,3] la produktaĵo devus esti 6 Por lst = [] la produktaĵo devus esti 0 Por lst = [-1,-5,2,-1,-5] la produktaĵo devus esti -126 """"""
+","    result =[]
+    for i in range(len(lst)):
+        if i %3 == 0:
+            result.append(lst[i]**2)
+        elif i % 4 == 0 and i%3 != 0:
+            result.append(lst[i]**3)
+        else:
+            result.append(lst[i])
+    return sum(result)
+","def check(candidate):
+
+    # Check some simple cases
+    
+    assert candidate([1,2,3]) == 6
+    assert candidate([1,4,9]) == 14
+    assert candidate([]) == 0
+    assert candidate([1,1,1,1,1,1,1,1,1]) == 9
+    assert candidate([-1,-1,-1,-1,-1,-1,-1,-1,-1]) == -3
+    assert candidate([0]) == 0
+    assert candidate([-1,-5,2,-1,-5]) == -126
+    assert candidate([-56,-99,1,0,-2]) == 3030
+    assert candidate([-1,0,0,0,0,0,0,0,-1]) == 0
+    assert candidate([-16, -9, -2, 36, 36, 26, -20, 25, -40, 20, -4, 12, -26, 35, 37]) == -14196
+    assert candidate([-1, -3, 17, -1, -15, 13, -1, 14, -14, -12, -5, 14, -14, 6, 13, 11, 16, 16, 4, 10]) == -1448
+    
+    
+    # Don't remove this line:
+",,,
+HumanEval/143,epo_Latn,python,"
+def words_in_sentence(sentence):
+    """"""Vi ricevas ŝnuron reprezentantan frazon, la frazo enhavas kelkajn vortojn apartigitajn per spaco, kaj vi devas redoni ŝnuron, kiu enhavas la vortojn de la originala frazo, kies longoj estas primoj, la ordo de la vortoj en la nova ŝnuro devas esti la sama kiel la originala. Ekzemplo1: Enigo: frazo = ""Ĉi tio estas testo"" Elfluo: ""estas"" Ekzemplo2: Enigo: frazo = ""lasas iri por naĝi"" Elfluo: ""iri por"" Limigoj: * 1 <= len(frazo) <= 100 * Frazo enhavas nur literojn """"""
+","    new_lst = []
+    for word in sentence.split():
+        flg = 0
+        if len(word) == 1:
+            flg = 1
+        for i in range(2, len(word)):
+            if len(word)%i == 0:
+                flg = 1
+        if flg == 0 or len(word) == 2:
+            new_lst.append(word)
+    return "" "".join(new_lst)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""This is a test"") == ""is""
+    assert candidate(""lets go for swimming"") == ""go for""
+    assert candidate(""there is no place available here"") == ""there is no place""
+    assert candidate(""Hi I am Hussein"") == ""Hi am Hussein""
+    assert candidate(""go for it"") == ""go for it""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""here"") == """"
+    assert candidate(""here is"") == ""is""
+
+",,,
+HumanEval/144,epo_Latn,python,"
+def simplify(x, n):
+    """"""Via tasko estas efektivigi funkcion kiu simpligos la esprimon x * n. La funkcio resendas True se x * n valoras al entjero kaj False alie. Kaj x kaj n, estas ĉenreprezentado de frakcio, kaj havas la sekvan formaton, <numerator>/<denominator> kie kaj numeratoro kaj denominatoro estas pozitivaj entjeroj. Vi povas supozi ke x, kaj n estas validaj frakcioj, kaj ne havas nul kiel denominatoron. simpligi "" 1/5 "", ""5/1"") = True simpligi "" 1/6 "", ""2/1"") = False simpligi "" 7/10 "", ""10/2"") = False """"""
+","    a, b = x.split(""/"")
+    c, d = n.split(""/"")
+    numerator = int(a) * int(c)
+    denom = int(b) * int(d)
+    if (numerator/denom == int(numerator/denom)):
+        return True
+    return False
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""1/5"", ""5/1"") == True, 'test1'
+    assert candidate(""1/6"", ""2/1"") == False, 'test2'
+    assert candidate(""5/1"", ""3/1"") == True, 'test3'
+    assert candidate(""7/10"", ""10/2"") == False, 'test4'
+    assert candidate(""2/10"", ""50/10"") == True, 'test5'
+    assert candidate(""7/2"", ""4/2"") == True, 'test6'
+    assert candidate(""11/6"", ""6/1"") == True, 'test7'
+    assert candidate(""2/3"", ""5/2"") == False, 'test8'
+    assert candidate(""5/2"", ""3/5"") == False, 'test9'
+    assert candidate(""2/4"", ""8/4"") == True, 'test10'
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""2/4"", ""4/2"") == True, 'test11'
+    assert candidate(""1/5"", ""5/1"") == True, 'test12'
+    assert candidate(""1/5"", ""1/5"") == False, 'test13'
+
+",,,
+HumanEval/145,epo_Latn,python,"
+def order_by_points(nums):
+    """"""Skribu funkcion kiu ordigas la donitan liston de entjeroj en kreskanta ordo laŭ la sumo de iliaj ciferoj. Noto: se ekzistas pluraj eroj kun simila sumo de iliaj ciferoj, ordigu ilin laŭ ilia indekso en la origina listo. Ekzemple: >>> ordo_de_punktoj (([1, 11, -1, -11, -12]) == [-1, -11, 1, -12, 11] >>> ordo_de_punktoj ([]) == [] """"""
+","    def digits_sum(n):
+        neg = 1
+        if n < 0: n, neg = -1 * n, -1 
+        n = [int(i) for i in str(n)]
+        n[0] = n[0] * neg
+        return sum(n)
+    return sorted(nums, key=digits_sum)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1, 11, -1, -11, -12]) == [-1, -11, 1, -12, 11]
+    assert candidate([1234,423,463,145,2,423,423,53,6,37,3457,3,56,0,46]) == [0, 2, 3, 6, 53, 423, 423, 423, 1234, 145, 37, 46, 56, 463, 3457]
+    assert candidate([]) == []
+    assert candidate([1, -11, -32, 43, 54, -98, 2, -3]) == [-3, -32, -98, -11, 1, 2, 43, 54]
+    assert candidate([1,2,3,4,5,6,7,8,9,10,11]) == [1, 10, 2, 11, 3, 4, 5, 6, 7, 8, 9]
+    assert candidate([0,6,6,-76,-21,23,4]) == [-76, -21, 0, 4, 23, 6, 6]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/146,epo_Latn,python,"
+def specialFilter(nums):
+    """"""Skribu funkcion kiu prenas aron da nombroj kiel enigaĵon kaj resendas la nombron da elementoj en la aro, kiuj estas pli grandaj ol 10 kaj ambaŭ unua kaj lastaj ciferoj de nombro estas neparaj (1, 3, 5, 7, 9). Ekzemple: specialFilter (([15, -73, 14, -15]) => 1 specialFilter (([33, -2, -3, 45, 21, 109]) => 2 """"""
+","    
+    count = 0
+    for num in nums:
+        if num > 10:
+            odd_digits = (1, 3, 5, 7, 9)
+            number_as_string = str(num)
+            if int(number_as_string[0]) in odd_digits and int(number_as_string[-1]) in odd_digits:
+                count += 1
+        
+    return count 
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([5, -2, 1, -5]) == 0  
+    assert candidate([15, -73, 14, -15]) == 1
+    assert candidate([33, -2, -3, 45, 21, 109]) == 2
+    assert candidate([43, -12, 93, 125, 121, 109]) == 4
+    assert candidate([71, -2, -33, 75, 21, 19]) == 3
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([1]) == 0              
+    assert candidate([]) == 0                   
+
+",,,
+HumanEval/147,epo_Latn,python,"
+def get_max_triples(n):
+    """"""Vi ricevas pozitivan entjeran nombron n. Vi devas krei entjeran aron a de longo n. Por ĉiu i (1 ‰¤ i ‰¤ n), la valoro de a[i] = i * i - i + 1. Redonu la nombron de triobloj (a[i], a[j], a[k]) de a kie i < j < k, kaj a[i] + a[j] + a[k] estas multoblo de 3. Ekzemplo: Enigo: n = 5 Eligo: 1 Klarigo: a = [1, 3, 7, 13, 21] La sola valida trioblo estas (1, 7, 13). """"""
+","    A = [i*i - i + 1 for i in range(1,n+1)]
+    ans = []
+    for i in range(n):
+        for j in range(i+1,n):
+            for k in range(j+1,n):
+                if (A[i]+A[j]+A[k])%3 == 0:
+                    ans += [(A[i],A[j],A[k])]
+    return len(ans)
+","def check(candidate):
+
+    assert candidate(5) == 1
+    assert candidate(6) == 4
+    assert candidate(10) == 36
+    assert candidate(100) == 53361
+",,,
+HumanEval/148,epo_Latn,python,"
+def bf(planet1, planet2):
+    '''Ekzistas ok planedoj en nia sunsistemo: la plej proksima al la suno estas Merkuro, la sekva estas Venuso, tiam Tero, Marso, Jupitero, Saturno, Urano, Neptuno. Skribu funkcion kiu prenas du planednomojn kiel ŝnurojn planedo1 kaj planedo2. La funkcio devus resendi tuplon enhavanta ĉiujn planedojn kies orbitoj situas inter la orbito de planedo1 kaj la orbito de planedo2, ordigita laŭ la proksimeco al la suno. La funkcio devus resendi malplenan tuplon se planedo1 aŭ planedo2 ne estas ĝustaj planednomoj. Ekzemploj bf""{ \\displaistile \\ \\displaistile \\displaistile \\displaistile \\displaistile \\displaistile \\displaistile \\displaistile \\displaistile \\displaistile \\displaistile \\displaistile \\displaistile \\displaistile \\displaistile \\displaistile \\displaistile \\displaistile \\displaistile \\displaistile \\displaistile \\displaistile \\displaistile \\displaistile \\displaistile \\displaistile \\displaistile \\displa \\displaistile \\displa \\displaistile \\displa \\displaistile \\displa \\displa \\displaistile \\displa \\displays \\displaistile \\displaistile \\displaistile \\displaistile \\displaistile \\displays \\displays \\displays \\displays \\displays \\displays \\displays \\displays \\displays \\displays \\displays \\displays \\displays \\displays \\displays \\displays \\displays \\displays \\displays \\displays \\'''
+","    planet_names = (""Mercury"", ""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn"", ""Uranus"", ""Neptune"")
+    if planet1 not in planet_names or planet2 not in planet_names or planet1 == planet2:
+        return ()
+    planet1_index = planet_names.index(planet1)
+    planet2_index = planet_names.index(planet2)
+    if planet1_index < planet2_index:
+        return (planet_names[planet1_index + 1: planet2_index])
+    else:
+        return (planet_names[planet2_index + 1 : planet1_index])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""Jupiter"", ""Neptune"") == (""Saturn"", ""Uranus""), ""First test error: "" + str(len(candidate(""Jupiter"", ""Neptune"")))      
+    assert candidate(""Earth"", ""Mercury"") == (""Venus"",), ""Second test error: "" + str(candidate(""Earth"", ""Mercury""))  
+    assert candidate(""Mercury"", ""Uranus"") == (""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn""), ""Third test error: "" + str(candidate(""Mercury"", ""Uranus""))      
+    assert candidate(""Neptune"", ""Venus"") == (""Earth"", ""Mars"", ""Jupiter"", ""Saturn"", ""Uranus""), ""Fourth test error: "" + str(candidate(""Neptune"", ""Venus""))  
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""Earth"", ""Earth"") == ()
+    assert candidate(""Mars"", ""Earth"") == ()
+    assert candidate(""Jupiter"", ""Makemake"") == ()
+
+",,,
+HumanEval/149,epo_Latn,python,"
+def sorted_list_sum(lst):
+    """"""Skribu funkcion kiu akceptas liston de ŝnuroj kiel parametron, forigas la ŝnurojn kiuj havas neparajn longojn de ĝi, kaj resendas la rezultan liston kun ordigita ordo, La listo estas ĉiam listo de ŝnuroj kaj neniam aro de nombroj, kaj ĝi povas enhavi duplikatojn. La ordo de la listo devus esti supreniranta laŭ longo de ĉiu vorto, kaj vi devus resendi la liston ordigita per tiu regulo. Se du vortoj havas la saman longon, ordi la liston alfabete. La funkcio devus resendi liston de ŝnuroj en ordigita ordo. Vi povas supozi ke ĉiuj vortoj havos la saman longon. Ekzemple: aserti list_sort[""aa"", ""a"", ""aaa""]) => aserti list_sort[""ab"", ""a"", ""aaa"", ""cd"" => ""cd ""]""""""
+","    lst.sort()
+    new_lst = []
+    for i in lst:
+        if len(i)%2 == 0:
+            new_lst.append(i)
+    return sorted(new_lst, key=len)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([""aa"", ""a"", ""aaa""]) == [""aa""]
+    assert candidate([""school"", ""AI"", ""asdf"", ""b""]) == [""AI"", ""asdf"", ""school""]
+    assert candidate([""d"", ""b"", ""c"", ""a""]) == []
+    assert candidate([""d"", ""dcba"", ""abcd"", ""a""]) == [""abcd"", ""dcba""]
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([""AI"", ""ai"", ""au""]) == [""AI"", ""ai"", ""au""]
+    assert candidate([""a"", ""b"", ""b"", ""c"", ""c"", ""a""]) == []
+    assert candidate(['aaaa', 'bbbb', 'dd', 'cc']) == [""cc"", ""dd"", ""aaaa"", ""bbbb""]
+
+",,,
+HumanEval/150,epo_Latn,python,"
+def x_or_y(n, x, y):
+    """"""Simpla programo kiu devas redoni la valoron de x se n estas primo kaj devas redoni la valoron de y alie. Ekzemploj: por x_or_y{\displaystyle x_or_y{\displaystyle x_{\displaystyle x_{\displaystyle x_{\displaystyle y}{\displaystyle x_{\displaystyle x_{\displaystyle x_{\displaystyle y}{\displaystyle x_{\displaystyle x_{\displaystyle x_{\displaystyle y}{\displaystyle x_{\displaystyle x_{\displaystyle x_{\displaystyle x_{\}}{\displaystyle x_{\displaystyle x_{\displaystyle x_{\displaystyle x_{\displaystyle y}{\}}{\displaystyle x_{\displaystyle x_{\displaystyle x_{\displaystyle x_{\displaystyle x_{\displaystyle x_{\}}{\displaystyle x_{\displaystyle x_{\displaystyle x_{\displaystyle x_{\}}{\displaystyle x_{\displaystyle x_{\displaystyle x_{\}}{\displaystyle x_{\displaystyle x_{\}}}}{\displaystyle x_{\displaystyle x_{\mathb}}}}}}""""""
+","    if n == 1:
+        return y
+    for i in range(2, n):
+        if n % i == 0:
+            return y
+            break
+    else:
+        return x
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(7, 34, 12) == 34
+    assert candidate(15, 8, 5) == 5
+    assert candidate(3, 33, 5212) == 33
+    assert candidate(1259, 3, 52) == 3
+    assert candidate(7919, -1, 12) == -1
+    assert candidate(3609, 1245, 583) == 583
+    assert candidate(91, 56, 129) == 129
+    assert candidate(6, 34, 1234) == 1234
+    
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1, 2, 0) == 0
+    assert candidate(2, 2, 0) == 2
+
+",,,
+HumanEval/151,epo_Latn,python,"
+def double_the_difference(lst):
+    '''Donita listo de nombroj, redonu la sumon de la kvadratoj de la nombroj en la listo, kiuj estas neparaj. Ignoru nombrojn, kiuj estas negativaj aŭ ne entjeroj. duobla_diferenco (([1, 3, 2, 0]) == 1 + 9 + 0 + 0 = 10 duobla_diferenco (([-1, -2, 0]) == 0 duobla_diferenco (([9, -2]) == 81 duobla_diferenco (([0]) == 0 Se la eniga listo estas malplena, redonu 0. '''
+","    return sum([i**2 for i in lst if i > 0 and i%2!=0 and ""."" not in str(i)])
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([]) == 0 , ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([5, 4]) == 25 , ""This prints if this assert fails 2 (good for debugging!)""
+    assert candidate([0.1, 0.2, 0.3]) == 0 , ""This prints if this assert fails 3 (good for debugging!)""
+    assert candidate([-10, -20, -30]) == 0 , ""This prints if this assert fails 4 (good for debugging!)""
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate([-1, -2, 8]) == 0, ""This prints if this assert fails 5 (also good for debugging!)""
+    assert candidate([0.2, 3, 5]) == 34, ""This prints if this assert fails 6 (also good for debugging!)""
+    lst = list(range(-99, 100, 2))
+    odd_sum = sum([i**2 for i in lst if i%2!=0 and i > 0])
+    assert candidate(lst) == odd_sum , ""This prints if this assert fails 7 (good for debugging!)""
+
+",,,
+HumanEval/152,epo_Latn,python,"
+def compare(game,guess):
+    """"""Mi pensas ke ni ĉiuj memoras tiun senton kiam la rezulto de iu longe atendita okazaĵo estas fine konata. La sentoj kaj pensoj, kiujn vi havas en tiu momento, certe valoras noti kaj kompari. Via tasko estas determini ĉu persono ĝuste divenis la rezultojn de kelkaj matĉoj. Vi ricevas du arojn de poentaroj kaj divenoj de egala longo, kie ĉiu indekso montras matĉon. Revenigu aron de la sama longo indikante kiom malproksime ĉiu supozo estis. Se ili divenis ĝuste, la valoro estas 0, kaj se ne, la valoro estas la absoluta diferenco inter la supozo kaj la poentaro. ekzemplo: ((([1,2,3,4,5,1],[1,2,3,4,2,]) -> [0,0,0,0,0,3,3] compare ((([0,5,0,4,0,1,0,2,4]) -> [4,0,1,0,6]""""""
+","    return [abs(x-y) for x,y in zip(game,guess)]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate([1,2,3,4,5,1],[1,2,3,4,2,-2])==[0,0,0,0,3,3], ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([0,0,0,0,0,0],[0,0,0,0,0,0])==[0,0,0,0,0,0], ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1,2,3],[-1,-2,-3])==[2,4,6], ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate([1,2,3,5],[-1,2,3,4])==[2,0,0,1], ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/153,epo_Latn,python,"
+def Strongest_Extension(class_name, extensions):
+    """"""La forto de la etendaĵo estas la sekva: lasu CAP esti la nombro de la majuskloj en la nomo de la etendaĵo, kaj lasu SM esti la nombro de la minuskloj en la nomo de la etendaĵo, la forto estas donita per la frakcio CAP - SM. Vi devas trovi la plej fortan etendaĵon kaj resendi ŝnuron en ĉi tiu formato: ClassName.StrongestExtensionName. Se estas du aŭ pli da etendaĵoj kun la sama forto, vi devas elekti tiun, kiu unue aperas en la listo. Ekzemple, se vi ricevas ""Slices"" kiel la klaso kaj listo de la etendaĵoj: ['SEviviRNGSliCes', 'Cheese', 'StuFfed'] tiam vi devas resendi 'Slices.SEviRNGSliCes' ĉar 'SviRNGSliCes' estas la plej forta etendaĵo (ekzemple: 'AA_Beats' estas la plej forta', 'AA_Class' estas la plej forta '_Beats'), ekzemple: 'AA_Extension' estas la plej forta.""""""
+","    strong = extensions[0]
+    my_val = len([x for x in extensions[0] if x.isalpha() and x.isupper()]) - len([x for x in extensions[0] if x.isalpha() and x.islower()])
+    for s in extensions:
+        val = len([x for x in s if x.isalpha() and x.isupper()]) - len([x for x in s if x.isalpha() and x.islower()])
+        if val > my_val:
+            strong = s
+            my_val = val
+
+    ans = class_name + ""."" + strong
+    return ans
+
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('Watashi', ['tEN', 'niNE', 'eIGHt8OKe']) == 'Watashi.eIGHt8OKe'
+    assert candidate('Boku123', ['nani', 'NazeDa', 'YEs.WeCaNe', '32145tggg']) == 'Boku123.YEs.WeCaNe'
+    assert candidate('__YESIMHERE', ['t', 'eMptY', 'nothing', 'zeR00', 'NuLl__', '123NoooneB321']) == '__YESIMHERE.NuLl__'
+    assert candidate('K', ['Ta', 'TAR', 't234An', 'cosSo']) == 'K.TAR'
+    assert candidate('__HAHA', ['Tab', '123', '781345', '-_-']) == '__HAHA.123'
+    assert candidate('YameRore', ['HhAas', 'okIWILL123', 'WorkOut', 'Fails', '-_-']) == 'YameRore.okIWILL123'
+    assert candidate('finNNalLLly', ['Die', 'NowW', 'Wow', 'WoW']) == 'finNNalLLly.WoW'
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate('_', ['Bb', '91245']) == '_.Bb'
+    assert candidate('Sp', ['671235', 'Bb']) == 'Sp.671235'
+    
+",,,
+HumanEval/154,epo_Latn,python,"
+def cycpattern_check(a , b):
+    """"""Vi ricevas 2 vortojn. Vi devas redoni True se la dua vorto aŭ iu ajn el ĝiaj rotacioj estas subĉeneto en la unua vorto cycpattern_check (((""abcd"",""abd"") => False cycpattern_check (((""hello"",""ell"") => True cycpattern_check (((""whassup"",""psus"") => False cycpattern_check (((""abab"",""baa"") => True cycpattern_check (((""efef"",""eeff"") => False cycpattern_check (((hims"",""simen"") => True """"""
+","    l = len(b)
+    pat = b + b
+    for i in range(len(a) - l + 1):
+        for j in range(l + 1):
+            if a[i:i+l] == pat[j:j+l]:
+                return True
+    return False
+","def check(candidate):
+
+    # Check some simple cases
+    #assert True, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    #assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert  candidate(""xyzw"",""xyw"") == False , ""test #0""
+    assert  candidate(""yello"",""ell"") == True , ""test #1""
+    assert  candidate(""whattup"",""ptut"") == False , ""test #2""
+    assert  candidate(""efef"",""fee"") == True , ""test #3""
+    assert  candidate(""abab"",""aabb"") == False , ""test #4""
+    assert  candidate(""winemtt"",""tinem"") == True , ""test #5""
+
+",,,
+HumanEval/155,epo_Latn,python,"
+def even_odd_count(num):
+    """"""Donita entjero. redonu tuplo kiu havas la nombron de paraj kaj neparaj ciferoj respektive. Ekzemplo: eĉ_nepara_nombro ((-12) ==> (1, 1) eĉ_nepara_nombro ((123) ==> (1, 2) """"""
+","    even_count = 0
+    odd_count = 0
+    for i in str(abs(num)):
+        if int(i)%2==0:
+            even_count +=1
+        else:
+            odd_count +=1
+    return (even_count, odd_count)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(7) == (0, 1)
+    assert candidate(-78) == (1, 1)
+    assert candidate(3452) == (2, 2)
+    assert candidate(346211) == (3, 3)
+    assert candidate(-345821) == (3, 3)
+    assert candidate(-2) == (1, 0)
+    assert candidate(-45347) == (2, 3)
+    assert candidate(0) == (1, 0)
+
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/156,epo_Latn,python,"
+def int_to_mini_roman(number):
+    """"""Donita pozitiva entjero, ricevu ĝian romian numeran ekvivalenton kiel ŝnuro, kaj redonu ĝin en minusklo.""""""
+","    num = [1, 4, 5, 9, 10, 40, 50, 90,  
+           100, 400, 500, 900, 1000] 
+    sym = [""I"", ""IV"", ""V"", ""IX"", ""X"", ""XL"",  
+           ""L"", ""XC"", ""C"", ""CD"", ""D"", ""CM"", ""M""] 
+    i = 12
+    res = ''
+    while number: 
+        div = number // num[i] 
+        number %= num[i] 
+        while div: 
+            res += sym[i] 
+            div -= 1
+        i -= 1
+    return res.lower()
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(19) == 'xix'
+    assert candidate(152) == 'clii'
+    assert candidate(251) == 'ccli'
+    assert candidate(426) == 'cdxxvi'
+    assert candidate(500) == 'd'
+    assert candidate(1) == 'i'
+    assert candidate(4) == 'iv'
+    assert candidate(43) == 'xliii'
+    assert candidate(90) == 'xc'
+    assert candidate(94) == 'xciv'
+    assert candidate(532) == 'dxxxii'
+    assert candidate(900) == 'cm'
+    assert candidate(994) == 'cmxciv'
+    assert candidate(1000) == 'm'
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/157,epo_Latn,python,"
+def right_angle_triangle(a, b, c):
+    '''Donita la longoj de la tri flankoj de triangulo. Redonu Vera se la tri flankoj formas rektangulan triangulon, Falsa alie. Rektangula triangulo estas triangulo en kiu unu angulo estas dekstra angulo aŭ 90 gradoj. Ekzemplo: right_angle_triangle ((3, 4, 5) == Vera_right_angle_triangulo ((1, 2, 3) == Falsa '''
+","    return a*a == b*b + c*c or b*b == a*a + c*c or c*c == a*a + b*b
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(3, 4, 5) == True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(1, 2, 3) == False
+    assert candidate(10, 6, 8) == True
+    assert candidate(2, 2, 2) == False
+    assert candidate(7, 24, 25) == True
+    assert candidate(10, 5, 7) == False
+    assert candidate(5, 12, 13) == True
+    assert candidate(15, 8, 17) == True
+    assert candidate(48, 55, 73) == True
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(1, 1, 1) == False, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(2, 2, 10) == False
+
+",,,
+HumanEval/158,epo_Latn,python,"
+def find_max(words):
+    """"""Skribu funkcion kiu akceptas liston de ŝnuroj. La listo enhavas malsamajn vortojn. Redonu la vorton kun maksimuma nombro da unikaj signoj. Se pluraj ŝnuroj havas maksimuman nombron da unikaj signoj, redonu tiun, kiu venas unua en leksikografia ordo.""""""
+","    return sorted(words, key = lambda x: (-len(set(x)), x))[0]
+","def check(candidate):
+
+    # Check some simple cases
+    assert (candidate([""name"", ""of"", ""string""]) == ""string""), ""t1""
+    assert (candidate([""name"", ""enam"", ""game""]) == ""enam""), 't2'
+    assert (candidate([""aaaaaaa"", ""bb"", ""cc""]) == ""aaaaaaa""), 't3'
+    assert (candidate([""abc"", ""cba""]) == ""abc""), 't4'
+    assert (candidate([""play"", ""this"", ""game"", ""of"",""footbott""]) == ""footbott""), 't5'
+    assert (candidate([""we"", ""are"", ""gonna"", ""rock""]) == ""gonna""), 't6'
+    assert (candidate([""we"", ""are"", ""a"", ""mad"", ""nation""]) == ""nation""), 't7'
+    assert (candidate([""this"", ""is"", ""a"", ""prrk""]) == ""this""), 't8'
+
+    # Check some edge cases that are easy to work out by hand.
+    assert (candidate([""b""]) == ""b""), 't9'
+    assert (candidate([""play"", ""play"", ""play""]) == ""play""), 't10'
+
+",,,
+HumanEval/159,epo_Latn,python,"
+def eat(number, need, remaining):
+    """"""Vi estas malsata kuniklo, kaj vi jam manĝis certan nombron da karotoj, sed nun vi devas manĝi pli da karotoj por kompletigi la tagmanĝojn. vi devas redoni aron de [total number of eaten carrots after your meals, the number of carrots left after your meals] se ne estas sufiĉe da ceteraj karotoj, vi manĝos ĉiujn ceterajn karotojn, sed vi ankoraŭ estos malsata. Ekzemplo: * manĝas ((5, 6, 10) -> [11, 4] * manĝas ((4, 8, 9) -> [12, 1] * manĝas ((1, 10, 10) -> [11, 0] * manĝas ((2, 11, 5) -> [7, 0] Variabloj: @number: entjero la nombro da karotoj, kiujn vi manĝis. @need: entjero la nombro da karotoj, kiujn vi devas manĝi. @remaining: entjero la nombro de la ceteraj karotoj en la stoko.""""""
+","    if(need <= remaining):
+        return [ number + need , remaining-need ]
+    else:
+        return [ number + remaining , 0]
+","def check(candidate):
+
+    # Check some simple cases
+    assert True, ""This prints if this assert fails 1 (good for debugging!)""
+    assert candidate(5, 6, 10) == [11, 4], ""Error""
+    assert candidate(4, 8, 9) == [12, 1], ""Error""
+    assert candidate(1, 10, 10) == [11, 0], ""Error""
+    assert candidate(2, 11, 5) == [7, 0], ""Error""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+    assert candidate(4, 5, 7) == [9, 2], ""Error""
+    assert candidate(4, 5, 1) == [5, 0], ""Error""
+
+",,,
+HumanEval/160,epo_Latn,python,"
+def do_algebra(operator, operand):
+    """"""La unua listo havas bazajn algebrajn operaciojn, kaj la dua listo estas listo de entjeroj. Uzu la du donitajn listojn por konstrui la algebran esprimon kaj redoni la taksadon de ĉi tiu esprimo. La bazaj algebraj operacioj: Aldono (+) Subtraho (-)) Multipliko (*) Planko-divido (//) Eksponentigo (**) Ekzemplo: operatoro['+', '*', '-'] aro = [2, 3, 4, 5] rezulto = 2 + 3 * 4 - 5 => rezulto = 9 Noto: La longo de listo de operatoro egalas al la longo de operand listo minus unu.""""""
+","    expression = str(operand[0])
+    for oprt, oprn in zip(operator, operand[1:]):
+        expression+= oprt + str(oprn)
+    return eval(expression)
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(['**', '*', '+'], [2, 3, 4, 5]) == 37
+    assert candidate(['+', '*', '-'], [2, 3, 4, 5]) == 9
+    assert candidate(['//', '*'], [7, 3, 4]) == 8, ""This prints if this assert fails 1 (good for debugging!)""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
+HumanEval/161,epo_Latn,python,"
+def solve(s):
+    """"""Se la ŝnuro ne enhavas literojn, inversu la ŝnuron. La funkcio devas redoni la rezultan ŝnuron. Ekzemploj solvu ((""1234"") = ""4321"" solvu ((""ab"") = ""AB"" solvu ((""#a@C"") = ""#A@c"" """"""
+","    flg = 0
+    idx = 0
+    new_str = list(s)
+    for i in s:
+        if i.isalpha():
+            new_str[idx] = i.swapcase()
+            flg = 1
+        idx += 1
+    s = """"
+    for i in new_str:
+        s += i
+    if flg == 0:
+        return s[len(s)::-1]
+    return s
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(""AsDf"") == ""aSdF""
+    assert candidate(""1234"") == ""4321""
+    assert candidate(""ab"") == ""AB""
+    assert candidate(""#a@C"") == ""#A@c""
+    assert candidate(""#AsdfW^45"") == ""#aSDFw^45""
+    assert candidate(""#6@2"") == ""2@6#""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert candidate(""#$a^D"") == ""#$A^d""
+    assert candidate(""#ccc"") == ""#CCC""
+
+    # Don't remove this line:
+",,,
+HumanEval/162,epo_Latn,python,"
+def string_to_md5(text):
+    """"""Se estas donita ŝnuro 'teksto', redonu ĝian md5 hash ekvivalentan ŝnuron. Se 'teksto' estas malplena ŝnuro, redonu Neniu. >>> string_to_md5('Hello world') == '3e25960a79dbc69b674cd4ec67a72c62' """"""
+","    import hashlib
+    return hashlib.md5(text.encode('ascii')).hexdigest() if text else None
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate('Hello world') == '3e25960a79dbc69b674cd4ec67a72c62'
+    assert candidate('') == None
+    assert candidate('A B C') == '0ef78513b0cb8cef12743f5aeb35f888'
+    assert candidate('password') == '5f4dcc3b5aa765d61d8327deb882cf99'
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True
+
+",,,
+HumanEval/163,epo_Latn,python,"
+def generate_integers(a, b):
+    """"""Donita du pozitiva entjeroj a kaj b, redonu la eĉ ciferoj inter a kaj b, en kreskanta sinsekvo. Ekzemple: generate_integers{2, 8, 9} => [2, 4, 6, 8] generate_integers{8, 2, 9} => [2, 4, 6, 8] generate_integers{10, 14} => [] """"""
+","    lower = max(2, min(a, b))
+    upper = min(8, max(a, b))
+
+    return [i for i in range(lower, upper+1) if i % 2 == 0]
+","def check(candidate):
+
+    # Check some simple cases
+    assert candidate(2, 10) == [2, 4, 6, 8], ""Test 1""
+    assert candidate(10, 2) == [2, 4, 6, 8], ""Test 2""
+    assert candidate(132, 2) == [2, 4, 6, 8], ""Test 3""
+    assert candidate(17,89) == [], ""Test 4""
+
+    # Check some edge cases that are easy to work out by hand.
+    assert True, ""This prints if this assert fails 2 (also good for debugging!)""
+
+",,,
