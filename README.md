@@ -25,6 +25,71 @@ The mHumanEval benchmark is curated based on prompts from the original HumanEval
 
 
 
+
+
+
+
+
+
+
+
+<div align="center">
+
+  # **Quick Start**
+
+  Detailed instructions and code are provided in the "Usage Guide" directory  
+
+</div>
+
+## Prerequisites
+
+- Python 3.6 or higher
+- Jupyter Notebook environment
+- Downloaded benchmark files (CSV or JSON format)
+
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/mraihan-gmu/mHumanEval-Benchmark.git
+   cd mHumanEval-Benchmark
+   ```
+
+2. Install requirements:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. Download the benchmark files to evaluate:
+   - NL-specific benchmarks are in the `mHumanEval-{NL}` directory
+   - PL-specific benchmarks are in the `mHumanEval-{PL}` directory
+
+4. Open the evaluator notebook:
+   ```bash
+   jupyter notebook evaluate.ipynb
+   ```
+
+5. Update the configuration variables at the top of the notebook, then run the cell to evaluate the benchmark file:
+   ```python
+   # Update these variables to match your benchmark files
+   CSV_FILE_NAME = 'mHumanEval-ben_Beng.csv'
+   JSON_FILE_NAME = 'mHumanEval-ben_Beng.json'
+   SOLUTION_COLUMN = 'canonical_solution'  # Important: Change this to the name of your column containing code solutions
+   
+   # The evaluation will run automatically when you execute the cell
+   ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ---
 <div align="center">
 
