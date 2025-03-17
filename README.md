@@ -62,7 +62,7 @@ The mHumanEval benchmark is curated based on prompts from the original HumanEval
    - NL-specific benchmarks are in the `mHumanEval-{NL}` directory
    - PL-specific benchmarks are in the `mHumanEval-{PL}` directory
 
-4. Open the evaluator notebook:
+4. Open the evaluator notebook (In the 'Usage Guide' directory):
    ```bash
    jupyter notebook evaluate.ipynb
    ```
