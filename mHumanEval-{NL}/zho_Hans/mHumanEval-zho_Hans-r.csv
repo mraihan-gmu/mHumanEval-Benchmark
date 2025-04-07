@@ -1,0 +1,4622 @@
+task_id,nl,pl,prompt,canonical_solution,tests
+HumanEval_0,zho_Hans,r,"给定值.检查给定数列表中的两个数字是否比 更接近.# >>> has_close_elements(c(1.0, 2.0, 3.0), 0.5)
+# FALSE
+# >>> has_close_elements(c(1.0, 2.8, 3.0, 4.0, 5.0, 2.0), 0.3)
+# TRUE
+has_close_elements <- function(numbers, threshold) {","has_close_elements <- function(numbers, threshold) {
+  for (i in seq_along(numbers)) {
+    for (j in seq_along(numbers)) {
+      if (i != j && abs(numbers[i] - numbers[j]) < threshold) {
+        return(TRUE)
+      }
+    }
+  }
+  return(FALSE)
+}","test_humaneval <- function() {
+    candidate <- has_close_elements
+    stopifnot(isTRUE(all.equal(candidate(c(1.0, 2.0, 3.9, 4.0, 5.0, 2.2), 0.3), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1.0, 2.0, 3.9, 4.0, 5.0, 2.2), 0.05), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1.0, 2.0, 5.9, 4.0, 5.0), 0.95), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1.0, 2.0, 5.9, 4.0, 5.0), 0.8), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1.0, 2.0, 3.0, 4.0, 5.0, 2.0), 0.1), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1.1, 2.2, 3.1, 4.1, 5.1), 1.0), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1.1, 2.2, 3.1, 4.1, 5.1), 0.5), FALSE)))
+}
+test_humaneval()"
+HumanEval_1,zho_Hans,r,"忽略输入字符串中的任何空格.独立的组是平衡的 (每个开放的支架是适当关闭的),而不是彼此之间嵌套.将这些组分为单独的字符串并返回这些列表.这个函数的输入是包含多个嵌套括号组的字符串. 您的目标是# >>> separate_paren_groups('( ) (( )) (( )( ))')
+# c('()', '(())', '(()())')
+separate_paren_groups <- function(paren_string) {","separate_paren_groups <- function(paren_string) {
+  # Remove spaces from the input string
+  paren_string <- gsub("" "", """", paren_string)
+  
+  # Initialize variables for processing
+  result <- c()
+  current_group <- """"
+  balance <- 0
+  
+  # Iterate through each character in the string
+  for (char in strsplit(paren_string, """")[[1]]) {
+    current_group <- paste0(current_group, char)
+    if (char == ""("") {
+      balance <- balance + 1
+    } else if (char == "")"") {
+      balance <- balance - 1
+    }
+    
+    # If balance is zero, we found a complete group
+    if (balance == 0 && nchar(current_group) > 0) {
+      result <- c(result, current_group)
+      current_group <- """"
+    }
+  }
+  
+  return(result)
+}","test_humaneval <- function() {
+    candidate <- separate_paren_groups
+    stopifnot(isTRUE(all.equal(candidate('(()()) ((())) () ((())()())'), c('(()())', '((()))', '()', '((())()())'))))
+    stopifnot(isTRUE(all.equal(candidate('() (()) ((())) (((())))'), c('()', '(())', '((()))', '(((())))'))))
+    stopifnot(isTRUE(all.equal(candidate('(()(())((())))'), c('(()(())((())))'))))
+    stopifnot(isTRUE(all.equal(candidate('( ) (( )) (( )( ))'), c('()', '(())', '(()())'))))
+}
+test_humaneval()"
+HumanEval_2,zho_Hans,r,"返回数字的小数部分.总是小于1个.和整数部分 (最大的整数小于给定数) 和小数点给定一个正的浮点数,它可以分解成# >>> truncate_number(3.5)
+# 0.5
+truncate_number <- function(number) {","truncate_number <- function(number) {
+  return(number - floor(number))
+}","test_humaneval <- function() {
+    candidate <- truncate_number
+    stopifnot(isTRUE(all.equal(candidate(3.5), 0.5)))
+    stopifnot(isTRUE(all.equal(candidate(1.25), 0.25)))
+    stopifnot(isTRUE(all.equal(candidate(123.0), 0.0)))
+}
+test_humaneval()"
+HumanEval_3,zho_Hans,r,"在这个点上,函数应该返回true.否则它应该返回false.您的任务是检测账户余额是否在任何时候都低于零,您可以看到银行账户中的存款和提款列表, 列表的开头是# >>> below_zero(c(1, 2, 3))
+# FALSE
+# >>> below_zero(c(1, 2, -4, 5))
+# TRUE
+below_zero <- function(operations) {","below_zero <- function(operations) {
+  balance <- 0
+  for (op in operations) {
+    balance <- balance + op
+    if (balance < 0) {
+      return(TRUE)
+    }
+  }
+  return(FALSE)
+}","test_humaneval <- function() {
+    candidate <- below_zero
+    stopifnot(isTRUE(all.equal(candidate(c()), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, -3, 1, 2, -3)), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, -4, 5, 6)), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, -1, 2, -2, 5, -5, 4, -4)), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, -1, 2, -2, 5, -5, 4, -5)), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, -2, 2, -2, 5, -5, 4, -4)), TRUE)))
+}
+test_humaneval()"
+HumanEval_4,zho_Hans,r,"平均值是指平均值的值.元素和一个中心点 (在这种情况下是平均值):平均绝对偏差是每一个 之间的平均绝对差异.对于这个数据集的平均值.对于给定的输入数列表,计算平均绝对偏差.# >>> mean_absolute_deviation(c(1.0, 2.0, 3.0, 4.0))
+# 1.0
+mean_absolute_deviation <- function(numbers) {","mean_absolute_deviation <- function(numbers) {
+  x_mean <- mean(numbers)
+  mad <- mean(abs(numbers - x_mean))
+  return(mad)
+}
+
+# Example usage
+mean_absolute_deviation(c(1.0, 2.0, 3.0, 4.0))","test_humaneval <- function() {
+    candidate <- mean_absolute_deviation
+    stopifnot(isTRUE(all.equal(candidate(c(1.0, 2.0)), 0.5)))
+    stopifnot(isTRUE(all.equal(candidate(c(1.0, 2.0, 3.0, 4.0)), 1.0)))
+    stopifnot(isTRUE(all.equal(candidate(c(1.0, 2.0, 3.0, 4.0, 5.0)), 1.2)))
+}
+test_humaneval()"
+HumanEval_5,zho_Hans,r,"在输入列表中的每两个连续元素之间插入一个""分界符""号.# >>> intersperse(c(), 4)
+# c()
+# >>> intersperse(c(1, 2, 3), 4)
+# c(1, 4, 2, 4, 3)
+intersperse <- function(numbers, delimeter) {","intersperse <- function(numbers, delimeter) {
+  if (length(numbers) <= 1) {
+    return(numbers)
+  }
+  result <- c()
+  for (i in 1:(length(numbers) - 1)) {
+    result <- c(result, numbers[i], delimeter)
+  }
+  result <- c(result, numbers[length(numbers)])
+  return(result)
+}","test_humaneval <- function() {
+    candidate <- intersperse
+    stopifnot(isTRUE(all.equal(candidate(c(), 7), c())))
+    stopifnot(isTRUE(all.equal(candidate(c(5, 6, 3, 2), 8), c(5, 8, 6, 8, 3, 8, 2))))
+    stopifnot(isTRUE(all.equal(candidate(c(2, 2, 2), 2), c(2, 2, 2, 2, 2))))
+}
+test_humaneval()"
+HumanEval_6,zho_Hans,r,"例如, (() (()) 具有最多两个巢层次,而 ((())) 则有三个.输出每个组的括号嵌套的最深层次.这个函数的输入是一个字符串, 代表了多个以空格隔开的嵌套括号的组.# >>> parse_nested_parens('(()()) ((())) () ((())()())')
+# c(2, 3, 1, 3)
+parse_nested_parens <- function(paren_string) {","parse_nested_parens <- function(paren_string) {
+  sapply(strsplit(paren_string, "" "")[[1]], function(group) {
+    max_nesting <- 0
+    current_nesting <- 0
+    for (char in strsplit(group, """")[[1]]) {
+      if (char == ""("") {
+        current_nesting <- current_nesting + 1
+        max_nesting <- max(max_nesting, current_nesting)
+      } else if (char == "")"") {
+        current_nesting <- current_nesting - 1
+      }
+    }
+    return(max_nesting)
+  })
+}","test_humaneval <- function() {
+    candidate <- parse_nested_parens
+    stopifnot(isTRUE(all.equal(candidate('(()()) ((())) () ((())()())'), c(2, 3, 1, 3))))
+    stopifnot(isTRUE(all.equal(candidate('() (()) ((())) (((())))'), c(1, 2, 3, 4))))
+    stopifnot(isTRUE(all.equal(candidate('(()(())((())))'), c(4))))
+}
+test_humaneval()"
+HumanEval_7,zho_Hans,r,"仅过输入字符串列表中包含给定的子字符串的字符串# >>> filter_by_substring(c(), 'a')
+# c()
+# >>> filter_by_substring(c('abc', 'bacd', 'cde', 'array'), 'a')
+# c('abc', 'bacd', 'array')
+filter_by_substring <- function(strings, substring) {","filter_by_substring <- function(strings, substring) {
+  return(strings[grepl(substring, strings)])
+}","test_humaneval <- function() {
+    candidate <- filter_by_substring
+    stopifnot(isTRUE(all.equal(candidate(c(), 'john'), c())))
+    stopifnot(isTRUE(all.equal(candidate(c('xxx', 'asd', 'xxy', 'john doe', 'xxxAAA', 'xxx'), 'xxx'), c('xxx', 'xxxAAA', 'xxx'))))
+    stopifnot(isTRUE(all.equal(candidate(c('xxx', 'asd', 'aaaxxy', 'john doe', 'xxxAAA', 'xxx'), 'xx'), c('xxx', 'aaaxxy', 'xxxAAA', 'xxx'))))
+    stopifnot(isTRUE(all.equal(candidate(c('grunt', 'trumpet', 'prune', 'gruesome'), 'run'), c('grunt', 'prune'))))
+}
+test_humaneval()"
+HumanEval_8,zho_Hans,r,"虚和应等于0而虚积应等于1.返回一个列表,其中包含列表中的所有整数的和和乘积.# >>> sum_product(c())
+# c(0, 1)
+# >>> sum_product(c(1, 2, 3, 4))
+# c(10, 24)
+sum_product <- function(numbers) {","sum_product <- function(numbers) {
+  sum_val <- sum(numbers)
+  prod_val <- ifelse(length(numbers) == 0, 1, prod(numbers))
+  return(c(sum_val, prod_val))
+}","test_humaneval <- function() {
+    candidate <- sum_product
+    stopifnot(isTRUE(all.equal(candidate(c()), c(0, 1))))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 1, 1)), c(3, 1))))
+    stopifnot(isTRUE(all.equal(candidate(c(100, 0)), c(100, 0))))
+    stopifnot(isTRUE(all.equal(candidate(c(3, 5, 7)), c(15, 105))))
+    stopifnot(isTRUE(all.equal(candidate(c(10)), c(10, 10))))
+}
+test_humaneval()"
+HumanEval_9,zho_Hans,r,"在序列中.从给定的整数列表中,生成到给定的时刻发现的滚动最大元素列表.# >>> rolling_max(c(1, 2, 3, 2, 3, 4, 2))
+# c(1, 2, 3, 3, 3, 4, 4)
+rolling_max <- function(numbers) {","rolling_max <- function(numbers) {
+  max_list <- c()
+  current_max <- -Inf
+  for (number in numbers) {
+    current_max <- max(current_max, number)
+    max_list <- c(max_list, current_max)
+  }
+  return(max_list)
+}","test_humaneval <- function() {
+    candidate <- rolling_max
+    stopifnot(isTRUE(all.equal(candidate(c()), c())))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3, 4)), c(1, 2, 3, 4))))
+    stopifnot(isTRUE(all.equal(candidate(c(4, 3, 2, 1)), c(4, 4, 4, 4))))
+    stopifnot(isTRUE(all.equal(candidate(c(3, 2, 3, 100, 3)), c(3, 3, 3, 100, 100))))
+}
+test_humaneval()"
+HumanEval_10,zho_Hans,r,"- 在字符串前的末尾添加一个字符串前, 后是 palindromic.- 找到提供字符串中最长的后代码,它是平行符.算法很简单:找到以已提供字符串开始的最短的平行符号.# >>> make_palindrome('')
+# ''
+# >>> make_palindrome('cat')
+# 'catac'
+# >>> make_palindrome('cata')
+# 'catac'
+make_palindrome <- function(string) {","make_palindrome <- function(string) {
+  is_palindrome <- function(s) {
+    return(s == stringi::stri_reverse(s))
+  }
+  
+  n <- nchar(string)
+  
+  for (i in seq(n, 0, by = -1)) {
+    suffix <- substr(string, i, n)
+    if (is_palindrome(suffix)) {
+      prefix <- substr(string, 1, i - 1)
+      return(paste0(string, stringi::stri_reverse(prefix)))
+    }
+  }
+  
+  return(string) # for the empty string case
+}","test_humaneval <- function() {
+    candidate <- make_palindrome
+    stopifnot(isTRUE(all.equal(candidate(''), '')))
+    stopifnot(isTRUE(all.equal(candidate('x'), 'x')))
+    stopifnot(isTRUE(all.equal(candidate('xyz'), 'xyzyx')))
+    stopifnot(isTRUE(all.equal(candidate('xyx'), 'xyx')))
+    stopifnot(isTRUE(all.equal(candidate('jerry'), 'jerryrrej')))
+}
+test_humaneval()"
+HumanEval_11,zho_Hans,r,"在这些输入上执行二进制XOR,并返回结果作为字符串.输入是两个字符串a和b, 只有1和0# >>> string_xor('010', '110')
+# '100'
+string_xor <- function(a, b) {","string_xor <- function(a, b) {
+  xor_result <- mapply(function(x, y) { 
+    ifelse(x == y, 0, 1) 
+  }, strsplit(a, NULL)[[1]], strsplit(b, NULL)[[1]])
+  return(paste(xor_result, collapse = """"))
+}","test_humaneval <- function() {
+    candidate <- string_xor
+    stopifnot(isTRUE(all.equal(candidate('111000', '101010'), '010010')))
+    stopifnot(isTRUE(all.equal(candidate('1', '1'), '0')))
+    stopifnot(isTRUE(all.equal(candidate('0101', '0000'), '0101')))
+}
+test_humaneval()"
+HumanEval_12,zho_Hans,r,"如果输入列表是空的,返回NULL.在列表中返回最长的字符串. 如果有多个字符串,返回第一个字符串.# >>> longest(c())
+# NULL
+# >>> longest(c('a', 'b', 'c'))
+# 'a'
+# >>> longest(c('a', 'bb', 'ccc'))
+# 'ccc'
+longest <- function(strings) {","longest <- function(strings) {
+  if (length(strings) == 0) return(NULL)
+  longest_string <- strings[1]
+  for (s in strings) {
+    if (nchar(s) > nchar(longest_string)) {
+      longest_string <- s
+    }
+  }
+  return(longest_string)
+}","test_humaneval <- function() {
+    candidate <- longest
+    stopifnot(isTRUE(all.equal(candidate(c()), NULL)))
+    stopifnot(isTRUE(all.equal(candidate(c('x', 'y', 'z')), 'x')))
+    stopifnot(isTRUE(all.equal(candidate(c('x', 'yyy', 'zzzz', 'www', 'kkkk', 'abc')), 'zzzz')))
+}
+test_humaneval()"
+HumanEval_13,zho_Hans,r,"返回两个整数 a 和 b 的最大公分数.# >>> greatest_common_divisor(3, 5)
+# 1
+# >>> greatest_common_divisor(25, 15)
+# 5
+greatest_common_divisor <- function(a, b) {","greatest_common_divisor <- function(a, b) {
+  while (b != 0) {
+    temp <- b
+    b <- a %% b
+    a <- temp
+  }
+  return(abs(a))
+}","test_humaneval <- function() {
+    candidate <- greatest_common_divisor
+    stopifnot(isTRUE(all.equal(candidate(3, 7), 1)))
+    stopifnot(isTRUE(all.equal(candidate(10, 15), 5)))
+    stopifnot(isTRUE(all.equal(candidate(49, 14), 7)))
+    stopifnot(isTRUE(all.equal(candidate(144, 60), 12)))
+}
+test_humaneval()"
+HumanEval_14,zho_Hans,r,"返回所有序列的列表,从输入字符串中最短到最长的序列.# >>> all_prefixes('abc')
+# c('a', 'ab', 'abc')
+all_prefixes <- function(string) {","all_prefixes <- function(string) {
+  prefixes <- character(nchar(string))
+  for (i in seq_along(prefixes)) {
+    prefixes[i] <- substr(string, 1, i)
+  }
+  return(prefixes)
+}","test_humaneval <- function() {
+    candidate <- all_prefixes
+    stopifnot(isTRUE(all.equal(candidate(''), c())))
+    stopifnot(isTRUE(all.equal(candidate('asdfgh'), c('a', 'as', 'asd', 'asdf', 'asdfg', 'asdfgh'))))
+    stopifnot(isTRUE(all.equal(candidate('WWW'), c('W', 'WW', 'WWW'))))
+}
+test_humaneval()"
+HumanEval_15,zho_Hans,r,"返回包含从0到n的空间划分数的字符串.# >>> string_sequence(0)
+# '0'
+# >>> string_sequence(5)
+# '0 1 2 3 4 5'
+string_sequence <- function(n) {","string_sequence <- function(n) {
+  return(paste(0:n, collapse = "" ""))
+}","test_humaneval <- function() {
+    candidate <- string_sequence
+    stopifnot(isTRUE(all.equal(candidate(0), '0')))
+    stopifnot(isTRUE(all.equal(candidate(3), '0 1 2 3')))
+    stopifnot(isTRUE(all.equal(candidate(10), '0 1 2 3 4 5 6 7 8 9 10')))
+}
+test_humaneval()"
+HumanEval_16,zho_Hans,r,"给定一个字符串, 找出它包含多少个不同的字符 (不论大小写).# >>> count_distinct_characters('xyzXYZ')
+# 3
+# >>> count_distinct_characters('Jerry')
+# 4
+count_distinct_characters <- function(string) {","count_distinct_characters <- function(string) {
+  # Convert the string to lowercase to handle case insensitivity
+  lower_string <- tolower(string)
+  # Split the string into individual characters
+  chars <- strsplit(lower_string, NULL)[[1]]
+  # Find the unique characters and count them
+  distinct_count <- length(unique(chars))
+  return(distinct_count)
+}","test_humaneval <- function() {
+    candidate <- count_distinct_characters
+    stopifnot(isTRUE(all.equal(candidate(''), 0)))
+    stopifnot(isTRUE(all.equal(candidate('abcde'), 5)))
+    stopifnot(isTRUE(all.equal(candidate('abcdecadeCADE'), 5)))
+    stopifnot(isTRUE(all.equal(candidate('aaaaAAAAaaaa'), 1)))
+    stopifnot(isTRUE(all.equal(candidate('Jerry jERRY JeRRRY'), 5)))
+}
+test_humaneval()"
+HumanEval_17,zho_Hans,r,"音 - - 四音符,持续一个节奏.""o""是半音,持续两拍.音符""O""是整个音符,持续四次.这里有一个传说:没有最后一次.您的任务是解析这个字符串并返回对应于每个数的整数列表.输入这个函数是一个符串, 代表音乐音符在一个特殊的ASCII格式.# >>> parse_music('o o| .| o| o| .| .| .| .| o o')
+# c(4, 2, 1, 2, 2, 1, 1, 1, 1, 4, 4)
+parse_music <- function(music_string) {","parse_music <- function(music_string) {
+  # Split the input string by spaces to get individual notes
+  notes <- strsplit(music_string, "" "")[[1]]
+  
+  # Map each note to its corresponding beat duration
+  beats <- sapply(notes, function(note) {
+    if (note == 'o') {
+      return(4)
+    } else if (note == 'o|') {
+      return(2)
+    } else if (note == '.|') {
+      return(1)
+    } else {
+      stop(""Invalid note"")
+    }
+  })
+  
+  return(beats)
+}
+
+# Example usage:
+# parse_music('o o| .| o| o| .| .| .| .| o o')
+# c(4, 2, 1, 2, 2, 1, 1, 1, 1, 4, 4)","test_humaneval <- function() {
+    candidate <- parse_music
+    stopifnot(isTRUE(all.equal(candidate(''), c())))
+    stopifnot(isTRUE(all.equal(candidate('o o o o'), c(4, 4, 4, 4))))
+    stopifnot(isTRUE(all.equal(candidate('.| .| .| .|'), c(1, 1, 1, 1))))
+    stopifnot(isTRUE(all.equal(candidate('o| o| .| .| o o o o'), c(2, 2, 1, 1, 4, 4, 4, 4))))
+    stopifnot(isTRUE(all.equal(candidate('o| .| o| .| o o| o o|'), c(2, 1, 2, 1, 4, 2, 4, 2))))
+}
+test_humaneval()"
+HumanEval_18,zho_Hans,r,"求出给定的子字符串在原始字符串中可以被找到的次数. 计算重叠的情况.# >>> how_many_times('', 'a')
+# 0
+# >>> how_many_times('aaa', 'a')
+# 3
+# >>> how_many_times('aaaa', 'aa')
+# 3
+how_many_times <- function(string, substring) {","how_many_times <- function(string, substring) {
+  if (nchar(substring) == 0) {
+    return(0)
+  }
+  
+  count <- 0
+  for (i in seq(nchar(string) - nchar(substring) + 1)) {
+    if (substr(string, i, i + nchar(substring) - 1) == substring) {
+      count <- count + 1
+    }
+  }
+  
+  return(count)
+}","test_humaneval <- function() {
+    candidate <- how_many_times
+    stopifnot(isTRUE(all.equal(candidate('', 'x'), 0)))
+    stopifnot(isTRUE(all.equal(candidate('xyxyxyx', 'x'), 4)))
+    stopifnot(isTRUE(all.equal(candidate('cacacacac', 'cac'), 4)))
+    stopifnot(isTRUE(all.equal(candidate('john doe', 'john'), 1)))
+}
+test_humaneval()"
+HumanEval_19,zho_Hans,r,"返回从最小到最大排序的数列有效的选择是""零"""",一"""",两"""",三"""",四"""",五"""",六"""",七"""",八""和""九"".输入是一个由""零""到""九""的数字串.# >>> sort_numbers('three one five')
+# 'one three five'
+sort_numbers <- function(numbers) {","sort_numbers <- function(numbers) {
+  words_to_numbers <- c(
+    ""zero"" = 0, ""one"" = 1, ""two"" = 2, ""three"" = 3, ""four"" = 4, 
+    ""five"" = 5, ""six"" = 6, ""seven"" = 7, ""eight"" = 8, ""nine"" = 9
+  )
+  
+  number_list <- strsplit(numbers, "" "")[[1]]
+  sorted_numbers <- number_list[order(sapply(number_list, function(word) words_to_numbers[word]))]
+  return(paste(sorted_numbers, collapse = "" ""))
+}","test_humaneval <- function() {
+    candidate <- sort_numbers
+    stopifnot(isTRUE(all.equal(candidate(''), '')))
+    stopifnot(isTRUE(all.equal(candidate('three'), 'three')))
+    stopifnot(isTRUE(all.equal(candidate('three five nine'), 'three five nine')))
+    stopifnot(isTRUE(all.equal(candidate('five zero four seven nine eight'), 'zero four five seven eight nine')))
+    stopifnot(isTRUE(all.equal(candidate('six five four three two one zero'), 'zero one two three four five six')))
+}
+test_humaneval()"
+HumanEval_20,zho_Hans,r,"其他,并按顺序返回 (数量较小,数量较大).从提供的一份数字列表中 (长度至少为两个) 选择并返回两个与每个数字最接近的数字.# >>> find_closest_elements(c(1.0, 2.0, 3.0, 4.0, 5.0, 2.2))
+# c(2.0, 2.2)
+# >>> find_closest_elements(c(1.0, 2.0, 3.0, 4.0, 5.0, 2.0))
+# c(2.0, 2.0)
+find_closest_elements <- function(numbers) {","find_closest_elements <- function(numbers) {
+  sorted_numbers <- sort(numbers)
+  min_diff <- Inf
+  closest_pair <- c()
+
+  for (i in 1:(length(sorted_numbers) - 1)) {
+    diff <- sorted_numbers[i + 1] - sorted_numbers[i]
+    if (diff < min_diff) {
+      min_diff <- diff
+      closest_pair <- c(sorted_numbers[i], sorted_numbers[i + 1])
+    }
+  }
+
+  return(closest_pair)
+}","test_humaneval <- function() {
+    candidate <- find_closest_elements
+    stopifnot(isTRUE(all.equal(candidate(c(1.0, 2.0, 3.9, 4.0, 5.0, 2.2)), c(3.9, 4.0))))
+    stopifnot(isTRUE(all.equal(candidate(c(1.0, 2.0, 5.9, 4.0, 5.0)), c(5.0, 5.9))))
+    stopifnot(isTRUE(all.equal(candidate(c(1.0, 2.0, 3.0, 4.0, 5.0, 2.2)), c(2.0, 2.2))))
+    stopifnot(isTRUE(all.equal(candidate(c(1.0, 2.0, 3.0, 4.0, 5.0, 2.0)), c(2.0, 2.0))))
+    stopifnot(isTRUE(all.equal(candidate(c(1.1, 2.2, 3.1, 4.1, 5.1)), c(2.2, 3.1))))
+}
+test_humaneval()"
+HumanEval_21,zho_Hans,r,"最小的数量将成为0和最大的数量将成为1给定一个数列 (至少两个元素),将线性变换应用到该列表中,# >>> rescale_to_unit(c(1.0, 2.0, 3.0, 4.0, 5.0))
+# c(0.0, 0.25, 0.5, 0.75, 1.0)
+rescale_to_unit <- function(numbers) {","rescale_to_unit <- function(numbers) {
+  min_val <- min(numbers)
+  max_val <- max(numbers)
+  (numbers - min_val) / (max_val - min_val)
+}","test_humaneval <- function() {
+    candidate <- rescale_to_unit
+    stopifnot(isTRUE(all.equal(candidate(c(2.0, 49.9)), c(0.0, 1.0))))
+    stopifnot(isTRUE(all.equal(candidate(c(100.0, 49.9)), c(1.0, 0.0))))
+    stopifnot(isTRUE(all.equal(candidate(c(1.0, 2.0, 3.0, 4.0, 5.0)), c(0.0, 0.25, 0.5, 0.75, 1.0))))
+    stopifnot(isTRUE(all.equal(candidate(c(2.0, 1.0, 5.0, 3.0, 4.0)), c(0.25, 0.0, 1.0, 0.5, 0.75))))
+    stopifnot(isTRUE(all.equal(candidate(c(12.0, 11.0, 15.0, 13.0, 14.0)), c(0.25, 0.0, 1.0, 0.5, 0.75))))
+}
+test_humaneval()"
+HumanEval_22,zho_Hans,r,"仅对整数过给定的任何rthon值列表# >>> filter_integers(list('a', 3.14, 5))
+# c(5)
+# >>> filter_integers(list(1, 2, 3, 'abc', list(), c()))
+# c(1, 2, 3)
+filter_integers <- function(values) {","filter_integers <- function(values) {
+  return(unlist(Filter(is.integer, values)))
+}","test_humaneval <- function() {
+    candidate <- filter_integers
+    stopifnot(isTRUE(all.equal(candidate(c()), c())))
+    stopifnot(isTRUE(all.equal(candidate(list(4, list(), c(), 23.2, 9, 'adasd')), c(4, 9))))
+    stopifnot(isTRUE(all.equal(candidate(list(3, 'c', 3, 3, 'a', 'b')), c(3, 3, 3))))
+}
+test_humaneval()"
+HumanEval_23,zho_Hans,r,"返回给定的字符串的长度# >>> strlen('')
+# 0
+# >>> strlen('abc')
+# 3
+strlen <- function(string) {","strlen <- function(string) {
+  return(nchar(string))
+}","test_humaneval <- function() {
+    candidate <- strlen
+    stopifnot(isTRUE(all.equal(candidate(''), 0)))
+    stopifnot(isTRUE(all.equal(candidate('x'), 1)))
+    stopifnot(isTRUE(all.equal(candidate('asdasnakj'), 9)))
+}
+test_humaneval()"
+HumanEval_24,zho_Hans,r,"给定一个数 n, 求最大的数, 分 n 均, 小于 n # >>> largest_divisor(15)
+# 5
+largest_divisor <- function(n) {","largest_divisor <- function(n) {
+  for (i in (n-1):1) {
+    if (n %% i == 0) {
+      return(i)
+    }
+  }
+}","test_humaneval <- function() {
+    candidate <- largest_divisor
+    stopifnot(isTRUE(all.equal(candidate(3), 1)))
+    stopifnot(isTRUE(all.equal(candidate(7), 1)))
+    stopifnot(isTRUE(all.equal(candidate(10), 5)))
+    stopifnot(isTRUE(all.equal(candidate(100), 50)))
+    stopifnot(isTRUE(all.equal(candidate(49), 7)))
+}
+test_humaneval()"
+HumanEval_25,zho_Hans,r,"输入数应该等于所有因子的乘积.每个因子应列出数次, 应对应于它在因子化中出现的次数.返回给定整数的质因数列表,从最小到最大的顺序.# >>> factorize(8)
+# c(2, 2, 2)
+# >>> factorize(25)
+# c(5, 5)
+# >>> factorize(70)
+# c(2, 5, 7)
+factorize <- function(n) {","factorize <- function(n) {
+  if (n < 2) {
+    return(c())
+  }
+  factors <- c()
+  divisor <- 2
+  
+  while (n > 1) {
+    while (n %% divisor == 0) {
+      factors <- c(factors, divisor)
+      n <- n / divisor
+    }
+    divisor <- divisor + 1
+  }
+  
+  return(factors)
+}","test_humaneval <- function() {
+    candidate <- factorize
+    stopifnot(isTRUE(all.equal(candidate(2), c(2))))
+    stopifnot(isTRUE(all.equal(candidate(4), c(2, 2))))
+    stopifnot(isTRUE(all.equal(candidate(8), c(2, 2, 2))))
+    stopifnot(isTRUE(all.equal(candidate(57), c(3, 19))))
+    stopifnot(isTRUE(all.equal(candidate(3249), c(3, 3, 19, 19))))
+    stopifnot(isTRUE(all.equal(candidate(185193), c(3, 3, 3, 19, 19, 19))))
+    stopifnot(isTRUE(all.equal(candidate(20577), c(3, 19, 19, 19))))
+    stopifnot(isTRUE(all.equal(candidate(18), c(2, 3, 3))))
+}
+test_humaneval()"
+HumanEval_26,zho_Hans,r,"保持元素的顺序与输入相同.从整数列表中删除出现一次以上的元素.# >>> remove_duplicates(c(1, 2, 3, 2, 4))
+# c(1, 3, 4)
+remove_duplicates <- function(numbers) {","remove_duplicates <- function(numbers) {
+  unique_numbers <- numbers[!duplicated(numbers) & !duplicated(numbers, fromLast = TRUE)]
+  return(unique_numbers)
+}","test_humaneval <- function() {
+    candidate <- remove_duplicates
+    stopifnot(isTRUE(all.equal(candidate(c()), c())))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3, 4)), c(1, 2, 3, 4))))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3, 2, 4, 3, 5)), c(1, 4, 5))))
+}
+test_humaneval()"
+HumanEval_27,zho_Hans,r,"对于给定的字符串,将小写字符翻转为大写字符,大写字符翻转为小写字符.# >>> flip_case('Hello')
+# 'hELLO'
+flip_case <- function(string) {","flip_case <- function(string) {
+  chars <- strsplit(string, NULL)[[1]]
+  flipped_chars <- sapply(chars, function(c) {
+    if (grepl(""[a-z]"", c)) {
+      return(toupper(c))
+    } else if (grepl(""[A-Z]"", c)) {
+      return(tolower(c))
+    } else {
+      return(c)
+    }
+  })
+  return(paste(flipped_chars, collapse = """"))
+}","test_humaneval <- function() {
+    candidate <- flip_case
+    stopifnot(isTRUE(all.equal(candidate(''), '')))
+    stopifnot(isTRUE(all.equal(candidate('Hello!'), 'hELLO!')))
+    stopifnot(isTRUE(all.equal(candidate('These violent delights have violent ends'), 'tHESE VIOLENT DELIGHTS HAVE VIOLENT ENDS')))
+}
+test_humaneval()"
+HumanEval_28,zho_Hans,r,"将字符串列表连接成一个字符串# >>> concatenate(c())
+# ''
+# >>> concatenate(c('a', 'b', 'c'))
+# 'abc'
+concatenate <- function(strings) {","concatenate <- function(strings) {
+  paste(strings, collapse = """")
+}","test_humaneval <- function() {
+    candidate <- concatenate
+    stopifnot(isTRUE(all.equal(candidate(c()), '')))
+    stopifnot(isTRUE(all.equal(candidate(c('x', 'y', 'z')), 'xyz')))
+    stopifnot(isTRUE(all.equal(candidate(c('x', 'y', 'z', 'w', 'k')), 'xyzwk')))
+}
+test_humaneval()"
+HumanEval_29,zho_Hans,r,"只有以给定的前开始的字符串才能过输入字符串列表.# >>> filter_by_prefix(c(), 'a')
+# c()
+# >>> filter_by_prefix(c('abc', 'bcd', 'cde', 'array'), 'a')
+# c('abc', 'array')
+filter_by_prefix <- function(strings, prefix) {","filter_by_prefix <- function(strings, prefix) {
+  return(strings[startsWith(strings, prefix)])
+}","test_humaneval <- function() {
+    candidate <- filter_by_prefix
+    stopifnot(isTRUE(all.equal(candidate(c(), 'john'), c())))
+    stopifnot(isTRUE(all.equal(candidate(c('xxx', 'asd', 'xxy', 'john doe', 'xxxAAA', 'xxx'), 'xxx'), c('xxx', 'xxxAAA', 'xxx'))))
+}
+test_humaneval()"
+HumanEval_30,zho_Hans,r,"返回列表中的仅是正数.# >>> get_positive(c(-1, 2, -4, 5, 6))
+# c(2, 5, 6)
+# >>> get_positive(c(5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10))
+# c(5, 3, 2, 3, 9, 123, 1)
+get_positive <- function(l) {","get_positive <- function(l) {
+  return(l[l > 0])
+}","test_humaneval <- function() {
+    candidate <- get_positive
+    stopifnot(isTRUE(all.equal(candidate(c(-1, -2, 4, 5, 6)), c(4, 5, 6))))
+    stopifnot(isTRUE(all.equal(candidate(c(5, 3, -5, 2, 3, 3, 9, 0, 123, 1, -10)), c(5, 3, 2, 3, 3, 9, 123, 1))))
+    stopifnot(isTRUE(all.equal(candidate(c(-1, -2)), c())))
+    stopifnot(isTRUE(all.equal(candidate(c()), c())))
+}
+test_humaneval()"
+HumanEval_31,zho_Hans,r,"如果给定数是素数,则返回true,否则则返回false.# >>> is_prime(6)
+# FALSE
+# >>> is_prime(101)
+# TRUE
+# >>> is_prime(11)
+# TRUE
+# >>> is_prime(13441)
+# TRUE
+# >>> is_prime(61)
+# TRUE
+# >>> is_prime(4)
+# FALSE
+# >>> is_prime(1)
+# FALSE
+is_prime <- function(n) {","is_prime <- function(n) {
+  if (n <= 1) {
+    return(FALSE)
+  }
+  if (n <= 3) {
+    return(TRUE)
+  }
+  if (n %% 2 == 0 || n %% 3 == 0) {
+    return(FALSE)
+  }
+  i <- 5
+  while (i * i <= n) {
+    if (n %% i == 0 || n %% (i + 2) == 0) {
+      return(FALSE)
+    }
+    i <- i + 6
+  }
+  return(TRUE)
+}","test_humaneval <- function() {
+    candidate <- is_prime
+    stopifnot(isTRUE(all.equal(candidate(6), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(101), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(11), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(13441), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(61), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(4), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(1), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(5), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(11), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(17), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(85), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(77), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(255379), FALSE)))
+}
+test_humaneval()"
+HumanEval_33,zho_Hans,r,"值的相应指数的l,但分类.在三不可分割的指数中,l'与l相同,而在三可分割的指数中,它的值是相同的.这个函数取一个列表l,并返回一个列表l'这样的# >>> sort_third(c(1, 2, 3))
+# c(1, 2, 3)
+# >>> sort_third(c(5, 6, 3, 4, 8, 9, 2))
+# c(2, 6, 3, 4, 8, 9, 5)
+sort_third <- function(l) {","sort_third <- function(l) {
+  # Find the indices that are divisible by three
+  indices_div_by_3 <- seq(3, length(l), by = 3)
+  
+  # Extract the elements at those indices and sort them
+  elements_to_sort <- l[indices_div_by_3]
+  sorted_elements <- sort(elements_to_sort)
+  
+  # Replace the original elements at those indices with sorted ones
+  l[indices_div_by_3] <- sorted_elements
+  
+  return(l)
+}","test_humaneval <- function() {
+    candidate <- sort_third
+    stopifnot(isTRUE(all.equal(candidate(c(5, 6, 3, 4, 8, 9, 2)), c(2, 6, 3, 4, 8, 9, 5))))
+    stopifnot(isTRUE(all.equal(candidate(c(5, 8, 3, 4, 6, 9, 2)), c(2, 8, 3, 4, 6, 9, 5))))
+    stopifnot(isTRUE(all.equal(candidate(c(5, 6, 9, 4, 8, 3, 2)), c(2, 6, 9, 4, 8, 3, 5))))
+    stopifnot(isTRUE(all.equal(candidate(c(5, 6, 3, 4, 8, 9, 2, 1)), c(2, 6, 3, 4, 8, 9, 5, 1))))
+}
+test_humaneval()"
+HumanEval_34,zho_Hans,r,"返回列表中排序的唯一元素# >>> unique(c(5, 3, 5, 2, 3, 3, 9, 0, 123))
+# c(0, 2, 3, 5, 9, 123)
+unique <- function(l) {","unique <- function(l) {
+  return(sort(unique(l)))
+}","test_humaneval <- function() {
+    candidate <- unique
+    stopifnot(isTRUE(all.equal(candidate(c(5, 3, 5, 2, 3, 3, 9, 0, 123)), c(0, 2, 3, 5, 9, 123))))
+}
+test_humaneval()"
+HumanEval_35,zho_Hans,r,"返回列表中的最大元素.# >>> max_element(c(1, 2, 3))
+# 3
+# >>> max_element(c(5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10))
+# 123
+max_element <- function(l) {","max_element <- function(l) {
+  return(max(l))
+}","test_humaneval <- function() {
+    candidate <- max_element
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3)), 3)))
+    stopifnot(isTRUE(all.equal(candidate(c(5, 3, -5, 2, -3, 3, 9, 0, 124, 1, -10)), 124)))
+}
+test_humaneval()"
+HumanEval_36,zho_Hans,r,"返回数字7在小于n的整数中出现的次数,该整数可被11或13除以. # >>> fizz_buzz(50)
+# 0
+# >>> fizz_buzz(78)
+# 2
+# >>> fizz_buzz(79)
+# 3
+fizz_buzz <- function(n) {","fizz_buzz <- function(n) {
+  count <- 0
+  for (i in 1:(n-1)) {
+    if (i %% 11 == 0 || i %% 13 == 0) {
+      count <- count + sum(unlist(strsplit(as.character(i), """")) == ""7"")
+    }
+  }
+  return(count)
+}","test_humaneval <- function() {
+    candidate <- fizz_buzz
+    stopifnot(isTRUE(all.equal(candidate(50), 0)))
+    stopifnot(isTRUE(all.equal(candidate(78), 2)))
+    stopifnot(isTRUE(all.equal(candidate(79), 3)))
+    stopifnot(isTRUE(all.equal(candidate(100), 3)))
+    stopifnot(isTRUE(all.equal(candidate(200), 6)))
+    stopifnot(isTRUE(all.equal(candidate(4000), 192)))
+    stopifnot(isTRUE(all.equal(candidate(10000), 639)))
+    stopifnot(isTRUE(all.equal(candidate(100000), 8026)))
+}
+test_humaneval()"
+HumanEval_37,zho_Hans,r,"对于 l 的偶数指数的值,但有所排序.在奇数指数中,l'与l相同,而在偶数指数中,它的值是相同的.这个函数取一个列表l,并返回一个列表l'这样的# >>> sort_even(c(1, 2, 3))
+# c(1, 2, 3)
+# >>> sort_even(c(5, 6, 3, 4))
+# c(3, 6, 5, 4)
+sort_even <- function(l) {","sort_even <- function(l) {
+  even_indices <- seq(2, length(l), by=2)
+  l[even_indices] <- sort(l[even_indices])
+  return(l)
+}","test_humaneval <- function() {
+    candidate <- sort_even
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3)), c(1, 2, 3))))
+    stopifnot(isTRUE(all.equal(candidate(c(5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10)), c(-10, 3, -5, 2, -3, 3, 5, 0, 9, 1, 123))))
+    stopifnot(isTRUE(all.equal(candidate(c(5, 8, -12, 4, 23, 2, 3, 11, 12, -10)), c(-12, 8, 3, 4, 5, 2, 12, 11, 23, -10))))
+}
+test_humaneval()"
+HumanEval_39,zho_Hans,r,"返回第n个是斐波那契数,也是一个素数.# >>> prime_fib(1)
+# 2
+# >>> prime_fib(2)
+# 3
+# >>> prime_fib(3)
+# 5
+# >>> prime_fib(4)
+# 13
+# >>> prime_fib(5)
+# 89
+prime_fib <- function(n) {","prime_fib <- function(n) {
+  is_prime <- function(num) {
+    if (num < 2) return(FALSE)
+    for (i in 2:sqrt(num)) {
+      if (num %% i == 0) return(FALSE)
+    }
+    return(TRUE)
+  }
+  
+  fibonacci <- function() {
+    a <- 0
+    b <- 1
+    while (TRUE) {
+      yield <- a + b
+      a <<- b
+      b <<- yield
+      yield
+    }
+  }
+  
+  fib_gen <- fibonacci()
+  count <- 0
+  repeat {
+    current_fib <- fib_gen()
+    if (is_prime(current_fib)) {
+      count <- count + 1
+      if (count == n) return(current_fib)
+    }
+  }
+}","test_humaneval <- function() {
+    candidate <- prime_fib
+    stopifnot(isTRUE(all.equal(candidate(1), 2)))
+    stopifnot(isTRUE(all.equal(candidate(2), 3)))
+    stopifnot(isTRUE(all.equal(candidate(3), 5)))
+    stopifnot(isTRUE(all.equal(candidate(4), 13)))
+    stopifnot(isTRUE(all.equal(candidate(5), 89)))
+    stopifnot(isTRUE(all.equal(candidate(6), 233)))
+    stopifnot(isTRUE(all.equal(candidate(7), 1597)))
+    stopifnot(isTRUE(all.equal(candidate(8), 28657)))
+    stopifnot(isTRUE(all.equal(candidate(9), 514229)))
+    stopifnot(isTRUE(all.equal(candidate(10), 433494437)))
+}
+test_humaneval()"
+HumanEval_40,zho_Hans,r,"其他情况是 FALSE.如果列表中有三个不同的元素,则返回 TRUE 需要整数列表作为输入.# >>> triples_sum_to_zero(c(1, 3, 5, 0))
+# FALSE
+# >>> triples_sum_to_zero(c(1, 3, -2, 1))
+# TRUE
+# >>> triples_sum_to_zero(c(1, 2, 3, 7))
+# FALSE
+# >>> triples_sum_to_zero(c(2, 4, -5, 3, 9, 7))
+# TRUE
+# >>> triples_sum_to_zero(c(1))
+# FALSE
+triples_sum_to_zero <- function(l) {","triples_sum_to_zero <- function(l) {
+  n <- length(l)
+  if (n < 3) {
+    return(FALSE)
+  }
+  for (i in 1:(n - 2)) {
+    for (j in (i + 1):(n - 1)) {
+      for (k in (j + 1):n) {
+        if (l[i] + l[j] + l[k] == 0) {
+          return(TRUE)
+        }
+      }
+    }
+  }
+  return(FALSE)
+}","test_humaneval <- function() {
+    candidate <- triples_sum_to_zero
+    stopifnot(isTRUE(all.equal(candidate(c(1, 3, 5, 0)), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 3, 5, -1)), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 3, -2, 1)), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3, 7)), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 5, 7)), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(c(2, 4, -5, 3, 9, 7)), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1)), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 3, 5, -100)), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(c(100, 3, 5, -100)), FALSE)))
+}
+test_humaneval()"
+HumanEval_41,zho_Hans,r,"这一函数输出了此类碰撞的数量.它们的轨迹似乎没有碰撞.它们的动力是无限强大的,车辆在向右转向左的方向撞上了向右转向左的方向.两辆车相撞的速度是相同的.两组车辆从距离非常远的地方开始.同时,不同的组的n个车辆想象一下一条完全直的道路,car_race_collision <- function(n) {","car_race_collision <- function(n) {
+  # Each car moving left to right will eventually collide with each car moving right to left
+  return(n)
+}","test_humaneval <- function() {
+    candidate <- car_race_collision
+    stopifnot(isTRUE(all.equal(candidate(2), 4)))
+    stopifnot(isTRUE(all.equal(candidate(3), 9)))
+    stopifnot(isTRUE(all.equal(candidate(4), 16)))
+    stopifnot(isTRUE(all.equal(candidate(8), 64)))
+    stopifnot(isTRUE(all.equal(candidate(10), 100)))
+}
+test_humaneval()"
+HumanEval_42,zho_Hans,r,"返回列表中的元素增加了1.# >>> incr_list(c(1, 2, 3))
+# c(2, 3, 4)
+# >>> incr_list(c(5, 3, 5, 2, 3, 3, 9, 0, 123))
+# c(6, 4, 6, 3, 4, 4, 10, 1, 124)
+incr_list <- function(l) {","incr_list <- function(l) {
+  return(l + 1)
+}","test_humaneval <- function() {
+    candidate <- incr_list
+    stopifnot(isTRUE(all.equal(candidate(c()), c())))
+    stopifnot(isTRUE(all.equal(candidate(c(3, 2, 1)), c(4, 3, 2))))
+    stopifnot(isTRUE(all.equal(candidate(c(5, 2, 5, 2, 3, 3, 9, 0, 123)), c(6, 3, 6, 3, 4, 4, 10, 1, 124))))
+}
+test_humaneval()"
+HumanEval_43,zho_Hans,r,"其他情况是 FALSE.如果列表中有两个不同的元素是 作为输入,使用整数列表.# >>> pairs_sum_to_zero(c(1, 3, 5, 0))
+# FALSE
+# >>> pairs_sum_to_zero(c(1, 3, -2, 1))
+# FALSE
+# >>> pairs_sum_to_zero(c(1, 2, 3, 7))
+# FALSE
+# >>> pairs_sum_to_zero(c(2, 4, -5, 3, 5, 7))
+# TRUE
+# >>> pairs_sum_to_zero(c(1))
+# FALSE
+pairs_sum_to_zero <- function(l) {","pairs_sum_to_zero <- function(l) {
+  n <- length(l)
+  if (n < 2) return(FALSE)
+  
+  for (i in 1:(n-1)) {
+    for (j in (i+1):n) {
+      if (l[i] + l[j] == 0) {
+        return(TRUE)
+      }
+    }
+  }
+  
+  return(FALSE)
+}","test_humaneval <- function() {
+    candidate <- pairs_sum_to_zero
+    stopifnot(isTRUE(all.equal(candidate(c(1, 3, 5, 0)), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 3, -2, 1)), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3, 7)), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(c(2, 4, -5, 3, 5, 7)), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1)), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(c(-3, 9, -1, 3, 2, 30)), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(-3, 9, -1, 3, 2, 31)), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(-3, 9, -1, 4, 2, 30)), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(c(-3, 9, -1, 4, 2, 31)), FALSE)))
+}
+test_humaneval()"
+HumanEval_44,zho_Hans,r,"基数小于10个.在转换后返回字符串表示.输入数 x 的数值基础变为基础.# >>> change_base(8, 3)
+# '22'
+# >>> change_base(8, 2)
+# '1000'
+# >>> change_base(7, 2)
+# '111'
+change_base <- function(x, base) {","change_base <- function(x, base) {
+  if (x == 0) return('0')
+  result <- ''
+  while (x > 0) {
+    remainder <- x %% base
+    result <- paste0(remainder, result)
+    x <- x %/% base
+  }
+  return(result)
+}","test_humaneval <- function() {
+    candidate <- change_base
+    stopifnot(isTRUE(all.equal(candidate(8, 3), '22')))
+    stopifnot(isTRUE(all.equal(candidate(9, 3), '100')))
+    stopifnot(isTRUE(all.equal(candidate(234, 2), '11101010')))
+    stopifnot(isTRUE(all.equal(candidate(16, 2), '10000')))
+    stopifnot(isTRUE(all.equal(candidate(8, 2), '1000')))
+    stopifnot(isTRUE(all.equal(candidate(7, 2), '111')))
+    stopifnot(isTRUE(all.equal(candidate(2, 3), '2')))
+    stopifnot(isTRUE(all.equal(candidate(3, 4), '3')))
+    stopifnot(isTRUE(all.equal(candidate(4, 5), '4')))
+    stopifnot(isTRUE(all.equal(candidate(5, 6), '5')))
+    stopifnot(isTRUE(all.equal(candidate(6, 7), '6')))
+    stopifnot(isTRUE(all.equal(candidate(7, 8), '7')))
+}
+test_humaneval()"
+HumanEval_45,zho_Hans,r,"给定边长和高回归面积的三角形.# >>> triangle_area(5, 3)
+# 7.5
+triangle_area <- function(a, h) {","triangle_area <- function(a, h) {
+  return(0.5 * a * h)
+}","test_humaneval <- function() {
+    candidate <- triangle_area
+    stopifnot(isTRUE(all.equal(candidate(5, 3), 7.5)))
+    stopifnot(isTRUE(all.equal(candidate(2, 2), 2.0)))
+    stopifnot(isTRUE(all.equal(candidate(10, 8), 40.0)))
+}
+test_humaneval()"
+HumanEval_46,zho_Hans,r,"请写一个函数,有效计算 fib4 数序的第 n 元素. 不要使用递归. () ->  (-1) +  (-2) +  (-3) +  (-4).没有任何问题.4 (2) -> 2 没有任何问题.没有任何的4数列与博纳奇数列相似, 定义如下:# >>> fib4(5)
+# 4
+# >>> fib4(6)
+# 8
+# >>> fib4(7)
+# 14
+fib4 <- function(n) {","fib4 <- function(n) {
+  if (n == 0) return(0)
+  if (n == 1) return(0)
+  if (n == 2) return(2)
+  if (n == 3) return(0)
+  
+  fib_seq <- c(0, 0, 2, 0) # Initialize with base cases
+  for (i in 4:n) {
+    fib_seq[i] <- fib_seq[i-1] + fib_seq[i-2] + fib_seq[i-3] + fib_seq[i-4]
+  }
+  return(fib_seq[n])
+}","test_humaneval <- function() {
+    candidate <- fib4
+    stopifnot(isTRUE(all.equal(candidate(5), 4)))
+    stopifnot(isTRUE(all.equal(candidate(8), 28)))
+    stopifnot(isTRUE(all.equal(candidate(10), 104)))
+    stopifnot(isTRUE(all.equal(candidate(12), 386)))
+}
+test_humaneval()"
+HumanEval_47,zho_Hans,r,"列表中的元素的返回中位数# >>> median(c(3, 1, 2, 4, 5))
+# 3
+# >>> median(c(-10, 4, 6, 1000, 10, 20))
+# 15.0
+median <- function(l) {","median <- function(l) {
+  return(median(l))
+}","test_humaneval <- function() {
+    candidate <- median
+    stopifnot(isTRUE(all.equal(candidate(c(3, 1, 2, 4, 5)), 3)))
+    stopifnot(isTRUE(all.equal(candidate(c(-10, 4, 6, 1000, 10, 20)), 8.0)))
+    stopifnot(isTRUE(all.equal(candidate(c(5)), 5)))
+    stopifnot(isTRUE(all.equal(candidate(c(6, 5)), 5.5)))
+    stopifnot(isTRUE(all.equal(candidate(c(8, 1, 3, 9, 9, 2, 7)), 7)))
+}
+test_humaneval()"
+HumanEval_48,zho_Hans,r,"检查给定的字符串是否是平行符号# >>> is_palindrome('')
+# TRUE
+# >>> is_palindrome('aba')
+# TRUE
+# >>> is_palindrome('aaaaa')
+# TRUE
+# >>> is_palindrome('zbcd')
+# FALSE
+is_palindrome <- function(text) {","is_palindrome <- function(text) {
+  return(text == paste(rev(unlist(strsplit(text, NULL))), collapse = """"))
+}","test_humaneval <- function() {
+    candidate <- is_palindrome
+    stopifnot(isTRUE(all.equal(candidate(''), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('aba'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('aaaaa'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('zbcd'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('xywyx'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('xywyz'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('xywzx'), FALSE)))
+}
+test_humaneval()"
+HumanEval_49,zho_Hans,r,"返回2^n模块p (请注意数字).# >>> modp(3, 5)
+# 3
+# >>> modp(1101, 101)
+# 2
+# >>> modp(0, 101)
+# 1
+# >>> modp(3, 11)
+# 8
+# >>> modp(100, 101)
+# 1
+modp <- function(n, p) {","modp <- function(n, p) {
+  result <- 1
+  base <- 2
+  
+  while (n > 0) {
+    if (n %% 2 == 1) {
+      result <- (result * base) %% p
+    }
+    base <- (base * base) %% p
+    n <- n %/% 2
+  }
+  
+  return(result)
+}","test_humaneval <- function() {
+    candidate <- modp
+    stopifnot(isTRUE(all.equal(candidate(3, 5), 3)))
+    stopifnot(isTRUE(all.equal(candidate(1101, 101), 2)))
+    stopifnot(isTRUE(all.equal(candidate(0, 101), 1)))
+    stopifnot(isTRUE(all.equal(candidate(3, 11), 8)))
+    stopifnot(isTRUE(all.equal(candidate(100, 101), 1)))
+    stopifnot(isTRUE(all.equal(candidate(30, 5), 4)))
+    stopifnot(isTRUE(all.equal(candidate(31, 5), 3)))
+}
+test_humaneval()"
+HumanEval_51,zho_Hans,r,"remove_vowels是一个函数,它取字符串并返回没有元音的字符串. # >>> remove_vowels('')
+# ''
+# >>> remove_vowels('abcdef')
+# 'bcdf'
+# >>> remove_vowels('aaaaa')
+# ''
+# >>> remove_vowels('aaBAA')
+# 'B'
+# >>> remove_vowels('zbcd')
+# 'zbcd'
+remove_vowels <- function(text) {","remove_vowels <- function(text) {
+  gsub(""[aeiouAEIOU]"", """", text)
+}","test_humaneval <- function() {
+    candidate <- remove_vowels
+    stopifnot(isTRUE(all.equal(candidate(''), '')))
+    stopifnot(isTRUE(all.equal(candidate('abcdef\nghijklm'), 'bcdf\nghjklm')))
+    stopifnot(isTRUE(all.equal(candidate('fedcba'), 'fdcb')))
+    stopifnot(isTRUE(all.equal(candidate('eeeee'), '')))
+    stopifnot(isTRUE(all.equal(candidate('acBAA'), 'cB')))
+    stopifnot(isTRUE(all.equal(candidate('EcBOO'), 'cB')))
+    stopifnot(isTRUE(all.equal(candidate('ybcd'), 'ybcd')))
+}
+test_humaneval()"
+HumanEval_52,zho_Hans,r,"如果列表中的所有数字都低于值t,则返回TRUE.# >>> below_threshold(c(1, 2, 4, 10), 100)
+# TRUE
+# >>> below_threshold(c(1, 20, 4, 10), 5)
+# FALSE
+below_threshold <- function(l, t) {","below_threshold <- function(l, t) {
+  return(all(l < t))
+}","test_humaneval <- function() {
+    candidate <- below_threshold
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 4, 10), 100), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 20, 4, 10), 5), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 20, 4, 10), 21), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 20, 4, 10), 22), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 8, 4, 10), 11), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 8, 4, 10), 10), FALSE)))
+}
+test_humaneval()"
+HumanEval_53,zho_Hans,r,"增加两个数字x和y# >>> add(2, 3)
+# 5
+# >>> add(5, 7)
+# 12
+add <- function(x, y) {","add <- function(x, y) {
+  return(x + y)
+}","test_humaneval <- function() {
+    candidate <- add
+    stopifnot(isTRUE(all.equal(candidate(0, 1), 1)))
+    stopifnot(isTRUE(all.equal(candidate(1, 0), 1)))
+    stopifnot(isTRUE(all.equal(candidate(2, 3), 5)))
+    stopifnot(isTRUE(all.equal(candidate(5, 7), 12)))
+    stopifnot(isTRUE(all.equal(candidate(7, 5), 12)))
+}
+test_humaneval()"
+HumanEval_54,zho_Hans,r,"检查两个单词是否有相同的字符.# >>> same_chars('eabcdzzzz', 'dddzzzzzzzddeddabc')
+# TRUE
+# >>> same_chars('abcd', 'dddddddabc')
+# TRUE
+# >>> same_chars('dddddddabc', 'abcd')
+# TRUE
+# >>> same_chars('eabcd', 'dddddddabc')
+# FALSE
+# >>> same_chars('abcd', 'dddddddabce')
+# FALSE
+# >>> same_chars('eabcdzzzz', 'dddzzzzzzzddddabc')
+# FALSE
+same_chars <- function(s0, s1) {","same_chars <- function(s0, s1) {
+  return(identical(sort(unique(unlist(strsplit(s0, """")))), sort(unique(unlist(strsplit(s1, """"))))))
+}","test_humaneval <- function() {
+    candidate <- same_chars
+    stopifnot(isTRUE(all.equal(candidate('eabcdzzzz', 'dddzzzzzzzddeddabc'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('abcd', 'dddddddabc'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('dddddddabc', 'abcd'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('eabcd', 'dddddddabc'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('abcd', 'dddddddabcf'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('eabcdzzzz', 'dddzzzzzzzddddabc'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('aabb', 'aaccc'), FALSE)))
+}
+test_humaneval()"
+HumanEval_55,zho_Hans,r,"返回第n个斐波那契数.# >>> fib(10)
+# 55
+# >>> fib(1)
+# 1
+# >>> fib(8)
+# 21
+fib <- function(n) {","fib <- function(n) {
+  if (n <= 1) {
+    return(n)
+  }
+  a <- 0
+  b <- 1
+  for (i in 2:n) {
+    temp <- b
+    b <- a + b
+    a <- temp
+  }
+  return(b)
+}","test_humaneval <- function() {
+    candidate <- fib
+    stopifnot(isTRUE(all.equal(candidate(10), 55)))
+    stopifnot(isTRUE(all.equal(candidate(1), 1)))
+    stopifnot(isTRUE(all.equal(candidate(8), 21)))
+    stopifnot(isTRUE(all.equal(candidate(11), 89)))
+    stopifnot(isTRUE(all.equal(candidate(12), 144)))
+}
+test_humaneval()"
+HumanEval_56,zho_Hans,r,"如果每个开放括号都有相应的闭包括号,则返回TRUE.括号是一个字符串""<""和"">"".# >>> correct_bracketing('<')
+# FALSE
+# >>> correct_bracketing('<>')
+# TRUE
+# >>> correct_bracketing('<<><>>')
+# TRUE
+# >>> correct_bracketing('><<>')
+# FALSE
+correct_bracketing <- function(brackets) {","correct_bracketing <- function(brackets) {
+  count <- 0
+  for (char in strsplit(brackets, NULL)[[1]]) {
+    if (char == ""<"") {
+      count <- count + 1
+    } else if (char == "">"") {
+      count <- count - 1
+    }
+    if (count < 0) {
+      return(FALSE)
+    }
+  }
+  return(count == 0)
+}","test_humaneval <- function() {
+    candidate <- correct_bracketing
+    stopifnot(isTRUE(all.equal(candidate('<>'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('<<><>>'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('<><><<><>><>'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('<><><<<><><>><>><<><><<>>>'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('<<<><>>>>'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('><<>'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('<'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('<<<<'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('>'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('<<>'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('<><><<><>><>><<>'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('<><><<><>><>>><>'), FALSE)))
+}
+test_humaneval()"
+HumanEval_57,zho_Hans,r,"返回 TRUE 是列表元素单调增加或减少.# >>> monotonic(c(1, 2, 4, 20))
+# TRUE
+# >>> monotonic(c(1, 20, 4, 10))
+# FALSE
+# >>> monotonic(c(4, 1, 0, -10))
+# TRUE
+monotonic <- function(l) {","monotonic <- function(l) {
+  is_increasing <- all(diff(l) >= 0)
+  is_decreasing <- all(diff(l) <= 0)
+  return(is_increasing || is_decreasing)
+}","test_humaneval <- function() {
+    candidate <- monotonic
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 4, 10)), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 4, 20)), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 20, 4, 10)), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(c(4, 1, 0, -10)), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(4, 1, 1, 0)), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3, 2, 5, 60)), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3, 4, 5, 60)), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(9, 9, 9, 9)), TRUE)))
+}
+test_humaneval()"
+HumanEval_58,zho_Hans,r,"返回两个列表的排序的唯一的共同元素.# >>> common(c(1, 4, 3, 34, 653, 2, 5), c(5, 7, 1, 5, 9, 653, 121))
+# c(1, 5, 653)
+# >>> common(c(5, 3, 2, 8), c(3, 2))
+# c(2, 3)
+common <- function(l1, l2) {","common <- function(l1, l2) {
+  common_elements <- intersect(l1, l2)
+  sorted_unique_common <- sort(unique(common_elements))
+  return(sorted_unique_common)
+}","test_humaneval <- function() {
+    candidate <- common
+    stopifnot(isTRUE(all.equal(candidate(c(1, 4, 3, 34, 653, 2, 5), c(5, 7, 1, 5, 9, 653, 121)), c(1, 5, 653))))
+    stopifnot(isTRUE(all.equal(candidate(c(5, 3, 2, 8), c(3, 2)), c(2, 3))))
+    stopifnot(isTRUE(all.equal(candidate(c(4, 3, 2, 8), c(3, 2, 4)), c(2, 3, 4))))
+    stopifnot(isTRUE(all.equal(candidate(c(4, 3, 2, 8), c()), c())))
+}
+test_humaneval()"
+HumanEval_59,zho_Hans,r,"返回最大的n的质因数.假设n>1并不是质因数.# >>> largest_prime_factor(13195)
+# 29
+# >>> largest_prime_factor(2048)
+# 2
+largest_prime_factor <- function(n) {","largest_prime_factor <- function(n) {
+  # Initialize the largest prime factor
+  largest_prime <- -1
+  
+  # Remove factors of 2
+  while (n %% 2 == 0) {
+    largest_prime <- 2
+    n <- n / 2
+  }
+  
+  # Try odd factors from 3 upwards
+  factor <- 3
+  while (factor * factor <= n) {
+    while (n %% factor == 0) {
+      largest_prime <- factor
+      n <- n / factor
+    }
+    factor <- factor + 2
+  }
+  
+  # If n is a prime number greater than 2
+  if (n > 2) {
+    largest_prime <- n
+  }
+  
+  # Return the largest prime factor found
+  return(largest_prime)
+}","test_humaneval <- function() {
+    candidate <- largest_prime_factor
+    stopifnot(isTRUE(all.equal(candidate(15), 5)))
+    stopifnot(isTRUE(all.equal(candidate(27), 3)))
+    stopifnot(isTRUE(all.equal(candidate(63), 7)))
+    stopifnot(isTRUE(all.equal(candidate(330), 11)))
+    stopifnot(isTRUE(all.equal(candidate(13195), 29)))
+}
+test_humaneval()"
+HumanEval_60,zho_Hans,r,"sum_to_n是一个从1到n的数的和函数.# >>> sum_to_n(30)
+# 465
+# >>> sum_to_n(100)
+# 5050
+# >>> sum_to_n(5)
+# 15
+# >>> sum_to_n(10)
+# 55
+# >>> sum_to_n(1)
+# 1
+sum_to_n <- function(n) {","sum_to_n <- function(n) {
+  return(sum(1:n))
+}","test_humaneval <- function() {
+    candidate <- sum_to_n
+    stopifnot(isTRUE(all.equal(candidate(1), 1)))
+    stopifnot(isTRUE(all.equal(candidate(6), 21)))
+    stopifnot(isTRUE(all.equal(candidate(11), 66)))
+    stopifnot(isTRUE(all.equal(candidate(30), 465)))
+    stopifnot(isTRUE(all.equal(candidate(100), 5050)))
+}
+test_humaneval()"
+HumanEval_61,zho_Hans,r,"如果每个开放括号都有相应的闭包括号,则返回TRUE.括号是一个字符串"" ((""和"")"".# >>> correct_bracketing('(')
+# FALSE
+# >>> correct_bracketing('()')
+# TRUE
+# >>> correct_bracketing('(()())')
+# TRUE
+# >>> correct_bracketing(')(()')
+# FALSE
+correct_bracketing <- function(brackets) {","correct_bracketing <- function(brackets) {
+  balance <- 0
+  for (char in strsplit(brackets, NULL)[[1]]) {
+    if (char == ""("") {
+      balance <- balance + 1
+    } else if (char == "")"") {
+      balance <- balance - 1
+    }
+    if (balance < 0) {
+      return(FALSE)
+    }
+  }
+  return(balance == 0)
+}","test_humaneval <- function() {
+    candidate <- correct_bracketing
+    stopifnot(isTRUE(all.equal(candidate('()'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('(()())'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('()()(()())()'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('()()((()()())())(()()(()))'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('((()())))'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(')(()'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('('), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('(((('), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(')'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('(()'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('()()(()())())(()'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('()()(()())()))()'), FALSE)))
+}
+test_humaneval()"
+HumanEval_62,zho_Hans,r,"返回这个多项式的相同形式的导数.的值是xs[0]+xs[1] * x+xs[2] * x^2 + .... 代表一个多项式的系数.# >>> derivative(c(3, 1, 2, 4, 5))
+# c(1, 4, 12, 20)
+# >>> derivative(c(1, 2, 3))
+# c(2, 6)
+derivative <- function(xs) {","derivative <- function(xs) {
+  n <- length(xs)
+  if (n <= 1) return(numeric(0))  # Derivative of a constant is zero
+  
+  deriv <- numeric(n - 1)
+  for (i in 2:n) {
+    deriv[i - 1] <- xs[i] * (i - 1)
+  }
+  return(deriv)
+}","test_humaneval <- function() {
+    candidate <- derivative
+    stopifnot(isTRUE(all.equal(candidate(c(3, 1, 2, 4, 5)), c(1, 4, 12, 20))))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3)), c(2, 6))))
+    stopifnot(isTRUE(all.equal(candidate(c(3, 2, 1)), c(2, 2))))
+    stopifnot(isTRUE(all.equal(candidate(c(3, 2, 1, 0, 4)), c(2, 2, 0, 16))))
+    stopifnot(isTRUE(all.equal(candidate(c(1)), c())))
+}
+test_humaneval()"
+HumanEval_63,zho_Hans,r,"请写一个函数来有效计算fibfib数列的第n个元素.                                                                                                                                                                                                                                                                                         形形数序列与形形数序列相似, 定义如下:# >>> fibfib(1)
+# 0
+# >>> fibfib(5)
+# 4
+# >>> fibfib(8)
+# 24
+fibfib <- function(n) {","fibfib <- function(n) {
+  # Base cases
+  if (n == 0) return(0)
+  if (n == 1) return(0)
+  if (n == 2) return(1)
+
+  # Initialize the first three values
+  fibfib_values <- c(0, 0, 1)
+  
+  # Compute fibfib for the rest using iteration
+  for (i in 3:n) {
+    fibfib_values[i + 1] <- fibfib_values[i] + fibfib_values[i - 1] + fibfib_values[i - 2]
+  }
+  # Return the nth value
+  return(fibfib_values[n + 1])
+}","test_humaneval <- function() {
+    candidate <- fibfib
+    stopifnot(isTRUE(all.equal(candidate(2), 1)))
+    stopifnot(isTRUE(all.equal(candidate(1), 0)))
+    stopifnot(isTRUE(all.equal(candidate(5), 4)))
+    stopifnot(isTRUE(all.equal(candidate(8), 24)))
+    stopifnot(isTRUE(all.equal(candidate(10), 81)))
+    stopifnot(isTRUE(all.equal(candidate(12), 274)))
+    stopifnot(isTRUE(all.equal(candidate(14), 927)))
+}
+test_humaneval()"
+HumanEval_64,zho_Hans,r,"举例:只有在给定的词的末尾时才会出现.在此情况下,元音是""a"""",e"""",i"""",o"""",u"". 在这里"",y""也是""a""返回字符串中的元音数.写一个函数,它需要一个字符串来表示# >>> vowels_count('abcde')
+# 2
+# >>> vowels_count('ACEDY')
+# 3
+vowels_count <- function(s) {","vowels_count <- function(s) {
+  s <- tolower(s)
+  n <- nchar(s)
+  count <- sum(unlist(strsplit(s, NULL)) %in% c('a', 'e', 'i', 'o', 'u'))
+  if (n > 0 && substr(s, n, n) == 'y') {
+    count <- count + 1
+  }
+  return(count)
+}","test_humaneval <- function() {
+    candidate <- vowels_count
+    stopifnot(isTRUE(all.equal(candidate('abcde'), 2)))
+    stopifnot(isTRUE(all.equal(candidate('Alone'), 3)))
+    stopifnot(isTRUE(all.equal(candidate('key'), 2)))
+    stopifnot(isTRUE(all.equal(candidate('bye'), 1)))
+    stopifnot(isTRUE(all.equal(candidate('keY'), 2)))
+    stopifnot(isTRUE(all.equal(candidate('bYe'), 1)))
+    stopifnot(isTRUE(all.equal(candidate('ACEDY'), 3)))
+}
+test_humaneval()"
+HumanEval_65,zho_Hans,r,"如果shift > 数字数,则返回数字反转.返回结果作为一个字符串.循环移动整数x的位数, 移动位数右转.# >>> circular_shift(12, 1)
+# '21'
+# >>> circular_shift(12, 2)
+# '12'
+circular_shift <- function(x, shift) {","circular_shift <- function(x, shift) {
+  digits <- as.character(x)
+  n <- nchar(digits)
+  
+  if (shift > n) {
+    return(paste0(rev(unlist(strsplit(digits, """"))), collapse = """"))
+  }
+  
+  shift <- shift %% n
+  if (shift == 0) {
+    return(digits)
+  }
+  
+  right_part <- substr(digits, n - shift + 1, n)
+  left_part <- substr(digits, 1, n - shift)
+  result <- paste0(right_part, left_part)
+  
+  return(result)
+}","test_humaneval <- function() {
+    candidate <- circular_shift
+    stopifnot(isTRUE(all.equal(candidate(100, 2), '001')))
+    stopifnot(isTRUE(all.equal(candidate(12, 2), '12')))
+    stopifnot(isTRUE(all.equal(candidate(97, 8), '79')))
+    stopifnot(isTRUE(all.equal(candidate(12, 1), '21')))
+    stopifnot(isTRUE(all.equal(candidate(11, 101), '11')))
+}
+test_humaneval()"
+HumanEval_66,zho_Hans,r,"举例:美国数字化代码.写一个函数, 输入字符串, 仅返回上方字符的和.任务# >>> digitSum('')
+# 0
+# >>> digitSum('abAB')
+# 131
+# >>> digitSum('abcCd')
+# 67
+# >>> digitSum('helloE')
+# 69
+# >>> digitSum('woArBld')
+# 131
+# >>> digitSum('aAaaaXa')
+# 153
+digitSum <- function(s) {","digitSum <- function(s) {
+  sum(sapply(unlist(strsplit(s, """")), function(x) {
+    if (grepl(""[A-Z]"", x)) {
+      return(as.integer(charToRaw(x)))
+    } else {
+      return(0)
+    }
+  }))
+}","test_humaneval <- function() {
+    candidate <- digitSum
+    stopifnot(isTRUE(all.equal(candidate(''), 0)))
+    stopifnot(isTRUE(all.equal(candidate('abAB'), 131)))
+    stopifnot(isTRUE(all.equal(candidate('abcCd'), 67)))
+    stopifnot(isTRUE(all.equal(candidate('helloE'), 69)))
+    stopifnot(isTRUE(all.equal(candidate('woArBld'), 131)))
+    stopifnot(isTRUE(all.equal(candidate('aAaaaXa'), 153)))
+    stopifnot(isTRUE(all.equal(candidate(' How are yOu?'), 151)))
+    stopifnot(isTRUE(all.equal(candidate('You arE Very Smart'), 327)))
+}
+test_humaneval()"
+HumanEval_67,zho_Hans,r,"对于 examble:在篮子里返回篮子里果的数量.子和果和一个整数表示果实总数给出代表总数的字符串它们被分发在一个水果篮里,代表一个数量的果和子.# >>> fruit_distribution('5 apples and 6 oranges', 19)
+# 8
+# >>> fruit_distribution('0 apples and 1 oranges', 3)
+# 2
+# >>> fruit_distribution('2 apples and 3 oranges', 100)
+# 95
+# >>> fruit_distribution('100 apples and 1 oranges', 120)
+# 19
+fruit_distribution <- function(s, n) {","fruit_distribution <- function(s, n) {
+  # Extract numbers using regular expressions
+  matches <- regmatches(s, gregexpr(""\\d+"", s))
+  # Convert extracted number strings to integers
+  fruits_count <- as.integer(unlist(matches))
+  # Total fruits described in the string
+  total_apples_oranges <- sum(fruits_count)
+  # Calculate mangoes
+  mangoes <- n - total_apples_oranges
+  return(mangoes)
+}","test_humaneval <- function() {
+    candidate <- fruit_distribution
+    stopifnot(isTRUE(all.equal(candidate('5 apples and 6 oranges', 19), 8)))
+    stopifnot(isTRUE(all.equal(candidate('5 apples and 6 oranges', 21), 10)))
+    stopifnot(isTRUE(all.equal(candidate('0 apples and 1 oranges', 3), 2)))
+    stopifnot(isTRUE(all.equal(candidate('1 apples and 0 oranges', 3), 2)))
+    stopifnot(isTRUE(all.equal(candidate('2 apples and 3 oranges', 100), 95)))
+    stopifnot(isTRUE(all.equal(candidate('2 apples and 3 oranges', 5), 0)))
+    stopifnot(isTRUE(all.equal(candidate('1 apples and 100 oranges', 120), 19)))
+}
+test_humaneval()"
+HumanEval_68,zho_Hans,r,"举例1:如果没有偶数值或给定的向量是空的,返回[].摘取的节点应该在一个列表中返回,[smallest_value,它的索引],,如果发现有多个具有相同最小偶数值的节点,则返回具有最小索引的节点. 摘取的节点应该是最小偶数值的节点.您的任务是摘取一个节点并将其返回.""给定一个向量代表树的分支, 具有非负整数节点.# >>> pluck(c(4, 2, 3))
+# c(2, 1)
+# Explanation: 2 has the smallest even value, and 2 has the smallest index.
+# Example 2:
+# >>> pluck(c(1, 2, 3))
+# c(2, 1)
+# Explanation: 2 has the smallest even value, and 2 has the smallest index.
+# Example 3:
+# >>> pluck(c())
+# c()
+# Example 4:
+# >>> pluck(c(5, 0, 3, 0, 4, 2))
+# c(0, 1)
+# Explanation: 0 is the smallest value, but  there are two zeros,
+#              so we will choose the first zero, which has the smallest index.
+# Constraints:
+#     * 1 <= nodes.length <= 10000
+#     * 0 <= node.value
+pluck <- function(arr) {","pluck <- function(arr) {
+  # Find indices for even numbers in the array
+  even_indices <- which(arr %% 2 == 0)
+  
+  # If no even numbers are found, return an empty list
+  if (length(even_indices) == 0) {
+    return(c())
+  }
+  
+  # Extract even numbers
+  even_values <- arr[even_indices]
+  
+  # Find the smallest even value
+  min_even_value <- min(even_values)
+  
+  # Find the index of the first occurrence of the smallest even value
+  min_index <- even_indices[which.min(even_values)]
+  
+  # Return the smallest even value and its index (0-based index)
+  return(c(min_even_value, min_index - 1))
+}","test_humaneval <- function() {
+    candidate <- pluck
+    stopifnot(isTRUE(all.equal(candidate(c(4, 2, 3)), c(2, 1))))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3)), c(2, 1))))
+    stopifnot(isTRUE(all.equal(candidate(c()), c())))
+    stopifnot(isTRUE(all.equal(candidate(c(5, 0, 3, 0, 4, 2)), c(0, 1))))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3, 0, 5, 3)), c(0, 3))))
+    stopifnot(isTRUE(all.equal(candidate(c(5, 4, 8, 4, 8)), c(4, 1))))
+    stopifnot(isTRUE(all.equal(candidate(c(7, 6, 7, 1)), c(6, 1))))
+    stopifnot(isTRUE(all.equal(candidate(c(7, 9, 7, 1)), c())))
+}
+test_humaneval()"
+HumanEval_69,zho_Hans,r,"举例:如果没有这样的值,返回 -1.一个整数的频率是它在列表中出现的次数.且其频率大于或等于整数本身的值.返回最大的整数大于 # >>> search(c(4, 1, 2, 2, 3, 1))
+# 2
+# >>> search(c(1, 2, 2, 3, 3, 3, 4, 4, 4))
+# 3
+# >>> search(c(5, 5, 4, 4, 4))
+# -1
+search <- function(lst) {","search <- function(lst) {
+  # Calculate the frequency table
+  freq_table <- table(lst)
+  
+  # Convert to a data frame for easier processing
+  freq_df <- as.data.frame(freq_table)
+  
+  # Rename columns for convenience
+  names(freq_df) <- c(""value"", ""frequency"")
+  
+  # Filter the values where the frequency is greater than or equal to the value itself
+  valid_values <- freq_df[freq_df$value <= freq_df$frequency, ""value""]
+  
+  # If no valid values exist, return -1
+  if (length(valid_values) == 0) {
+    return(-1)
+  }
+  
+  # Otherwise, return the greatest valid value
+  return(max(valid_values))
+}","test_humaneval <- function() {
+    candidate <- search
+    stopifnot(isTRUE(all.equal(candidate(c(5, 5, 5, 5, 1)), 1)))
+    stopifnot(isTRUE(all.equal(candidate(c(4, 1, 4, 1, 4, 4)), 4)))
+    stopifnot(isTRUE(all.equal(candidate(c(3, 3)), -1)))
+    stopifnot(isTRUE(all.equal(candidate(c(8, 8, 8, 8, 8, 8, 8, 8)), 8)))
+    stopifnot(isTRUE(all.equal(candidate(c(2, 3, 3, 2, 2)), 2)))
+    stopifnot(isTRUE(all.equal(candidate(c(2, 7, 8, 8, 4, 8, 7, 3, 9, 6, 5, 10, 4, 3, 6, 7, 1, 7, 4, 10, 8, 1)), 1)))
+    stopifnot(isTRUE(all.equal(candidate(c(3, 2, 8, 2)), 2)))
+    stopifnot(isTRUE(all.equal(candidate(c(6, 7, 1, 8, 8, 10, 5, 8, 5, 3, 10)), 1)))
+    stopifnot(isTRUE(all.equal(candidate(c(8, 8, 3, 6, 5, 6, 4)), -1)))
+    stopifnot(isTRUE(all.equal(candidate(c(6, 9, 6, 7, 1, 4, 7, 1, 8, 8, 9, 8, 10, 10, 8, 4, 10, 4, 10, 1, 2, 9, 5, 7, 9)), 1)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 9, 10, 1, 3)), 1)))
+    stopifnot(isTRUE(all.equal(candidate(c(6, 9, 7, 5, 8, 7, 5, 3, 7, 5, 10, 10, 3, 6, 10, 2, 8, 6, 5, 4, 9, 5, 3, 10)), 5)))
+    stopifnot(isTRUE(all.equal(candidate(c(1)), 1)))
+    stopifnot(isTRUE(all.equal(candidate(c(8, 8, 10, 6, 4, 3, 5, 8, 2, 4, 2, 8, 4, 6, 10, 4, 2, 1, 10, 2, 1, 1, 5)), 4)))
+    stopifnot(isTRUE(all.equal(candidate(c(2, 10, 4, 8, 2, 10, 5, 1, 2, 9, 5, 5, 6, 3, 8, 6, 4, 10)), 2)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 6, 10, 1, 6, 9, 10, 8, 6, 8, 7, 3)), 1)))
+    stopifnot(isTRUE(all.equal(candidate(c(9, 2, 4, 1, 5, 1, 5, 2, 5, 7, 7, 7, 3, 10, 1, 5, 4, 2, 8, 4, 1, 9, 10, 7, 10, 2, 8, 10, 9, 4)), 4)))
+    stopifnot(isTRUE(all.equal(candidate(c(2, 6, 4, 2, 8, 7, 5, 6, 4, 10, 4, 6, 3, 7, 8, 8, 3, 1, 4, 2, 2, 10, 7)), 4)))
+    stopifnot(isTRUE(all.equal(candidate(c(9, 8, 6, 10, 2, 6, 10, 2, 7, 8, 10, 3, 8, 2, 6, 2, 3, 1)), 2)))
+    stopifnot(isTRUE(all.equal(candidate(c(5, 5, 3, 9, 5, 6, 3, 2, 8, 5, 6, 10, 10, 6, 8, 4, 10, 7, 7, 10, 8)), -1)))
+    stopifnot(isTRUE(all.equal(candidate(c(10)), -1)))
+    stopifnot(isTRUE(all.equal(candidate(c(9, 7, 7, 2, 4, 7, 2, 10, 9, 7, 5, 7, 2)), 2)))
+    stopifnot(isTRUE(all.equal(candidate(c(5, 4, 10, 2, 1, 1, 10, 3, 6, 1, 8)), 1)))
+    stopifnot(isTRUE(all.equal(candidate(c(7, 9, 9, 9, 3, 4, 1, 5, 9, 1, 2, 1, 1, 10, 7, 5, 6, 7, 6, 7, 7, 6)), 1)))
+    stopifnot(isTRUE(all.equal(candidate(c(3, 10, 10, 9, 2)), -1)))
+}
+test_humaneval()"
+HumanEval_70,zho_Hans,r,"举例:接下来是剩余的整数的最大数,然后是最小数,等等.奇怪的分类,是当你从最小值开始,给定整数列表,返回奇数列表.# >>> strange_sort_list(c(1, 2, 3, 4))
+# c(1, 4, 2, 3)
+# >>> strange_sort_list(c(5, 5, 5, 5))
+# c(5, 5, 5, 5)
+# >>> strange_sort_list(c())
+# c()
+strange_sort_list <- function(lst) {","strange_sort_list <- function(lst) {
+  result <- c()
+  while (length(lst) > 0) {
+    # Find and append the minimum of the list
+    min_val <- min(lst)
+    result <- c(result, min_val)
+    lst <- lst[lst != min_val]
+    
+    # Check if list is not empty before finding maximum
+    if (length(lst) > 0) {
+      # Find and append the maximum of the list
+      max_val <- max(lst)
+      result <- c(result, max_val)
+      lst <- lst[lst != max_val]
+    }
+  }
+  return(result)
+}","test_humaneval <- function() {
+    candidate <- strange_sort_list
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3, 4)), c(1, 4, 2, 3))))
+    stopifnot(isTRUE(all.equal(candidate(c(5, 6, 7, 8, 9)), c(5, 9, 6, 8, 7))))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3, 4, 5)), c(1, 5, 2, 4, 3))))
+    stopifnot(isTRUE(all.equal(candidate(c(5, 6, 7, 8, 9, 1)), c(1, 9, 5, 8, 6, 7))))
+    stopifnot(isTRUE(all.equal(candidate(c(5, 5, 5, 5)), c(5, 5, 5, 5))))
+    stopifnot(isTRUE(all.equal(candidate(c()), c())))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3, 4, 5, 6, 7, 8)), c(1, 8, 2, 7, 3, 6, 4, 5))))
+    stopifnot(isTRUE(all.equal(candidate(c(0, 2, 2, 2, 5, 5, -5, -5)), c(-5, 5, -5, 5, 0, 2, 2, 2))))
+    stopifnot(isTRUE(all.equal(candidate(c(111111)), c(111111))))
+}
+test_humaneval()"
+HumanEval_71,zho_Hans,r,"举例:没有任何其他方面.三边是有效的三角形,如果任何两边的和大于.否则返回-1 如果三边构成一个有效的三角形,则三角形将被圆成2个小数点.给出三角形三边的长度. 返回的面积# >>> triangle_area(3, 4, 5)
+# 6.0
+# >>> triangle_area(1, 2, 10)
+# -1
+triangle_area <- function(a, b, c) {","triangle_area <- function(a, b, c) {
+  if (a + b > c && a + c > b && b + c > a) {
+    # Using Heron's formula
+    s <- (a + b + c) / 2
+    area <- sqrt(s * (s - a) * (s - b) * (s - c))
+    return(round(area, 2))
+  } else {
+    return(-1)
+  }
+}","test_humaneval <- function() {
+    candidate <- triangle_area
+    stopifnot(isTRUE(all.equal(candidate(3, 4, 5), 6.0)))
+    stopifnot(isTRUE(all.equal(candidate(1, 2, 10), -1)))
+    stopifnot(isTRUE(all.equal(candidate(4, 8, 5), 8.18)))
+    stopifnot(isTRUE(all.equal(candidate(2, 2, 2), 1.73)))
+    stopifnot(isTRUE(all.equal(candidate(1, 2, 3), -1)))
+    stopifnot(isTRUE(all.equal(candidate(10, 5, 7), 16.25)))
+    stopifnot(isTRUE(all.equal(candidate(2, 6, 3), -1)))
+    stopifnot(isTRUE(all.equal(candidate(1, 1, 1), 0.43)))
+    stopifnot(isTRUE(all.equal(candidate(2, 2, 10), -1)))
+}
+test_humaneval()"
+HumanEval_72,zho_Hans,r,"举例:如果物体q平衡 (它是一个平行列表),并且其元素的总和小于或等于最大可能的重量w,则它会飞.写一个函数,如果对象q会飞,则返回TRUE,否则返回FALSE.# >>> will_it_fly(c(1, 2), 5)
+# FALSE
+# # 1+2 is less than the maximum possible weight, but it's unbalanced.
+# >>> will_it_fly(c(3, 2, 3), 1)
+# FALSE
+# # it's balanced, but 3+2+3 is more than the maximum possible weight.
+# >>> will_it_fly(c(3, 2, 3), 9)
+# TRUE
+# # 3+2+3 is less than the maximum possible weight, and it's balanced.
+# >>> will_it_fly(c(3), 5)
+# TRUE
+# # 3 is less than the maximum possible weight, and it's balanced.
+will_it_fly <- function(q, w) {","will_it_fly <- function(q, w) {
+  is_palindromic <- function(lst) {
+    return(all(lst == rev(lst)))
+  }
+  
+  is_balanced <- is_palindromic(q)
+  sum_elements <- sum(q)
+  
+  return(is_balanced && (sum_elements <= w))
+}","test_humaneval <- function() {
+    candidate <- will_it_fly
+    stopifnot(isTRUE(all.equal(candidate(c(3, 2, 3), 9), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2), 5), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(c(3), 5), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(3, 2, 3), 1), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3), 6), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(c(5), 5), TRUE)))
+}
+test_humaneval()"
+HumanEval_73,zho_Hans,r,"例如:您可以在一次更改中将一个元素更改为任何其他元素.需要改变以使向量成为平行体.平行体向量是给定一个整数的向量arr, 找到最小的元素数,# >>> smallest_change(c(1, 2, 3, 5, 4, 7, 9, 6))
+# 4
+# >>> smallest_change(c(1, 2, 3, 4, 3, 2, 2))
+# 1
+# >>> smallest_change(c(1, 2, 3, 2, 1))
+# 0
+smallest_change <- function(arr) {","smallest_change <- function(arr) {
+  n <- length(arr)
+  changes <- 0
+  
+  for (i in 1:(n %/% 2)) {
+    if (arr[i] != arr[n - i + 1]) {
+      changes <- changes + 1
+    }
+  }
+  
+  return(changes)
+}","test_humaneval <- function() {
+    candidate <- smallest_change
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3, 5, 4, 7, 9, 6)), 4)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3, 4, 3, 2, 2)), 1)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 4, 2)), 1)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 4, 4, 2)), 1)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3, 2, 1)), 0)))
+    stopifnot(isTRUE(all.equal(candidate(c(3, 1, 1, 3)), 0)))
+    stopifnot(isTRUE(all.equal(candidate(c(1)), 0)))
+    stopifnot(isTRUE(all.equal(candidate(c(0, 1)), 1)))
+}
+test_humaneval()"
+HumanEval_74,zho_Hans,r,"举例 如果两个列表的字符数相同,返回第一个列表.列表中的所有字符串的总字符数量小于其他列表.写一个函数,接受两个字符串列表,并返回具有  的列表.# >>> total_match(c(), c())
+# c()
+# >>> total_match(c('hi', 'admin'), c('hI', 'Hi'))
+# c('hI', 'Hi')
+# >>> total_match(c('hi', 'admin'), c('hi', 'hi', 'admin', 'project'))
+# c('hi', 'admin')
+# >>> total_match(c('hi', 'admin'), c('hI', 'hi', 'hi'))
+# c('hI', 'hi', 'hi')
+# >>> total_match(c('4'), c('1', '2', '3', '4', '5'))
+# c('4')
+total_match <- function(lst1, lst2) {","total_match <- function(lst1, lst2) {
+  chars_count <- function(lst) {
+    sum(nchar(lst))
+  }
+  
+  count1 <- chars_count(lst1)
+  count2 <- chars_count(lst2)
+  
+  if (count1 < count2) {
+    return(lst1)
+  } else if (count1 > count2) {
+    return(lst2)
+  } else {
+    return(lst1)
+  }
+}","test_humaneval <- function() {
+    candidate <- total_match
+    stopifnot(isTRUE(all.equal(candidate(c(), c()), c())))
+    stopifnot(isTRUE(all.equal(candidate(c('hi', 'admin'), c('hi', 'hi')), c('hi', 'hi'))))
+    stopifnot(isTRUE(all.equal(candidate(c('hi', 'admin'), c('hi', 'hi', 'admin', 'project')), c('hi', 'admin'))))
+    stopifnot(isTRUE(all.equal(candidate(c('4'), c('1', '2', '3', '4', '5')), c('4'))))
+    stopifnot(isTRUE(all.equal(candidate(c('hi', 'admin'), c('hI', 'Hi')), c('hI', 'Hi'))))
+    stopifnot(isTRUE(all.equal(candidate(c('hi', 'admin'), c('hI', 'hi', 'hi')), c('hI', 'hi', 'hi'))))
+    stopifnot(isTRUE(all.equal(candidate(c('hi', 'admin'), c('hI', 'hi', 'hii')), c('hi', 'admin'))))
+    stopifnot(isTRUE(all.equal(candidate(c(), c('this')), c())))
+    stopifnot(isTRUE(all.equal(candidate(c('this'), c()), c())))
+}
+test_humaneval()"
+HumanEval_75,zho_Hans,r,"举例:知道 (a) 小于100.其他情况则是错误的.写一个函数,如果给定的数是3个素数的乘法,则返回true.# >>> is_multiply_prime(30)
+# TRUE
+# 30 = 2 * 3 * 5
+is_multiply_prime <- function(a) {","is_multiply_prime <- function(a) {
+  is_prime <- function(n) {
+    if (n <= 1) return(FALSE)
+    if (n <= 3) return(TRUE)
+    if (n %% 2 == 0 || n %% 3 == 0) return(FALSE)
+    i <- 5
+    while (i * i <= n) {
+      if (n %% i == 0 || n %% (i + 2) == 0) return(FALSE)
+      i <- i + 6
+    }
+    return(TRUE)
+  }
+
+  if (a >= 100) return(FALSE)
+  
+  primes <- c()
+  for (i in 2:a) {
+    if (is_prime(i)) {
+      primes <- c(primes, i)
+    }
+  }
+  
+  for (i in 1:length(primes)) {
+    for (j in i:length(primes)) {
+      for (k in j:length(primes)) {
+        if (primes[i] * primes[j] * primes[k] == a) {
+          return(TRUE)
+        }
+      }
+    }
+  }
+  
+  return(FALSE)
+}","test_humaneval <- function() {
+    candidate <- is_multiply_prime
+    stopifnot(isTRUE(all.equal(candidate(5), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(30), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(8), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(10), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(125), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(105), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(126), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(729), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(891), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(1001), TRUE)))
+}
+test_humaneval()"
+HumanEval_76,zho_Hans,r,"例如:如果n**int=x,则x是n的简单次数在其他情况下, n 的权力和 false.您的任务是写一个函数,如果一个数 x 是一个简单的# >>> is_simple_power(1, 4)
+# TRUE
+# >>> is_simple_power(2, 2)
+# TRUE
+# >>> is_simple_power(8, 2)
+# TRUE
+# >>> is_simple_power(3, 2)
+# FALSE
+# >>> is_simple_power(3, 1)
+# FALSE
+# >>> is_simple_power(5, 3)
+# FALSE
+is_simple_power <- function(x, n) {","is_simple_power <- function(x, n) {
+  if (x == 1) return(TRUE)
+  power <- 1
+  while (power < x) {
+    power <- power * n
+    if (power == x) return(TRUE)
+  }
+  return(FALSE)
+}","test_humaneval <- function() {
+    candidate <- is_simple_power
+    stopifnot(isTRUE(all.equal(candidate(16, 2), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(143214, 16), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(4, 2), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(9, 3), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(16, 4), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(24, 2), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(128, 4), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(12, 6), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(1, 1), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(1, 12), TRUE)))
+}
+test_humaneval()"
+HumanEval_77,zho_Hans,r,"举例:注意:您可以假设输入总是有效的.如果这个数是某个整数的立方体.写一个函数,它取一个整数 a,并返回 TRUE # >>> iscube(1)
+# TRUE
+# >>> iscube(2)
+# FALSE
+# >>> iscube(-1)
+# TRUE
+# >>> iscube(64)
+# TRUE
+# >>> iscube(0)
+# TRUE
+# >>> iscube(180)
+# FALSE
+iscube <- function(a) {","iscube <- function(a) {
+  if (a == 0) return(TRUE)
+  root <- round(abs(a)^(1/3))
+  return(root^3 == abs(a))
+}","test_humaneval <- function() {
+    candidate <- iscube
+    stopifnot(isTRUE(all.equal(candidate(1), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(2), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(-1), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(64), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(180), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(1000), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(0), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(1729), FALSE)))
+}
+test_humaneval()"
+HumanEval_78,zho_Hans,r,"举例:标志 A,B,C,D,E,F 总是大写的注意:您可以假设输入总是正确或空字符串,值的值是指指数的值.您必须确定以下数字中的一个数: 2, 3, 5, 7, 质数是2,3,5,7,11,13,17,... 它们是十六进制数字是0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F. 它们是指一个数字,没有两个较小的自然数的乘积).那些是素数的数字 (素数,或一个素数,是一个自然数)作为一个字符串, 计算十六进制数字的数量.您被要求编写一个接收函数.# >>> hex_key('AB')
+# 1
+# >>> hex_key('1077E')
+# 2
+# >>> hex_key('ABED1A33')
+# 4
+# >>> hex_key('123456789ABCDEF0')
+# 6
+# >>> hex_key('2020')
+# 2
+hex_key <- function(num) {","hex_key <- function(num) {
+  # Define the set of prime hexadecimal digits
+  prime_hex_digits <- c('2', '3', '5', '7', 'B', 'D')
+  
+  # Initialize a counter
+  count <- 0
+  
+  # Convert the input string to a list of characters
+  chars <- strsplit(num, NULL)[[1]]
+  
+  # Loop over each character in the list
+  for (char in chars) {
+    # Check if the character is in the list of prime hexadecimal digits
+    if (char %in% prime_hex_digits) {
+      # Increment the count
+      count <- count + 1
+    }
+  }
+  
+  # Return the count
+  return(count)
+}","test_humaneval <- function() {
+    candidate <- hex_key
+    stopifnot(isTRUE(all.equal(candidate('AB'), 1)))
+    stopifnot(isTRUE(all.equal(candidate('1077E'), 2)))
+    stopifnot(isTRUE(all.equal(candidate('ABED1A33'), 4)))
+    stopifnot(isTRUE(all.equal(candidate('2020'), 2)))
+    stopifnot(isTRUE(all.equal(candidate('123456789ABCDEF0'), 6)))
+    stopifnot(isTRUE(all.equal(candidate('112233445566778899AABBCCDDEEFF00'), 12)))
+}
+test_humaneval()"
+HumanEval_79,zho_Hans,r,"举例:额外的字符是为了帮助格式.在字符串的开始和结束会有额外的""db""字符.字符串中的每个字符都将是""0""或""1"".函数应该返回一个字符串,每个字符代表一个二进制的字符.您将得到一个以小数形式的数字, 您的任务是将其转换为# >>> decimal_to_binary(15)
+# 'db1111db'
+# >>> decimal_to_binary(32)
+# 'db100000db'
+decimal_to_binary <- function(decimal) {","decimal_to_binary <- function(decimal) {
+  binary_string <- as.character(intToBits(decimal))
+  binary_clean <- paste0(rev(binary_string), collapse = """")
+  binary_trimmed <- sub(""^0+"", """", binary_clean)
+  return(paste0(""db"", binary_trimmed, ""db""))
+}","test_humaneval <- function() {
+    candidate <- decimal_to_binary
+    stopifnot(isTRUE(all.equal(candidate(0), 'db0db')))
+    stopifnot(isTRUE(all.equal(candidate(32), 'db100000db')))
+    stopifnot(isTRUE(all.equal(candidate(103), 'db1100111db')))
+    stopifnot(isTRUE(all.equal(candidate(15), 'db1111db')))
+}
+test_humaneval()"
+HumanEval_80,zho_Hans,r,"例如:如果字符串长度至少为3个,并且每3个连续字母都不同,则该字符串是 hapr 您的任务是检查字符串是否正确.给你一个字符串 s.# >>> is_happy('a')
+# FALSE
+# >>> is_happy('aa')
+# FALSE
+# >>> is_happy('abcd')
+# TRUE
+# >>> is_happy('aabb')
+# FALSE
+# >>> is_happy('adb')
+# TRUE
+# >>> is_happy('xyy')
+# FALSE
+is_happy <- function(s) {","is_happy <- function(s) {
+  n <- nchar(s)
+  if (n < 3) {
+    return(FALSE)
+  }
+  for (i in 1:(n - 2)) {
+    if (length(unique(substring(s, i, i + 2))) != 3) {
+      return(FALSE)
+    }
+  }
+  return(TRUE)
+}","test_humaneval <- function() {
+    candidate <- is_happy
+    stopifnot(isTRUE(all.equal(candidate('a'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('aa'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('abcd'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('aabb'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('adb'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('xyy'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('iopaxpoi'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('iopaxioi'), FALSE)))
+}
+test_humaneval()"
+HumanEval_81,zho_Hans,r,"举例:没有.其他超过0.7 D> 1.0 D+ 其他> 1.3 C- 没有超过1.7°C超过2.0°C> 2.3 B- 其他> 2.7 B 其他> 3.0 B+ 其他> 3.3 A- 其他> 3.7 A 其他没有任何问题.平均成绩:函数可以使用下面表输出字母等级列表:她给了你一些学生的平均成绩,你必须写下来.唯一的问题是,她失去了她用来评分的代码.学生们的教育工作者们也在为学生们提供各种帮助.现在是学期的最后一周,老师要给分.# >>> grade_equation(c(4.0, 3, 1.7, 2, 3.5))
+# c('A+', 'B', 'C-', 'C', 'A-')
+numerical_letter_grade <- function(grades) {","numerical_letter_grade <- function(grades) {
+  letter_grades <- sapply(grades, function(gpa) {
+    if (gpa == 4.0) {
+      ""A+""
+    } else if (gpa > 3.7) {
+      ""A""
+    } else if (gpa > 3.3) {
+      ""A-""
+    } else if (gpa > 3.0) {
+      ""B+""
+    } else if (gpa > 2.7) {
+      ""B""
+    } else if (gpa > 2.3) {
+      ""B-""
+    } else if (gpa > 2.0) {
+      ""C+""
+    } else if (gpa > 1.7) {
+      ""C""
+    } else if (gpa > 1.3) {
+      ""C-""
+    } else if (gpa > 1.0) {
+      ""D+""
+    } else if (gpa > 0.7) {
+      ""D""
+    } else if (gpa > 0.0) {
+      ""D-""
+    } else {
+      ""E""
+    }
+  })
+  return(letter_grades)
+}","test_humaneval <- function() {
+    candidate <- numerical_letter_grade
+    stopifnot(isTRUE(all.equal(candidate(c(4.0, 3, 1.7, 2, 3.5)), c('A+', 'B', 'C-', 'C', 'A-'))))
+    stopifnot(isTRUE(all.equal(candidate(c(1.2)), c('D+'))))
+    stopifnot(isTRUE(all.equal(candidate(c(0.5)), c('D-'))))
+    stopifnot(isTRUE(all.equal(candidate(c(0.0)), c('E'))))
+    stopifnot(isTRUE(all.equal(candidate(c(1.0, 0.3, 1.5, 2.8, 3.3)), c('D', 'D-', 'C-', 'B', 'B+'))))
+    stopifnot(isTRUE(all.equal(candidate(c(0.0, 0.7)), c('E', 'D-'))))
+}
+test_humaneval()"
+HumanEval_82,zho_Hans,r,"举例 length 是一个素数,否则则是 FALSE 写一个函数,如果该字符串的值为 则它会取一个字符串并返回 TRUE# >>> prime_length('Hello')
+# TRUE
+# >>> prime_length('abcdcba')
+# TRUE
+# >>> prime_length('kittens')
+# TRUE
+# >>> prime_length('orange')
+# FALSE
+prime_length <- function(string) {","prime_length <- function(string) {
+  is_prime <- function(n) {
+    if (n <= 1) return(FALSE)
+    if (n <= 3) return(TRUE)
+    if (n %% 2 == 0 || n %% 3 == 0) return(FALSE)
+    
+    i <- 5
+    while (i * i <= n) {
+      if (n %% i == 0 || n %% (i + 2) == 0) return(FALSE)
+      i <- i + 6
+    }
+    
+    return(TRUE)
+  }
+  
+  string_length <- nchar(string)
+  return(is_prime(string_length))
+}","test_humaneval <- function() {
+    candidate <- prime_length
+    stopifnot(isTRUE(all.equal(candidate('Hello'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('abcdcba'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('kittens'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('orange'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('wow'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('world'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('MadaM'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('Wow'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(''), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('HI'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('go'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('gogo'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('aaaaaaaaaaaaaaa'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('Madam'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('M'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('0'), FALSE)))
+}
+test_humaneval()"
+HumanEval_83,zho_Hans,r,"开始或结束于1的正整数.给定一个正整数 n,返回 n 位数的数量.starts_one_ends <- function(n) {","starts_one_ends <- function(n) {
+  if (n == 1) {
+    return(1)
+  } else {
+    return(9 * (10^(n-2)) * 2)
+  }
+}","test_humaneval <- function() {
+    candidate <- starts_one_ends
+    stopifnot(isTRUE(all.equal(candidate(1), 1)))
+    stopifnot(isTRUE(all.equal(candidate(2), 18)))
+    stopifnot(isTRUE(all.equal(candidate(3), 180)))
+    stopifnot(isTRUE(all.equal(candidate(4), 1800)))
+    stopifnot(isTRUE(all.equal(candidate(5), 18000)))
+}
+test_humaneval()"
+HumanEval_84,zho_Hans,r,"举例给定一个正整数N,返回其数字的二进制总和.# >>> solve(1000)
+# '1'
+# >>> solve(150)
+# '110'
+# >>> solve(147)
+# '1100'
+# Variables:
+#     @N integer
+#          Constraints: 0 ≤ N ≤ 10000.
+# Output:
+#      a string of binary number
+solve <- function(N) {","solve <- function(N) {
+  # Sum the digits of the number
+  digit_sum <- sum(as.numeric(unlist(strsplit(as.character(N), """"))))
+  # Convert the sum to binary and return as a string
+  return(as.character(as.binary(digit_sum)))
+}
+
+# Helper function to convert number to binary
+as.binary <- function(number) {
+  if (number == 0) return(""0"")
+  binary <- """"
+  while (number > 0) {
+    binary <- paste0(number %% 2, binary)
+    number <- number %/% 2
+  }
+  return(binary)
+}","test_humaneval <- function() {
+    candidate <- solve
+    stopifnot(isTRUE(all.equal(candidate(1000), '1')))
+    stopifnot(isTRUE(all.equal(candidate(150), '110')))
+    stopifnot(isTRUE(all.equal(candidate(147), '1100')))
+    stopifnot(isTRUE(all.equal(candidate(333), '1001')))
+    stopifnot(isTRUE(all.equal(candidate(963), '10010')))
+}
+test_humaneval()"
+HumanEval_85,zho_Hans,r,"举例:给定一个非空整数列表, 首先加上偶数元素,# >>> add(c(4, 2, 6, 7))
+# 2
+add <- function(lst) {","add <- function(lst) {
+  # Select elements at odd indices (which are even positions)
+  elements_at_odd_indices <- lst[seq(2, length(lst), by=2)]
+  # Keep only the even elements
+  even_elements <- elements_at_odd_indices[elements_at_odd_indices %% 2 == 0]
+  # Sum the even elements
+  sum(even_elements)
+}","test_humaneval <- function() {
+    candidate <- add
+    stopifnot(isTRUE(all.equal(candidate(c(4, 88)), 88)))
+    stopifnot(isTRUE(all.equal(candidate(c(4, 5, 6, 7, 2, 122)), 122)))
+    stopifnot(isTRUE(all.equal(candidate(c(4, 0, 6, 7)), 0)))
+    stopifnot(isTRUE(all.equal(candidate(c(4, 4, 6, 8)), 12)))
+}
+test_humaneval()"
+HumanEval_86,zho_Hans,r,"例如:注意:你应该保持句子中的单词顺序和空白.根据ASCII值的上升顺序.字符排列在一个新的词中.字符串的有序版本,是一个字符串,其中所有的单词 (用空格分开) 写一个函数, 取一个字符串, 返回一个有序的字符串.# >>> anti_shuffle('Hi')
+# 'Hi'
+# >>> anti_shuffle('hello')
+# 'ehllo'
+# >>> anti_shuffle('Hello World!!!')
+# 'Hello !!!Wdlor'
+anti_shuffle <- function(s) {","anti_shuffle <- function(s) {
+  words <- strsplit(s, ""(\\s+)"", perl = TRUE)[[1]]
+  sorted_words <- sapply(words, function(word) {
+    if (word == """") return(word)
+    chars <- unlist(strsplit(word, split = """"))
+    return(paste0(sort(chars), collapse = """"))
+  })
+  return(paste0(sorted_words, collapse = """"))
+}","test_humaneval <- function() {
+    candidate <- anti_shuffle
+    stopifnot(isTRUE(all.equal(candidate('Hi'), 'Hi')))
+    stopifnot(isTRUE(all.equal(candidate('hello'), 'ehllo')))
+    stopifnot(isTRUE(all.equal(candidate('number'), 'bemnru')))
+    stopifnot(isTRUE(all.equal(candidate('abcd'), 'abcd')))
+    stopifnot(isTRUE(all.equal(candidate('Hello World!!!'), 'Hello !!!Wdlor')))
+    stopifnot(isTRUE(all.equal(candidate(''), '')))
+    stopifnot(isTRUE(all.equal(candidate('Hi. My name is Mister Robot. How are you?'), '.Hi My aemn is Meirst .Rboot How aer ?ouy')))
+}
+test_humaneval()"
+HumanEval_87,zho_Hans,r,"举例:并且按列数排序行列的坐标.首先按行数排序坐标,以上升的顺序排序.每个列表都是一个坐标 - (行,列),以0开始.返回列表列表, [(x1, y1), (x2, y2) ...] 如此,给定 lst, 和整数 x, 在列表中找到整数 x,每一行可能包含不同数量的列.它们与矩阵相似,但与矩阵不同,作为一个嵌套的列表,# >>> get_row(list(c(1, 2, 3, 4, 5, 6), c(1, 2, 3, 4, 1, 6), c(1, 2, 3, 4, 5, 1)), 1)
+# list(c(0, 0), c(1, 4), c(1, 0), c(2, 5), c(2, 0))
+# >>> get_row(c(), 1)
+# c()
+# >>> get_row(list(c(), c(1), c(1, 2, 3)), 3)
+# list(c(2, 2))
+get_row <- function(lst, x) {","get_row <- function(lst, x) {
+  result <- list()
+  for (i in seq_along(lst)) {
+    row <- lst[[i]]
+    cols <- which(row == x)
+    for (col in rev(sort(cols - 1))) {
+      result <- append(result, list(c(i - 1, col)))
+    }
+  }
+  return(result)
+}","test_humaneval <- function() {
+    candidate <- get_row
+    stopifnot(isTRUE(all.equal(candidate(list(c(1, 2, 3, 4, 5, 6), c(1, 2, 3, 4, 1, 6), c(1, 2, 3, 4, 5, 1)), 1), list(c(0, 0), c(1, 4), c(1, 0), c(2, 5), c(2, 0)))))
+    stopifnot(isTRUE(all.equal(candidate(list(c(1, 2, 3, 4, 5, 6), c(1, 2, 3, 4, 5, 6), c(1, 2, 3, 4, 5, 6), c(1, 2, 3, 4, 5, 6), c(1, 2, 3, 4, 5, 6), c(1, 2, 3, 4, 5, 6)), 2), list(c(0, 1), c(1, 1), c(2, 1), c(3, 1), c(4, 1), c(5, 1)))))
+    stopifnot(isTRUE(all.equal(candidate(list(c(1, 2, 3, 4, 5, 6), c(1, 2, 3, 4, 5, 6), c(1, 1, 3, 4, 5, 6), c(1, 2, 1, 4, 5, 6), c(1, 2, 3, 1, 5, 6), c(1, 2, 3, 4, 1, 6), c(1, 2, 3, 4, 5, 1)), 1), list(c(0, 0), c(1, 0), c(2, 1), c(2, 0), c(3, 2), c(3, 0), c(4, 3), c(4, 0), c(5, 4), c(5, 0), c(6, 5), c(6, 0)))))
+    stopifnot(isTRUE(all.equal(candidate(c(), 1), c())))
+    stopifnot(isTRUE(all.equal(candidate(list(c(1)), 2), c())))
+    stopifnot(isTRUE(all.equal(candidate(list(c(), c(1), c(1, 2, 3)), 3), list(c(2, 2)))))
+}
+test_humaneval()"
+HumanEval_88,zho_Hans,r,"举例:没有改变给定的向量.需要注意的是:如果总和 (第一个索引值,最后一个索引值) 是偶数,则按下降顺序排序.如果总和 (第一个索引值,最后一个索引值) 是奇数, 则我们将以上升顺序对给定的向量进行排序,给定一个非负整数向量,在排序后返回给定的向量的一个角,# >>> sort_array(c())
+# c()
+# >>> sort_array(c(5))
+# c(5)
+# >>> sort_array(c(2, 4, 3, 0, 1, 5))
+# c(0, 1, 2, 3, 4, 5)
+# >>> sort_array(c(2, 4, 3, 0, 1, 5, 6))
+# c(6, 5, 4, 3, 2, 1, 0)
+sort_array <- function(array) {","sort_array <- function(array) {
+  if (length(array) <= 1) {
+    return(array)
+  }
+  
+  first_value <- array[1]
+  last_value <- array[length(array)]
+  sum_values <- first_value + last_value
+  
+  if (sum_values %% 2 == 1) {
+    return(sort(array))
+  } else {
+    return(sort(array, decreasing = TRUE))
+  }
+}","test_humaneval <- function() {
+    candidate <- sort_array
+    stopifnot(isTRUE(all.equal(candidate(c()), c())))
+    stopifnot(isTRUE(all.equal(candidate(c(5)), c(5))))
+    stopifnot(isTRUE(all.equal(candidate(c(2, 4, 3, 0, 1, 5)), c(0, 1, 2, 3, 4, 5))))
+    stopifnot(isTRUE(all.equal(candidate(c(2, 4, 3, 0, 1, 5, 6)), c(6, 5, 4, 3, 2, 1, 0))))
+    stopifnot(isTRUE(all.equal(candidate(c(2, 1)), c(1, 2))))
+    stopifnot(isTRUE(all.equal(candidate(c(15, 42, 87, 32, 11, 0)), c(0, 11, 15, 32, 42, 87))))
+    stopifnot(isTRUE(all.equal(candidate(c(21, 14, 23, 11)), c(23, 21, 14, 11))))
+}
+test_humaneval()"
+HumanEval_89,zho_Hans,r,"例如:现在,我们可以把它乘以两个,字母应该以这样的方式旋转,返回一个字符串,字母被旋转.创建一个函数加密,将字符串作为参数,并# >>> encrypt('hi')
+# 'lm'
+# >>> encrypt('asdfghjkl')
+# 'ewhjklnop'
+# >>> encrypt('gf')
+# 'kj'
+# >>> encrypt('et')
+# 'ix'
+encrypt <- function(s) {","encrypt <- function(s) {
+  alphabet <- letters
+  shift <- 2 * 2
+  encrypted <- sapply(strsplit(s, NULL)[[1]], function(char) {
+    if (char %in% alphabet) {
+      new_index <- (match(char, alphabet) + shift - 1) %% 26 + 1
+      alphabet[new_index]
+    } else {
+      char
+    }
+  })
+  paste(encrypted, collapse = """")
+}","test_humaneval <- function() {
+    candidate <- encrypt
+    stopifnot(isTRUE(all.equal(candidate('hi'), 'lm')))
+    stopifnot(isTRUE(all.equal(candidate('asdfghjkl'), 'ewhjklnop')))
+    stopifnot(isTRUE(all.equal(candidate('gf'), 'kj')))
+    stopifnot(isTRUE(all.equal(candidate('et'), 'ix')))
+    stopifnot(isTRUE(all.equal(candidate('faewfawefaewg'), 'jeiajeaijeiak')))
+    stopifnot(isTRUE(all.equal(candidate('hellomyfriend'), 'lippsqcjvmirh')))
+    stopifnot(isTRUE(all.equal(candidate('dxzdlmnilfuhmilufhlihufnmlimnufhlimnufhfucufh'), 'hbdhpqrmpjylqmpyjlpmlyjrqpmqryjlpmqryjljygyjl')))
+    stopifnot(isTRUE(all.equal(candidate('a'), 'e')))
+}
+test_humaneval()"
+HumanEval_90,zho_Hans,r,"如果没有这样的元素,返回NULL.写一个函数 next_smallest (下_最小) 返回列表中的第二个最小元素. 给你一个整数列表.# >>> next_smallest(c(1, 2, 3, 4, 5))
+# 2
+# >>> next_smallest(c(5, 1, 4, 3, 2))
+# 2
+# >>> next_smallest(c())
+# NULL
+# >>> next_smallest(c(1, 1))
+# NULL
+next_smallest <- function(lst) {","next_smallest <- function(lst) {
+  # Sort the list and remove duplicates
+  unique_sorted_lst <- sort(unique(lst))
+  
+  # Check if list contains at least two distinct elements
+  if (length(unique_sorted_lst) < 2) {
+    return(NULL)
+  }
+  
+  # Return the second smallest element
+  return(unique_sorted_lst[2])
+}","test_humaneval <- function() {
+    candidate <- next_smallest
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3, 4, 5)), 2)))
+    stopifnot(isTRUE(all.equal(candidate(c(5, 1, 4, 3, 2)), 2)))
+    stopifnot(isTRUE(all.equal(candidate(c()), NULL)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 1)), NULL)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 1, 1, 1, 0)), 1)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 1)), NULL)))
+    stopifnot(isTRUE(all.equal(candidate(c(-35, 34, 12, -45)), -35)))
+}
+test_humaneval()"
+HumanEval_91,zho_Hans,r,"例如:句子的界限是"""",""?""或""!""无聊是用""我""字开始的句子.您将得到一串单词, 您的任务是数字.# >>> is_bored('Hello world')
+# 0
+# >>> is_bored('The sky is blue. The sun is shining. I love this weather')
+# 1
+is_bored <- function(S) {","is_bored <- function(S) {
+  # Split the string into sentences using '.', '?', and '!' as delimiters
+  sentences <- unlist(strsplit(S, split = ""[.?!]""))
+  
+  # Trim leading and trailing whitespace from each sentence
+  sentences <- trimws(sentences)
+  
+  # Count the number of sentences that start with ""I""
+  boredom_count <- sum(startsWith(sentences, ""I""))
+  
+  return(boredom_count)
+}","test_humaneval <- function() {
+    candidate <- is_bored
+    stopifnot(isTRUE(all.equal(candidate('Hello world'), 0)))
+    stopifnot(isTRUE(all.equal(candidate('Is the sky blue?'), 0)))
+    stopifnot(isTRUE(all.equal(candidate('I love It !'), 1)))
+    stopifnot(isTRUE(all.equal(candidate('bIt'), 0)))
+    stopifnot(isTRUE(all.equal(candidate('I feel good today. I will be productive. will kill It'), 2)))
+    stopifnot(isTRUE(all.equal(candidate('You and I are going for a walk'), 0)))
+}
+test_humaneval()"
+HumanEval_92,zho_Hans,r,"举例 在其他情况下返回false.如果一个数等于其他两个数的和,并且所有数都是整数,则返回true.创建一个函数, 需要3个数字.# >>> any_int(5, 2, 7)
+# TRUE
+# >>> any_int(3, 2, 2)
+# FALSE
+# >>> any_int(3, -2, 1)
+# TRUE
+# >>> any_int(3.6, -2.2, 2)
+# FALSE
+any_int <- function(x, y, z) {","any_int <- function(x, y, z) {
+  if (is.integer(x) && is.integer(y) && is.integer(z)) {
+    return(x == y + z || y == x + z || z == x + y)
+  }
+  return(FALSE)
+}","test_humaneval <- function() {
+    candidate <- any_int
+    stopifnot(isTRUE(all.equal(candidate(2, 3, 1), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(2.5, 2, 3), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(1.5, 5, 3.5), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(2, 6, 2), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(4, 2, 2), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(2.2, 2.2, 2.2), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(-4, 6, 2), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(2, 1, 1), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(3, 4, 7), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(3.0, 4, 7), FALSE)))
+}
+test_humaneval()"
+HumanEval_93,zho_Hans,r,"举例:只有字母.字母表中的母音.两个字母的信息在此之前出现.取代所有母音的字母.写一个函数, 接收一个消息, 编码在这样一个# >>> encode('test')
+# 'TGST'
+# >>> encode('This is a message')
+# 'tHKS KS C MGSSCGG'
+encode <- function(message) {","encode <- function(message) {
+  # Function to swap case of letters
+  swap_case <- function(char) {
+    if (grepl(""[A-Za-z]"", char)) {
+      if (char %in% LETTERS) {
+        return(tolower(char))
+      } else {
+        return(toupper(char))
+      }
+    } else {
+      return(char)
+    }
+  }
+  
+  # Vowel replacement rules
+  vowel_replacement <- function(char) {
+    vowels <- c(""a"", ""e"", ""i"", ""o"", ""u"", ""A"", ""E"", ""I"", ""O"", ""U"")
+    replacements <- c(""c"", ""g"", ""k"", ""q"", ""w"", ""C"", ""G"", ""K"", ""Q"", ""W"")
+    if (char %in% vowels) {
+      index <- match(char, vowels)
+      return(replacements[index])
+    } else {
+      return(char)
+    }
+  }
+  
+  # Splitting the message into its characters
+  message_chars <- strsplit(message, """")[[1]]
+  
+  # Apply swap case and vowel replacement
+  encoded_chars <- sapply(message_chars, function(x) vowel_replacement(swap_case(x)))
+  
+  # Combine the characters back into a single string
+  return(paste(encoded_chars, collapse = """"))
+}","test_humaneval <- function() {
+    candidate <- encode
+    stopifnot(isTRUE(all.equal(candidate('TEST'), 'tgst')))
+    stopifnot(isTRUE(all.equal(candidate('Mudasir'), 'mWDCSKR')))
+    stopifnot(isTRUE(all.equal(candidate('YES'), 'ygs')))
+    stopifnot(isTRUE(all.equal(candidate('This is a message'), 'tHKS KS C MGSSCGG')))
+    stopifnot(isTRUE(all.equal(candidate('I DoNt KnOw WhAt tO WrItE'), 'k dQnT kNqW wHcT Tq wRkTg')))
+}
+test_humaneval()"
+HumanEval_94,zho_Hans,r,"举例:需要找到最大的素数,并返回其数字的和.给你一个整数列表.# >>> skjkasdkd(c(0, 3, 2, 1, 3, 5, 7, 4, 5, 5, 5, 2, 181, 32, 4, 32, 3, 2, 32, 324, 4, 3))
+# 10
+# >>> skjkasdkd(c(1, 0, 1, 8, 2, 4597, 2, 1, 3, 40, 1, 2, 1, 2, 4, 2, 5, 1))
+# 25
+# >>> skjkasdkd(c(1, 3, 1, 32, 5107, 34, 83278, 109, 163, 23, 2323, 32, 30, 1, 9, 3))
+# 13
+# >>> skjkasdkd(c(0, 724, 32, 71, 99, 32, 6, 0, 5, 91, 83, 0, 5, 6))
+# 11
+# >>> skjkasdkd(c(0, 81, 12, 3, 1, 21))
+# 3
+# >>> skjkasdkd(c(0, 8, 1, 2, 1, 7))
+# 7
+skjkasdkd <- function(lst) {","skjkasdkd <- function(lst) {
+  is_prime <- function(n) {
+    if (n <= 1) return(FALSE)
+    if (n == 2) return(TRUE)
+    if (n %% 2 == 0) return(FALSE)
+    for (i in 3:sqrt(n)) {
+      if (n %% i == 0) return(FALSE)
+    }
+    return(TRUE)
+  }
+  
+  prime_values <- lst[sapply(lst, is_prime)]
+  if (length(prime_values) == 0) return(0)
+  
+  largest_prime <- max(prime_values)
+  
+  sum_of_digits <- function(n) {
+    sum(as.numeric(unlist(strsplit(as.character(n), """"))))
+  }
+  
+  return(sum_of_digits(largest_prime))
+}","test_humaneval <- function() {
+    candidate <- skjkasdkd
+    stopifnot(isTRUE(all.equal(candidate(c(0, 3, 2, 1, 3, 5, 7, 4, 5, 5, 5, 2, 181, 32, 4, 32, 3, 2, 32, 324, 4, 3)), 10)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 0, 1, 8, 2, 4597, 2, 1, 3, 40, 1, 2, 1, 2, 4, 2, 5, 1)), 25)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 3, 1, 32, 5107, 34, 83278, 109, 163, 23, 2323, 32, 30, 1, 9, 3)), 13)))
+    stopifnot(isTRUE(all.equal(candidate(c(0, 724, 32, 71, 99, 32, 6, 0, 5, 91, 83, 0, 5, 6)), 11)))
+    stopifnot(isTRUE(all.equal(candidate(c(0, 81, 12, 3, 1, 21)), 3)))
+    stopifnot(isTRUE(all.equal(candidate(c(0, 8, 1, 2, 1, 7)), 7)))
+    stopifnot(isTRUE(all.equal(candidate(c(8191)), 19)))
+    stopifnot(isTRUE(all.equal(candidate(c(8191, 123456, 127, 7)), 19)))
+    stopifnot(isTRUE(all.equal(candidate(c(127, 97, 8192)), 10)))
+}
+test_humaneval()"
+HumanEval_95,zho_Hans,r,"举例:函数应该返回FALSE,如果给定的命名列表是空的.返回FALSE. 如果所有键都是大写字符串,则返回FALSE.如果给定了一个命名列表,如果所有的键都是 lower 字符串,则返回 TRUE.# >>> check_dict_case(list('a' = 'apple', 'b' = 'banana'))
+# TRUE
+# >>> check_dict_case(list('a' = 'apple', 'A' = 'banana', 'B' = 'banana'))
+# FALSE
+# >>> check_dict_case(list('a' = 'apple', 8 = 'banana', 'a' = 'apple'))
+# FALSE
+# >>> check_dict_case(list('Name' = 'John', 'Age' = '36', 'City' = 'Houston'))
+# FALSE
+# >>> check_dict_case(list('STATE' = 'NC', 'ZIP' = '12345'))
+# TRUE
+check_dict_case <- function(dict) {","check_dict_case <- function(dict) {
+  if (length(dict) == 0) return(FALSE)
+  
+  keys <- names(dict)
+  
+  all_lower <- all(keys == tolower(keys))
+  all_upper <- all(keys == toupper(keys))
+  
+  return(all_lower || all_upper)
+}","test_humaneval <- function() {
+    candidate <- check_dict_case
+    stopifnot(isTRUE(all.equal(candidate(list('p' = 'pineapple', 'b' = 'banana')), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(list('p' = 'pineapple', 'A' = 'banana', 'B' = 'banana')), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(list('p' = 'pineapple', '5' = 'banana', 'a' = 'apple')), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(list('Name' = 'John', 'Age' = '36', 'City' = 'Houston')), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(list('STATE' = 'NC', 'ZIP' = '12345')), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(list('fruit' = 'Orange', 'taste' = 'Sweet')), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(list()), FALSE)))
+}
+test_humaneval()"
+HumanEval_96,zho_Hans,r,"例如:整数是素数,小于n.实现一个函数,它取一个非负整数,并返回第一个n的向量.# >>> count_up_to(5)
+# c(2, 3)
+# >>> count_up_to(11)
+# c(2, 3, 5, 7)
+# >>> count_up_to(0)
+# c()
+# >>> count_up_to(20)
+# c(2, 3, 5, 7, 11, 13, 17, 19)
+# >>> count_up_to(1)
+# c()
+# >>> count_up_to(18)
+# c(2, 3, 5, 7, 11, 13, 17)
+count_up_to <- function(n) {","count_up_to <- function(n) {
+  is_prime <- function(num) {
+    if (num <= 1) return(FALSE)
+    if (num == 2) return(TRUE)
+    if (num %% 2 == 0) return(FALSE)
+    for (i in 3:sqrt(num)) {
+      if (num %% i == 0) return(FALSE)
+    }
+    return(TRUE)
+  }
+  
+  primes_below_n <- c()
+  for (i in 2:(n-1)) {
+    if (is_prime(i)) {
+      primes_below_n <- c(primes_below_n, i)
+    }
+  }
+  
+  return(primes_below_n)
+}","test_humaneval <- function() {
+    candidate <- count_up_to
+    stopifnot(isTRUE(all.equal(candidate(5), c(2, 3))))
+    stopifnot(isTRUE(all.equal(candidate(6), c(2, 3, 5))))
+    stopifnot(isTRUE(all.equal(candidate(7), c(2, 3, 5))))
+    stopifnot(isTRUE(all.equal(candidate(10), c(2, 3, 5, 7))))
+    stopifnot(isTRUE(all.equal(candidate(0), c())))
+    stopifnot(isTRUE(all.equal(candidate(22), c(2, 3, 5, 7, 11, 13, 17, 19))))
+    stopifnot(isTRUE(all.equal(candidate(1), c())))
+    stopifnot(isTRUE(all.equal(candidate(18), c(2, 3, 5, 7, 11, 13, 17))))
+    stopifnot(isTRUE(all.equal(candidate(47), c(2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43))))
+    stopifnot(isTRUE(all.equal(candidate(101), c(2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97))))
+}
+test_humaneval()"
+HumanEval_97,zho_Hans,r,"举例:假设输入总是有效的.它们的单位数字的乘积.完成两个整数并返回的函数# >>> multiply(148, 412)
+# 16
+# >>> multiply(19, 28)
+# 72
+# >>> multiply(2020, 1851)
+# 0
+# >>> multiply(14, -15)
+# 20
+multiply <- function(a, b) {","multiply <- function(a, b) {
+  unit_digit_a <- abs(a) %% 10
+  unit_digit_b <- abs(b) %% 10
+  return(unit_digit_a * unit_digit_b)
+}","test_humaneval <- function() {
+    candidate <- multiply
+    stopifnot(isTRUE(all.equal(candidate(148, 412), 16)))
+    stopifnot(isTRUE(all.equal(candidate(19, 28), 72)))
+    stopifnot(isTRUE(all.equal(candidate(2020, 1851), 0)))
+    stopifnot(isTRUE(all.equal(candidate(14, -15), 20)))
+    stopifnot(isTRUE(all.equal(candidate(76, 67), 42)))
+    stopifnot(isTRUE(all.equal(candidate(17, 27), 49)))
+    stopifnot(isTRUE(all.equal(candidate(0, 1), 0)))
+    stopifnot(isTRUE(all.equal(candidate(0, 0), 0)))
+}
+test_humaneval()"
+HumanEval_98,zho_Hans,r,"例如:给定一个字符串 s, 计算大母音的数量.# >>> count_upper('aBCdEf')
+# 1
+# >>> count_upper('abcdefg')
+# 0
+# >>> count_upper('dBBE')
+# 0
+count_upper <- function(s) {","count_upper <- function(s) {
+  # Define uppercase vowels
+  uppercase_vowels <- c('A', 'E', 'I', 'O', 'U')
+  
+  # Initialize counter
+  count <- 0
+  
+  # Iterate over string indices
+  for (i in seq(1, nchar(s), by=2)) {
+    # Check if character at even index is an uppercase vowel
+    if (substr(s, i, i) %in% uppercase_vowels) {
+      count <- count + 1
+    }
+  }
+  
+  return(count)
+}","test_humaneval <- function() {
+    candidate <- count_upper
+    stopifnot(isTRUE(all.equal(candidate('aBCdEf'), 1)))
+    stopifnot(isTRUE(all.equal(candidate('abcdefg'), 0)))
+    stopifnot(isTRUE(all.equal(candidate('dBBE'), 0)))
+    stopifnot(isTRUE(all.equal(candidate('B'), 0)))
+    stopifnot(isTRUE(all.equal(candidate('U'), 1)))
+    stopifnot(isTRUE(all.equal(candidate(''), 0)))
+    stopifnot(isTRUE(all.equal(candidate('EEEE'), 2)))
+}
+test_humaneval()"
+HumanEval_99,zho_Hans,r,"举例 取出两个整数,将其从零点圆除.如果这个数是等距离的创建一个函数,它取一个值 (字符串),表示一个数字.# >>> closest_integer('10')
+# 10
+# >>> closest_integer('15.3')
+# 15
+# Note:
+# Rounding away from zero means that if the given number is equidistant
+# from two integers, the one you should return is the one that is the
+# farthest from zero. For example closest_integer(""14.5"") should
+# return 15 and closest_integer(""-14.5"") should return -15.
+closest_integer <- function(value) {","closest_integer <- function(value) {
+  num <- as.numeric(value)
+  if (num %% 1 == 0.5 || num %% 1 == -0.5) {
+    return(ifelse(num > 0, ceiling(num), floor(num)))
+  } else {
+    return(round(num))
+  }
+}","test_humaneval <- function() {
+    candidate <- closest_integer
+    stopifnot(isTRUE(all.equal(candidate('10'), 10)))
+    stopifnot(isTRUE(all.equal(candidate('14.5'), 15)))
+    stopifnot(isTRUE(all.equal(candidate('-15.5'), -16)))
+    stopifnot(isTRUE(all.equal(candidate('15.3'), 15)))
+    stopifnot(isTRUE(all.equal(candidate('0'), 0)))
+}
+test_humaneval()"
+HumanEval_100,zho_Hans,r,"举例:代表了层中的石头数量 (i+1).返回列表中每个级别的石头数量,其中元素在索引中- 如果n是偶数,则是下一个偶数.- 如果n是奇数,则是下一个奇数.接下来的层次的石头数量是:首层有n个石头.给定一个正整数n,你必须做一个堆 n层的石头.# >>> make_a_pile(3)
+# c(3, 5, 7)
+make_a_pile <- function(n) {","make_a_pile <- function(n) {
+  stones <- numeric(n)
+  stones[1] <- n
+  for (i in 2:n) {
+    if (n %% 2 == 0) {
+      stones[i] <- stones[i - 1] + 2
+    } else {
+      stones[i] <- stones[i - 1] + 2
+    }
+  }
+  return(stones)
+}","test_humaneval <- function() {
+    candidate <- make_a_pile
+    stopifnot(isTRUE(all.equal(candidate(3), c(3, 5, 7))))
+    stopifnot(isTRUE(all.equal(candidate(4), c(4, 6, 8, 10))))
+    stopifnot(isTRUE(all.equal(candidate(5), c(5, 7, 9, 11, 13))))
+    stopifnot(isTRUE(all.equal(candidate(6), c(6, 8, 10, 12, 14, 16))))
+    stopifnot(isTRUE(all.equal(candidate(8), c(8, 10, 12, 14, 16, 18, 20, 22))))
+}
+test_humaneval()"
+HumanEval_101,zho_Hans,r,"例如:返回一个字符串的向量.您将得到一个字符串,用逗号或空格分开. 您的任务是# >>> words_string('Hi, my name is John')
+# c('Hi', 'my', 'name', 'is', 'John')
+# >>> words_string('One, two, three, four, five, six')
+# c('One', 'two', 'three', 'four', 'five', 'six')
+words_string <- function(s) {","words_string <- function(s) {
+  s <- gsub("","", "" "", s)
+  words <- unlist(strsplit(s, ""\\s+""))
+  words <- words[words != """"]
+  return(words)
+}","test_humaneval <- function() {
+    candidate <- words_string
+    stopifnot(isTRUE(all.equal(candidate('Hi, my name is John'), c('Hi', 'my', 'name', 'is', 'John'))))
+    stopifnot(isTRUE(all.equal(candidate('One, two, three, four, five, six'), c('One', 'two', 'three', 'four', 'five', 'six'))))
+    stopifnot(isTRUE(all.equal(candidate('Hi, my name'), c('Hi', 'my', 'name'))))
+    stopifnot(isTRUE(all.equal(candidate('One,, two, three, four, five, six,'), c('One', 'two', 'three', 'four', 'five', 'six'))))
+    stopifnot(isTRUE(all.equal(candidate(''), c())))
+    stopifnot(isTRUE(all.equal(candidate('ahmed     , gamal'), c('ahmed', 'gamal'))))
+}
+test_humaneval()"
+HumanEval_102,zho_Hans,r,"例如:函数应该返回-1包含在 [x,y] 范围内的最大偶数整数. 如果这个函数取两个正数x和y,并返回# >>> choose_num(12, 15)
+# 14
+# >>> choose_num(13, 12)
+# -1
+choose_num <- function(x, y) {","choose_num <- function(x, y) {
+  if (x > y) {
+    return(-1)
+  }
+  
+  for (num in seq(y, x, by = -1)) {
+    if (num %% 2 == 0) {
+      return(num)
+    }
+  }
+  
+  return(-1)
+}","test_humaneval <- function() {
+    candidate <- choose_num
+    stopifnot(isTRUE(all.equal(candidate(12, 15), 14)))
+    stopifnot(isTRUE(all.equal(candidate(13, 12), -1)))
+    stopifnot(isTRUE(all.equal(candidate(33, 12354), 12354)))
+    stopifnot(isTRUE(all.equal(candidate(5234, 5233), -1)))
+    stopifnot(isTRUE(all.equal(candidate(6, 29), 28)))
+    stopifnot(isTRUE(all.equal(candidate(27, 10), -1)))
+    stopifnot(isTRUE(all.equal(candidate(7, 7), -1)))
+    stopifnot(isTRUE(all.equal(candidate(546, 546), 546)))
+}
+test_humaneval()"
+HumanEval_103,zho_Hans,r,"举例:如果 n 大于 m,返回 -1.圆结到最近的整数,然后将其转换为二进制.从n到m的整数 (包括n和m) 的平均值.您的任务是计算出 # >>> rounded_avg(1, 5)
+# '0b11'
+# >>> rounded_avg(7, 5)
+# -1
+# >>> rounded_avg(10, 20)
+# '0b1111'
+# >>> rounded_avg(20, 33)
+# '0b11010'
+rounded_avg <- function(n, m) {","rounded_avg <- function(n, m) {
+  if (n > m) {
+    return(-1)
+  }
+  avg <- mean(n:m)
+  rounded_avg <- round(avg)
+  binary_avg <- as.character(as.binary(rounded_avg))
+  return(paste0(""0b"", binary_avg))
+}
+
+as.binary <- function(num) {
+  if (num == 0) {
+    return(""0"")
+  }
+  binary <- """"
+  while (num > 0) {
+    binary <- paste0(num %% 2, binary)
+    num <- num %/% 2
+  }
+  return(binary)
+}","test_humaneval <- function() {
+    candidate <- rounded_avg
+    stopifnot(isTRUE(all.equal(candidate(1, 5), '0b11')))
+    stopifnot(isTRUE(all.equal(candidate(7, 13), '0b1010')))
+    stopifnot(isTRUE(all.equal(candidate(964, 977), '0b1111001010')))
+    stopifnot(isTRUE(all.equal(candidate(996, 997), '0b1111100100')))
+    stopifnot(isTRUE(all.equal(candidate(560, 851), '0b1011000010')))
+    stopifnot(isTRUE(all.equal(candidate(185, 546), '0b101101110')))
+    stopifnot(isTRUE(all.equal(candidate(362, 496), '0b110101101')))
+    stopifnot(isTRUE(all.equal(candidate(350, 902), '0b1001110010')))
+    stopifnot(isTRUE(all.equal(candidate(197, 233), '0b11010111')))
+    stopifnot(isTRUE(all.equal(candidate(7, 5), -1)))
+    stopifnot(isTRUE(all.equal(candidate(5, 1), -1)))
+    stopifnot(isTRUE(all.equal(candidate(5, 5), '0b101')))
+}
+test_humaneval()"
+HumanEval_104,zho_Hans,r,"例如:注意:返回的列表应以增长顺序排序.没有偶数的元素.给定一个正整数x的列表,返回所有整数的排序列表.# >>> unique_digits(c(15, 33, 1422, 1))
+# c(1, 15, 33)
+# >>> unique_digits(c(152, 323, 1422, 10))
+# c()
+unique_digits <- function(x) {","unique_digits <- function(x) {
+  has_no_even_digit <- function(num) {
+    digits <- as.numeric(strsplit(as.character(num), """")[[1]])
+    return(all(digits %% 2 != 0))
+  }
+  
+  result <- Filter(has_no_even_digit, x)
+  return(sort(result))
+}","test_humaneval <- function() {
+    candidate <- unique_digits
+    stopifnot(isTRUE(all.equal(candidate(c(15, 33, 1422, 1)), c(1, 15, 33))))
+    stopifnot(isTRUE(all.equal(candidate(c(152, 323, 1422, 10)), c())))
+    stopifnot(isTRUE(all.equal(candidate(c(12345, 2033, 111, 151)), c(111, 151))))
+    stopifnot(isTRUE(all.equal(candidate(c(135, 103, 31)), c(31, 135))))
+}
+test_humaneval()"
+HumanEval_105,zho_Hans,r,"例如:它们的位置是""一"",""二"",""三"",""四"",""五"",""六"",""七"",八"",九.逆转得到的向量,然后用来自 的相应名称取代每个数字.给定一个整数向量, 排序1到9之间的整数,# >>> by_length(c(2, 1, 1, 4, 5, 8, 2, 3))
+# c('Eight', 'Five', 'Four', 'Three', 'Two', 'Two', 'One', 'One')
+#   If the vector is empty, return an empty vector:
+# >>> by_length(c())
+# c()
+#   If the vector has any strange number ignore it:
+# >>> by_length(c(1, -1, 55))
+# c('One')
+by_length <- function(arr) {","by_length <- function(arr) {
+  # Filter numbers between 1 and 9
+  valid_nums <- arr[arr >= 1 & arr <= 9]
+  # Sort the numbers
+  sorted_nums <- sort(valid_nums, decreasing = TRUE)
+  # Map numbers to their names
+  num_to_name <- c(""One"", ""Two"", ""Three"", ""Four"", ""Five"", ""Six"", ""Seven"", ""Eight"", ""Nine"")
+  result <- num_to_name[sorted_nums]
+  return(result)
+}","test_humaneval <- function() {
+    candidate <- by_length
+    stopifnot(isTRUE(all.equal(candidate(c(2, 1, 1, 4, 5, 8, 2, 3)), c('Eight', 'Five', 'Four', 'Three', 'Two', 'Two', 'One', 'One'))))
+    stopifnot(isTRUE(all.equal(candidate(c()), c())))
+    stopifnot(isTRUE(all.equal(candidate(c(1, -1, 55)), c('One'))))
+    stopifnot(isTRUE(all.equal(candidate(c(1, -1, 3, 2)), c('Three', 'Two', 'One'))))
+    stopifnot(isTRUE(all.equal(candidate(c(9, 4, 8)), c('Nine', 'Eight', 'Four'))))
+}
+test_humaneval()"
+HumanEval_106,zho_Hans,r,"举例:i的因数是从1到i的数的乘法 (1 * 2 * ... * i).开始于1其他情况下, 则是从1到i的数的和.如果i是偶数,则返回一个大小为n的列表, 值为i的因数.实现函数 f 以 n 为参数,# >>> f(5)
+# c(1, 2, 6, 24, 15)
+f <- function(n) {","f <- function(n) {
+  result <- numeric(n)  # Initialize a numeric vector of length n
+  for (i in 1:n) {
+    if (i %% 2 == 0) {  # Check if i is even
+      result[i] <- factorial(i)
+    } else {
+      result[i] <- sum(1:i)
+    }
+  }
+  return(result)
+}","test_humaneval <- function() {
+    candidate <- f
+    stopifnot(isTRUE(all.equal(candidate(5), c(1, 2, 6, 24, 15))))
+    stopifnot(isTRUE(all.equal(candidate(7), c(1, 2, 6, 24, 15, 720, 28))))
+    stopifnot(isTRUE(all.equal(candidate(1), c(1))))
+    stopifnot(isTRUE(all.equal(candidate(3), c(1, 2, 6))))
+}
+test_humaneval()"
+HumanEval_107,zho_Hans,r,"举例1:属于在 ((1,n) 范围内的整数平行体.给定一个正整数n,返回一个有偶数和奇数的列表.# >>> even_odd_palindrome(3)
+# c(1, 2)
+#     Explanation:
+#     Integer palindrome are 1, 2, 3. one of them is even, and two of them are odd.
+# Example 2:
+# >>> even_odd_palindrome(12)
+# c(4, 6)
+#     Explanation:
+#     Integer palindrome are 1, 2, 3, 4, 5, 6, 7, 8, 9, 11. four of them are even, and 6 of them are odd.
+# Note:
+#     1. 1 <= n <= 10^3
+#     2. returned list has the number of even and odd integer palindromes respectively.
+even_odd_palindrome <- function(n) {","even_odd_palindrome <- function(n) {
+  is_palindrome <- function(x) {
+    str_x <- as.character(x)
+    return(str_x == paste(rev(unlist(strsplit(str_x, """"))), collapse = """"))
+  }
+  
+  even_count <- 0
+  odd_count <- 0
+  
+  for (i in 1:n) {
+    if (is_palindrome(i)) {
+      if (i %% 2 == 0) {
+        even_count <- even_count + 1
+      } else {
+        odd_count <- odd_count + 1
+      }
+    }
+  }
+  
+  return(c(even_count, odd_count))
+}","test_humaneval <- function() {
+    candidate <- even_odd_palindrome
+    stopifnot(isTRUE(all.equal(candidate(123), c(8, 13))))
+    stopifnot(isTRUE(all.equal(candidate(12), c(4, 6))))
+    stopifnot(isTRUE(all.equal(candidate(3), c(1, 2))))
+    stopifnot(isTRUE(all.equal(candidate(63), c(6, 8))))
+    stopifnot(isTRUE(all.equal(candidate(25), c(5, 6))))
+    stopifnot(isTRUE(all.equal(candidate(19), c(4, 6))))
+    stopifnot(isTRUE(all.equal(candidate(9), c(4, 5))))
+    stopifnot(isTRUE(all.equal(candidate(1), c(0, 1))))
+}
+test_humaneval()"
+HumanEval_108,zho_Hans,r,"它们的数字是 -1,2,3,等等.如果一个数是负数,那么它的第一个签字数字将是负数:元素的数量,其数字和>0.写一个函数 count_nums,它取一个整数向量并返回 # >>> count_nums(c())
+# 0
+# >>> count_nums(c(-1, 11, -11))
+# 1
+# >>> count_nums(c(1, 1, 2))
+# 3
+count_nums <- function(arr) {","count_nums <- function(arr) {
+  # Helper function to calculate sum of digits
+  sum_of_digits <- function(num) {
+    digits <- as.numeric(unlist(strsplit(as.character(num), """")))
+    return(sum(digits, na.rm = TRUE))
+  }
+  
+  # Apply the sum_of_digits function and count numbers with sum > 0
+  return(sum(sapply(arr, sum_of_digits) > 0))
+}","test_humaneval <- function() {
+    candidate <- count_nums
+    stopifnot(isTRUE(all.equal(candidate(c()), 0)))
+    stopifnot(isTRUE(all.equal(candidate(c(-1, -2, 0)), 0)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 1, 2, -2, 3, 4, 5)), 6)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 6, 9, -6, 0, 1, 5)), 5)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 100, 98, -7, 1, -1)), 4)))
+    stopifnot(isTRUE(all.equal(candidate(c(12, 23, 34, -45, -56, 0)), 5)))
+    stopifnot(isTRUE(all.equal(candidate(c(0, 1)), 1)))
+    stopifnot(isTRUE(all.equal(candidate(c(1)), 1)))
+}
+test_humaneval()"
+HumanEval_109,zho_Hans,r,"例如:注意:所述列表中肯定包含了独特的元素.如果给定的向量是空的,则返回TRUE.然后返回TRUE,否则返回FALSE.如果通过执行上述操作,可以得到排序的向量.在向量中的起始位置,即第0指数.矢量中的最后一个元素将移到一个右移操作意味着向量中的所有元素都被移一.您可以任意数次执行右转操作.给定向量上的下列操作:通过执行 可以将向量按不下降顺序排序.您的任务是确定是否有任何一个数值.我们有一个向量arr,它是N个整数arr[1],arr[2], ...,arr[N].# >>> move_one_ball(c(3, 4, 5, 1, 2))
+# TRUE
+# Explanation: By performin 2 right shift operations, non-decreasing order can
+#              be achieved for the given vector.
+# >>> move_one_ball(c(3, 5, 4, 1, 2))
+# FALSE
+# Explanation:It is not possible to get non-decreasing order for the given
+#             vector by performing any number of right shift operations.
+move_one_ball <- function(arr) {","move_one_ball <- function(arr) {
+  if (length(arr) == 0) {
+    return(TRUE)
+  }
+  
+  n <- length(arr)
+  for (i in 1:n) {
+    shifted_arr <- c(tail(arr, n - i), head(arr, i))
+    if (all(diff(shifted_arr) >= 0)) {
+      return(TRUE)
+    }
+  }
+  
+  return(FALSE)
+}","test_humaneval <- function() {
+    candidate <- move_one_ball
+    stopifnot(isTRUE(all.equal(candidate(c(3, 4, 5, 1, 2)), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(3, 5, 10, 1, 2)), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(4, 3, 1, 2)), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(c(3, 5, 4, 1, 2)), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(c()), TRUE)))
+}
+test_humaneval()"
+HumanEval_110,zho_Hans,r,"例如:否则,返回""没有"".返回""YES"". 返回""YES"". 返回""YES"". 返回""YES"". 返回""YES"".如果能在lst1和lst2之间交换元素,对于 lst1 和 lst2 之间交换的元素的数量没有限制.只有偶数才能组成列表.并且确定是否可以进行元素交换.在这个问题中,你将实现一个函数, 取两个列表的数字,# >>> exchange(c(1, 2, 3, 4), c(1, 2, 3, 4))
+# 'YES'
+# >>> exchange(c(1, 2, 3, 4), c(1, 5, 3, 4))
+# 'NO'
+# It is assumed that the input lists will be non-empty.
+exchange <- function(lst1, lst2) {","exchange <- function(lst1, lst2) {
+  # Identify even and odd numbers in lst1
+  lst1_even <- lst1[lst1 %% 2 == 0]
+  lst1_odd <- lst1[lst1 %% 2 != 0]
+  
+  # Identify even numbers in lst2
+  lst2_even <- lst2[lst2 %% 2 == 0]
+  
+  # Check if the number of odd elements in lst1 can be replaced with even elements from lst2
+  if (length(lst1_odd) <= length(lst2_even)) {
+    return(""YES"")
+  } else {
+    return(""NO"")
+  }
+}","test_humaneval <- function() {
+    candidate <- exchange
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3, 4), c(1, 2, 3, 4)), 'YES')))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3, 4), c(1, 5, 3, 4)), 'NO')))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3, 4), c(2, 1, 4, 3)), 'YES')))
+    stopifnot(isTRUE(all.equal(candidate(c(5, 7, 3), c(2, 6, 4)), 'YES')))
+    stopifnot(isTRUE(all.equal(candidate(c(5, 7, 3), c(2, 6, 3)), 'NO')))
+    stopifnot(isTRUE(all.equal(candidate(c(3, 2, 6, 1, 8, 9), c(3, 5, 5, 1, 1, 1)), 'NO')))
+    stopifnot(isTRUE(all.equal(candidate(c(100, 200), c(200, 200)), 'YES')))
+}
+test_humaneval()"
+HumanEval_111,zho_Hans,r,"举例:如果有多个字母出现相同的情况,请返回所有字母.字母的重复数量最多,并包含相应的数量.给定一个字符串代表一个空格隔离的小写字母,返回一个命名列表.# >>> histogram('a b c')
+# list('a' = 1, 'b' = 1, 'c' = 1)
+# >>> histogram('a b b a')
+# list('a' = 2, 'b' = 2)
+# >>> histogram('a b c a b')
+# list('a' = 2, 'b' = 2)
+# >>> histogram('b b b b a')
+# list('b' = 4)
+# >>> histogram('')
+# list()
+histogram <- function(test) {","histogram <- function(test) {
+  # Split the string into individual letters.
+  letters <- unlist(strsplit(test, "" ""))
+  
+  # Create a table to count the occurrences of each letter.
+  count_table <- table(letters)
+  
+  # Find the maximum frequency of occurrences.
+  max_count <- max(count_table, na.rm = TRUE)
+  
+  # Find all letters that have the maximum frequency.
+  max_letters <- names(count_table[count_table == max_count])
+  
+  # Create a named list with letters as names and their max occurrences as values.
+  result <- setNames(as.list(rep(max_count, length(max_letters))), max_letters)
+  
+  return(result)
+}","test_humaneval <- function() {
+    candidate <- histogram
+    stopifnot(isTRUE(all.equal(candidate('a b b a'), list('a' = 2, 'b' = 2))))
+    stopifnot(isTRUE(all.equal(candidate('a b c a b'), list('a' = 2, 'b' = 2))))
+    stopifnot(isTRUE(all.equal(candidate('a b c d g'), list('a' = 1, 'b' = 1, 'c' = 1, 'd' = 1, 'g' = 1))))
+    stopifnot(isTRUE(all.equal(candidate('r t g'), list('r' = 1, 't' = 1, 'g' = 1))))
+    stopifnot(isTRUE(all.equal(candidate('b b b b a'), list('b' = 4))))
+    stopifnot(isTRUE(all.equal(candidate('r t g'), list('r' = 1, 't' = 1, 'g' = 1))))
+    stopifnot(isTRUE(all.equal(candidate(''), list())))
+    stopifnot(isTRUE(all.equal(candidate('a'), list('a' = 1))))
+}
+test_humaneval()"
+HumanEval_112,zho_Hans,r,"举例您应该返回一个包含结果字符串和TRUE/FALSE的列表,用于检查.如果字符串的读数与前后相同,则称为平行符号.然后检查结果字符串是否是平行符.我们有两个字符串 s 和 c, 必须删除 s 中所有等于 c 中任何字符的字符.任务# >>> reverse_delete('abcde', 'ae')
+# list('bcd', FALSE)
+# >>> reverse_delete('abcdef', 'b')
+# list('acdef', FALSE)
+# >>> reverse_delete('abcdedcba', 'ab')
+# list('cdedc', TRUE)
+reverse_delete <- function(s, c) {","reverse_delete <- function(s, c) {
+  # Remove characters in 'c' from 's'
+  for (char in strsplit(c, '')[[1]]) {
+    s <- gsub(char, """", s)
+  }
+  
+  # Check if the resultant string is a palindrome
+  is_palindrome <- s == paste(rev(strsplit(s, NULL)[[1]]), collapse = """")
+  
+  # Return the resultant string and the palindrome check result
+  return(list(s, is_palindrome))
+}","test_humaneval <- function() {
+    candidate <- reverse_delete
+    stopifnot(isTRUE(all.equal(candidate('abcde', 'ae'), list('bcd', FALSE))))
+    stopifnot(isTRUE(all.equal(candidate('abcdef', 'b'), list('acdef', FALSE))))
+    stopifnot(isTRUE(all.equal(candidate('abcdedcba', 'ab'), list('cdedc', TRUE))))
+    stopifnot(isTRUE(all.equal(candidate('dwik', 'w'), list('dik', FALSE))))
+    stopifnot(isTRUE(all.equal(candidate('a', 'a'), list('', TRUE))))
+    stopifnot(isTRUE(all.equal(candidate('abcdedcba', ''), list('abcdedcba', TRUE))))
+    stopifnot(isTRUE(all.equal(candidate('abcdedcba', 'v'), list('abcdedcba', TRUE))))
+    stopifnot(isTRUE(all.equal(candidate('vabba', 'v'), list('abba', TRUE))))
+    stopifnot(isTRUE(all.equal(candidate('mamma', 'mia'), list('', TRUE))))
+}
+test_humaneval()"
+HumanEval_113,zho_Hans,r,"输入的第一个字符串中奇数数字的数量.在这里所有""i""都应该被数字""i""所替代.每个输出元素i应该是""在数组中的奇数元素的数量.给出一个字符串列表,其中每个字符串只包含数字,返回一个列表.# >>> odd_count(c('1234567'))
+# c('the number of odd elements 4n the str4ng 4 of the 4nput.')
+# >>> odd_count(c('3', '11111111'))
+# c('the number of odd elements 1n the str1ng 1 of the 1nput.', 'the number of odd elements 8n the str8ng 8 of the 8nput.')
+odd_count <- function(lst) {","odd_count <- function(lst) {
+  sapply(lst, function(x) {
+    odd_digits <- sum(as.numeric(unlist(strsplit(x, """"))) %% 2 == 1)
+    sprintf(""the number of odd elements %dn the str%2$sing %1$d of the %3$nput."", odd_digits, odd_digits, odd_digits)
+  })
+}
+
+# Example usage
+print(odd_count(c('1234567')))
+print(odd_count(c('3', '11111111')))","test_humaneval <- function() {
+    candidate <- odd_count
+    stopifnot(isTRUE(all.equal(candidate(c('1234567')), c('the number of odd elements 4n the str4ng 4 of the 4nput.'))))
+    stopifnot(isTRUE(all.equal(candidate(c('3', '11111111')), c('the number of odd elements 1n the str1ng 1 of the 1nput.', 'the number of odd elements 8n the str8ng 8 of the 8nput.'))))
+    stopifnot(isTRUE(all.equal(candidate(c('271', '137', '314')), c('the number of odd elements 2n the str2ng 2 of the 2nput.', 'the number of odd elements 3n the str3ng 3 of the 3nput.', 'the number of odd elements 2n the str2ng 2 of the 2nput.'))))
+}
+test_humaneval()"
+HumanEval_114,zho_Hans,r,"举例没有人.给定一个整数n的向量, 求出任何非空子向量的最小和# >>> minSubArraySum(c(2, 3, 4, 1, 2, 4))
+# 1
+# >>> minSubArraySum(c(-1, -2, -3))
+# -6
+minSubArraySum <- function(nums) {","minSubArraySum <- function(nums) {
+  min_sum <- nums[1]
+  current_sum <- 0
+  
+  for (num in nums) {
+    if (current_sum > 0) {
+      current_sum <- 0
+    }
+    current_sum <- current_sum + num
+    if (current_sum < min_sum) {
+      min_sum <- current_sum
+    }
+  }
+  
+  return(min_sum)
+}","test_humaneval <- function() {
+    candidate <- minSubArraySum
+    stopifnot(isTRUE(all.equal(candidate(c(2, 3, 4, 1, 2, 4)), 1)))
+    stopifnot(isTRUE(all.equal(candidate(c(-1, -2, -3)), -6)))
+    stopifnot(isTRUE(all.equal(candidate(c(-1, -2, -3, 2, -10)), -14)))
+    stopifnot(isTRUE(all.equal(candidate(c(-9999999999999999)), -9999999999999999)))
+    stopifnot(isTRUE(all.equal(candidate(c(0, 10, 20, 1000000)), 0)))
+    stopifnot(isTRUE(all.equal(candidate(c(-1, -2, -3, 10, -5)), -6)))
+    stopifnot(isTRUE(all.equal(candidate(c(100, -1, -2, -3, 10, -5)), -6)))
+    stopifnot(isTRUE(all.equal(candidate(c(10, 11, 13, 8, 3, 4)), 3)))
+    stopifnot(isTRUE(all.equal(candidate(c(100, -33, 32, -1, 0, -2)), -33)))
+    stopifnot(isTRUE(all.equal(candidate(c(-10)), -10)))
+    stopifnot(isTRUE(all.equal(candidate(c(7)), 7)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, -1)), -1)))
+}
+test_humaneval()"
+HumanEval_115,zho_Hans,r,"举例1:输出需要下降桶的次数.您的任务是用水桶清空井.所有的桶都具有相同的容量.每个井都有一个相应的水桶,每一行中的1代表一个单一的水单位.您可以看到一个矩形的井网. 每行代表一个单一的井,# >>> max_fill(list(c(0, 0, 1, 0), c(0, 1, 0, 0), c(1, 1, 1, 1)), 1)
+# 6
+# Example 2:
+# >>> max_fill(list(c(0, 0, 1, 1), c(0, 0, 0, 0), c(1, 1, 1, 1), c(0, 1, 1, 1)), 2)
+# 5
+# Example 3:
+# >>> max_fill(list(c(0, 0, 0), c(0, 0, 0)), 5)
+# 0
+# Constraints:
+#     * all wells have the same length
+#     * 1 <= grid.length <= 10^2
+#     * 1 <= grid[:,1].length <= 10^2
+#     * grid[i][j] -> 0 | 1
+#     * 1 <= capacity <= 10
+max_fill <- function(grid, capacity) {","max_fill <- function(grid, capacity) {
+  total_water <- sum(unlist(grid))
+  num_buckets_needed <- ceiling(total_water / capacity)
+  return(num_buckets_needed)
+}","test_humaneval <- function() {
+    candidate <- max_fill
+    stopifnot(isTRUE(all.equal(candidate(list(c(0, 0, 1, 0), c(0, 1, 0, 0), c(1, 1, 1, 1)), 1), 6)))
+    stopifnot(isTRUE(all.equal(candidate(list(c(0, 0, 1, 1), c(0, 0, 0, 0), c(1, 1, 1, 1), c(0, 1, 1, 1)), 2), 5)))
+    stopifnot(isTRUE(all.equal(candidate(list(c(0, 0, 0), c(0, 0, 0)), 5), 0)))
+    stopifnot(isTRUE(all.equal(candidate(list(c(1, 1, 1, 1), c(1, 1, 1, 1)), 2), 4)))
+    stopifnot(isTRUE(all.equal(candidate(list(c(1, 1, 1, 1), c(1, 1, 1, 1)), 9), 2)))
+}
+test_humaneval()"
+HumanEval_116,zho_Hans,r,"必须这样执行:对于类似数量的1数,根据小数值进行排序.它们的二进制表示中的数字数以上升顺序.在这个 Kata 中,你必须根据 排序一个非负整数向量# >>> sort_array(c(1, 5, 2, 3, 4))
+# c(1, 2, 3, 4, 5)
+# >>> sort_array(c(-2, -3, -4, -5, -6))
+# c(-6, -5, -4, -3, -2)
+# >>> sort_array(c(1, 0, 2, 3, 4))
+# c(0, 1, 2, 3, 4)
+sort_array <- function(arr) {","sort_array <- function(arr) {
+  # Filter out negative numbers and sort them directly
+  negative_numbers <- sort(arr[arr < 0])
+  
+  # Process non-negative numbers
+  non_negative_numbers <- arr[arr >= 0]
+  
+  # Sort non-negative numbers based on number of 1s in binary representation, then by decimal value
+  sorted_non_negative_numbers <- non_negative_numbers[order(sapply(non_negative_numbers, function(x) {
+    sum(as.integer(intToBits(x)))
+  }), non_negative_numbers)]
+  
+  # Combine sorted negative and non-negative numbers
+  c(negative_numbers, sorted_non_negative_numbers)
+}","test_humaneval <- function() {
+    candidate <- sort_array
+    stopifnot(isTRUE(all.equal(candidate(c(1, 5, 2, 3, 4)), c(1, 2, 4, 3, 5))))
+    stopifnot(isTRUE(all.equal(candidate(c(-2, -3, -4, -5, -6)), c(-4, -2, -6, -5, -3))))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 0, 2, 3, 4)), c(0, 1, 2, 4, 3))))
+    stopifnot(isTRUE(all.equal(candidate(c()), c())))
+    stopifnot(isTRUE(all.equal(candidate(c(2, 5, 77, 4, 5, 3, 5, 7, 2, 3, 4)), c(2, 2, 4, 4, 3, 3, 5, 5, 5, 7, 77))))
+    stopifnot(isTRUE(all.equal(candidate(c(3, 6, 44, 12, 32, 5)), c(32, 3, 5, 6, 12, 44))))
+    stopifnot(isTRUE(all.equal(candidate(c(2, 4, 8, 16, 32)), c(2, 4, 8, 16, 32))))
+    stopifnot(isTRUE(all.equal(candidate(c(2, 4, 8, 16, 32)), c(2, 4, 8, 16, 32))))
+}
+test_humaneval()"
+HumanEval_117,zho_Hans,r,"举例:输入字符串只包含字母和空格.如果字符串s是空的, 函数应该返回一个空的列表.字母串中出现的字母顺序.一个函数,返回包含完全的字符串s中的所有单词的列表.给定一个字符串 s 和一个自然数 n, 您被要求执行# >>> select_words('Mary had a little lamb', 4)
+# c('little')
+# >>> select_words('Mary had a little lamb', 3)
+# c('Mary', 'lamb')
+# >>> select_words('simple white space', 2)
+# c()
+# >>> select_words('Hello world', 4)
+# c('world')
+# >>> select_words('Uncle sam', 3)
+# c('Uncle')
+select_words <- function(s, n) {","select_words <- function(s, n) {
+  vowels <- c('a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U')
+  words <- strsplit(s, "" "")[[1]]
+  result <- sapply(words, function(word) {
+    consonants_count <- nchar(gsub(paste(vowels, collapse = ""|""), """", word))
+    if (consonants_count == n) return(word)
+    else return(NULL)
+  })
+  result <- result[!sapply(result, is.null)]
+  unname(result)
+}","test_humaneval <- function() {
+    candidate <- select_words
+    stopifnot(isTRUE(all.equal(candidate('Mary had a little lamb', 4), c('little'))))
+    stopifnot(isTRUE(all.equal(candidate('Mary had a little lamb', 3), c('Mary', 'lamb'))))
+    stopifnot(isTRUE(all.equal(candidate('simple white space', 2), c())))
+    stopifnot(isTRUE(all.equal(candidate('Hello world', 4), c('world'))))
+    stopifnot(isTRUE(all.equal(candidate('Uncle sam', 3), c('Uncle'))))
+    stopifnot(isTRUE(all.equal(candidate('', 4), c())))
+    stopifnot(isTRUE(all.equal(candidate('a b c d e f', 1), c('b', 'c', 'd', 'f'))))
+}
+test_humaneval()"
+HumanEval_118,zho_Hans,r,"举例:您可以假设给定的字符串只包含英文字母.找到任何符合上述条件的母音.开始和结束的元音不算. 如果没有,请返回空字符串.两个从单词的右侧的辅音 (大小写敏感).您的任务是找到最接近于此之间的母音.# >>> get_closest_vowel('yogurt')
+# 'u'
+# >>> get_closest_vowel('FULL')
+# 'U'
+# >>> get_closest_vowel('quick')
+# ''
+# >>> get_closest_vowel('ab')
+# ''
+get_closest_vowel <- function(word) {","get_closest_vowel <- function(word) {
+  vowels <- c('a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U')
+  n <- nchar(word)
+  
+  # Iterate from the second to last position to the second position
+  for (i in (n-1):2) {
+    if (substr(word, i, i) %in% vowels) {
+      if (!substr(word, i-1, i-1) %in% vowels && !substr(word, i+1, i+1) %in% vowels) {
+        return(substr(word, i, i))
+      }
+    }
+  }
+  
+  # Return empty string if no vowel is found
+  return('')
+}","test_humaneval <- function() {
+    candidate <- get_closest_vowel
+    stopifnot(isTRUE(all.equal(candidate('yogurt'), 'u')))
+    stopifnot(isTRUE(all.equal(candidate('full'), 'u')))
+    stopifnot(isTRUE(all.equal(candidate('easy'), '')))
+    stopifnot(isTRUE(all.equal(candidate('eAsy'), '')))
+    stopifnot(isTRUE(all.equal(candidate('ali'), '')))
+    stopifnot(isTRUE(all.equal(candidate('bad'), 'a')))
+    stopifnot(isTRUE(all.equal(candidate('most'), 'o')))
+    stopifnot(isTRUE(all.equal(candidate('ab'), '')))
+    stopifnot(isTRUE(all.equal(candidate('ba'), '')))
+    stopifnot(isTRUE(all.equal(candidate('quick'), '')))
+    stopifnot(isTRUE(all.equal(candidate('anime'), 'i')))
+    stopifnot(isTRUE(all.equal(candidate('Asia'), '')))
+    stopifnot(isTRUE(all.equal(candidate('Above'), 'o')))
+}
+test_humaneval()"
+HumanEval_119,zho_Hans,r,"举例:如果有方法可以做出一个好的字符串, 返回""Yes"", 否则返回""No""."" (()) ""不是.它们是平衡的.例如:字符串'(()))) 很好,而字符串如果和只有如果所有括号在S中,则被认为是一个字符串S是好的.结果的字符串会是好的.您的工作是检查是否可以将两个字符串连接在一起.只有括号"" (() ""或括号"" () "".两个字符串都包含开放式.# >>> match_parens(c('()(', ')'))
+# 'Yes'
+# >>> match_parens(c(')', ')'))
+# 'No'
+match_parens <- function(lst) {","match_parens <- function(lst) {
+  is_balanced <- function(s) {
+    balance <- 0
+    for (ch in strsplit(s, """")[[1]]) {
+      if (ch == '(') {
+        balance <- balance + 1
+      } else {
+        balance <- balance - 1
+      }
+      if (balance < 0) return(FALSE)
+    }
+    return(balance == 0)
+  }
+  
+  s1 <- lst[1]
+  s2 <- lst[2]
+  
+  if (is_balanced(paste0(s1, s2)) || is_balanced(paste0(s2, s1))) {
+    return('Yes')
+  } else {
+    return('No')
+  }
+}","test_humaneval <- function() {
+    candidate <- match_parens
+    stopifnot(isTRUE(all.equal(candidate(c('()(', ')')), 'Yes')))
+    stopifnot(isTRUE(all.equal(candidate(c(')', ')')), 'No')))
+    stopifnot(isTRUE(all.equal(candidate(c('(()(())', '())())')), 'No')))
+    stopifnot(isTRUE(all.equal(candidate(c(')())', '(()()(')), 'Yes')))
+    stopifnot(isTRUE(all.equal(candidate(c('(())))', '(()())((')), 'Yes')))
+    stopifnot(isTRUE(all.equal(candidate(c('()', '())')), 'No')))
+    stopifnot(isTRUE(all.equal(candidate(c('(()(', '()))()')), 'Yes')))
+    stopifnot(isTRUE(all.equal(candidate(c('((((', '((())')), 'No')))
+    stopifnot(isTRUE(all.equal(candidate(c(')(()', '(()(')), 'No')))
+    stopifnot(isTRUE(all.equal(candidate(c(')(', ')(')), 'No')))
+    stopifnot(isTRUE(all.equal(candidate(c('(', ')')), 'Yes')))
+    stopifnot(isTRUE(all.equal(candidate(c(')', '(')), 'Yes')))
+}
+test_humaneval()"
+HumanEval_120,zho_Hans,r,"举例1:长度为k,最大的数量为k个数.给定一个整数的向量arr和一个正整数k,返回一个排序的列表.# >>> maximum(c(-3, -4, 5), 3)
+# c(-4, -3, 5)
+# Example 2:
+# >>> maximum(c(4, -4, 4), 2)
+# c(4, 4)
+# Example 3:
+# >>> maximum(c(-3, 2, 1, 2, -1, -2, 1), 1)
+# c(2)
+# Note:
+#     1. The length of the vector will be in the range of [1, 1000].
+#     2. The elements in the vector will be in the range of [-1000, 1000].
+#     3. 0 <= k <= len(arr)
+maximum <- function(arr, k) {","maximum <- function(arr, k) {
+  return(sort(tail(sort(arr), k)))
+}","test_humaneval <- function() {
+    candidate <- maximum
+    stopifnot(isTRUE(all.equal(candidate(c(-3, -4, 5), 3), c(-4, -3, 5))))
+    stopifnot(isTRUE(all.equal(candidate(c(4, -4, 4), 2), c(4, 4))))
+    stopifnot(isTRUE(all.equal(candidate(c(-3, 2, 1, 2, -1, -2, 1), 1), c(2))))
+    stopifnot(isTRUE(all.equal(candidate(c(123, -123, 20, 0, 1, 2, -3), 3), c(2, 20, 123))))
+    stopifnot(isTRUE(all.equal(candidate(c(-123, 20, 0, 1, 2, -3), 4), c(0, 1, 2, 20))))
+    stopifnot(isTRUE(all.equal(candidate(c(5, 15, 0, 3, -13, -8, 0), 7), c(-13, -8, 0, 0, 3, 5, 15))))
+    stopifnot(isTRUE(all.equal(candidate(c(-1, 0, 2, 5, 3, -10), 2), c(3, 5))))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 0, 5, -7), 1), c(5))))
+    stopifnot(isTRUE(all.equal(candidate(c(4, -4), 2), c(-4, 4))))
+    stopifnot(isTRUE(all.equal(candidate(c(-10, 10), 2), c(-10, 10))))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3, -23, 243, -400, 0), 0), c())))
+}
+test_humaneval()"
+HumanEval_121,zho_Hans,r,"举例 给出一个非空整数列表,返回所有偶数元素的和.# >>> solution(c(5, 8, 7, 1))
+# 12
+# >>> solution(c(3, 3, 3, 3, 3))
+# 9
+# >>> solution(c(30, 13, 24, 321))
+# 0
+solution <- function(lst) {","solution <- function(lst) {
+  sum(lst[seq(2, length(lst), by = 2)][lst[seq(2, length(lst), by = 2)] %% 2 != 0])
+}","test_humaneval <- function() {
+    candidate <- solution
+    stopifnot(isTRUE(all.equal(candidate(c(5, 8, 7, 1)), 12)))
+    stopifnot(isTRUE(all.equal(candidate(c(3, 3, 3, 3, 3)), 9)))
+    stopifnot(isTRUE(all.equal(candidate(c(30, 13, 24, 321)), 0)))
+    stopifnot(isTRUE(all.equal(candidate(c(5, 9)), 5)))
+    stopifnot(isTRUE(all.equal(candidate(c(2, 4, 8)), 0)))
+    stopifnot(isTRUE(all.equal(candidate(c(30, 13, 23, 32)), 23)))
+    stopifnot(isTRUE(all.equal(candidate(c(3, 13, 2, 9)), 3)))
+}
+test_humaneval()"
+HumanEval_122,zho_Hans,r,"举例:元素的总和最多是从 arr 的第一个 k 个元素中取出两个数字.给定一个非空的整数 arr 和一个整数 k 的向量,返回 # >>> add_elements(c(111, 21, 3, 4000, 5, 6, 7, 8, 9), 4)
+# 24
+# Constraints:
+#     1. 1 <= len(arr) <= 100
+#     2. 1 <= k <= len(arr)
+add_elements <- function(arr, k) {","add_elements <- function(arr, k) {
+  sum(arr[1:k][nchar(abs(arr[1:k])) <= 2])
+}","test_humaneval <- function() {
+    candidate <- add_elements
+    stopifnot(isTRUE(all.equal(candidate(c(1, -2, -3, 41, 57, 76, 87, 88, 99), 3), -4)))
+    stopifnot(isTRUE(all.equal(candidate(c(111, 121, 3, 4000, 5, 6), 2), 0)))
+    stopifnot(isTRUE(all.equal(candidate(c(11, 21, 3, 90, 5, 6, 7, 8, 9), 4), 125)))
+    stopifnot(isTRUE(all.equal(candidate(c(111, 21, 3, 4000, 5, 6, 7, 8, 9), 4), 24)))
+    stopifnot(isTRUE(all.equal(candidate(c(1), 1), 1)))
+}
+test_humaneval()"
+HumanEval_123,zho_Hans,r,"# 5 的 collatz 序列是 [5, 16, 8, 4, 2, 1], 所以奇数只有 1 和 5. 例如:2. 返回的列表按增长顺序排序.1. 列式的列式是 [1].需要注意的是:推测是,无论n的值如何,序列总是达到1.如果前一个项是奇数,下一个项是前一个项的3倍.则下一个数是 的1/2.开始从任意正整数n. 然后从每项得到科拉茨推测是数学中的一个推测,涉及到一个已定义的序列.给定一个正整数n,返回一个有奇数列表, 列出奇数列中的奇数列.# >>> get_odd_collatz(5)
+# c(1, 5)
+get_odd_collatz <- function(n) {","get_odd_collatz <- function(n) {
+  collatz_sequence <- function(n) {
+    sequence <- c(n)
+    while (n != 1) {
+      if (n %% 2 == 0) {
+        n <- n / 2
+      } else {
+        n <- 3 * n + 1
+      }
+      sequence <- c(sequence, n)
+    }
+    return(sequence)
+  }
+  
+  sequence <- collatz_sequence(n)
+  odd_numbers <- unique(sequence[sequence %% 2 != 0])
+  return(sort(odd_numbers))
+}","test_humaneval <- function() {
+    candidate <- get_odd_collatz
+    stopifnot(isTRUE(all.equal(candidate(14), c(1, 5, 7, 11, 13, 17))))
+    stopifnot(isTRUE(all.equal(candidate(5), c(1, 5))))
+    stopifnot(isTRUE(all.equal(candidate(12), c(1, 3, 5))))
+    stopifnot(isTRUE(all.equal(candidate(1), c(1))))
+}
+test_humaneval()"
+HumanEval_124,zho_Hans,r,"4. 时间应该以:MM-DD-YYYY的格式.3. 个月不应小于1个月或高于12个月.2. 月份 1,3,5,7,8,10,12 的天数不少于 1 或高于 31 天,月份 4,6,9,11 的天数不少于 1 或高于 30 天,月份 2 的天数不少于 1 或高于 29 天.1. 日期字符串不是空的.如果符合以下所有规则,该日期是有效的:如果日期是有效的,则返回 TRUE,否则返回 FALSE.必须写一个函数来验证给定的日期字符串,# >>> valid_date('03-11-2000')
+# TRUE
+# >>> valid_date('15-01-2012')
+# FALSE
+# >>> valid_date('04-0-2040')
+# FALSE
+# >>> valid_date('06-04-2020')
+# TRUE
+# >>> valid_date('06/04/2020')
+# FALSE
+valid_date <- function(date) {","valid_date <- function(date) {
+  # Check if the date is not empty
+  if (date == """") {
+    return(FALSE)
+  }
+  
+  # Check the format of the date
+  if (!grepl(""^\\d{2}-\\d{2}-\\d{4}$"", date)) {
+    return(FALSE)
+  }
+  
+  # Extract the month, day, and year
+  parts <- unlist(strsplit(date, ""-""))
+  month <- as.numeric(parts[1])
+  day <- as.numeric(parts[2])
+  year <- as.numeric(parts[3])
+  
+  # Check if the month is valid
+  if (month < 1 || month > 12) {
+    return(FALSE)
+  }
+  
+  # Check if the day is valid
+  if (month %in% c(1, 3, 5, 7, 8, 10, 12) && (day < 1 || day > 31)) {
+    return(FALSE)
+  }
+  
+  if (month %in% c(4, 6, 9, 11) && (day < 1 || day > 30)) {
+    return(FALSE)
+  }
+  
+  if (month == 2 && (day < 1 || day > 29)) {
+    return(FALSE)
+  }
+  
+  return(TRUE)
+}","test_humaneval <- function() {
+    candidate <- valid_date
+    stopifnot(isTRUE(all.equal(candidate('03-11-2000'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('15-01-2012'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('04-0-2040'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('06-04-2020'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('01-01-2007'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('03-32-2011'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(''), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('04-31-3000'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('06-06-2005'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('21-31-2000'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('04-12-2003'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('04122003'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('20030412'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('2003-04'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('2003-04-12'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('04-2003'), FALSE)))
+}
+test_humaneval()"
+HumanEval_125,zho_Hans,r,"举例 字母表, 字母表""a""=0, 字母表""b""=1, ... 字母表""z""=25应该分成逗号','如果没有逗号, 应该返回小写字母数量, 奇数顺序.给定一串单词,返回一个单词列表,用空白划分,如果您的文本中没有空白,则返回一个单词列表.# >>> split_words('Hello world!')
+# c('Hello', 'world!')
+# >>> split_words('Hello,world!')
+# c('Hello', 'world!')
+# >>> split_words('abcdef')
+# 3
+split_words <- function(txt) {","split_words <- function(txt) {
+  if (grepl(""\\s"", txt)) {
+    return(strsplit(txt, ""\\s+"")[[1]])
+  } else if (grepl("","", txt)) {
+    return(strsplit(txt, "","")[[1]])
+  } else {
+    odd_order_count <- sum(
+      sapply(unlist(strsplit(txt, """")), function(x) {
+        ord <- utf8ToInt(tolower(x)) - utf8ToInt(""a"")
+        ord %% 2 == 1
+      })
+    )
+    return(odd_order_count)
+  }
+}","test_humaneval <- function() {
+    candidate <- split_words
+    stopifnot(isTRUE(all.equal(candidate('Hello world!'), c('Hello', 'world!'))))
+    stopifnot(isTRUE(all.equal(candidate('Hello,world!'), c('Hello', 'world!'))))
+    stopifnot(isTRUE(all.equal(candidate('Hello world,!'), c('Hello', 'world,!'))))
+    stopifnot(isTRUE(all.equal(candidate('Hello,Hello,world !'), c('Hello,Hello,world', '!'))))
+    stopifnot(isTRUE(all.equal(candidate('abcdef'), 3)))
+    stopifnot(isTRUE(all.equal(candidate('aaabb'), 2)))
+    stopifnot(isTRUE(all.equal(candidate('aaaBb'), 1)))
+    stopifnot(isTRUE(all.equal(candidate(''), 0)))
+}
+test_humaneval()"
+HumanEval_126,zho_Hans,r,"举例 假设没有负数,只有整数.单有多个重复的相同的给出一个数字列表,返回是否它们是排序的.# >>> is_sorted(c(5))
+# TRUE
+# >>> is_sorted(c(1, 2, 3, 4, 5))
+# TRUE
+# >>> is_sorted(c(1, 3, 2, 4, 5))
+# FALSE
+# >>> is_sorted(c(1, 2, 3, 4, 5, 6))
+# TRUE
+# >>> is_sorted(c(1, 2, 3, 4, 5, 6, 7))
+# TRUE
+# >>> is_sorted(c(1, 3, 2, 4, 5, 6, 7))
+# FALSE
+# >>> is_sorted(c(1, 2, 2, 3, 3, 4))
+# TRUE
+# >>> is_sorted(c(1, 2, 2, 2, 3, 4))
+# FALSE
+is_sorted <- function(lst) {","is_sorted <- function(lst) {
+  if (length(lst) <= 1) {
+    return(TRUE)
+  }
+  
+  # Check for duplicates more than once
+  tbl <- table(lst)
+  if (any(tbl > 2)) {
+    return(FALSE)
+  }
+  
+  # Check if the list is sorted in ascending order
+  for (i in 2:length(lst)) {
+    if (lst[i] < lst[i - 1]) {
+      return(FALSE)
+    }
+  }
+  
+  return(TRUE)
+}","test_humaneval <- function() {
+    candidate <- is_sorted
+    stopifnot(isTRUE(all.equal(candidate(c(5)), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3, 4, 5)), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 3, 2, 4, 5)), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3, 4, 5, 6)), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3, 4, 5, 6, 7)), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 3, 2, 4, 5, 6, 7)), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(c()), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1)), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(3, 2, 1)), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 2, 2, 3, 4)), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3, 3, 3, 4)), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 2, 3, 3, 4)), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3, 4)), TRUE)))
+}
+test_humaneval()"
+HumanEval_127,zho_Hans,r,"[输入/输出] 样本: 如果两个间隔不相交,返回""NO"".否则返回""没有"".如果交点的长度是个素数,返回""YES"",没有一个素数.两个区间的交点是 (2,3)时间间隔是一个素数.您的任务是确定这两个线的交点长度是否对于每一个给定的间隔,假设它的开始小于或等于它的结束.包含开始和结束.给定的间隔是封闭的,这意味着间隔 (开始,结束) 每个区间都是一对整数.例如,区间= (开始,结束) = (1, 2).您有两个时间间隔,# >>> intersection(c(1, 2), c(2, 3))
+# 'NO'
+# >>> intersection(c(-1, 1), c(0, 4))
+# 'NO'
+# >>> intersection(c(-3, -1), c(-5, 5))
+# 'YES'
+intersection <- function(interval1, interval2) {","intersection <- function(interval1, interval2) {
+  start1 <- interval1[1]
+  end1 <- interval1[2]
+  start2 <- interval2[1]
+  end2 <- interval2[2]
+  
+  # Determine the start and end of the intersection
+  intersection_start <- max(start1, start2)
+  intersection_end <- min(end1, end2)
+  
+  # Calculate the length of the intersection
+  length_of_intersection <- intersection_end - intersection_start
+  
+  # If there's no intersection, return ""NO""
+  if (length_of_intersection < 0) {
+    return('NO')
+  }
+  
+  # Check if the length is a prime number
+  is_prime <- function(num) {
+    if (num <= 1) {
+      return(FALSE)
+    }
+    for (i in 2:sqrt(num)) {
+      if (num %% i == 0) {
+        return(FALSE)
+      }
+    }
+    return(TRUE)
+  }
+  
+  # Return ""YES"" if the length is prime, otherwise ""NO""
+  if (is_prime(length_of_intersection)) {
+    return('YES')
+  } else {
+    return('NO')
+  }
+}","test_humaneval <- function() {
+    candidate <- intersection
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2), c(2, 3)), 'NO')))
+    stopifnot(isTRUE(all.equal(candidate(c(-1, 1), c(0, 4)), 'NO')))
+    stopifnot(isTRUE(all.equal(candidate(c(-3, -1), c(-5, 5)), 'YES')))
+    stopifnot(isTRUE(all.equal(candidate(c(-2, 2), c(-4, 0)), 'YES')))
+    stopifnot(isTRUE(all.equal(candidate(c(-11, 2), c(-1, -1)), 'NO')))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2), c(3, 5)), 'NO')))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2), c(1, 2)), 'NO')))
+    stopifnot(isTRUE(all.equal(candidate(c(-2, -2), c(-3, -2)), 'NO')))
+}
+test_humaneval()"
+HumanEval_128,zho_Hans,r,"举例:注意:返回空的arr. 代表每个数的向量,由1,-1或0.整数的数量和所有符号的乘法给你一个整数的向量arr,你需要返回# >>> prod_signs(c(1, 2, 2, -4))
+# 9
+# >>> prod_signs(c(0, 1))
+# 0
+# >>> prod_signs(c())
+# NULL
+prod_signs <- function(arr) {","prod_signs <- function(arr) {
+  if (length(arr) == 0) {
+    return(NULL)
+  }
+  magnitude_sum <- sum(abs(arr))
+  sign_product <- prod(sign(arr))
+  return(magnitude_sum * sign_product)
+}","test_humaneval <- function() {
+    candidate <- prod_signs
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 2, -4)), -9)))
+    stopifnot(isTRUE(all.equal(candidate(c(0, 1)), 0)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 1, 1, 2, 3, -1, 1)), -10)))
+    stopifnot(isTRUE(all.equal(candidate(c()), NULL)))
+    stopifnot(isTRUE(all.equal(candidate(c(2, 4, 1, 2, -1, -1, 9)), 20)))
+    stopifnot(isTRUE(all.equal(candidate(c(-1, 1, -1, 1)), 4)))
+    stopifnot(isTRUE(all.equal(candidate(c(-1, 1, 1, 1)), -4)))
+    stopifnot(isTRUE(all.equal(candidate(c(-1, 1, 1, 0)), 0)))
+}
+test_humaneval()"
+HumanEval_129,zho_Hans,r,"举例:返回最小路径所经过的单元格中的值的排序列表.答案是唯一的.时间表:这样 lst_A[i] < lst_B[i] 对于任何j (1 <= j < i) 我们有换句话说,存在一个整数指数i (1 <= i <= k) 通过 (让我们称它们为lst_A和lst_B),lst_A在词典学上是较少的.在列出A和B的单元格中的数值后,一条路径A (长度k) 被认为小于一条路径B (长度k),如果您不能离开网络.没有必要区分).请注意,一个长度为k的路径意味着访问了正好k个单元 (而不是 没有.换句话说,你可以去与你共享边缘的电流.通过每个步骤,你可以移动到任何邻近的细胞,您必须在网格中找到长度k的最小路径.包含在网格的单元格上出现了正好一次.每个网格的单元格都包含一个值.范围内的每个整数[1,N*N]给定一个有N行和N列的网格 (N>=2) 和一个正整数k,# >>> minPath(list(c(1, 2, 3), c(4, 5, 6), c(7, 8, 9)), 3)
+# c(1, 2, 1)
+# >>> minPath(list(c(5, 9, 3), c(4, 1, 6), c(7, 8, 2)), 1)
+# c(1)
+minPath <- function(grid, k) {","minPath <- function(grid, k) {
+  N <- length(grid)
+  directions <- list(c(0, 1), c(1, 0), c(0, -1), c(-1, 0))
+  
+  is_valid <- function(x, y) {
+    return(x >= 1 && x <= N && y >= 1 && y <= N)
+  }
+  
+  # DFS to find all paths
+  dfs <- function(x, y, path) {
+    if (length(path) == k) {
+      paths <<- append(paths, list(path))
+      return()
+    }
+    
+    for (direction in directions) {
+      nx <- x + direction[1]
+      ny <- y + direction[2]
+      if (is_valid(nx, ny)) {
+        dfs(nx, ny, c(path, grid[[nx]][[ny]]))
+      }
+    }
+  }
+  
+  paths <- list()
+  
+  # Start from every cell
+  for (i in 1:N) {
+    for (j in 1:N) {
+      dfs(i, j, c(grid[[i]][[j]]))
+    }
+  }
+  
+  # Find and return the lexicographically smallest path
+  min_path <- paths[[1]]
+  for (path in paths) {
+    if (path < min_path) {
+      min_path <- path
+    }
+  }
+  
+  return(min_path)
+}","test_humaneval <- function() {
+    candidate <- minPath
+    stopifnot(isTRUE(all.equal(candidate(list(c(1, 2, 3), c(4, 5, 6), c(7, 8, 9)), 3), c(1, 2, 1))))
+    stopifnot(isTRUE(all.equal(candidate(list(c(5, 9, 3), c(4, 1, 6), c(7, 8, 2)), 1), c(1))))
+    stopifnot(isTRUE(all.equal(candidate(list(c(1, 2, 3, 4), c(5, 6, 7, 8), c(9, 10, 11, 12), c(13, 14, 15, 16)), 4), c(1, 2, 1, 2))))
+    stopifnot(isTRUE(all.equal(candidate(list(c(6, 4, 13, 10), c(5, 7, 12, 1), c(3, 16, 11, 15), c(8, 14, 9, 2)), 7), c(1, 10, 1, 10, 1, 10, 1))))
+    stopifnot(isTRUE(all.equal(candidate(list(c(8, 14, 9, 2), c(6, 4, 13, 15), c(5, 7, 1, 12), c(3, 10, 11, 16)), 5), c(1, 7, 1, 7, 1))))
+    stopifnot(isTRUE(all.equal(candidate(list(c(11, 8, 7, 2), c(5, 16, 14, 4), c(9, 3, 15, 6), c(12, 13, 10, 1)), 9), c(1, 6, 1, 6, 1, 6, 1, 6, 1))))
+    stopifnot(isTRUE(all.equal(candidate(list(c(12, 13, 10, 1), c(9, 3, 15, 6), c(5, 16, 14, 4), c(11, 8, 7, 2)), 12), c(1, 6, 1, 6, 1, 6, 1, 6, 1, 6, 1, 6))))
+    stopifnot(isTRUE(all.equal(candidate(list(c(2, 7, 4), c(3, 1, 5), c(6, 8, 9)), 8), c(1, 3, 1, 3, 1, 3, 1, 3))))
+    stopifnot(isTRUE(all.equal(candidate(list(c(6, 1, 5), c(3, 8, 9), c(2, 7, 4)), 8), c(1, 5, 1, 5, 1, 5, 1, 5))))
+    stopifnot(isTRUE(all.equal(candidate(list(c(1, 2), c(3, 4)), 10), c(1, 2, 1, 2, 1, 2, 1, 2, 1, 2))))
+    stopifnot(isTRUE(all.equal(candidate(list(c(1, 3), c(3, 2)), 10), c(1, 3, 1, 3, 1, 3, 1, 3, 1, 3))))
+}
+test_humaneval()"
+HumanEval_130,zho_Hans,r,"举例:在Tribonacci序列中的第一个n+1个数.给你一个非负数整数n,你必须返回一个列表两个加三个加三个等于八个.三三 = 三二 + 三一 + 三四) = 3 三分二是1+ (2 / 2) = 2例如:如果n是奇数,则n-1=n-1+n-2+n-1如果n是偶数,则tri (n) = 1 + n / 2         波尼奇序列的定义是:然而,人们不知道的是特里波纳契序列.菲博纳契数列是众所周知的,# >>> tri(3)
+# c(1, 3, 2, 8)
+tri <- function(n) {","tri <- function(n) {
+  if (n == 0) return(c(3))
+  
+  tribonacci <- numeric(n + 1)
+  tribonacci[1] <- 3
+  
+  for (i in 2:(n + 1)) {
+    if (i %% 2 == 0) {
+      tribonacci[i] <- 1 + i / 2
+    } else {
+      if (i == 3) {
+        tribonacci[i] <- tribonacci[i - 1] + tribonacci[i - 2] + tribonacci[i + 1]  # tri(3) requires tri(4)
+      } else {
+        # When i > 3 and i is odd, dependencies are always available
+        tribonacci[i] <- tribonacci[i - 1] + tribonacci[i - 2] + tribonacci[i - 3 + 2]  # i + 1 becomes i - 3 + 2
+      }
+    }
+  }
+  
+  return(tribonacci)
+}","test_humaneval <- function() {
+    candidate <- tri
+    stopifnot(isTRUE(all.equal(candidate(3), c(1, 3, 2, 8))))
+    stopifnot(isTRUE(all.equal(candidate(4), c(1, 3, 2, 8, 3))))
+    stopifnot(isTRUE(all.equal(candidate(5), c(1, 3, 2, 8, 3, 15))))
+    stopifnot(isTRUE(all.equal(candidate(6), c(1, 3, 2, 8, 3, 15, 4))))
+    stopifnot(isTRUE(all.equal(candidate(7), c(1, 3, 2, 8, 3, 15, 4, 24))))
+    stopifnot(isTRUE(all.equal(candidate(8), c(1, 3, 2, 8, 3, 15, 4, 24, 5))))
+    stopifnot(isTRUE(all.equal(candidate(9), c(1, 3, 2, 8, 3, 15, 4, 24, 5, 35))))
+    stopifnot(isTRUE(all.equal(candidate(20), c(1, 3, 2, 8, 3, 15, 4, 24, 5, 35, 6, 48, 7, 63, 8, 80, 9, 99, 10, 120, 11))))
+    stopifnot(isTRUE(all.equal(candidate(0), c(1))))
+    stopifnot(isTRUE(all.equal(candidate(1), c(1, 3))))
+}
+test_humaneval()"
+HumanEval_131,zho_Hans,r,"例如:如果所有数字均为偶数,则返回0.给定一个正整数 n,返回奇数的乘积.# >>> digits(1)
+# 1
+# >>> digits(4)
+# 0
+# >>> digits(235)
+# 15
+digits <- function(n) {","digits <- function(n) {
+  # Convert the number to a character vector
+  digits_vector <- unlist(strsplit(as.character(n), """"))
+  
+  # Convert the character vector back to numeric
+  digits_vector <- as.numeric(digits_vector)
+  
+  # Filter out the odd digits
+  odd_digits <- digits_vector[digits_vector %% 2 != 0]
+  
+  # If all digits are even, return 0
+  if (length(odd_digits) == 0) {
+    return(0)
+  }
+  
+  # Calculate and return the product of odd digits
+  return(prod(odd_digits))
+}","test_humaneval <- function() {
+    candidate <- digits
+    stopifnot(isTRUE(all.equal(candidate(5), 5)))
+    stopifnot(isTRUE(all.equal(candidate(54), 5)))
+    stopifnot(isTRUE(all.equal(candidate(120), 1)))
+    stopifnot(isTRUE(all.equal(candidate(5014), 5)))
+    stopifnot(isTRUE(all.equal(candidate(98765), 315)))
+    stopifnot(isTRUE(all.equal(candidate(5576543), 2625)))
+    stopifnot(isTRUE(all.equal(candidate(2468), 0)))
+}
+test_humaneval()"
+HumanEval_132,zho_Hans,r,"在该次序中至少有一个括号是嵌套的.如果只有一个有效的括号子序列存在,函数应该返回TRUE.创建一个函数, 作为输入, 仅包含方括号的字符串.# >>> is_nested('[[]]')
+# TRUE
+# >>> is_nested('[]]]]]]][[[[[]')
+# FALSE
+# >>> is_nested('[][]')
+# FALSE
+# >>> is_nested('[]')
+# FALSE
+# >>> is_nested('[[][]]')
+# TRUE
+# >>> is_nested('[[]][[')
+# TRUE
+is_nested <- function(string) {","is_nested <- function(string) {
+  open_count <- 0
+  for (char in unlist(strsplit(string, """"))) {
+    if (char == ""["") {
+      open_count <- open_count + 1
+    } else if (char == ""]"") {
+      if (open_count > 1) {
+        return(TRUE)
+      }
+      open_count <- open_count - 1
+    }
+  }
+  return(FALSE)
+}","test_humaneval <- function() {
+    candidate <- is_nested
+    stopifnot(isTRUE(all.equal(candidate('[[]]'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('[]]]]]]][[[[[]'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('[][]'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('[]'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('[[[[]]]]'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('[]]]]]]]]]]'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('[][][[]]'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('[[]'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('[]]'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('[[]][['), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('[[][]]'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(''), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('[[[[[[[['), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(']]]]]]]]'), FALSE)))
+}
+test_humaneval()"
+HumanEval_133,zho_Hans,r,"举例:首先将列表中的每个元素圆到顶部.需要返回给定的列表中的二次数和,您可以在此处找到一个列表.# >>> lst(c(1.0, 2.0, 3.0))
+# 14
+# >>> lst(c(1.0, 4.0, 9.0))
+# 98
+# >>> lst(c(1.0, 3.0, 5.0, 7.0))
+# 84
+# >>> lst(c(1.4, 4.2, 0.0))
+# 29
+# >>> lst(c(-2.4, 1.0, 1.0))
+# 6
+sum_squares <- function(lst) {","sum_squares <- function(lst) {
+  sum(ceiling(lst)^2)
+}","test_humaneval <- function() {
+    candidate <- sum_squares
+    stopifnot(isTRUE(all.equal(candidate(c(1.0, 2.0, 3.0)), 14)))
+    stopifnot(isTRUE(all.equal(candidate(c(1.0, 2.0, 3.0)), 14)))
+    stopifnot(isTRUE(all.equal(candidate(c(1.0, 3.0, 5.0, 7.0)), 84)))
+    stopifnot(isTRUE(all.equal(candidate(c(1.4, 4.2, 0.0)), 29)))
+    stopifnot(isTRUE(all.equal(candidate(c(-2.4, 1.0, 1.0)), 6)))
+    stopifnot(isTRUE(all.equal(candidate(c(100.0, 1.0, 15.0, 2.0)), 10230)))
+    stopifnot(isTRUE(all.equal(candidate(c(10000.0, 10000.0)), 200000000)))
+    stopifnot(isTRUE(all.equal(candidate(c(-1.4, 4.6, 6.3)), 75)))
+    stopifnot(isTRUE(all.equal(candidate(c(-1.4, 17.9, 18.9, 19.9)), 1086)))
+    stopifnot(isTRUE(all.equal(candidate(c(0.0)), 0)))
+    stopifnot(isTRUE(all.equal(candidate(c(-1.0)), 1)))
+    stopifnot(isTRUE(all.equal(candidate(c(-1.0, 1.0, 0.0)), 2)))
+}
+test_humaneval()"
+HumanEval_134,zho_Hans,r,"举例:注意:""word""是用空格隔开的一组字符.其他部分是假的.字符串的字符是字母表的字符,而不是如果最后一个字符是 则创建一个返回 TRUE 的函数# >>> check_if_last_char_is_a_letter('apple pie')
+# FALSE
+# >>> check_if_last_char_is_a_letter('apple pi e')
+# TRUE
+# >>> check_if_last_char_is_a_letter('apple pi e ')
+# FALSE
+# >>> check_if_last_char_is_a_letter('')
+# FALSE
+check_if_last_char_is_a_letter <- function(txt) {","check_if_last_char_is_a_letter <- function(txt) {
+  # Trim any trailing whitespace
+  trimmed_txt <- trimws(txt, which = ""right"")
+  
+  # If the trimmed text is empty, return FALSE
+  if (nchar(trimmed_txt) == 0) {
+    return(FALSE)
+  }
+  
+  # Get the last character
+  last_char <- substr(trimmed_txt, nchar(trimmed_txt), nchar(trimmed_txt))
+  
+  # Check if the last character is an alphabetical character
+  if (grepl(""[a-zA-Z]"", last_char)) {
+    # Split the text by spaces
+    words <- strsplit(trimmed_txt, "" "")[[1]]
+    # Get the last word
+    last_word <- tail(words, n = 1)
+    # If last character is the only character in the last ""word"", return TRUE
+    # Otherwise, it is part of a word, return FALSE
+    return(nchar(last_word) == 1)
+  }
+  
+  return(FALSE)
+}","test_humaneval <- function() {
+    candidate <- check_if_last_char_is_a_letter
+    stopifnot(isTRUE(all.equal(candidate('apple'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('apple pi e'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('eeeee'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('A'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('Pumpkin pie '), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('Pumpkin pie 1'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(''), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('eeeee e '), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('apple pie'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('apple pi e '), FALSE)))
+}
+test_humaneval()"
+HumanEval_135,zho_Hans,r,"举例:值的重复.如果没有这样的元素,则返回 -1. 给定的向量不会包含不大于或等于它之前的元素.如果创建一个函数,返回一个元素的最大索引,# >>> can_arrange(c(1, 2, 4, 3, 5))
+# 3
+# >>> can_arrange(c(1, 2, 3))
+# -1
+can_arrange <- function(arr) {","can_arrange <- function(arr) {
+  for (i in seq(length(arr) - 1, 1)) {
+    if (arr[i] > arr[i + 1]) {
+      return(i)
+    }
+  }
+  return(-1)
+}","test_humaneval <- function() {
+    candidate <- can_arrange
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 4, 3, 5)), 3)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 4, 5)), -1)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 4, 2, 5, 6, 7, 8, 9, 10)), 2)))
+    stopifnot(isTRUE(all.equal(candidate(c(4, 8, 5, 7, 3)), 4)))
+    stopifnot(isTRUE(all.equal(candidate(c()), -1)))
+}
+test_humaneval()"
+HumanEval_136,zho_Hans,r,"举例:如果没有负数或正数,则返回为NULL.整数的数组在一个列表中.负数中最大的整数,b是最小的整数创建一个函数,返回一个列表 (a,b),其中""a""是# >>> largest_smallest_integers(c(2, 4, 1, 3, 5, 7))
+# list(NULL, 1)
+# >>> largest_smallest_integers(c())
+# list(NULL, NULL)
+# >>> largest_smallest_integers(c(0))
+# list(NULL, NULL)
+largest_smallest_integers <- function(lst) {","largest_smallest_integers <- function(lst) {
+  negatives <- lst[lst < 0]
+  positives <- lst[lst > 0]
+  
+  largest_negative <- if(length(negatives) > 0) max(negatives) else NULL
+  smallest_positive <- if(length(positives) > 0) min(positives) else NULL
+  
+  list(largest_negative, smallest_positive)
+}","test_humaneval <- function() {
+    candidate <- largest_smallest_integers
+    stopifnot(isTRUE(all.equal(candidate(c(2, 4, 1, 3, 5, 7)), list(NULL, 1))))
+    stopifnot(isTRUE(all.equal(candidate(c(2, 4, 1, 3, 5, 7, 0)), list(NULL, 1))))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 3, 2, 4, 5, 6, -2)), c(-2, 1))))
+    stopifnot(isTRUE(all.equal(candidate(c(4, 5, 3, 6, 2, 7, -7)), c(-7, 2))))
+    stopifnot(isTRUE(all.equal(candidate(c(7, 3, 8, 4, 9, 2, 5, -9)), c(-9, 2))))
+    stopifnot(isTRUE(all.equal(candidate(c()), list(NULL, NULL))))
+    stopifnot(isTRUE(all.equal(candidate(c(0)), list(NULL, NULL))))
+    stopifnot(isTRUE(all.equal(candidate(c(-1, -3, -5, -6)), list(-1, NULL))))
+    stopifnot(isTRUE(all.equal(candidate(c(-1, -3, -5, -6, 0)), list(-1, NULL))))
+    stopifnot(isTRUE(all.equal(candidate(c(-6, -4, -4, -3, 1)), c(-3, 1))))
+    stopifnot(isTRUE(all.equal(candidate(c(-6, -4, -4, -3, -100, 1)), c(-3, 1))))
+}
+test_humaneval()"
+HumanEval_137,zho_Hans,r,"注意:如果实数被表示为字符串,浮点可能是 . 或 , 如果值是相同的,返回NULL.返回给定的变量类型中的较大的变量.创建一个函数, 取整数,浮动数或表示字符串的函数.# >>> compare_one(1, 2.5)
+# 2.5
+# >>> compare_one(1, '2,3')
+# '2,3'
+# >>> compare_one('5,1', '6')
+# '6'
+# >>> compare_one('1', 1)
+# NULL
+compare_one <- function(a, b) {","compare_one <- function(a, b) {
+  to_number <- function(x) {
+    if (is.character(x)) {
+      x <- gsub("","", ""."", x)
+      as.numeric(x)
+    } else {
+      as.numeric(x)
+    }
+  }
+  
+  a_num <- to_number(a)
+  b_num <- to_number(b)
+  
+  if (a_num == b_num) {
+    return(NULL)
+  } else if (a_num > b_num) {
+    return(a)
+  } else {
+    return(b)
+  }
+}","test_humaneval <- function() {
+    candidate <- compare_one
+    stopifnot(isTRUE(all.equal(candidate(1, 2), 2)))
+    stopifnot(isTRUE(all.equal(candidate(1, 2.5), 2.5)))
+    stopifnot(isTRUE(all.equal(candidate(2, 3), 3)))
+    stopifnot(isTRUE(all.equal(candidate(5, 6), 6)))
+    stopifnot(isTRUE(all.equal(candidate(1, '2,3'), '2,3')))
+    stopifnot(isTRUE(all.equal(candidate('5,1', '6'), '6')))
+    stopifnot(isTRUE(all.equal(candidate('1', '2'), '2')))
+    stopifnot(isTRUE(all.equal(candidate('1', 1), NULL)))
+}
+test_humaneval()"
+HumanEval_138,zho_Hans,r,"举例评估给定的数 n 是否可以写成正确的 4 个正偶数的和.# >>> is_equal_to_sum_even(4)
+# FALSE
+# >>> is_equal_to_sum_even(6)
+# FALSE
+# >>> is_equal_to_sum_even(8)
+# TRUE
+is_equal_to_sum_even <- function(n) {","is_equal_to_sum_even <- function(n) {
+  if (n <= 0 || n %% 2 != 0 || n < 8) {
+    return(FALSE)
+  }
+  remaining_sum <- n
+  count <- 0
+  for (i in seq(2, n, by = 2)) {
+    if (remaining_sum - i >= 2 * (4 - count - 1)) {
+      remaining_sum <- remaining_sum - i
+      count <- count + 1
+    }
+    if (count == 4) {
+      return(TRUE)
+    }
+  }
+  return(FALSE)
+}
+
+# Examples
+is_equal_to_sum_even(4)   # FALSE
+is_equal_to_sum_even(6)   # FALSE
+is_equal_to_sum_even(8)   # TRUE","test_humaneval <- function() {
+    candidate <- is_equal_to_sum_even
+    stopifnot(isTRUE(all.equal(candidate(4), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(6), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(8), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(10), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(11), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(12), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(13), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(16), TRUE)))
+}
+test_humaneval()"
+HumanEval_139,zho_Hans,r,"例如:在这里,n > 0 ,你知道的,我不认为你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说.巴西的因数定义为:# >>> special_factorial(4)
+# 288
+# The function will receive an integer as input and should return the special
+# factorial of this integer.
+special_factorial <- function(n) {","special_factorial <- function(n) {
+  result <- 1
+  for (i in 1:n) {
+    result <- result * factorial(i)
+  }
+  return(result)
+}","test_humaneval <- function() {
+    candidate <- special_factorial
+    stopifnot(isTRUE(all.equal(candidate(4), 288)))
+    stopifnot(isTRUE(all.equal(candidate(5), 34560)))
+    stopifnot(isTRUE(all.equal(candidate(7), 125411328000)))
+    stopifnot(isTRUE(all.equal(candidate(1), 1)))
+}
+test_humaneval()"
+HumanEval_140,zho_Hans,r,"然后用 - 取代所有连续的空格.如果字符串有超过2个连续的空格,给定一个文字串,用下划线来替换所有的空格,# >>> fix_spaces(' Example')
+# 'Example'
+# >>> fix_spaces(' Example 1')
+# 'Example_1'
+# >>> fix_spaces(' Example 2')
+# '_Example_2'
+# >>> fix_spaces(' Example 3')
+# '_Example-3'
+fix_spaces <- function(text) {","fix_spaces <- function(text) {
+  # Trim leading and trailing spaces
+  text <- trimws(text)
+  # Replace 3 or more consecutive spaces with a dash
+  text <- gsub("" {3,}"", ""-"", text)
+  # Replace remaining spaces with underscores
+  text <- gsub("" "", ""_"", text)
+  return(text)
+}","test_humaneval <- function() {
+    candidate <- fix_spaces
+    stopifnot(isTRUE(all.equal(candidate('Example'), 'Example')))
+    stopifnot(isTRUE(all.equal(candidate('Mudasir Hanif '), 'Mudasir_Hanif_')))
+    stopifnot(isTRUE(all.equal(candidate('Yellow Yellow  Dirty  Fellow'), 'Yellow_Yellow__Dirty__Fellow')))
+    stopifnot(isTRUE(all.equal(candidate('Exa   mple'), 'Exa-mple')))
+    stopifnot(isTRUE(all.equal(candidate('   Exa 1 2 2 mple'), '-Exa_1_2_2_mple')))
+}
+test_humaneval()"
+HumanEval_141,zho_Hans,r,"举例:- 点后的子字符串应该是以下一个:拉丁字母表 (""a"" - ""z""和""A"" - ""Z"").字符串的前面不应该是空的,- 文件名字包含一个点'.'- 文件名称不应超过三位数 ('0'-'9').满足了以下要求:如果下列条件全部满足,则文件名称才被认为是有效的.如果文件名是有效的,则返回""是"",否则返回""不"".创建一个函数,它取一个字符串来表示文件的名称,并返回 # >>> file_name_check('example.txt')
+# 'Yes'
+# >>> file_name_check('1example.dll')
+# 'No'
+file_name_check <- function(file_name) {","file_name_check <- function(file_name) {
+  # Split the file name into the name part and the extension part
+  parts <- strsplit(file_name, ""\\."", fixed = TRUE)[[1]]
+  
+  # Check there is exactly one dot
+  if (length(parts) != 2) {
+    return('No')
+  }
+  
+  # Extract the name and extension
+  name_part <- parts[1]
+  ext_part <- parts[2]
+  
+  # Check the extension is valid
+  if (!(ext_part %in% c('txt', 'exe', 'dll'))) {
+    return('No')
+  }
+  
+  # Check the name part is not empty and starts with a letter
+  if (nchar(name_part) == 0 || !grepl(""^[A-Za-z]"", name_part)) {
+    return('No')
+  }
+  
+  # Count digits in the name part
+  digit_count <- nchar(gsub(""[^0-9]"", """", name_part))
+  
+  # Check there are no more than three digits
+  if (digit_count > 3) {
+    return('No')
+  }
+  
+  return('Yes')
+}","test_humaneval <- function() {
+    candidate <- file_name_check
+    stopifnot(isTRUE(all.equal(candidate('example.txt'), 'Yes')))
+    stopifnot(isTRUE(all.equal(candidate('1example.dll'), 'No')))
+    stopifnot(isTRUE(all.equal(candidate('s1sdf3.asd'), 'No')))
+    stopifnot(isTRUE(all.equal(candidate('K.dll'), 'Yes')))
+    stopifnot(isTRUE(all.equal(candidate('MY16FILE3.exe'), 'Yes')))
+    stopifnot(isTRUE(all.equal(candidate('His12FILE94.exe'), 'No')))
+    stopifnot(isTRUE(all.equal(candidate('_Y.txt'), 'No')))
+    stopifnot(isTRUE(all.equal(candidate('?aREYA.exe'), 'No')))
+    stopifnot(isTRUE(all.equal(candidate('/this_is_valid.dll'), 'No')))
+    stopifnot(isTRUE(all.equal(candidate('this_is_valid.wow'), 'No')))
+    stopifnot(isTRUE(all.equal(candidate('this_is_valid.txt'), 'Yes')))
+    stopifnot(isTRUE(all.equal(candidate('this_is_valid.txtexe'), 'No')))
+    stopifnot(isTRUE(all.equal(candidate('#this2_i4s_5valid.ten'), 'No')))
+    stopifnot(isTRUE(all.equal(candidate('@this1_is6_valid.exe'), 'No')))
+    stopifnot(isTRUE(all.equal(candidate('this_is_12valid.6exe4.txt'), 'No')))
+    stopifnot(isTRUE(all.equal(candidate('all.exe.txt'), 'No')))
+    stopifnot(isTRUE(all.equal(candidate('I563_No.exe'), 'Yes')))
+    stopifnot(isTRUE(all.equal(candidate('Is3youfault.txt'), 'Yes')))
+    stopifnot(isTRUE(all.equal(candidate('no_one#knows.dll'), 'Yes')))
+    stopifnot(isTRUE(all.equal(candidate('1I563_Yes3.exe'), 'No')))
+    stopifnot(isTRUE(all.equal(candidate('I563_Yes3.txtt'), 'No')))
+    stopifnot(isTRUE(all.equal(candidate('final..txt'), 'No')))
+    stopifnot(isTRUE(all.equal(candidate('final132'), 'No')))
+    stopifnot(isTRUE(all.equal(candidate('_f4indsartal132.'), 'No')))
+    stopifnot(isTRUE(all.equal(candidate('.txt'), 'No')))
+    stopifnot(isTRUE(all.equal(candidate('s.'), 'No')))
+}
+test_humaneval()"
+HumanEval_142,zho_Hans,r,"举例:改变该列表中的那些索引不是3或4的倍数的条目. 函数将返回所有条目的和.如果它的索引是4的倍数而不是3的倍数, 函数将立方化整数.这个函数将取一个整数列表.对于列表中的所有条目,如果它的索引是 a,则该函数将整数条目平方."" 没有# >>> lst
+# c(1, 2, 3)
+# >>> lst
+# c()
+# >>> lst
+# c(-1, -5, 2, -1, -5)
+sum_squares <- function(lst) {","sum_squares <- function(lst) {
+  lst <- sapply(seq_along(lst), function(i) {
+    if (i %% 3 == 0) {
+      return(lst[i]^2)
+    } else if (i %% 4 == 0) {
+      return(lst[i]^3)
+    } else {
+      return(lst[i])
+    }
+  })
+  return(sum(lst))
+}","test_humaneval <- function() {
+    candidate <- sum_squares
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3)), 6)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 4, 9)), 14)))
+    stopifnot(isTRUE(all.equal(candidate(c()), 0)))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 1, 1, 1, 1, 1, 1, 1, 1)), 9)))
+    stopifnot(isTRUE(all.equal(candidate(c(-1, -1, -1, -1, -1, -1, -1, -1, -1)), -3)))
+    stopifnot(isTRUE(all.equal(candidate(c(0)), 0)))
+    stopifnot(isTRUE(all.equal(candidate(c(-1, -5, 2, -1, -5)), -126)))
+    stopifnot(isTRUE(all.equal(candidate(c(-56, -99, 1, 0, -2)), 3030)))
+    stopifnot(isTRUE(all.equal(candidate(c(-1, 0, 0, 0, 0, 0, 0, 0, -1)), 0)))
+    stopifnot(isTRUE(all.equal(candidate(c(-16, -9, -2, 36, 36, 26, -20, 25, -40, 20, -4, 12, -26, 35, 37)), -14196)))
+    stopifnot(isTRUE(all.equal(candidate(c(-1, -3, 17, -1, -15, 13, -1, 14, -14, -12, -5, 14, -14, 6, 13, 11, 16, 16, 4, 10)), -1448)))
+}
+test_humaneval()"
+HumanEval_143,zho_Hans,r,"举例1:字符串中的单词顺序应该与原始字符串相同.它们的长度是素数,必须返回包含原始句子中的字符串,句子包含一些用空格隔开的单词,给你一个代表句子的字符串,# >>> words_in_sentence('This is a test')
+# 'is'
+# Example 2:
+# >>> words_in_sentence('lets go for swimming')
+# 'go for'
+# Constraints:
+#     * 1 <= len(sentence) <= 100
+#     * sentence contains only letters
+words_in_sentence <- function(sentence) {","words_in_sentence <- function(sentence) {
+  is_prime <- function(n) {
+    if (n <= 1) return(FALSE)
+    if (n == 2) return(TRUE)
+    for (i in 2:sqrt(n)) {
+      if (n %% i == 0) return(FALSE)
+    }
+    return(TRUE)
+  }
+  
+  words <- strsplit(sentence, "" "")[[1]]
+  prime_words <- words[sapply(words, function(word) is_prime(nchar(word)))]
+  return(paste(prime_words, collapse = "" ""))
+}","test_humaneval <- function() {
+    candidate <- words_in_sentence
+    stopifnot(isTRUE(all.equal(candidate('This is a test'), 'is')))
+    stopifnot(isTRUE(all.equal(candidate('lets go for swimming'), 'go for')))
+    stopifnot(isTRUE(all.equal(candidate('there is no place available here'), 'there is no place')))
+    stopifnot(isTRUE(all.equal(candidate('Hi I am Hussein'), 'Hi am Hussein')))
+    stopifnot(isTRUE(all.equal(candidate('go for it'), 'go for it')))
+    stopifnot(isTRUE(all.equal(candidate('here'), '')))
+    stopifnot(isTRUE(all.equal(candidate('here is'), 'is')))
+}
+test_humaneval()"
+HumanEval_144,zho_Hans,r,"你可以假设x,n是有效的分数,并且没有0作为分母.在此情况下,分母和分母都是正整数.则x和n都是分数的字符串表示, 具有以下格式,x * n.如果x * n是整数,并且值为FALSE,则函数返回TRUE.您的任务是实现一个函数来简化表达式.# >>> simplify('1/5', '5/1')
+# TRUE
+# >>> simplify('1/6', '2/1')
+# FALSE
+# >>> simplify('7/10', '10/2')
+# FALSE
+simplify <- function(x, n) {","simplify <- function(x, n) {
+  parse_fraction <- function(fraction) {
+    parts <- strsplit(fraction, ""/"")[[1]]
+    return(as.numeric(parts[1]) / as.numeric(parts[2]))
+  }
+  
+  x_value <- parse_fraction(x)
+  n_value <- parse_fraction(n)
+  
+  product <- x_value * n_value
+  
+  # Check if the product is a whole number
+  return(product == floor(product))
+}","test_humaneval <- function() {
+    candidate <- simplify
+    stopifnot(isTRUE(all.equal(candidate('1/5', '5/1'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('1/6', '2/1'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('5/1', '3/1'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('7/10', '10/2'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('2/10', '50/10'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('7/2', '4/2'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('11/6', '6/1'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('2/3', '5/2'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('5/2', '3/5'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('2/4', '8/4'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('2/4', '4/2'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('1/5', '5/1'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('1/5', '1/5'), FALSE)))
+}
+test_humaneval()"
+HumanEval_145,zho_Hans,r,"例如:根据原始清单中的索引对它们进行排序.注意:如果有几个项目,其数字的和相似,根据数字的总和, 按上升顺序排列.写一个函数来排序给定的整数列表.# >>> order_by_points(c(1, 11, -1, -11, -12))
+# c(-1, -11, 1, -12, 11)
+# >>> order_by_points(c())
+# c()
+order_by_points <- function(nums) {","order_by_points <- function(nums) {
+  # Helper function to calculate the sum of digits
+  sum_of_digits <- function(n) {
+    sum(as.integer(unlist(strsplit(as.character(abs(n)), """"))))
+  }
+  
+  # Order the numbers based on the sum of their digits first, 
+  # and then by their original index
+  indices <- seq_along(nums)
+  nums[order(sapply(nums, sum_of_digits), indices)]
+}","test_humaneval <- function() {
+    candidate <- order_by_points
+    stopifnot(isTRUE(all.equal(candidate(c(1, 11, -1, -11, -12)), c(-1, -11, 1, -12, 11))))
+    stopifnot(isTRUE(all.equal(candidate(c(1234, 423, 463, 145, 2, 423, 423, 53, 6, 37, 3457, 3, 56, 0, 46)), c(0, 2, 3, 6, 53, 423, 423, 423, 1234, 145, 37, 46, 56, 463, 3457))))
+    stopifnot(isTRUE(all.equal(candidate(c()), c())))
+    stopifnot(isTRUE(all.equal(candidate(c(1, -11, -32, 43, 54, -98, 2, -3)), c(-3, -32, -98, -11, 1, 2, 43, 54))))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)), c(1, 10, 2, 11, 3, 4, 5, 6, 7, 8, 9))))
+    stopifnot(isTRUE(all.equal(candidate(c(0, 6, 6, -76, -21, 23, 4)), c(-76, -21, 0, 4, 23, 6, 6))))
+}
+test_humaneval()"
+HumanEval_146,zho_Hans,r,"例如:一个数字的第一个和最后一个数字是奇数 (1, 3, 5, 7, 9).矢量中的元素数大于10和两者写一个函数,它将数字向量作为输入,并返回# >>> specialFilter(c(15, -73, 14, -15))
+# 1
+# >>> specialFilter(c(33, -2, -3, 45, 21, 109))
+# 2
+specialFilter <- function(nums) {","specialFilter <- function(nums) {
+  # Helper function to check if both first and last digits are odd
+  are_first_last_digits_odd <- function(x) {
+    str_num <- as.character(abs(x))
+    first_digit <- as.numeric(substr(str_num, 1, 1))
+    last_digit <- as.numeric(substr(str_num, nchar(str_num), nchar(str_num)))
+    first_digit %% 2 == 1 && last_digit %% 2 == 1
+  }
+
+  # Filter numbers greater than 10 with both first and last digits odd
+  filtered_nums <- nums[nums > 10 & sapply(nums, are_first_last_digits_odd)]
+  
+  # Return the count of such numbers
+  length(filtered_nums)
+}","test_humaneval <- function() {
+    candidate <- specialFilter
+    stopifnot(isTRUE(all.equal(candidate(c(5, -2, 1, -5)), 0)))
+    stopifnot(isTRUE(all.equal(candidate(c(15, -73, 14, -15)), 1)))
+    stopifnot(isTRUE(all.equal(candidate(c(33, -2, -3, 45, 21, 109)), 2)))
+    stopifnot(isTRUE(all.equal(candidate(c(43, -12, 93, 125, 121, 109)), 4)))
+    stopifnot(isTRUE(all.equal(candidate(c(71, -2, -33, 75, 21, 19)), 3)))
+    stopifnot(isTRUE(all.equal(candidate(c(1)), 0)))
+    stopifnot(isTRUE(all.equal(candidate(c()), 0)))
+}
+test_humaneval()"
+HumanEval_147,zho_Hans,r,"举例:并且a[i]+a[j]+a[k]是3的倍数.返回一个三次数 (a[i],a[j],a[k]) 的数目,其中i < j < k,对于每个i (1 ≤ i ≤ n),a[i]的值=i * i - i + 1.给你一个正整数n. 你必须创建一个长度为n的整数向量a.#     >>> get_max_triples(5)
+#     1
+# Explanation: 
+# a = [1, 3, 7, 13, 21]
+# The only valid triple is (1, 7, 13).
+get_max_triples <- function(n) {","get_max_triples <- function(n) {
+  # Create the vector a according to the given rule
+  a <- sapply(1:n, function(i) i * i - i + 1)
+  
+  # Initialize the count of valid triples
+  count <- 0
+  
+  # Iterate over all possible triples (i, j, k) with i < j < k
+  for (i in 1:(n-2)) {
+    for (j in (i+1):(n-1)) {
+      for (k in (j+1):n) {
+        # Check if the sum of the selected triple is a multiple of 3
+        if ((a[i] + a[j] + a[k]) %% 3 == 0) {
+          count <- count + 1
+        }
+      }
+    }
+  }
+  
+  # Return the count of valid triples
+  return(count)
+}","test_humaneval <- function() {
+    candidate <- get_max_triples
+    stopifnot(isTRUE(all.equal(candidate(5), 1)))
+    stopifnot(isTRUE(all.equal(candidate(6), 4)))
+    stopifnot(isTRUE(all.equal(candidate(10), 36)))
+    stopifnot(isTRUE(all.equal(candidate(100), 53361)))
+}
+test_humaneval()"
+HumanEval_148,zho_Hans,r,"举例 它们不是正确的行星名.如果是 planet1 或 planet2 函数应该返回一个空列表.太阳的距离.位于行星1和行星2的轨道之间,按该函数应该返回一个包含所有行星的列表, 它们的轨道是写一个函数,以两个行星的名字作为string planet1和planet2.乌拉诺斯,海王星接下来是金星,然后是地球,火星,木星,土星,太阳系有八个行星:# >>> bf('Jupiter', 'Neptune')
+# c('Saturn', 'Uranus')
+# >>> bf('Earth', 'Mercury')
+# 'Venus'
+# >>> bf('Mercury', 'Uranus')
+# c('Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn')
+bf <- function(planet1, planet2) {","bf <- function(planet1, planet2) {
+  planets <- c('Mercury', 'Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune')
+  if (!(planet1 %in% planets) || !(planet2 %in% planets)) {
+    return(c())
+  }
+  
+  index1 <- which(planets == planet1)
+  index2 <- which(planets == planet2)
+  
+  if (index1 < index2) {
+    return(planets[(index1 + 1):(index2 - 1)])
+  } else if (index2 < index1) {
+    return(planets[(index2 + 1):(index1 - 1)])
+  } else {
+    return(c())
+  }
+}","test_humaneval <- function() {
+    candidate <- bf
+    stopifnot(isTRUE(all.equal(candidate('Jupiter', 'Neptune'), c('Saturn', 'Uranus'))))
+    stopifnot(isTRUE(all.equal(candidate('Earth', 'Mercury'), c('Venus'))))
+    stopifnot(isTRUE(all.equal(candidate('Mercury', 'Uranus'), c('Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn'))))
+    stopifnot(isTRUE(all.equal(candidate('Neptune', 'Venus'), c('Earth', 'Mars', 'Jupiter', 'Saturn', 'Uranus'))))
+    stopifnot(isTRUE(all.equal(candidate('Earth', 'Earth'), c())))
+    stopifnot(isTRUE(all.equal(candidate('Mars', 'Earth'), c())))
+    stopifnot(isTRUE(all.equal(candidate('Jupiter', 'Makemake'), c())))
+}
+test_humaneval()"
+HumanEval_149,zho_Hans,r,"例如:您可能会认为所有的单词都长度相同.函数应该返回一个排序的字符串列表.如果两个单词的长度相同,请按字母顺序排列.应该根据该规则排序列表.列表中的字数应该以每一个单词的长度上升,并且可能包含重复的文件.永远不是一个数字向量,返回结果列表,并按顺序排序,删除从它中具有奇数长度的字符串,写一个函数, 接受字符串列表作为参数,# >>> list_sort(c('aa', 'a', 'aaa'))
+# c('aa')
+# >>> list_sort(c('ab', 'a', 'aaa', 'cd'))
+# c('ab', 'cd')
+sorted_list_sum <- function(lst) {","list_sort <- function(lst) {
+  # Filter out strings with odd lengths
+  filtered_list <- lst[nchar(lst) %% 2 == 0]
+  
+  # Sort the list first by length, then alphabetically
+  sorted_list <- filtered_list[order(nchar(filtered_list), filtered_list)]
+  
+  return(sorted_list)
+}","test_humaneval <- function() {
+    candidate <- sorted_list_sum
+    stopifnot(isTRUE(all.equal(candidate(c('aa', 'a', 'aaa')), c('aa'))))
+    stopifnot(isTRUE(all.equal(candidate(c('school', 'AI', 'asdf', 'b')), c('AI', 'asdf', 'school'))))
+    stopifnot(isTRUE(all.equal(candidate(c('d', 'b', 'c', 'a')), c())))
+    stopifnot(isTRUE(all.equal(candidate(c('d', 'dcba', 'abcd', 'a')), c('abcd', 'dcba'))))
+    stopifnot(isTRUE(all.equal(candidate(c('AI', 'ai', 'au')), c('AI', 'ai', 'au'))))
+    stopifnot(isTRUE(all.equal(candidate(c('a', 'b', 'b', 'c', 'c', 'a')), c())))
+    stopifnot(isTRUE(all.equal(candidate(c('aaaa', 'bbbb', 'dd', 'cc')), c('cc', 'dd', 'aaaa', 'bbbb'))))
+}
+test_humaneval()"
+HumanEval_150,zho_Hans,r,"举例:应该返回 y 的值.一个简单的程序,如果n是,它应该返回x的值.# >>> x_or_y(7, 34, 12)
+# 34
+# >>> x_or_y(15, 8, 5)
+# 5
+x_or_y <- function(n, x, y) {","x_or_y <- function(n, x, y) {
+  is_prime <- function(num) {
+    if (num <= 1) {
+      return(FALSE)
+    }
+    for (i in 2:sqrt(num)) {
+      if (num %% i == 0) {
+        return(FALSE)
+      }
+    }
+    return(TRUE)
+  }
+  
+  if (is_prime(n)) {
+    return(x)
+  } else {
+    return(y)
+  }
+}","test_humaneval <- function() {
+    candidate <- x_or_y
+    stopifnot(isTRUE(all.equal(candidate(7, 34, 12), 34)))
+    stopifnot(isTRUE(all.equal(candidate(15, 8, 5), 5)))
+    stopifnot(isTRUE(all.equal(candidate(3, 33, 5212), 33)))
+    stopifnot(isTRUE(all.equal(candidate(1259, 3, 52), 3)))
+    stopifnot(isTRUE(all.equal(candidate(7919, -1, 12), -1)))
+    stopifnot(isTRUE(all.equal(candidate(3609, 1245, 583), 583)))
+    stopifnot(isTRUE(all.equal(candidate(91, 56, 129), 129)))
+    stopifnot(isTRUE(all.equal(candidate(6, 34, 1234), 1234)))
+    stopifnot(isTRUE(all.equal(candidate(1, 2, 0), 0)))
+    stopifnot(isTRUE(all.equal(candidate(2, 2, 0), 2)))
+}
+test_humaneval()"
+HumanEval_151,zho_Hans,r,"忽略负数或非整数的数.给出一个数列表,返回数的平方和.# >>> double_the_difference(c(1, 3, 2, 0))
+# 10
+# >>> double_the_difference(c(-1, -2, 0))
+# 0
+# >>> double_the_difference(c(9, -2))
+# 81
+# >>> double_the_difference(c(0))
+# 0
+# If the input list is empty, return 0.
+double_the_difference <- function(lst) {","double_the_difference <- function(lst) {
+  # Filter out non-positive, non-integer, and non-odd numbers
+  lst <- lst[lst > 0 & lst %% 1 == 0 & lst %% 2 == 1]
+  # Calculate the sum of squares of remaining numbers
+  sum(lst^2)
+}","test_humaneval <- function() {
+    candidate <- double_the_difference
+    stopifnot(isTRUE(all.equal(candidate(c()), 0)))
+    stopifnot(isTRUE(all.equal(candidate(c(5.0, 4.0)), 25)))
+    stopifnot(isTRUE(all.equal(candidate(c(0.1, 0.2, 0.3)), 0)))
+    stopifnot(isTRUE(all.equal(candidate(c(-10.0, -20.0, -30.0)), 0)))
+    stopifnot(isTRUE(all.equal(candidate(c(-1.0, -2.0, 8.0)), 0)))
+    stopifnot(isTRUE(all.equal(candidate(c(0.2, 3.0, 5.0)), 34)))
+    stopifnot(isTRUE(all.equal(candidate(c(-9.0, -7.0, -5.0, -3.0, -1.0, 1.0, 3.0, 5.0, 7.0, 9.0)), 165)))
+}
+test_humaneval()"
+HumanEval_152,zho_Hans,r,"举个例子:值为0,如果不是,则值是猜测和得分之间的绝对差异.返回一个相同长度的向量, 表示每个猜测的距离. 如果他们猜得对,两个分数和猜测的向量是相同的, 每个指数都显示一个匹配.您的任务是确定一个人是否正确猜出了几次比赛的结果.值得我们来记下并进行比较.现在,我们终于知道了这件事情.让我们一起来看看这场战争的结果.# >>> compare(c(1, 2, 3, 4, 5, 1), c(1, 2, 3, 4, 2, -2))
+# c(0, 0, 0, 0, 3, 3)
+# >>> compare(c(0, 5, 0, 0, 0, 4), c(4, 1, 1, 0, 0, -2))
+# c(4, 4, 1, 0, 0, 6)
+compare <- function(game, guess) {","compare <- function(game, guess) {
+  abs(game - guess)
+}","test_humaneval <- function() {
+    candidate <- compare
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3, 4, 5, 1), c(1, 2, 3, 4, 2, -2)), c(0, 0, 0, 0, 3, 3))))
+    stopifnot(isTRUE(all.equal(candidate(c(0, 0, 0, 0, 0, 0), c(0, 0, 0, 0, 0, 0)), c(0, 0, 0, 0, 0, 0))))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3), c(-1, -2, -3)), c(2, 4, 6))))
+    stopifnot(isTRUE(all.equal(candidate(c(1, 2, 3, 5), c(-1, 2, 3, 4)), c(2, 0, 0, 1))))
+}
+test_humaneval()"
+HumanEval_153,zho_Hans,r,"举例:(它的强度是-1).返回""Slices.SErviNGSliCes"",因为""SErviNGSliCes""是最强大的扩展扩展: ['SERVINGSliCes', 'Cheese', 'StuFfed']那么你应该 作为一个类, 列出了 类的 类别, 类别的 类别的 类别的 类别的 类别的 类别的 类别的 类别的选择列表中第一个.如果有两个或更多的延伸具有相同的强度,你应该格式: 类名. 最强的扩展名. 您应该找到最强的扩展, 并返回一个字符串.在扩展名字中,强度是CAP-SM分数.扩展名中的字母, SM 是小写字母的数量扩展的强度如下:让CAP是大写的数字.扩展可以用于加载类中的其他类.您将得到一个类的名称 (字符串) 和一个扩展名列表.# >>> Strongest_Extension('my_class', c('AA', 'Be', 'CC'))
+# 'my_class.AA'
+Strongest_Extension <- function(class_name, extensions) {","Strongest_Extension <- function(class_name, extensions) {
+  # Function to calculate the strength of an extension
+  extension_strength <- function(ext) {
+    cap_count <- sum(grepl(""[A-Z]"", strsplit(ext, """")[[1]]))
+    sm_count <- sum(grepl(""[a-z]"", strsplit(ext, """")[[1]]))
+    return(cap_count - sm_count)
+  }
+  
+  # Calculate strength for each extension and find the strongest one
+  strengths <- sapply(extensions, extension_strength)
+  max_strength_index <- which.max(strengths)
+  
+  # Construct the result string
+  return(paste0(class_name, ""."", extensions[max_strength_index]))
+}","test_humaneval <- function() {
+    candidate <- Strongest_Extension
+    stopifnot(isTRUE(all.equal(candidate('Watashi', c('tEN', 'niNE', 'eIGHt8OKe')), 'Watashi.eIGHt8OKe')))
+    stopifnot(isTRUE(all.equal(candidate('Boku123', c('nani', 'NazeDa', 'YEs.WeCaNe', '32145tggg')), 'Boku123.YEs.WeCaNe')))
+    stopifnot(isTRUE(all.equal(candidate('__YESIMHERE', c('t', 'eMptY', 'nothing', 'zeR00', 'NuLl__', '123NoooneB321')), '__YESIMHERE.NuLl__')))
+    stopifnot(isTRUE(all.equal(candidate('K', c('Ta', 'TAR', 't234An', 'cosSo')), 'K.TAR')))
+    stopifnot(isTRUE(all.equal(candidate('__HAHA', c('Tab', '123', '781345', '-_-')), '__HAHA.123')))
+    stopifnot(isTRUE(all.equal(candidate('YameRore', c('HhAas', 'okIWILL123', 'WorkOut', 'Fails', '-_-')), 'YameRore.okIWILL123')))
+    stopifnot(isTRUE(all.equal(candidate('finNNalLLly', c('Die', 'NowW', 'Wow', 'WoW')), 'finNNalLLly.WoW')))
+    stopifnot(isTRUE(all.equal(candidate('_', c('Bb', '91245')), '_.Bb')))
+    stopifnot(isTRUE(all.equal(candidate('Sp', c('671235', 'Bb')), 'Sp.671235')))
+}
+test_humaneval()"
+HumanEval_154,zho_Hans,r,"给你两个单词.如果你认为第二个单词或其任何一个旋转是第一个单词中的子字符串, 你需要返回TRUE.# >>> cycpattern_check('abcd', 'abd')
+# FALSE
+# >>> cycpattern_check('hello', 'ell')
+# TRUE
+# >>> cycpattern_check('whassup', 'psus')
+# FALSE
+# >>> cycpattern_check('abab', 'baa')
+# TRUE
+# >>> cycpattern_check('efef', 'eeff')
+# FALSE
+# >>> cycpattern_check('himenss', 'simen')
+# TRUE
+cycpattern_check <- function(a, b) {","cycpattern_check <- function(a, b) {
+  n <- nchar(b)
+  # Check all rotations of b
+  for (i in 0:(n-1)) {
+    # Rotate the string b by i characters
+    rotated_b <- substring(b, i+1, n) %/% substring(b, 1, i)
+    # Check if the rotated string is a substring of a
+    if (grepl(rotated_b, a)) {
+      return(TRUE)
+    }
+  }
+  return(FALSE)
+}","test_humaneval <- function() {
+    candidate <- cycpattern_check
+    stopifnot(isTRUE(all.equal(candidate('xyzw', 'xyw'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('yello', 'ell'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('whattup', 'ptut'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('efef', 'fee'), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate('abab', 'aabb'), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate('winemtt', 'tinem'), TRUE)))
+}
+test_humaneval()"
+HumanEval_155,zho_Hans,r,"举例:返回一个列表,其中分别有偶数和奇数的数字.#     >>> even_odd_count(-12)
+#     c(1, 1)
+#     >>> even_odd_count(123)
+#     c(1, 2)
+even_odd_count <- function(num) {","even_odd_count <- function(num) {
+  # Handle negative numbers by taking the absolute value
+  num <- abs(num)
+  
+  # Convert the number to a character vector to access digits
+  digits <- unlist(strsplit(as.character(num), """"))
+  
+  # Convert character vector back to integer
+  digits <- as.integer(digits)
+  
+  # Count even digits
+  even_count <- sum(digits %% 2 == 0)
+  
+  # Count odd digits
+  odd_count <- length(digits) - even_count
+  
+  # Return a vector with even and odd counts
+  return(c(even_count, odd_count))
+}","test_humaneval <- function() {
+    candidate <- even_odd_count
+    stopifnot(isTRUE(all.equal(candidate(7), c(0, 1))))
+    stopifnot(isTRUE(all.equal(candidate(-78), c(1, 1))))
+    stopifnot(isTRUE(all.equal(candidate(3452), c(2, 2))))
+    stopifnot(isTRUE(all.equal(candidate(346211), c(3, 3))))
+    stopifnot(isTRUE(all.equal(candidate(-345821), c(3, 3))))
+    stopifnot(isTRUE(all.equal(candidate(-2), c(1, 0))))
+    stopifnot(isTRUE(all.equal(candidate(-45347), c(2, 3))))
+    stopifnot(isTRUE(all.equal(candidate(0), c(1, 0))))
+}
+test_humaneval()"
+HumanEval_156,zho_Hans,r,"举例:限制: 1 <= num <= 1000 返回一个小写的字母.给定一个正整数,以一个字符串获得它的罗马数字等价值,# >>> int_to_mini_roman(19)
+# 'xix'
+# >>> int_to_mini_roman(152)
+# 'clii'
+# >>> int_to_mini_roman(426)
+# 'cdxxvi'
+int_to_mini_roman <- function(number) {","int_to_mini_roman <- function(number) {
+  values <- c(1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1)
+  numerals <- c(""m"", ""cm"", ""d"", ""cd"", ""c"", ""xc"", ""l"", ""xl"", ""x"", ""ix"", ""v"", ""iv"", ""i"")
+  
+  result <- """"
+  remainder <- number
+  
+  for (i in seq_along(values)) {
+    while (remainder >= values[i]) {
+      result <- paste0(result, numerals[i])
+      remainder <- remainder - values[i]
+    }
+  }
+  
+  return(result)
+}","test_humaneval <- function() {
+    candidate <- int_to_mini_roman
+    stopifnot(isTRUE(all.equal(candidate(19), 'xix')))
+    stopifnot(isTRUE(all.equal(candidate(152), 'clii')))
+    stopifnot(isTRUE(all.equal(candidate(251), 'ccli')))
+    stopifnot(isTRUE(all.equal(candidate(426), 'cdxxvi')))
+    stopifnot(isTRUE(all.equal(candidate(500), 'd')))
+    stopifnot(isTRUE(all.equal(candidate(1), 'i')))
+    stopifnot(isTRUE(all.equal(candidate(4), 'iv')))
+    stopifnot(isTRUE(all.equal(candidate(43), 'xliii')))
+    stopifnot(isTRUE(all.equal(candidate(90), 'xc')))
+    stopifnot(isTRUE(all.equal(candidate(94), 'xciv')))
+    stopifnot(isTRUE(all.equal(candidate(532), 'dxxxii')))
+    stopifnot(isTRUE(all.equal(candidate(900), 'cm')))
+    stopifnot(isTRUE(all.equal(candidate(994), 'cmxciv')))
+    stopifnot(isTRUE(all.equal(candidate(1000), 'm')))
+}
+test_humaneval()"
+HumanEval_157,zho_Hans,r,"举例:没有任何问题.一个直角三角形是一个角是直角的三角形,其他情况是 FALSE.给出三角形三边的长度. 如果三边的长度是# >>> right_angle_triangle(3, 4, 5)
+# TRUE
+# >>> right_angle_triangle(1, 2, 3)
+# FALSE
+right_angle_triangle <- function(a, b, c) {","right_angle_triangle <- function(a, b, c) {
+  # Sort the sides to easily compare the largest side
+  sides <- sort(c(a, b, c))
+  
+  # Check if the sum of squares of the two smaller sides equals the square of the largest side
+  return(sides[1]^2 + sides[2]^2 == sides[3]^2)
+}","test_humaneval <- function() {
+    candidate <- right_angle_triangle
+    stopifnot(isTRUE(all.equal(candidate(3, 4, 5), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(1, 2, 3), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(10, 6, 8), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(2, 2, 2), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(7, 24, 25), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(10, 5, 7), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(5, 12, 13), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(15, 8, 17), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(48, 55, 73), TRUE)))
+    stopifnot(isTRUE(all.equal(candidate(1, 1, 1), FALSE)))
+    stopifnot(isTRUE(all.equal(candidate(2, 2, 10), FALSE)))
+}
+test_humaneval()"
+HumanEval_158,zho_Hans,r,"字符,返回第一个在词典顺序.如果多个字符串有最大数量的唯一的字符.列表包含不同的单词.返回最多数量的单词写一个函数,接受字符串列表.# >>> find_max(c('name', 'of', 'string'))
+# 'string'
+# >>> find_max(c('name', 'enam', 'game'))
+# 'enam'
+# >>> find_max(c('aaaaaaa', 'bb', 'cc'))
+# 'aaaaaaa'
+find_max <- function(words) {","find_max <- function(words) {
+  max_unique_chars <- 0
+  result <- """"
+  
+  for (word in words) {
+    unique_chars_count <- length(unique(strsplit(word, NULL)[[1]]))
+    
+    if (unique_chars_count > max_unique_chars ||
+       (unique_chars_count == max_unique_chars && word < result)) {
+      max_unique_chars <- unique_chars_count
+      result <- word
+    }
+  }
+  
+  return(result)
+}","test_humaneval <- function() {
+    candidate <- find_max
+    stopifnot(isTRUE(all.equal(candidate(c('name', 'of', 'string')), 'string')))
+    stopifnot(isTRUE(all.equal(candidate(c('name', 'enam', 'game')), 'enam')))
+    stopifnot(isTRUE(all.equal(candidate(c('aaaaaaa', 'bb', 'cc')), 'aaaaaaa')))
+    stopifnot(isTRUE(all.equal(candidate(c('abc', 'cba')), 'abc')))
+    stopifnot(isTRUE(all.equal(candidate(c('play', 'this', 'game', 'of', 'footbott')), 'footbott')))
+    stopifnot(isTRUE(all.equal(candidate(c('we', 'are', 'gonna', 'rock')), 'gonna')))
+    stopifnot(isTRUE(all.equal(candidate(c('we', 'are', 'a', 'mad', 'nation')), 'nation')))
+    stopifnot(isTRUE(all.equal(candidate(c('this', 'is', 'a', 'prrk')), 'this')))
+    stopifnot(isTRUE(all.equal(candidate(c('b')), 'b')))
+    stopifnot(isTRUE(all.equal(candidate(c('play', 'play', 'play')), 'play')))
+}
+test_humaneval()"
+HumanEval_159,zho_Hans,r,"举例:如果剩下的胡卜不够,你会吃掉剩下的胡卜,但仍然会饿.吃完饭后剩下的胡卜数量] 您应该返回一个向量[在饭后吃到的胡卜总数,现在你需要吃更多的胡卜来完成一天的饭菜.你是一个饥饿的子, 你已经吃了一定数量的胡卜,# >>> eat(5, 6, 10)
+# c(11, 4)
+# >>> eat(4, 8, 9)
+# c(12, 1)
+# >>> eat(1, 10, 10)
+# c(11, 0)
+# >>> eat(2, 11, 5)
+# c(7, 0)
+# Variables:
+# @number : integer
+#     the number of carrots that you have eaten.
+# @need : integer
+#     the number of carrots that you need to eat.
+# @remaining : integer
+#     the number of remaining carrots thet exist in stock
+# Constrain:
+# * 0 <= number <= 1000
+# * 0 <= need <= 1000
+# * 0 <= remaining <= 1000
+# Have fun :)
+eat <- function(number, need, remaining) {","eat <- function(number, need, remaining) {
+  total_eaten <- number + min(need, remaining)
+  remaining_carrots <- max(0, remaining - need)
+  return(c(total_eaten, remaining_carrots))
+}","test_humaneval <- function() {
+    candidate <- eat
+    stopifnot(isTRUE(all.equal(candidate(5, 6, 10), c(11, 4))))
+    stopifnot(isTRUE(all.equal(candidate(4, 8, 9), c(12, 1))))
+    stopifnot(isTRUE(all.equal(candidate(1, 10, 10), c(11, 0))))
+    stopifnot(isTRUE(all.equal(candidate(2, 11, 5), c(7, 0))))
+    stopifnot(isTRUE(all.equal(candidate(4, 5, 7), c(9, 2))))
+    stopifnot(isTRUE(all.equal(candidate(4, 5, 1), c(5, 0))))
+}
+test_humaneval()"
+HumanEval_160,zho_Hans,r,"操作符列表至少有一个操作符,操作数列表至少有两个操作数.操作数是一个非负整数列表.操作符列表的长度等于操作数列表的长度减去一个.需要注意的是:=> 结果=9结果是2+3*4-5矢量 = [2, 3, 4, 5] 操作员['+', '*', '-'] 举例:显数 (**) 显数楼层划分 (乘法 (*) 减去 ( - ) 增加 (+) 基本的代数运算:返回该表达式的评估.两个给定的列表用于构建代数.给出两个列表操作符和操作数. 第一个列表有基本代数运算, do_algebra <- function(operator, operand) {","do_algebra <- function(operator, operand) {
+  if (length(operator) != length(operand) - 1) {
+    stop(""The length of operator list must be equal to the length of operand list minus one."")
+  }
+  
+  # Initialize the result with the first operand
+  result <- operand[1]
+  
+  # Iterate through the operators and operands
+  for (i in 1:length(operator)) {
+    op <- operator[i]
+    num <- operand[i + 1]
+    
+    # Apply the appropriate operation
+    if (op == '+') {
+      result <- result + num
+    } else if (op == '-') {
+      result <- result - num
+    } else if (op == '*') {
+      result <- result * num
+    } else if (op == '//') {
+      result <- result %/% num
+    } else if (op == '**') {
+      result <- result ^ num
+    } else {
+      stop(""Unsupported operation"")
+    }
+  }
+  
+  return(result)
+}","test_humaneval <- function() {
+    candidate <- do_algebra
+    stopifnot(isTRUE(all.equal(candidate(c('**', '*', '+'), c(2, 3, 4, 5)), 37)))
+    stopifnot(isTRUE(all.equal(candidate(c('+', '*', '-'), c(2, 3, 4, 5)), 9)))
+    stopifnot(isTRUE(all.equal(candidate(c('//', '*'), c(7, 3, 4)), 8)))
+}
+test_humaneval()"
+HumanEval_161,zho_Hans,r,"举例 函数应该返回得到的字符串.如果字符串没有字母, 则反转字符串.否则就让它保持原样.如果 s[i] 是一个字母,则将其大小写从下方转向上方或反之,给你一个字符串 s.# >>> solve('1234')
+# '4321'
+# >>> solve('ab')
+# 'AB'
+# >>> solve('#a@C')
+# '#A@c'
+solve <- function(s) {","solve <- function(s) {
+  if (grepl(""[a-zA-Z]"", s)) {
+    return(chartr(""abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"",
+                  ""ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"", s))
+  } else {
+    return(intToUtf8(rev(utf8ToInt(s))))
+  }
+}","test_humaneval <- function() {
+    candidate <- solve
+    stopifnot(isTRUE(all.equal(candidate('AsDf'), 'aSdF')))
+    stopifnot(isTRUE(all.equal(candidate('1234'), '4321')))
+    stopifnot(isTRUE(all.equal(candidate('ab'), 'AB')))
+    stopifnot(isTRUE(all.equal(candidate('#a@C'), '#A@c')))
+    stopifnot(isTRUE(all.equal(candidate('#AsdfW^45'), '#aSDFw^45')))
+    stopifnot(isTRUE(all.equal(candidate('#6@2'), '2@6#')))
+    stopifnot(isTRUE(all.equal(candidate('#$a^D'), '#$A^d')))
+    stopifnot(isTRUE(all.equal(candidate('#ccc'), '#CCC')))
+}
+test_humaneval()"
+HumanEval_162,zho_Hans,r,"如果'text'是一个空字符串,返回NULL. 给定一个字符串'text',返回其md5哈希等价字符串.# >>> string_to_md5('Hello world')
+# '3e25960a79dbc69b674cd4ec67a72c62'
+string_to_md5 <- function(text) {","string_to_md5 <- function(text) {
+  if (text == """") {
+    return(NULL)
+  } else {
+    return(digest::digest(text, algo = ""md5"", serialize = FALSE))
+  }
+}
+
+# Ensure the required library is loaded
+if(!requireNamespace(""digest"", quietly = TRUE)) {
+  install.packages(""digest"")
+}
+
+# Load the digest library
+library(digest)","test_humaneval <- function() {
+    candidate <- string_to_md5
+    stopifnot(isTRUE(all.equal(candidate('Hello world'), '3e25960a79dbc69b674cd4ec67a72c62')))
+    stopifnot(isTRUE(all.equal(candidate(''), NULL)))
+    stopifnot(isTRUE(all.equal(candidate('A B C'), '0ef78513b0cb8cef12743f5aeb35f888')))
+    stopifnot(isTRUE(all.equal(candidate('password'), '5f4dcc3b5aa765d61d8327deb882cf99')))
+}
+test_humaneval()"
+HumanEval_163,zho_Hans,r,"例如:并且 b, 顺序上升.给出两个正整数 a 和 b,返回 a 之间的偶数.# >>> generate_integers(2, 8)
+# c(2, 4, 6, 8)
+# >>> generate_integers(8, 2)
+# c(2, 4, 6, 8)
+# >>> generate_integers(10, 14)
+# c()
+generate_integers <- function(a, b) {","generate_integers <- function(a, b) {
+  start <- min(a, b)
+  end <- max(a, b)
+  even_digits <- seq(start, end)[seq(start, end) %% 2 == 0 & seq(start, end) <= 8]
+  return(even_digits)
+}","test_humaneval <- function() {
+    candidate <- generate_integers
+    stopifnot(isTRUE(all.equal(candidate(2, 10), c(2, 4, 6, 8))))
+    stopifnot(isTRUE(all.equal(candidate(10, 2), c(2, 4, 6, 8))))
+    stopifnot(isTRUE(all.equal(candidate(132, 2), c(2, 4, 6, 8))))
+    stopifnot(isTRUE(all.equal(candidate(17, 89), c())))
+}
+test_humaneval()"
