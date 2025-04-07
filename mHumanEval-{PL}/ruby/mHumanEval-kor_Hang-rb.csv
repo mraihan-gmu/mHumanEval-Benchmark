@@ -1,0 +1,4634 @@
+task_id,nl,pl,prompt,canonical_solution,tests
+HumanEval_0,kor_Hang,rb,"주어진 임계값.주어진 숫자의 배열에서 보다 두 개의 숫자가 서로 더 가깝는지 확인합니다# >>> has_close_elements.call([1.0, 2.0, 3.0], 0.5)
+# false
+# >>> has_close_elements.call([1.0, 2.8, 3.0, 4.0, 5.0, 2.0], 0.3)
+# true
+def has_close_elements(numbers, threshold)
+","def has_close_elements(numbers, threshold)
+  numbers.combination(2).any? { |a, b| (a - b).abs < threshold }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_has_close_elements
+    candidate = method(:has_close_elements)
+    assert_equal(true, candidate.call([1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.3))
+    assert_equal(false, candidate.call([1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.05))
+    assert_equal(true, candidate.call([1.0, 2.0, 5.9, 4.0, 5.0], 0.95))
+    assert_equal(false, candidate.call([1.0, 2.0, 5.9, 4.0, 5.0], 0.8))
+    assert_equal(true, candidate.call([1.0, 2.0, 3.0, 4.0, 5.0, 2.0], 0.1))
+    assert_equal(true, candidate.call([1.1, 2.2, 3.1, 4.1, 5.1], 1.0))
+    assert_equal(false, candidate.call([1.1, 2.2, 3.1, 4.1, 5.1], 0.5))
+  end
+end
+"
+HumanEval_1,kor_Hang,rb,"입력 문자열의 공백은 무시합니다.분리된 그룹은 균형 잡힌 (각 개방된 브레이크는 적절하게 닫힌) 서로 안에는 둥지를 짓지 않습니다.그 그룹을 별도의 문자열로 분리하고 그 배열을 반환합니다.이 함수의 입력은 둥글게 된 괄호의 여러 그룹을 포함하는 문자열입니다. 당신의 목표는 # >>> separate_paren_groups.call(""( ) (( )) (( )( ))"")
+# [""()"", ""(())"", ""(()())""]
+def separate_paren_groups(paren_string)
+","def separate_paren_groups(paren_string)
+  # Remove spaces from the string
+  paren_string = paren_string.gsub("" "", """")
+  
+  result = []
+  current_group = """"
+  balance = 0
+
+  paren_string.each_char do |char|
+    current_group += char
+    balance += 1 if char == '('
+    balance -= 1 if char == ')'
+
+    if balance == 0 && !current_group.empty?
+      result << current_group
+      current_group = """"
+    end
+  end
+
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_separate_paren_groups
+    candidate = method(:separate_paren_groups)
+    assert_equal([""(()())"", ""((()))"", ""()"", ""((())()())""], candidate.call(""(()()) ((())) () ((())()())""))
+    assert_equal([""()"", ""(())"", ""((()))"", ""(((())))""], candidate.call(""() (()) ((())) (((())))""))
+    assert_equal([""(()(())((())))""], candidate.call(""(()(())((())))""))
+    assert_equal([""()"", ""(())"", ""(()())""], candidate.call(""( ) (( )) (( )( ))""))
+  end
+end
+"
+HumanEval_2,kor_Hang,rb,"숫자의 소수점을 반환합니다.(남은 부분은 항상 1보다 작습니다.)그리고 정수 부분 (주기된 숫자보다 작은 최대 정수) 과 소수점 수인 수인 수인 수인 수인 수인 수인 수인 수인 수인 수인# >>> truncate_number.call(3.5)
+# 0.5
+def truncate_number(number)
+","def truncate_number(number)
+  number - number.to_i
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_truncate_number
+    candidate = method(:truncate_number)
+    assert_equal(0.5, candidate.call(3.5))
+    assert_equal(0.25, candidate.call(1.25))
+    assert_equal(0.0, candidate.call(123.0))
+  end
+end
+"
+HumanEval_3,kor_Hang,rb,"이 때 함수는 true를 반환해야 합니다. 그렇지 않으면 false를 반환해야 합니다.0 잔액. 당신의 임무는 어떤 시점에서 계좌 잔액이 0 이하로 떨어지는지 감지하는 것입니다.은행 계좌에 입금 및 인출을 하는 일련의 작업이 주어집니다.# >>> below_zero.call([1, 2, 3])
+# false
+# >>> below_zero.call([1, 2, -4, 5])
+# true
+def below_zero(operations)
+","def below_zero(operations)
+  balance = 0
+  operations.each do |operation|
+    balance += operation
+    return true if balance < 0
+  end
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_below_zero
+    candidate = method(:below_zero)
+    assert_equal(false, candidate.call([]))
+    assert_equal(false, candidate.call([1, 2, -3, 1, 2, -3]))
+    assert_equal(true, candidate.call([1, 2, -4, 5, 6]))
+    assert_equal(false, candidate.call([1, -1, 2, -2, 5, -5, 4, -4]))
+    assert_equal(true, candidate.call([1, -1, 2, -2, 5, -5, 4, -5]))
+    assert_equal(true, candidate.call([1, -2, 2, -2, 5, -5, 4, -4]))
+  end
+end
+"
+HumanEval_4,kor_Hang,rb,"MAD = 평균. x - x_mean.요소와 중심점 (이 경우 평균):평균 절대 편차는 각 이 데이터 세트의 평균에 가깝습니다.입력 숫자의 배열을 계산해 평균 절대 오차를 계산해# >>> mean_absolute_deviation.call([1.0, 2.0, 3.0, 4.0])
+# 1.0
+def mean_absolute_deviation(numbers)
+","def mean_absolute_deviation(numbers)
+  mean = numbers.sum.to_f / numbers.size
+  deviations = numbers.map { |num| (num - mean).abs }
+  deviations.sum / numbers.size
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_mean_absolute_deviation
+    candidate = method(:mean_absolute_deviation)
+    assert_equal(0.5, candidate.call([1.0, 2.0]))
+    assert_equal(1.0, candidate.call([1.0, 2.0, 3.0, 4.0]))
+    assert_equal(1.2, candidate.call([1.0, 2.0, 3.0, 4.0, 5.0]))
+  end
+end
+"
+HumanEval_5,kor_Hang,rb,"입력 배열의 2개의 연속적인 요소들 사이에 '분계' 숫자를 삽입합니다.# >>> intersperse.call([], 4)
+# []
+# >>> intersperse.call([1, 2, 3], 4)
+# [1, 4, 2, 4, 3]
+def intersperse(numbers, delimeter)
+","def intersperse(numbers, delimeter)
+  return numbers if numbers.empty?
+  result = []
+  numbers.each_with_index do |num, index|
+    result << num
+    result << delimeter unless index == numbers.size - 1
+  end
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_intersperse
+    candidate = method(:intersperse)
+    assert_equal([], candidate.call([], 7))
+    assert_equal([5, 8, 6, 8, 3, 8, 2], candidate.call([5, 6, 3, 2], 8))
+    assert_equal([2, 2, 2, 2, 2], candidate.call([2, 2, 2], 2))
+  end
+end
+"
+HumanEval_6,kor_Hang,rb,"예를 들어 (() (()) 은 최대 2개의 둥지 레벨을 가지고 있고 ((())) 은 3개의 둥지 레벨을 가지고 있습니다.각 그룹에 대해 가장 깊은 괄호의 둥지를 입력합니다.이 함수의 입력은 공간으로 분리된 둥글게 된 괄호를 위한 여러 그룹을 나타내는 문자열입니다.# >>> parse_nested_parens.call(""(()()) ((())) () ((())()())"")
+# [2, 3, 1, 3]
+def parse_nested_parens(paren_string)
+","def parse_nested_parens(paren_string)
+  paren_string.split.map do |group|
+    max_depth = current_depth = 0
+    group.chars.each do |char|
+      if char == '('
+        current_depth += 1
+        max_depth = [max_depth, current_depth].max
+      elsif char == ')'
+        current_depth -= 1
+      end
+    end
+    max_depth
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_parse_nested_parens
+    candidate = method(:parse_nested_parens)
+    assert_equal([2, 3, 1, 3], candidate.call(""(()()) ((())) () ((())()())""))
+    assert_equal([1, 2, 3, 4], candidate.call(""() (()) ((())) (((())))""))
+    assert_equal([4], candidate.call(""(()(())((())))""))
+  end
+end
+"
+HumanEval_7,kor_Hang,rb,"입력 배열의 문자열을 필터링하여 주어진 하위 문자열을 포함하고 있는 문자열만 필터링합니다.# >>> filter_by_substring.call([], ""a"")
+# []
+# >>> filter_by_substring.call([""abc"", ""bacd"", ""cde"", ""array""], ""a"")
+# [""abc"", ""bacd"", ""array""]
+def filter_by_substring(strings, substring)
+","def filter_by_substring(strings, substring)
+  strings.select { |string| string.include?(substring) }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_filter_by_substring
+    candidate = method(:filter_by_substring)
+    assert_equal([], candidate.call([], ""john""))
+    assert_equal([""xxx"", ""xxxAAA"", ""xxx""], candidate.call([""xxx"", ""asd"", ""xxy"", ""john doe"", ""xxxAAA"", ""xxx""], ""xxx""))
+    assert_equal([""xxx"", ""aaaxxy"", ""xxxAAA"", ""xxx""], candidate.call([""xxx"", ""asd"", ""aaaxxy"", ""john doe"", ""xxxAAA"", ""xxx""], ""xx""))
+    assert_equal([""grunt"", ""prune""], candidate.call([""grunt"", ""trumpet"", ""prune"", ""gruesome""], ""run""))
+  end
+end
+"
+HumanEval_8,kor_Hang,rb,"빈 합은 0과 빈 곱은 1이 되어야 합니다.주어진 정수 배열에 대해, 배열의 모든 정수의 합과 곱으로 이루어진 배열을 반환합니다.# >>> sum_product.call([])
+# [0, 1]
+# >>> sum_product.call([1, 2, 3, 4])
+# [10, 24]
+def sum_product(numbers)
+","def sum_product(numbers)
+  sum = numbers.reduce(0, :+)
+  product = numbers.reduce(1, :*)
+  [sum, product]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sum_product
+    candidate = method(:sum_product)
+    assert_equal([0, 1], candidate.call([]))
+    assert_equal([3, 1], candidate.call([1, 1, 1]))
+    assert_equal([100, 0], candidate.call([100, 0]))
+    assert_equal([15, 105], candidate.call([3, 5, 7]))
+    assert_equal([10, 10], candidate.call([10]))
+  end
+end
+"
+HumanEval_9,kor_Hang,rb,"순서대로.주어진 정수 배열에서 주어진 순간까지 발견된 롤링 최대 요소의 배열을 생성합니다.# >>> rolling_max.call([1, 2, 3, 2, 3, 4, 2])
+# [1, 2, 3, 3, 3, 4, 4]
+def rolling_max(numbers)
+","def rolling_max(numbers)
+  max_so_far = numbers.first
+  numbers.map do |num|
+    max_so_far = [max_so_far, num].max
+  end
+end
+
+# Example usage:
+# puts rolling_max([1, 2, 3, 2, 3, 4, 2]).inspect","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_rolling_max
+    candidate = method(:rolling_max)
+    assert_equal([], candidate.call([]))
+    assert_equal([1, 2, 3, 4], candidate.call([1, 2, 3, 4]))
+    assert_equal([4, 4, 4, 4], candidate.call([4, 3, 2, 1]))
+    assert_equal([3, 3, 3, 100, 100], candidate.call([3, 2, 3, 100, 3]))
+  end
+end
+"
+HumanEval_10,kor_Hang,rb,"- 문자열의 끝부분에 팔린드로믹 접두사 앞에 있는 문자열 접두사를 붙여주세요.- 제공된 문자열의 가장 긴 포스트픽스를 찾아서 팔린드로미를 구합니다.알고리즘 아이디어는 간단합니다:주어진 문자열로 시작하는 가장 짧은 팔린드로임을 찾아보세요.# >>> make_palindrome.call("""")
+# """"
+# >>> make_palindrome.call(""cat"")
+# ""catac""
+# >>> make_palindrome.call(""cata"")
+# ""catac""
+def make_palindrome(string)
+","def make_palindrome(string)
+  return string if string.empty?
+
+  def is_palindrome?(s)
+    s == s.reverse
+  end
+
+  (0...string.length).reverse_each do |i|
+    if is_palindrome?(string[i..-1])
+      return string + string[0...i].reverse
+    end
+  end
+
+  string
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_make_palindrome
+    candidate = method(:make_palindrome)
+    assert_equal("""", candidate.call(""""))
+    assert_equal(""x"", candidate.call(""x""))
+    assert_equal(""xyzyx"", candidate.call(""xyz""))
+    assert_equal(""xyx"", candidate.call(""xyx""))
+    assert_equal(""jerryrrej"", candidate.call(""jerry""))
+  end
+end
+"
+HumanEval_11,kor_Hang,rb,"이 입력에 대해 바이너리 XOR을 수행하고 결과를 문자열로 반환합니다.입력값은 a와 b가 1과 0으로만 구성된 두 개의 문자열입니다.# >>> string_xor.call(""010"", ""110"")
+# ""100""
+def string_xor(a, b)
+","def string_xor(a, b)
+  result = """"
+  a.length.times do |i|
+    result << (a[i] == b[i] ? ""0"" : ""1"")
+  end
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_string_xor
+    candidate = method(:string_xor)
+    assert_equal(""010010"", candidate.call(""111000"", ""101010""))
+    assert_equal(""0"", candidate.call(""1"", ""1""))
+    assert_equal(""0101"", candidate.call(""0101"", ""0000""))
+  end
+end
+"
+HumanEval_12,kor_Hang,rb,"같은 길이의 문자열. 입력 배열이 비어 있는 경우 nil를 반환합니다.문자열의 배열에서 가장 긴 문자열을 반환합니다. 여러   경우 첫 번째 문자열을 반환합니다.# >>> longest.call([])
+# nil
+# >>> longest.call([""a"", ""b"", ""c""])
+# ""a""
+# >>> longest.call([""a"", ""bb"", ""ccc""])
+# ""ccc""
+def longest(strings)
+","def longest(strings)
+  return nil if strings.empty?
+  strings.max_by(&:length)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_longest
+    candidate = method(:longest)
+    assert_equal(nil, candidate.call([]))
+    assert_equal(""x"", candidate.call([""x"", ""y"", ""z""]))
+    assert_equal(""zzzz"", candidate.call([""x"", ""yyy"", ""zzzz"", ""www"", ""kkkk"", ""abc""]))
+  end
+end
+"
+HumanEval_13,kor_Hang,rb,"두 정수 a와 b의 최대공분수를 반환합니다.# >>> greatest_common_divisor.call(3, 5)
+# 1
+# >>> greatest_common_divisor.call(25, 15)
+# 5
+def greatest_common_divisor(a, b)
+","def greatest_common_divisor(a, b)
+  while b != 0
+    a, b = b, a % b
+  end
+  a
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_greatest_common_divisor
+    candidate = method(:greatest_common_divisor)
+    assert_equal(1, candidate.call(3, 7))
+    assert_equal(5, candidate.call(10, 15))
+    assert_equal(7, candidate.call(49, 14))
+    assert_equal(12, candidate.call(144, 60))
+  end
+end
+"
+HumanEval_14,kor_Hang,rb,"입력 문자열의 가장 짧게에서 가장 길게까지의 모든 접두어들의 배열을 반환합니다.# >>> all_prefixes.call(""abc"")
+# [""a"", ""ab"", ""abc""]
+def all_prefixes(string)
+","def all_prefixes(string)
+  (1..string.length).map { |i| string[0, i] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_all_prefixes
+    candidate = method(:all_prefixes)
+    assert_equal([], candidate.call(""""))
+    assert_equal([""a"", ""as"", ""asd"", ""asdf"", ""asdfg"", ""asdfgh""], candidate.call(""asdfgh""))
+    assert_equal([""W"", ""WW"", ""WWW""], candidate.call(""WWW""))
+  end
+end
+"
+HumanEval_15,kor_Hang,rb,"0부터 n까지의 공간으로 정의된 숫자를 포함하는 문자열을 반환합니다.# >>> string_sequence.call(0)
+# ""0""
+# >>> string_sequence.call(5)
+# ""0 1 2 3 4 5""
+def string_sequence(n)
+","def string_sequence(n)
+  (0..n).to_a.join(' ')
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_string_sequence
+    candidate = method(:string_sequence)
+    assert_equal(""0"", candidate.call(0))
+    assert_equal(""0 1 2 3"", candidate.call(3))
+    assert_equal(""0 1 2 3 4 5 6 7 8 9 10"", candidate.call(10))
+  end
+end
+"
+HumanEval_16,kor_Hang,rb,"문자열을 주어, 얼마나 많은 다른 문자를 (대문자와는 상관없이) 로 구성되어 있는지 알아보십시오.# >>> count_distinct_characters.call(""xyzXYZ"")
+# 3
+# >>> count_distinct_characters.call(""Jerry"")
+# 4
+def count_distinct_characters(string)
+","def count_distinct_characters(string)
+  string.downcase.chars.uniq.count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_count_distinct_characters
+    candidate = method(:count_distinct_characters)
+    assert_equal(0, candidate.call(""""))
+    assert_equal(5, candidate.call(""abcde""))
+    assert_equal(5, candidate.call(""abcdecadeCADE""))
+    assert_equal(1, candidate.call(""aaaaAAAAaaaa""))
+    assert_equal(5, candidate.call(""Jerry jERRY JeRRRY""))
+  end
+end
+"
+HumanEval_17,kor_Hang,rb,"'하하하' - 4중 음, 한 박동 씩 지속됩니다'오오' - 반노트, 두 박동 씩'o' - 전체 음, 4박을 씁니다.전설이 있습니다.마지막이 아니죠여러분의 임무는 이 문자열을 분석하고 각 숫자가 몇 번 씩 는지에 해당하는 정수의 배열을 반환하는 것입니다.이 함수의 입력값은 특별한 ASCII 형식으로 음악 음을 나타내는 문자열입니다.# >>> parse_music.call(""o o| .| o| o| .| .| .| .| o o"")
+# [4, 2, 1, 2, 2, 1, 1, 1, 1, 4, 4]
+def parse_music(music_string)
+","def parse_music(music_string)
+  # Split the input string into individual notes.
+  notes = music_string.split
+
+  # Map each note to its corresponding number of beats.
+  notes.map do |note|
+    case note
+    when 'o'
+      4
+    when 'o|'
+      2
+    when '.|'
+      1
+    else
+      0
+    end
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_parse_music
+    candidate = method(:parse_music)
+    assert_equal([], candidate.call(""""))
+    assert_equal([4, 4, 4, 4], candidate.call(""o o o o""))
+    assert_equal([1, 1, 1, 1], candidate.call("".| .| .| .|""))
+    assert_equal([2, 2, 1, 1, 4, 4, 4, 4], candidate.call(""o| o| .| .| o o o o""))
+    assert_equal([2, 1, 2, 1, 4, 2, 4, 2], candidate.call(""o| .| o| .| o o| o o|""))
+  end
+end
+"
+HumanEval_18,kor_Hang,rb,"주어진 하위 문자열이 원래 문자열에서 몇 번 찾을 수 있는지 알아보십시오. 겹치는 경우를 계산하십시오.# >>> how_many_times.call("""", ""a"")
+# 0
+# >>> how_many_times.call(""aaa"", ""a"")
+# 3
+# >>> how_many_times.call(""aaaa"", ""aa"")
+# 3
+def how_many_times(string, substring)
+","def how_many_times(string, substring)
+  return 0 if substring.empty?
+  count = 0
+  i = 0
+  while i <= string.length - substring.length
+    if string[i, substring.length] == substring
+      count += 1
+    end
+    i += 1
+  end
+  count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_how_many_times
+    candidate = method(:how_many_times)
+    assert_equal(0, candidate.call("""", ""x""))
+    assert_equal(4, candidate.call(""xyxyxyx"", ""x""))
+    assert_equal(4, candidate.call(""cacacacac"", ""cac""))
+    assert_equal(1, candidate.call(""john doe"", ""john""))
+  end
+end
+"
+HumanEval_19,kor_Hang,rb,"숫자를 소수에서 최대로 정렬한 문자열을 반환합니다.유효한 선택은 '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'입니다.입력값은 '0'에서 '9'까지의 숫자들로 이루어진 공간으로 구분된 문자열입니다.# >>> sort_numbers.call(""three one five"")
+# ""one three five""
+def sort_numbers(numbers)
+","def sort_numbers(numbers)
+  numeral_map = {
+    'zero' => 0,
+    'one' => 1,
+    'two' => 2,
+    'three' => 3,
+    'four' => 4,
+    'five' => 5,
+    'six' => 6,
+    'seven' => 7,
+    'eight' => 8,
+    'nine' => 9
+  }
+
+  number_words = numbers.split
+  sorted_numbers = number_words.sort_by { |word| numeral_map[word] }
+  sorted_numbers.join(' ')
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sort_numbers
+    candidate = method(:sort_numbers)
+    assert_equal("""", candidate.call(""""))
+    assert_equal(""three"", candidate.call(""three""))
+    assert_equal(""three five nine"", candidate.call(""three five nine""))
+    assert_equal(""zero four five seven eight nine"", candidate.call(""five zero four seven nine eight""))
+    assert_equal(""zero one two three four five six"", candidate.call(""six five four three two one zero""))
+  end
+end
+"
+HumanEval_20,kor_Hang,rb,"다른 숫자를 순서대로 돌려주면 됩니다.제공된 숫자 배열 (최소 두 개의 길이) 에서 각 숫자 중 가장 가까운 두 개를 선택하고 반환합니다.# >>> find_closest_elements.call([1.0, 2.0, 3.0, 4.0, 5.0, 2.2])
+# [2.0, 2.2]
+# >>> find_closest_elements.call([1.0, 2.0, 3.0, 4.0, 5.0, 2.0])
+# [2.0, 2.0]
+def find_closest_elements(numbers)
+","def find_closest_elements(numbers)
+  sorted_numbers = numbers.sort
+  closest_pair = [sorted_numbers[0], sorted_numbers[1]]
+  min_difference = (sorted_numbers[1] - sorted_numbers[0]).abs
+
+  (1...(sorted_numbers.length - 1)).each do |i|
+    current_difference = (sorted_numbers[i + 1] - sorted_numbers[i]).abs
+    if current_difference < min_difference
+      min_difference = current_difference
+      closest_pair = [sorted_numbers[i], sorted_numbers[i + 1]]
+    end
+  end
+
+  closest_pair
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_find_closest_elements
+    candidate = method(:find_closest_elements)
+    assert_equal([3.9, 4.0], candidate.call([1.0, 2.0, 3.9, 4.0, 5.0, 2.2]))
+    assert_equal([5.0, 5.9], candidate.call([1.0, 2.0, 5.9, 4.0, 5.0]))
+    assert_equal([2.0, 2.2], candidate.call([1.0, 2.0, 3.0, 4.0, 5.0, 2.2]))
+    assert_equal([2.0, 2.0], candidate.call([1.0, 2.0, 3.0, 4.0, 5.0, 2.0]))
+    assert_equal([2.2, 3.1], candidate.call([1.1, 2.2, 3.1, 4.1, 5.1]))
+  end
+end
+"
+HumanEval_21,kor_Hang,rb,"가장 작은 숫자는 0이 되고 가장 큰 숫자는 1이 됩니다.주어진 숫자의 배열 (적어도 두 개의 요소로 구성된) 을 그 배열에 선형 변환을 적용합니다.# >>> rescale_to_unit.call([1.0, 2.0, 3.0, 4.0, 5.0])
+# [0.0, 0.25, 0.5, 0.75, 1.0]
+def rescale_to_unit(numbers)
+","def rescale_to_unit(numbers)
+  min = numbers.min
+  max = numbers.max
+  range = max - min
+  return numbers.map { |num| (num - min) / range.to_f }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_rescale_to_unit
+    candidate = method(:rescale_to_unit)
+    assert_equal([0.0, 1.0], candidate.call([2.0, 49.9]))
+    assert_equal([1.0, 0.0], candidate.call([100.0, 49.9]))
+    assert_equal([0.0, 0.25, 0.5, 0.75, 1.0], candidate.call([1.0, 2.0, 3.0, 4.0, 5.0]))
+    assert_equal([0.25, 0.0, 1.0, 0.5, 0.75], candidate.call([2.0, 1.0, 5.0, 3.0, 4.0]))
+    assert_equal([0.25, 0.0, 1.0, 0.5, 0.75], candidate.call([12.0, 11.0, 15.0, 13.0, 14.0]))
+  end
+end
+"
+HumanEval_22,kor_Hang,rb,"rbthon 값의 주어진 배열을 정수들만 필터링한다.# >>> filter_integers.call([""a"", 3.14, 5])
+# [5]
+# >>> filter_integers.call([1, 2, 3, ""abc"", {}, []])
+# [1, 2, 3]
+def filter_integers(values)
+","def filter_integers(values)
+  values.select { |value| value.is_a?(Integer) }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_filter_integers
+    candidate = method(:filter_integers)
+    assert_equal([], candidate.call([]))
+    assert_equal([4, 9], candidate.call([4, {}, [], 23.2, 9, ""adasd""]))
+    assert_equal([3, 3, 3], candidate.call([3, ""c"", 3, 3, ""a"", ""b""]))
+  end
+end
+"
+HumanEval_23,kor_Hang,rb,"주어진 문자열의 반환 길이# >>> strlen.call("""")
+# 0
+# >>> strlen.call(""abc"")
+# 3
+def strlen(string)
+","strlen = lambda do |string|
+  string.length
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_strlen
+    candidate = method(:strlen)
+    assert_equal(0, candidate.call(""""))
+    assert_equal(1, candidate.call(""x""))
+    assert_equal(9, candidate.call(""asdasnakj""))
+  end
+end
+"
+HumanEval_24,kor_Hang,rb,"주어진 숫자 n에 대해 n보다 작은, n을 균등하게 나누는 가장 큰 숫자를 찾아봅시다# >>> largest_divisor.call(15)
+# 5
+def largest_divisor(n)
+","def largest_divisor(n)
+  (n - 1).downto(1) do |i|
+    return i if n % i == 0
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_largest_divisor
+    candidate = method(:largest_divisor)
+    assert_equal(1, candidate.call(3))
+    assert_equal(1, candidate.call(7))
+    assert_equal(5, candidate.call(10))
+    assert_equal(50, candidate.call(100))
+    assert_equal(7, candidate.call(49))
+  end
+end
+"
+HumanEval_25,kor_Hang,rb,"입력된 숫자는 모든 인자의 곱과 같아야 합니다각 인수는 인수분해에서 나타나는 수에 대응하는 수만큼 배열되어야 합니다.소수에서 대에 순서로 주어진 정수의 소수 인수들의 배열을 반환합니다.# >>> factorize.call(8)
+# [2, 2, 2]
+# >>> factorize.call(25)
+# [5, 5]
+# >>> factorize.call(70)
+# [2, 5, 7]
+def factorize(n)
+","def factorize(n)
+  factors = []
+  divisor = 2
+  while n > 1
+    while n % divisor == 0
+      factors << divisor
+      n /= divisor
+    end
+    divisor += 1
+  end
+  factors
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_factorize
+    candidate = method(:factorize)
+    assert_equal([2], candidate.call(2))
+    assert_equal([2, 2], candidate.call(4))
+    assert_equal([2, 2, 2], candidate.call(8))
+    assert_equal([3, 19], candidate.call(57))
+    assert_equal([3, 3, 19, 19], candidate.call(3249))
+    assert_equal([3, 3, 3, 19, 19, 19], candidate.call(185193))
+    assert_equal([3, 19, 19, 19], candidate.call(20577))
+    assert_equal([2, 3, 3], candidate.call(18))
+  end
+end
+"
+HumanEval_26,kor_Hang,rb,"입력과 같은 순서로 요소를 남겨 두십시오.정수 배열에서 한 번 이상 나타나는 모든 요소를 제거합니다.# >>> remove_duplicates.call([1, 2, 3, 2, 4])
+# [1, 3, 4]
+def remove_duplicates(numbers)
+","def remove_duplicates(numbers)
+  numbers.select { |num| numbers.count(num) == 1 }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_remove_duplicates
+    candidate = method(:remove_duplicates)
+    assert_equal([], candidate.call([]))
+    assert_equal([1, 2, 3, 4], candidate.call([1, 2, 3, 4]))
+    assert_equal([1, 4, 5], candidate.call([1, 2, 3, 2, 4, 3, 5]))
+  end
+end
+"
+HumanEval_27,kor_Hang,rb,"주어진 문자열에 대해 소문자를 대문자로, 대문자를 소문자로 바꾸세요.# >>> flip_case.call(""Hello"")
+# ""hELLO""
+def flip_case(string)
+","def flip_case(string)
+  string.swapcase
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_flip_case
+    candidate = method(:flip_case)
+    assert_equal("""", candidate.call(""""))
+    assert_equal(""hELLO!"", candidate.call(""Hello!""))
+    assert_equal(""tHESE VIOLENT DELIGHTS HAVE VIOLENT ENDS"", candidate.call(""These violent delights have violent ends""))
+  end
+end
+"
+HumanEval_28,kor_Hang,rb,"문자열의 배열을 하나의 문자열로 연결합니다.# >>> concatenate.call([])
+# """"
+# >>> concatenate.call([""a"", ""b"", ""c""])
+# ""abc""
+def concatenate(strings)
+","def concatenate(strings)
+  strings.join
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_concatenate
+    candidate = method(:concatenate)
+    assert_equal("""", candidate.call([]))
+    assert_equal(""xyz"", candidate.call([""x"", ""y"", ""z""]))
+    assert_equal(""xyzwk"", candidate.call([""x"", ""y"", ""z"", ""w"", ""k""]))
+  end
+end
+"
+HumanEval_29,kor_Hang,rb,"입력된 문자열의 배열을 필터링하여 주어진 접두사로 시작하는 문자열만 선택합니다.# >>> filter_by_prefix.call([], ""a"")
+# []
+# >>> filter_by_prefix.call([""abc"", ""bcd"", ""cde"", ""array""], ""a"")
+# [""abc"", ""array""]
+def filter_by_prefix(strings, prefix)
+","def filter_by_prefix(strings, prefix)
+  strings.select { |string| string.start_with?(prefix) }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_filter_by_prefix
+    candidate = method(:filter_by_prefix)
+    assert_equal([], candidate.call([], ""john""))
+    assert_equal([""xxx"", ""xxxAAA"", ""xxx""], candidate.call([""xxx"", ""asd"", ""xxy"", ""john doe"", ""xxxAAA"", ""xxx""], ""xxx""))
+  end
+end
+"
+HumanEval_30,kor_Hang,rb,"배열의 양수만 반환합니다.# >>> get_positive.call([-1, 2, -4, 5, 6])
+# [2, 5, 6]
+# >>> get_positive.call([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])
+# [5, 3, 2, 3, 9, 123, 1]
+def get_positive(l)
+","get_positive = lambda do |l|
+  l.select { |num| num > 0 }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_get_positive
+    candidate = method(:get_positive)
+    assert_equal([4, 5, 6], candidate.call([-1, -2, 4, 5, 6]))
+    assert_equal([5, 3, 2, 3, 3, 9, 123, 1], candidate.call([5, 3, -5, 2, 3, 3, 9, 0, 123, 1, -10]))
+    assert_equal([], candidate.call([-1, -2]))
+    assert_equal([], candidate.call([]))
+  end
+end
+"
+HumanEval_31,kor_Hang,rb,"주어진 숫자가 소수라면 true를 반환하고, 그렇지 않으면 false를 반환합니다.# >>> is_prime.call(6)
+# false
+# >>> is_prime.call(101)
+# true
+# >>> is_prime.call(11)
+# true
+# >>> is_prime.call(13441)
+# true
+# >>> is_prime.call(61)
+# true
+# >>> is_prime.call(4)
+# false
+# >>> is_prime.call(1)
+# false
+def is_prime(n)
+","is_prime = lambda do |n|
+  return false if n <= 1
+  return true if n == 2
+  return false if n.even?
+
+  max_divisor = Math.sqrt(n).to_i
+  (3..max_divisor).step(2).each do |i|
+    return false if n % i == 0
+  end
+
+  true
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_prime
+    candidate = method(:is_prime)
+    assert_equal(false, candidate.call(6))
+    assert_equal(true, candidate.call(101))
+    assert_equal(true, candidate.call(11))
+    assert_equal(true, candidate.call(13441))
+    assert_equal(true, candidate.call(61))
+    assert_equal(false, candidate.call(4))
+    assert_equal(false, candidate.call(1))
+    assert_equal(true, candidate.call(5))
+    assert_equal(true, candidate.call(11))
+    assert_equal(true, candidate.call(17))
+    assert_equal(false, candidate.call(85))
+    assert_equal(false, candidate.call(77))
+    assert_equal(false, candidate.call(255379))
+  end
+end
+"
+HumanEval_33,kor_Hang,rb,"l의 대응 지수들의 값에 따라 정렬되어 있습니다.l'는 3으로 나눌 수 없는 지수에서 l와 동일하지만, 3으로 나눌 수 있는 지수에서 l의 값은 같습니다.이 함수는 배열 l을 가져다가 배열 l'를 반환합니다.# >>> sort_third.call([1, 2, 3])
+# [1, 2, 3]
+# >>> sort_third.call([5, 6, 3, 4, 8, 9, 2])
+# [2, 6, 3, 4, 8, 9, 5]
+def sort_third(l)
+","def sort_third(l)
+  divisible_by_three = l.each_with_index.select { |_, idx| idx % 3 == 0 }.map(&:first).sort
+  l.each_with_index.map { |val, idx| idx % 3 == 0 ? divisible_by_three.shift : val }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sort_third
+    candidate = method(:sort_third)
+    assert_equal([2, 6, 3, 4, 8, 9, 5], candidate.call([5, 6, 3, 4, 8, 9, 2]))
+    assert_equal([2, 8, 3, 4, 6, 9, 5], candidate.call([5, 8, 3, 4, 6, 9, 2]))
+    assert_equal([2, 6, 9, 4, 8, 3, 5], candidate.call([5, 6, 9, 4, 8, 3, 2]))
+    assert_equal([2, 6, 3, 4, 8, 9, 5, 1], candidate.call([5, 6, 3, 4, 8, 9, 2, 1]))
+  end
+end
+"
+HumanEval_34,kor_Hang,rb,"배열된 고유 요소를 array에서 반환합니다.# >>> unique.call([5, 3, 5, 2, 3, 3, 9, 0, 123])
+# [0, 2, 3, 5, 9, 123]
+def unique(l)
+","def unique(l)
+  l.uniq.sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_unique
+    candidate = method(:unique)
+    assert_equal([0, 2, 3, 5, 9, 123], candidate.call([5, 3, 5, 2, 3, 3, 9, 0, 123]))
+  end
+end
+"
+HumanEval_35,kor_Hang,rb,"배열의 최대 요소를 반환합니다.# >>> max_element.call([1, 2, 3])
+# 3
+# >>> max_element.call([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])
+# 123
+def max_element(l)
+","def max_element(l)
+  l.max
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_max_element
+    candidate = method(:max_element)
+    assert_equal(3, candidate.call([1, 2, 3]))
+    assert_equal(124, candidate.call([5, 3, -5, 2, -3, 3, 9, 0, 124, 1, -10]))
+  end
+end
+"
+HumanEval_36,kor_Hang,rb,"11 또는 13로 나누어지는 n보다 작은 정수에서 7이 나타나는 횟수를 반환합니다.# >>> fizz_buzz.call(50)
+# 0
+# >>> fizz_buzz.call(78)
+# 2
+# >>> fizz_buzz.call(79)
+# 3
+def fizz_buzz(n)
+","def fizz_buzz(n)
+  count = 0
+  (1...n).each do |i|
+    if i % 11 == 0 || i % 13 == 0
+      count += i.to_s.count('7')
+    end
+  end
+  count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fizz_buzz
+    candidate = method(:fizz_buzz)
+    assert_equal(0, candidate.call(50))
+    assert_equal(2, candidate.call(78))
+    assert_equal(3, candidate.call(79))
+    assert_equal(3, candidate.call(100))
+    assert_equal(6, candidate.call(200))
+    assert_equal(192, candidate.call(4000))
+    assert_equal(639, candidate.call(10000))
+    assert_equal(8026, candidate.call(100000))
+  end
+end
+"
+HumanEval_37,kor_Hang,rb,"l의 짝수 지수들의 값에, 하지만 정렬되어 있습니다.l'는 홀수 지수에서 l와 동일하지만, 짝수 지수에서 l의 값은 같습니다.이 함수는 배열 l을 가져다가 배열 l'를 반환합니다.# >>> sort_even.call([1, 2, 3])
+# [1, 2, 3]
+# >>> sort_even.call([5, 6, 3, 4])
+# [3, 6, 5, 4]
+def sort_even(l)
+","def sort_even(l)
+  even_indices = l.each_index.select { |i| i.even? }
+  even_values = even_indices.map { |i| l[i] }.sort
+  
+  even_index = 0
+  l.each_with_index.map do |value, index|
+    if index.even?
+      even_values[even_index].tap { even_index += 1 }
+    else
+      value
+    end
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sort_even
+    candidate = method(:sort_even)
+    assert_equal([1, 2, 3], candidate.call([1, 2, 3]))
+    assert_equal([-10, 3, -5, 2, -3, 3, 5, 0, 9, 1, 123], candidate.call([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10]))
+    assert_equal([-12, 8, 3, 4, 5, 2, 12, 11, 23, -10], candidate.call([5, 8, -12, 4, 23, 2, 3, 11, 12, -10]))
+  end
+end
+"
+HumanEval_39,kor_Hang,rb,"prime_fib는 n번째 숫자를 반환합니다. 이는 피보나치 수이고 또한 소수입니다.# >>> prime_fib.call(1)
+# 2
+# >>> prime_fib.call(2)
+# 3
+# >>> prime_fib.call(3)
+# 5
+# >>> prime_fib.call(4)
+# 13
+# >>> prime_fib.call(5)
+# 89
+def prime_fib(n)
+","def prime_fib(n)
+  require 'prime'
+  
+  fibs = Enumerator.new do |y|
+    a, b = 0, 1
+    loop do
+      a, b = b, a + b
+      y << b
+    end
+  end
+  
+  prime_fibs = fibs.lazy.select { |fib| Prime.prime?(fib) }
+  prime_fibs.first(n).last
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_prime_fib
+    candidate = method(:prime_fib)
+    assert_equal(2, candidate.call(1))
+    assert_equal(3, candidate.call(2))
+    assert_equal(5, candidate.call(3))
+    assert_equal(13, candidate.call(4))
+    assert_equal(89, candidate.call(5))
+    assert_equal(233, candidate.call(6))
+    assert_equal(1597, candidate.call(7))
+    assert_equal(28657, candidate.call(8))
+    assert_equal(514229, candidate.call(9))
+    assert_equal(433494437, candidate.call(10))
+  end
+end
+"
+HumanEval_40,kor_Hang,rb,"0과 같고, 다른 경우도 틀린 것입니다.array에 3개의 다른 요소가 있다면 true를 반환합니다.triples_sum_to_zero는 정수의 배열을 입력으로 사용합니다.# >>> triples_sum_to_zero.call([1, 3, 5, 0])
+# false
+# >>> triples_sum_to_zero.call([1, 3, -2, 1])
+# true
+# >>> triples_sum_to_zero.call([1, 2, 3, 7])
+# false
+# >>> triples_sum_to_zero.call([2, 4, -5, 3, 9, 7])
+# true
+# >>> triples_sum_to_zero.call([1])
+# false
+def triples_sum_to_zero(l)
+","def triples_sum_to_zero(l)
+  n = l.length
+  (0...n-2).each do |i|
+    ((i+1)...n-1).each do |j|
+      ((j+1)...n).each do |k|
+        return true if l[i] + l[j] + l[k] == 0
+      end
+    end
+  end
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_triples_sum_to_zero
+    candidate = method(:triples_sum_to_zero)
+    assert_equal(false, candidate.call([1, 3, 5, 0]))
+    assert_equal(false, candidate.call([1, 3, 5, -1]))
+    assert_equal(true, candidate.call([1, 3, -2, 1]))
+    assert_equal(false, candidate.call([1, 2, 3, 7]))
+    assert_equal(false, candidate.call([1, 2, 5, 7]))
+    assert_equal(true, candidate.call([2, 4, -5, 3, 9, 7]))
+    assert_equal(false, candidate.call([1]))
+    assert_equal(false, candidate.call([1, 3, 5, -100]))
+    assert_equal(false, candidate.call([100, 3, 5, -100]))
+  end
+end
+"
+HumanEval_41,kor_Hang,rb,"이 함수는 이러한 충돌의 수를 출력합니다.마치 충돌하지 않은 것처럼 궤도에 달려 있습니다.하지만, 이 차들은 무한히 견고하고 강합니다. 그래서 계속 움직입니다.좌우로 움직이는 차가 우측으로 움직이는 차를 치면서로. 모든 차는 같은 속도로 움직입니다. 두 차는 충돌한다고 합니다.두 쌍의 차는 아주 멀리 떨어져서 출발합니다.n개의 차가 왼쪽에서 오른쪽으로 움직이고, 동시에 다른 세트의 n개의 차가 움직이고,무한히 긴, 완벽하게 직선으로 이루어진 길을 상상해보세요.def car_race_collision(n)
+","def car_race_collision(n)
+  n
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_car_race_collision
+    candidate = method(:car_race_collision)
+    assert_equal(4, candidate.call(2))
+    assert_equal(9, candidate.call(3))
+    assert_equal(16, candidate.call(4))
+    assert_equal(64, candidate.call(8))
+    assert_equal(100, candidate.call(10))
+  end
+end
+"
+HumanEval_42,kor_Hang,rb,"1으로 증가된 요소를 가진 배열을 반환합니다.# >>> incr_list.call([1, 2, 3])
+# [2, 3, 4]
+# >>> incr_list.call([5, 3, 5, 2, 3, 3, 9, 0, 123])
+# [6, 4, 6, 3, 4, 4, 10, 1, 124]
+def incr_list(l)
+","def incr_list(l)
+  l.map { |x| x + 1 }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_incr_list
+    candidate = method(:incr_list)
+    assert_equal([], candidate.call([]))
+    assert_equal([4, 3, 2], candidate.call([3, 2, 1]))
+    assert_equal([6, 3, 6, 3, 4, 4, 10, 1, 124], candidate.call([5, 2, 5, 2, 3, 3, 9, 0, 123]))
+  end
+end
+"
+HumanEval_43,kor_Hang,rb,"0과 같고, 다른 경우도 틀린 것입니다.array에 두 개의 다른 요소가 있다면 true를 반환합니다.pairs_sum_to_zero는 정수의 배열을 입력으로 사용합니다.# >>> pairs_sum_to_zero.call([1, 3, 5, 0])
+# false
+# >>> pairs_sum_to_zero.call([1, 3, -2, 1])
+# false
+# >>> pairs_sum_to_zero.call([1, 2, 3, 7])
+# false
+# >>> pairs_sum_to_zero.call([2, 4, -5, 3, 5, 7])
+# true
+# >>> pairs_sum_to_zero.call([1])
+# false
+def pairs_sum_to_zero(l)
+","def pairs_sum_to_zero(l)
+  num_set = l.to_set
+  l.each do |num|
+    return true if num != 0 && num_set.include?(-num)
+  end
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_pairs_sum_to_zero
+    candidate = method(:pairs_sum_to_zero)
+    assert_equal(false, candidate.call([1, 3, 5, 0]))
+    assert_equal(false, candidate.call([1, 3, -2, 1]))
+    assert_equal(false, candidate.call([1, 2, 3, 7]))
+    assert_equal(true, candidate.call([2, 4, -5, 3, 5, 7]))
+    assert_equal(false, candidate.call([1]))
+    assert_equal(true, candidate.call([-3, 9, -1, 3, 2, 30]))
+    assert_equal(true, candidate.call([-3, 9, -1, 3, 2, 31]))
+    assert_equal(false, candidate.call([-3, 9, -1, 4, 2, 30]))
+    assert_equal(false, candidate.call([-3, 9, -1, 4, 2, 31]))
+  end
+end
+"
+HumanEval_44,kor_Hang,rb,"기본 숫자는 10보다 작습니다.변환 후 문자열 표현을 반환합니다.입력된 숫자 x의 숫자 기지를 기지로 바꾸세요.# >>> change_base.call(8, 3)
+# ""22""
+# >>> change_base.call(8, 2)
+# ""1000""
+# >>> change_base.call(7, 2)
+# ""111""
+def change_base(x, base)
+","def change_base(x, base)
+  return '0' if x == 0
+  digits = []
+  while x > 0
+    digits << (x % base).to_s
+    x /= base
+  end
+  digits.reverse.join
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_change_base
+    candidate = method(:change_base)
+    assert_equal(""22"", candidate.call(8, 3))
+    assert_equal(""100"", candidate.call(9, 3))
+    assert_equal(""11101010"", candidate.call(234, 2))
+    assert_equal(""10000"", candidate.call(16, 2))
+    assert_equal(""1000"", candidate.call(8, 2))
+    assert_equal(""111"", candidate.call(7, 2))
+    assert_equal(""2"", candidate.call(2, 3))
+    assert_equal(""3"", candidate.call(3, 4))
+    assert_equal(""4"", candidate.call(4, 5))
+    assert_equal(""5"", candidate.call(5, 6))
+    assert_equal(""6"", candidate.call(6, 7))
+    assert_equal(""7"", candidate.call(7, 8))
+  end
+end
+"
+HumanEval_45,kor_Hang,rb,"삼각형의 변의 길이를 보고, 높은 반환 영역을 # >>> triangle_area.call(5, 3)
+# 7.5
+def triangle_area(a, h)
+","def triangle_area(a, h)
+  (a * h) / 2.0
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_triangle_area
+    candidate = method(:triangle_area)
+    assert_equal(7.5, candidate.call(5, 3))
+    assert_equal(2.0, candidate.call(2, 2))
+    assert_equal(40.0, candidate.call(10, 8))
+  end
+end
+"
+HumanEval_46,kor_Hang,rb,"fib4 수열의 n번째 요소를 효율적으로 계산하는 함수를 작성하십시오. 재귀를 사용하지 마십시오.fib4(n) -> fib4(n-1) + fib4(n-2) + fib4(n-3) + fib4(n-4).fib4(3) -> 0 fib4(2) -> 2 fib4(1) -> 0 fib4(0) -> 0 Fib4 수열은 다음과 같이 정의되는 피보나치 수열과 유사한 수열입니다.# >>> fib4.call(5)
+# 4
+# >>> fib4.call(6)
+# 8
+# >>> fib4.call(7)
+# 14
+def fib4(n)
+","def fib4(n)
+  return 0 if n == 0 || n == 1 || n == 3
+  return 2 if n == 2
+
+  fib4_seq = [0, 0, 2, 0]
+  (4..n).each do |i|
+    fib4_seq[i] = fib4_seq[i-1] + fib4_seq[i-2] + fib4_seq[i-3] + fib4_seq[i-4]
+  end
+  fib4_seq[n]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fib4
+    candidate = method(:fib4)
+    assert_equal(4, candidate.call(5))
+    assert_equal(28, candidate.call(8))
+    assert_equal(104, candidate.call(10))
+    assert_equal(386, candidate.call(12))
+  end
+end
+"
+HumanEval_47,kor_Hang,rb,"배열의 요소들의 중간에 대한 반환 l. # >>> median.call([3, 1, 2, 4, 5])
+# 3
+# >>> median.call([-10, 4, 6, 1000, 10, 20])
+# 15.0
+def median(l)
+","def median(l)
+  sorted = l.sort
+  len = sorted.length
+  if len.odd?
+    sorted[len / 2]
+  else
+    (sorted[len / 2 - 1] + sorted[len / 2]) / 2.0
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_median
+    candidate = method(:median)
+    assert_equal(3, candidate.call([3, 1, 2, 4, 5]))
+    assert_equal(8.0, candidate.call([-10, 4, 6, 1000, 10, 20]))
+    assert_equal(5, candidate.call([5]))
+    assert_equal(5.5, candidate.call([6, 5]))
+    assert_equal(7, candidate.call([8, 1, 3, 9, 9, 2, 7]))
+  end
+end
+"
+HumanEval_48,kor_Hang,rb,"주어진 문자열이 팔린드로임인지 확인합니다.# >>> is_palindrome.call("""")
+# true
+# >>> is_palindrome.call(""aba"")
+# true
+# >>> is_palindrome.call(""aaaaa"")
+# true
+# >>> is_palindrome.call(""zbcd"")
+# false
+def is_palindrome(text)
+","is_palindrome = lambda do |text|
+  text == text.reverse
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_palindrome
+    candidate = method(:is_palindrome)
+    assert_equal(true, candidate.call(""""))
+    assert_equal(true, candidate.call(""aba""))
+    assert_equal(true, candidate.call(""aaaaa""))
+    assert_equal(false, candidate.call(""zbcd""))
+    assert_equal(true, candidate.call(""xywyx""))
+    assert_equal(false, candidate.call(""xywyz""))
+    assert_equal(false, candidate.call(""xywzx""))
+  end
+end
+"
+HumanEval_49,kor_Hang,rb,"2^n p p를 반환합니다 (수적값을 기억하세요).# >>> modp.call(3, 5)
+# 3
+# >>> modp.call(1101, 101)
+# 2
+# >>> modp.call(0, 101)
+# 1
+# >>> modp.call(3, 11)
+# 8
+# >>> modp.call(100, 101)
+# 1
+def modp(n, p)
+","def modp(n, p)
+  return 1 if p == 1
+  2.pow(n, p)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_modp
+    candidate = method(:modp)
+    assert_equal(3, candidate.call(3, 5))
+    assert_equal(2, candidate.call(1101, 101))
+    assert_equal(1, candidate.call(0, 101))
+    assert_equal(8, candidate.call(3, 11))
+    assert_equal(1, candidate.call(100, 101))
+    assert_equal(4, candidate.call(30, 5))
+    assert_equal(3, candidate.call(31, 5))
+  end
+end
+"
+HumanEval_51,kor_Hang,rb,"remove_vowels는 문자열을 가져다가 음절 없는 문자열을 반환하는 함수입니다. # >>> remove_vowels.call("""")
+# """"
+# >>> remove_vowels.call(""abcdef"")
+# ""bcdf""
+# >>> remove_vowels.call(""aaaaa"")
+# """"
+# >>> remove_vowels.call(""aaBAA"")
+# ""B""
+# >>> remove_vowels.call(""zbcd"")
+# ""zbcd""
+def remove_vowels(text)
+","def remove_vowels(text)
+  text.delete('aeiouAEIOU')
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_remove_vowels
+    candidate = method(:remove_vowels)
+    assert_equal("""", candidate.call(""""))
+    assert_equal(""bcdf
+ghjklm"", candidate.call(""abcdef
+ghijklm""))
+    assert_equal(""fdcb"", candidate.call(""fedcba""))
+    assert_equal("""", candidate.call(""eeeee""))
+    assert_equal(""cB"", candidate.call(""acBAA""))
+    assert_equal(""cB"", candidate.call(""EcBOO""))
+    assert_equal(""ybcd"", candidate.call(""ybcd""))
+  end
+end
+"
+HumanEval_52,kor_Hang,rb,"배열 l의 모든 숫자가 임계 t 이하인 경우 true를 반환합니다. # >>> below_threshold.call([1, 2, 4, 10], 100)
+# true
+# >>> below_threshold.call([1, 20, 4, 10], 5)
+# false
+def below_threshold(l, t)
+","def below_threshold(l, t)
+  l.all? { |num| num < t }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_below_threshold
+    candidate = method(:below_threshold)
+    assert_equal(true, candidate.call([1, 2, 4, 10], 100))
+    assert_equal(false, candidate.call([1, 20, 4, 10], 5))
+    assert_equal(true, candidate.call([1, 20, 4, 10], 21))
+    assert_equal(true, candidate.call([1, 20, 4, 10], 22))
+    assert_equal(true, candidate.call([1, 8, 4, 10], 11))
+    assert_equal(false, candidate.call([1, 8, 4, 10], 10))
+  end
+end
+"
+HumanEval_53,kor_Hang,rb,"두 개의 숫자를 더해 x와 y를 # >>> add.call(2, 3)
+# 5
+# >>> add.call(5, 7)
+# 12
+def add(x, y)
+","add = ->(x, y) { x + y }","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_add
+    candidate = method(:add)
+    assert_equal(1, candidate.call(0, 1))
+    assert_equal(1, candidate.call(1, 0))
+    assert_equal(5, candidate.call(2, 3))
+    assert_equal(12, candidate.call(5, 7))
+    assert_equal(12, candidate.call(7, 5))
+  end
+end
+"
+HumanEval_54,kor_Hang,rb,"두 단어의 문자들이 같는지 확인해 보세요.# >>> same_chars.call(""eabcdzzzz"", ""dddzzzzzzzddeddabc"")
+# true
+# >>> same_chars.call(""abcd"", ""dddddddabc"")
+# true
+# >>> same_chars.call(""dddddddabc"", ""abcd"")
+# true
+# >>> same_chars.call(""eabcd"", ""dddddddabc"")
+# false
+# >>> same_chars.call(""abcd"", ""dddddddabce"")
+# false
+# >>> same_chars.call(""eabcdzzzz"", ""dddzzzzzzzddddabc"")
+# false
+def same_chars(s0, s1)
+","def same_chars(s0, s1)
+  s0.chars.uniq.all? { |char| s1.include?(char) } &&
+  s1.chars.uniq.all? { |char| s0.include?(char) }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_same_chars
+    candidate = method(:same_chars)
+    assert_equal(true, candidate.call(""eabcdzzzz"", ""dddzzzzzzzddeddabc""))
+    assert_equal(true, candidate.call(""abcd"", ""dddddddabc""))
+    assert_equal(true, candidate.call(""dddddddabc"", ""abcd""))
+    assert_equal(false, candidate.call(""eabcd"", ""dddddddabc""))
+    assert_equal(false, candidate.call(""abcd"", ""dddddddabcf""))
+    assert_equal(false, candidate.call(""eabcdzzzz"", ""dddzzzzzzzddddabc""))
+    assert_equal(false, candidate.call(""aabb"", ""aaccc""))
+  end
+end
+"
+HumanEval_55,kor_Hang,rb,"n번째 피보나치 수를 반환합니다.# >>> fib.call(10)
+# 55
+# >>> fib.call(1)
+# 1
+# >>> fib.call(8)
+# 21
+def fib(n)
+","def fib(n)
+  return n if n <= 1
+  fib(n - 1) + fib(n - 2)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fib
+    candidate = method(:fib)
+    assert_equal(55, candidate.call(10))
+    assert_equal(1, candidate.call(1))
+    assert_equal(21, candidate.call(8))
+    assert_equal(89, candidate.call(11))
+    assert_equal(144, candidate.call(12))
+  end
+end
+"
+HumanEval_56,kor_Hang,rb,"모든 개시 브래킷이 해당하는 닫기 브래킷을 가지고 있다면 true를 반환합니다. 괄호는 ""<""와 "">""의 문자열입니다.# >>> correct_bracketing.call(""<"")
+# false
+# >>> correct_bracketing.call(""<>"")
+# true
+# >>> correct_bracketing.call(""<<><>>"")
+# true
+# >>> correct_bracketing.call(""><<>"")
+# false
+def correct_bracketing(brackets)
+","def correct_bracketing(brackets)
+  balance = 0
+  brackets.chars.each do |char|
+    if char == '<'
+      balance += 1
+    elsif char == '>'
+      balance -= 1
+    end
+    return false if balance < 0
+  end
+  balance == 0
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_correct_bracketing
+    candidate = method(:correct_bracketing)
+    assert_equal(true, candidate.call(""<>""))
+    assert_equal(true, candidate.call(""<<><>>""))
+    assert_equal(true, candidate.call(""<><><<><>><>""))
+    assert_equal(true, candidate.call(""<><><<<><><>><>><<><><<>>>""))
+    assert_equal(false, candidate.call(""<<<><>>>>""))
+    assert_equal(false, candidate.call(""><<>""))
+    assert_equal(false, candidate.call(""<""))
+    assert_equal(false, candidate.call(""<<<<""))
+    assert_equal(false, candidate.call("">""))
+    assert_equal(false, candidate.call(""<<>""))
+    assert_equal(false, candidate.call(""<><><<><>><>><<>""))
+    assert_equal(false, candidate.call(""<><><<><>><>>><>""))
+  end
+end
+"
+HumanEval_57,kor_Hang,rb,"true를 반환합니다. 배열 요소가 단조롭게 증가하거나 감소합니다.# >>> monotonic.call([1, 2, 4, 20])
+# true
+# >>> monotonic.call([1, 20, 4, 10])
+# false
+# >>> monotonic.call([4, 1, 0, -10])
+# true
+def monotonic(l)
+","def monotonic(l)
+  increasing = true
+  decreasing = true
+
+  (0...l.length - 1).each do |i|
+    if l[i] < l[i + 1]
+      decreasing = false
+    elsif l[i] > l[i + 1]
+      increasing = false
+    end
+  end
+
+  increasing || decreasing
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_monotonic
+    candidate = method(:monotonic)
+    assert_equal(true, candidate.call([1, 2, 4, 10]))
+    assert_equal(true, candidate.call([1, 2, 4, 20]))
+    assert_equal(false, candidate.call([1, 20, 4, 10]))
+    assert_equal(true, candidate.call([4, 1, 0, -10]))
+    assert_equal(true, candidate.call([4, 1, 1, 0]))
+    assert_equal(false, candidate.call([1, 2, 3, 2, 5, 60]))
+    assert_equal(true, candidate.call([1, 2, 3, 4, 5, 60]))
+    assert_equal(true, candidate.call([9, 9, 9, 9]))
+  end
+end
+"
+HumanEval_58,kor_Hang,rb,"두 배열의 정렬된 고유한 공통 요소를 반환합니다.# >>> common.call([1, 4, 3, 34, 653, 2, 5], [5, 7, 1, 5, 9, 653, 121])
+# [1, 5, 653]
+# >>> common.call([5, 3, 2, 8], [3, 2])
+# [2, 3]
+def common(l1, l2)
+","def common(l1, l2)
+  (l1 & l2).uniq.sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_common
+    candidate = method(:common)
+    assert_equal([1, 5, 653], candidate.call([1, 4, 3, 34, 653, 2, 5], [5, 7, 1, 5, 9, 653, 121]))
+    assert_equal([2, 3], candidate.call([5, 3, 2, 8], [3, 2]))
+    assert_equal([2, 3, 4], candidate.call([4, 3, 2, 8], [3, 2, 4]))
+    assert_equal([], candidate.call([4, 3, 2, 8], []))
+  end
+end
+"
+HumanEval_59,kor_Hang,rb,"n의 최대 소인수를 반환합니다. n>1이 소수가 아닌 것으로 가정합니다. # >>> largest_prime_factor.call(13195)
+# 29
+# >>> largest_prime_factor.call(2048)
+# 2
+def largest_prime_factor(n)
+","def largest_prime_factor(n)
+  factor = 2
+  while factor * factor <= n
+    if n % factor == 0
+      n /= factor
+    else
+      factor += 1
+    end
+  end
+  n
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_largest_prime_factor
+    candidate = method(:largest_prime_factor)
+    assert_equal(5, candidate.call(15))
+    assert_equal(3, candidate.call(27))
+    assert_equal(7, candidate.call(63))
+    assert_equal(11, candidate.call(330))
+    assert_equal(29, candidate.call(13195))
+  end
+end
+"
+HumanEval_60,kor_Hang,rb,"sum_to_n는 1부터 n까지의 숫자를 합하는 함수입니다.# >>> sum_to_n.call(30)
+# 465
+# >>> sum_to_n.call(100)
+# 5050
+# >>> sum_to_n.call(5)
+# 15
+# >>> sum_to_n.call(10)
+# 55
+# >>> sum_to_n.call(1)
+# 1
+def sum_to_n(n)
+","def sum_to_n(n)
+  (1..n).sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sum_to_n
+    candidate = method(:sum_to_n)
+    assert_equal(1, candidate.call(1))
+    assert_equal(21, candidate.call(6))
+    assert_equal(66, candidate.call(11))
+    assert_equal(465, candidate.call(30))
+    assert_equal(5050, candidate.call(100))
+  end
+end
+"
+HumanEval_61,kor_Hang,rb,"모든 개시 브래킷이 해당하는 닫기 브래킷을 가지고 있다면 true를 반환합니다. 괄호는 ""(""와 """") 의 문자열입니다.# >>> correct_bracketing.call(""("")
+# false
+# >>> correct_bracketing.call(""()"")
+# true
+# >>> correct_bracketing.call(""(()())"")
+# true
+# >>> correct_bracketing.call("")(()"")
+# false
+def correct_bracketing(brackets)
+","def correct_bracketing(brackets)
+  balance = 0
+  brackets.each_char do |char|
+    if char == '('
+      balance += 1
+    elsif char == ')'
+      balance -= 1
+    end
+    return false if balance < 0
+  end
+  balance == 0
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_correct_bracketing
+    candidate = method(:correct_bracketing)
+    assert_equal(true, candidate.call(""()""))
+    assert_equal(true, candidate.call(""(()())""))
+    assert_equal(true, candidate.call(""()()(()())()""))
+    assert_equal(true, candidate.call(""()()((()()())())(()()(()))""))
+    assert_equal(false, candidate.call(""((()())))""))
+    assert_equal(false, candidate.call("")(()""))
+    assert_equal(false, candidate.call(""(""))
+    assert_equal(false, candidate.call(""((((""))
+    assert_equal(false, candidate.call("")""))
+    assert_equal(false, candidate.call(""(()""))
+    assert_equal(false, candidate.call(""()()(()())())(()""))
+    assert_equal(false, candidate.call(""()()(()())()))()""))
+  end
+end
+"
+HumanEval_62,kor_Hang,rb,"이 다항식의 같은 형태의 도함수를 반환합니다.xs[0] + xs[1] * x + xs[2] * x^2 + .... xs는 다항식의 계수를 나타냅니다.# >>> derivative.call([3, 1, 2, 4, 5])
+# [1, 4, 12, 20]
+# >>> derivative.call([1, 2, 3])
+# [2, 6]
+def derivative(xs)
+","def derivative(xs)
+  return [] if xs.length < 2
+  xs.each_with_index.map { |coef, index| coef * index }[1..-1]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_derivative
+    candidate = method(:derivative)
+    assert_equal([1, 4, 12, 20], candidate.call([3, 1, 2, 4, 5]))
+    assert_equal([2, 6], candidate.call([1, 2, 3]))
+    assert_equal([2, 2], candidate.call([3, 2, 1]))
+    assert_equal([2, 2, 0, 16], candidate.call([3, 2, 1, 0, 4]))
+    assert_equal([], candidate.call([1]))
+  end
+end
+"
+HumanEval_63,kor_Hang,rb,"fibfib 수열의 n번째 요소를 효율적으로 계산하는 함수를 작성해 주세요.fibfib (n) == fibfib (n-1) + fibfib (n-2) + fibfib (n-3).fib fib () == 1fib fib () == 0 fib fib () == 0 FibFib 수열은 다음과 같이 정의되는 피보나치 수열과 유사한 수열입니다.# >>> fibfib.call(1)
+# 0
+# >>> fibfib.call(5)
+# 4
+# >>> fibfib.call(8)
+# 24
+def fibfib(n)
+","def fibfib(n)
+  return 0 if n == 0 || n == 1
+  return 1 if n == 2
+
+  a, b, c = 0, 0, 1
+  (3..n).each do
+    a, b, c = b, c, a + b + c
+  end
+  c
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fibfib
+    candidate = method(:fibfib)
+    assert_equal(1, candidate.call(2))
+    assert_equal(0, candidate.call(1))
+    assert_equal(4, candidate.call(5))
+    assert_equal(24, candidate.call(8))
+    assert_equal(81, candidate.call(10))
+    assert_equal(274, candidate.call(12))
+    assert_equal(927, candidate.call(14))
+  end
+end
+"
+HumanEval_64,kor_Hang,rb,"예: 음절, 하지만 주어진 단어의 끝에 있을 때만.이 경우의 모음은 'a', 'e', 'i', 'o', 'u'입니다. 여기 'y'는 또한 a 입니다.입력으로 단어를 입력하고 문자열의 모음수를 반환합니다.함수 vowels_count를 쓰면 라는 문자열을 사용한다.# >>> vowels_count.call(""abcde"")
+# 2
+# >>> vowels_count.call(""ACEDY"")
+# 3
+def vowels_count(s)
+","def vowels_count(s)
+  vowels = ['a', 'e', 'i', 'o', 'u']
+  count = 0
+  
+  s.chars.each_with_index do |char, index|
+    if vowels.include?(char.downcase)
+      count += 1
+    elsif char.downcase == 'y' && index == s.length - 1
+      count += 1
+    end
+  end
+  
+  count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_vowels_count
+    candidate = method(:vowels_count)
+    assert_equal(2, candidate.call(""abcde""))
+    assert_equal(3, candidate.call(""Alone""))
+    assert_equal(2, candidate.call(""key""))
+    assert_equal(1, candidate.call(""bye""))
+    assert_equal(2, candidate.call(""keY""))
+    assert_equal(1, candidate.call(""bYe""))
+    assert_equal(3, candidate.call(""ACEDY""))
+  end
+end
+"
+HumanEval_65,kor_Hang,rb,"Shift > 숫자, 반환 숫자는 역으로.그리고 결과를 문자열로 반환합니다.순환적으로 x의 숫자를 이동시켜, 숫자를 오른쪽으로 이동시켜# >>> circular_shift.call(12, 1)
+# ""21""
+# >>> circular_shift.call(12, 2)
+# ""12""
+def circular_shift(x, shift)
+","def circular_shift(x, shift)
+  digits = x.to_s.chars
+  num_digits = digits.length
+
+  if shift > num_digits
+    return digits.reverse.join
+  else
+    shift = shift % num_digits
+    shifted_digits = digits.rotate(-shift)
+    return shifted_digits.join
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_circular_shift
+    candidate = method(:circular_shift)
+    assert_equal(""001"", candidate.call(100, 2))
+    assert_equal(""12"", candidate.call(12, 2))
+    assert_equal(""79"", candidate.call(97, 8))
+    assert_equal(""21"", candidate.call(12, 1))
+    assert_equal(""11"", candidate.call(11, 101))
+  end
+end
+"
+HumanEval_66,kor_Hang,rb,"예: ASCII 코드입력으로 문자열을 가져다가 상위 문자들의 합만을 반환하는 함수를 작성하세요' 과제# >>> digitSum.call("""")
+# 0
+# >>> digitSum.call(""abAB"")
+# 131
+# >>> digitSum.call(""abcCd"")
+# 67
+# >>> digitSum.call(""helloE"")
+# 69
+# >>> digitSum.call(""woArBld"")
+# 131
+# >>> digitSum.call(""aAaaaXa"")
+# 153
+def digitSum(s)
+","def digitSum(s)
+  s.chars.select { |char| char =~ /[A-Z]/ }.map(&:ord).sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_digitSum
+    candidate = method(:digitSum)
+    assert_equal(0, candidate.call(""""))
+    assert_equal(131, candidate.call(""abAB""))
+    assert_equal(67, candidate.call(""abcCd""))
+    assert_equal(69, candidate.call(""helloE""))
+    assert_equal(131, candidate.call(""woArBld""))
+    assert_equal(153, candidate.call(""aAaaaXa""))
+    assert_equal(151, candidate.call("" How are yOu?""))
+    assert_equal(327, candidate.call(""You arE Very Smart""))
+  end
+end
+"
+HumanEval_67,kor_Hang,rb,"examble에 대해: 바구니에 있는 망고 열매의 숫자를 반환합니다.오렌지와 사과와 과일의 총수를 나타내는 정수 사과, 오렌지, 그리고 망고 과일. 전체 숫자를 나타내는 문자열을 이 바구니에 있는 과일 바구니에 배포됩니다.이 작업에서, 여러분은 사과와 오렌지를 나타내는 문자열을 받게 됩니다.# >>> fruit_distribution.call(""5 apples and 6 oranges"", 19)
+# 8
+# >>> fruit_distribution.call(""0 apples and 1 oranges"", 3)
+# 2
+# >>> fruit_distribution.call(""2 apples and 3 oranges"", 100)
+# 95
+# >>> fruit_distribution.call(""100 apples and 1 oranges"", 120)
+# 19
+def fruit_distribution(s, n)
+","def fruit_distribution(s, n)
+  numbers = s.scan(/\d+/).map(&:to_i)
+  apples = numbers[0]
+  oranges = numbers[1]
+  total_fruits = n
+  mangos = total_fruits - (apples + oranges)
+  mangos
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fruit_distribution
+    candidate = method(:fruit_distribution)
+    assert_equal(8, candidate.call(""5 apples and 6 oranges"", 19))
+    assert_equal(10, candidate.call(""5 apples and 6 oranges"", 21))
+    assert_equal(2, candidate.call(""0 apples and 1 oranges"", 3))
+    assert_equal(2, candidate.call(""1 apples and 0 oranges"", 3))
+    assert_equal(95, candidate.call(""2 apples and 3 oranges"", 100))
+    assert_equal(0, candidate.call(""2 apples and 3 oranges"", 5))
+    assert_equal(19, candidate.call(""1 apples and 100 oranges"", 120))
+  end
+end
+"
+HumanEval_68,kor_Hang,rb,"예제 1:만약 짝값이 없거나 주어진 배열이 비어 있다면, return []을 반환합니다.뽑힌 노드는 배열에서 반환되어야 합니다.같은 가장 작은 짝값을 가진 여러 개의 노드가 발견되면 가장 작은 인덱스를 가진 노드를 반환합니다. 은 노드는 가장 작은 짝값을 가진 노드여야 합니다.여러분의 임무는 노드 중 하나를 뽑아내고 돌려주는 것입니다.""무수 정수 노드를 가진 나무의 지점을 나타내는 배열을 주어 # >>> pluck.call([4, 2, 3])
+# [2, 1]
+# Explanation: 2 has the smallest even value, and 2 has the smallest index.
+# Example 2:
+# >>> pluck.call([1, 2, 3])
+# [2, 1]
+# Explanation: 2 has the smallest even value, and 2 has the smallest index.
+# Example 3:
+# >>> pluck.call([])
+# []
+# Example 4:
+# >>> pluck.call([5, 0, 3, 0, 4, 2])
+# [0, 1]
+# Explanation: 0 is the smallest value, but  there are two zeros,
+# so we will choose the first zero, which has the smallest index.
+# Constraints:
+# * 1 <= nodes.length <= 10000
+# * 0 <= node.value
+def pluck(arr)
+","def pluck(arr)
+  smallest_even = nil
+  smallest_index = nil
+  
+  arr.each_with_index do |value, index|
+    if value.even?
+      if smallest_even.nil? || value < smallest_even
+        smallest_even = value
+        smallest_index = index
+      end
+    end
+  end
+
+  smallest_even.nil? ? [] : [smallest_even, smallest_index]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_pluck
+    candidate = method(:pluck)
+    assert_equal([2, 1], candidate.call([4, 2, 3]))
+    assert_equal([2, 1], candidate.call([1, 2, 3]))
+    assert_equal([], candidate.call([]))
+    assert_equal([0, 1], candidate.call([5, 0, 3, 0, 4, 2]))
+    assert_equal([0, 3], candidate.call([1, 2, 3, 0, 5, 3]))
+    assert_equal([4, 1], candidate.call([5, 4, 8, 4, 8]))
+    assert_equal([6, 1], candidate.call([7, 6, 7, 1]))
+    assert_equal([], candidate.call([7, 9, 7, 1]))
+  end
+end
+"
+HumanEval_69,kor_Hang,rb,"예: 만약 그런 값이 존재하지 않는다면 -1을 반환합니다.정수의 빈도는 배열에 나타나는 횟수입니다.0이고, 그 빈도는 정수 자체의 값보다 크거나 같습니다.양수 정수의 비공백 배열을 주어 보다 큰 최대 정수를 반환합니다# >>> search.call([4, 1, 2, 2, 3, 1])
+# 2
+# >>> search.call([1, 2, 2, 3, 3, 3, 4, 4, 4])
+# 3
+# >>> search.call([5, 5, 4, 4, 4])
+# -1
+def search(lst)
+","def search(lst)
+  freq_hash = lst.each_with_object(Hash.new(0)) { |num, hash| hash[num] += 1 }
+  valid_numbers = freq_hash.select { |num, freq| freq >= num }.keys
+  valid_numbers.empty? ? -1 : valid_numbers.max
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_search
+    candidate = method(:search)
+    assert_equal(1, candidate.call([5, 5, 5, 5, 1]))
+    assert_equal(4, candidate.call([4, 1, 4, 1, 4, 4]))
+    assert_equal(-1, candidate.call([3, 3]))
+    assert_equal(8, candidate.call([8, 8, 8, 8, 8, 8, 8, 8]))
+    assert_equal(2, candidate.call([2, 3, 3, 2, 2]))
+    assert_equal(1, candidate.call([2, 7, 8, 8, 4, 8, 7, 3, 9, 6, 5, 10, 4, 3, 6, 7, 1, 7, 4, 10, 8, 1]))
+    assert_equal(2, candidate.call([3, 2, 8, 2]))
+    assert_equal(1, candidate.call([6, 7, 1, 8, 8, 10, 5, 8, 5, 3, 10]))
+    assert_equal(-1, candidate.call([8, 8, 3, 6, 5, 6, 4]))
+    assert_equal(1, candidate.call([6, 9, 6, 7, 1, 4, 7, 1, 8, 8, 9, 8, 10, 10, 8, 4, 10, 4, 10, 1, 2, 9, 5, 7, 9]))
+    assert_equal(1, candidate.call([1, 9, 10, 1, 3]))
+    assert_equal(5, candidate.call([6, 9, 7, 5, 8, 7, 5, 3, 7, 5, 10, 10, 3, 6, 10, 2, 8, 6, 5, 4, 9, 5, 3, 10]))
+    assert_equal(1, candidate.call([1]))
+    assert_equal(4, candidate.call([8, 8, 10, 6, 4, 3, 5, 8, 2, 4, 2, 8, 4, 6, 10, 4, 2, 1, 10, 2, 1, 1, 5]))
+    assert_equal(2, candidate.call([2, 10, 4, 8, 2, 10, 5, 1, 2, 9, 5, 5, 6, 3, 8, 6, 4, 10]))
+    assert_equal(1, candidate.call([1, 6, 10, 1, 6, 9, 10, 8, 6, 8, 7, 3]))
+    assert_equal(4, candidate.call([9, 2, 4, 1, 5, 1, 5, 2, 5, 7, 7, 7, 3, 10, 1, 5, 4, 2, 8, 4, 1, 9, 10, 7, 10, 2, 8, 10, 9, 4]))
+    assert_equal(4, candidate.call([2, 6, 4, 2, 8, 7, 5, 6, 4, 10, 4, 6, 3, 7, 8, 8, 3, 1, 4, 2, 2, 10, 7]))
+    assert_equal(2, candidate.call([9, 8, 6, 10, 2, 6, 10, 2, 7, 8, 10, 3, 8, 2, 6, 2, 3, 1]))
+    assert_equal(-1, candidate.call([5, 5, 3, 9, 5, 6, 3, 2, 8, 5, 6, 10, 10, 6, 8, 4, 10, 7, 7, 10, 8]))
+    assert_equal(-1, candidate.call([10]))
+    assert_equal(2, candidate.call([9, 7, 7, 2, 4, 7, 2, 10, 9, 7, 5, 7, 2]))
+    assert_equal(1, candidate.call([5, 4, 10, 2, 1, 1, 10, 3, 6, 1, 8]))
+    assert_equal(1, candidate.call([7, 9, 9, 9, 3, 4, 1, 5, 9, 1, 2, 1, 1, 10, 7, 5, 6, 7, 6, 7, 7, 6]))
+    assert_equal(-1, candidate.call([3, 10, 10, 9, 2]))
+  end
+end
+"
+HumanEval_70,kor_Hang,rb,"예: 그러면 나머지 정수의 최대값, 그리고 최소값 등이 나옵니다.이상한 정렬은 최소값에서 시작하면,정수의 배열을 주어, 이상한 순서로 배열을 반환합니다.# >>> strange_sort_list.call([1, 2, 3, 4])
+# [1, 4, 2, 3]
+# >>> strange_sort_list.call([5, 5, 5, 5])
+# [5, 5, 5, 5]
+# >>> strange_sort_list.call([])
+# []
+def strange_sort_list(lst)
+","def strange_sort_list(lst)
+  result = []
+  lst.sort!
+  until lst.empty?
+    result << lst.shift
+    result << lst.pop unless lst.empty?
+  end
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_strange_sort_list
+    candidate = method(:strange_sort_list)
+    assert_equal([1, 4, 2, 3], candidate.call([1, 2, 3, 4]))
+    assert_equal([5, 9, 6, 8, 7], candidate.call([5, 6, 7, 8, 9]))
+    assert_equal([1, 5, 2, 4, 3], candidate.call([1, 2, 3, 4, 5]))
+    assert_equal([1, 9, 5, 8, 6, 7], candidate.call([5, 6, 7, 8, 9, 1]))
+    assert_equal([5, 5, 5, 5], candidate.call([5, 5, 5, 5]))
+    assert_equal([], candidate.call([]))
+    assert_equal([1, 8, 2, 7, 3, 6, 4, 5], candidate.call([1, 2, 3, 4, 5, 6, 7, 8]))
+    assert_equal([-5, 5, -5, 5, 0, 2, 2, 2], candidate.call([0, 2, 2, 2, 5, 5, -5, -5]))
+    assert_equal([111111], candidate.call([111111]))
+  end
+end
+"
+HumanEval_71,kor_Hang,rb,"예: 세 번째 측면보다 더 삼각형의 세 변이 합이 두 변이 더 큰 경우에 삼각형이 유효하게 됩니다.그렇지 않으면 -1을 반환합니다.삼각형의 세 변이 유효한 삼각형이라면 삼각형은 소수점 2점으로 둥글게 됩니다.삼각형의 세 변의 길이를 주어 의 넓이를 반환합니다# >>> triangle_area.call(3, 4, 5)
+# 6.0
+# >>> triangle_area.call(1, 2, 10)
+# -1
+def triangle_area(a, b, c)
+","def triangle_area(a, b, c)
+  # Check for valid triangle
+  if a + b > c && a + c > b && b + c > a
+    # Calculate the semi-perimeter
+    s = (a + b + c) / 2.0
+    # Calculate the area using Heron's formula
+    area = Math.sqrt(s * (s - a) * (s - b) * (s - c))
+    # Round to 2 decimal points
+    return area.round(2)
+  else
+    return -1
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_triangle_area
+    candidate = method(:triangle_area)
+    assert_equal(6.0, candidate.call(3, 4, 5))
+    assert_equal(-1, candidate.call(1, 2, 10))
+    assert_equal(8.18, candidate.call(4, 8, 5))
+    assert_equal(1.73, candidate.call(2, 2, 2))
+    assert_equal(-1, candidate.call(1, 2, 3))
+    assert_equal(16.25, candidate.call(10, 5, 7))
+    assert_equal(-1, candidate.call(2, 6, 3))
+    assert_equal(0.43, candidate.call(1, 1, 1))
+    assert_equal(-1, candidate.call(2, 2, 10))
+  end
+end
+"
+HumanEval_72,kor_Hang,rb,"예: 객체 q는 균형이 잡혀 있고, 그 요소들의 합이 최대 가능한 무게 w보다 작거나 같다면 날아갑니다.만약 객체 q가 날아가면 true를, 그렇지 않으면 false를 반환하는 함수를 쓰세요.# >>> will_it_fly.call([1, 2], 5)
+# false
+# # 1+2 is less than the maximum possible weight, but it's unbalanced.
+# >>> will_it_fly.call([3, 2, 3], 1)
+# false
+# # it's balanced, but 3+2+3 is more than the maximum possible weight.
+# >>> will_it_fly.call([3, 2, 3], 9)
+# true
+# # 3+2+3 is less than the maximum possible weight, and it's balanced.
+# >>> will_it_fly.call([3], 5)
+# true
+# # 3 is less than the maximum possible weight, and it's balanced.
+def will_it_fly(q, w)
+","def will_it_fly(q, w)
+  is_palindrome = q == q.reverse
+  total_weight = q.sum
+  is_balanced_and_under_weight = is_palindrome && total_weight <= w
+  is_balanced_and_under_weight
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_will_it_fly
+    candidate = method(:will_it_fly)
+    assert_equal(true, candidate.call([3, 2, 3], 9))
+    assert_equal(false, candidate.call([1, 2], 5))
+    assert_equal(true, candidate.call([3], 5))
+    assert_equal(false, candidate.call([3, 2, 3], 1))
+    assert_equal(false, candidate.call([1, 2, 3], 6))
+    assert_equal(true, candidate.call([5], 5))
+  end
+end
+"
+HumanEval_73,kor_Hang,rb,"예를 들어:한 번 변경하면 한 요소를 다른 요소로 바꿀 수 있습니다.배열을 팔린드로믹하게 만들기 위해 변경해야 합니다. 팔린드로믹 배열은정수의 배열 arr을 주어, 라는 최소 요소 수를 찾아봅시다# >>> smallest_change.call([1, 2, 3, 5, 4, 7, 9, 6])
+# 4
+# >>> smallest_change.call([1, 2, 3, 4, 3, 2, 2])
+# 1
+# >>> smallest_change.call([1, 2, 3, 2, 1])
+# 0
+def smallest_change(arr)
+","def smallest_change(arr)
+  changes = 0
+  left = 0
+  right = arr.length - 1
+
+  while left < right
+    if arr[left] != arr[right]
+      changes += 1
+    end
+    left += 1
+    right -= 1
+  end
+
+  changes
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_smallest_change
+    candidate = method(:smallest_change)
+    assert_equal(4, candidate.call([1, 2, 3, 5, 4, 7, 9, 6]))
+    assert_equal(1, candidate.call([1, 2, 3, 4, 3, 2, 2]))
+    assert_equal(1, candidate.call([1, 4, 2]))
+    assert_equal(1, candidate.call([1, 4, 4, 2]))
+    assert_equal(0, candidate.call([1, 2, 3, 2, 1]))
+    assert_equal(0, candidate.call([3, 1, 1, 3]))
+    assert_equal(0, candidate.call([1]))
+    assert_equal(1, candidate.call([0, 1]))
+  end
+end
+"
+HumanEval_74,kor_Hang,rb,"예제두 배열이 동일한 숫자의 문자 수를 가지고 있다면 첫 배열을 반환합니다.배열의 모든 문자열의 전체 문자열의 수가 다른 배열보다 적습니다.두 개의 문자열 배열을 받아서 를 가진 배열을 반환하는 함수를 작성합니다.# >>> total_match.call([], [])
+# []
+# >>> total_match.call([""hi"", ""admin""], [""hI"", ""Hi""])
+# [""hI"", ""Hi""]
+# >>> total_match.call([""hi"", ""admin""], [""hi"", ""hi"", ""admin"", ""project""])
+# [""hi"", ""admin""]
+# >>> total_match.call([""hi"", ""admin""], [""hI"", ""hi"", ""hi""])
+# [""hI"", ""hi"", ""hi""]
+# >>> total_match.call([""4""], [""1"", ""2"", ""3"", ""4"", ""5""])
+# [""4""]
+def total_match(lst1, lst2)
+","def total_match(lst1, lst2)
+  total_chars1 = lst1.map(&:length).sum
+  total_chars2 = lst2.map(&:length).sum
+
+  if total_chars1 < total_chars2
+    lst1
+  elsif total_chars2 < total_chars1
+    lst2
+  else
+    lst1
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_total_match
+    candidate = method(:total_match)
+    assert_equal([], candidate.call([], []))
+    assert_equal([""hi"", ""hi""], candidate.call([""hi"", ""admin""], [""hi"", ""hi""]))
+    assert_equal([""hi"", ""admin""], candidate.call([""hi"", ""admin""], [""hi"", ""hi"", ""admin"", ""project""]))
+    assert_equal([""4""], candidate.call([""4""], [""1"", ""2"", ""3"", ""4"", ""5""]))
+    assert_equal([""hI"", ""Hi""], candidate.call([""hi"", ""admin""], [""hI"", ""Hi""]))
+    assert_equal([""hI"", ""hi"", ""hi""], candidate.call([""hi"", ""admin""], [""hI"", ""hi"", ""hi""]))
+    assert_equal([""hi"", ""admin""], candidate.call([""hi"", ""admin""], [""hI"", ""hi"", ""hii""]))
+    assert_equal([], candidate.call([], [""this""]))
+    assert_equal([], candidate.call([""this""], []))
+  end
+end
+"
+HumanEval_75,kor_Hang,rb,"예: (a) 가 100보다 작다는 것을 알고 있습니다.그리고 거짓입니다.주어진 숫자가 3개의 소수 곱하기라면 true를 반환하는 함수를 쓰세요.# >>> is_multiply_prime.call(30)
+# true
+# 30 = 2 * 3 * 5
+def is_multiply_prime(a)
+","require 'prime'
+
+def is_multiply_prime(a)
+  return false if a >= 100
+  prime_factors = a.prime_division
+  return true if prime_factors.size == 3 && prime_factors.all? { |_, exponent| exponent == 1 }
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_multiply_prime
+    candidate = method(:is_multiply_prime)
+    assert_equal(false, candidate.call(5))
+    assert_equal(true, candidate.call(30))
+    assert_equal(true, candidate.call(8))
+    assert_equal(false, candidate.call(10))
+    assert_equal(true, candidate.call(125))
+    assert_equal(true, candidate.call(105))
+    assert_equal(false, candidate.call(126))
+    assert_equal(false, candidate.call(729))
+    assert_equal(false, candidate.call(891))
+    assert_equal(true, candidate.call(1001))
+  end
+end
+"
+HumanEval_76,kor_Hang,rb,"예를 들어:x는 n의 단순 제곱이 됩니다. 만약 n**int=x 라면n의 제곱이고 다른 경우에는 false입니다.여러분의 임무는 x가 간단한 일 경우 true를 반환하는 함수를 작성하는 것입니다.# >>> is_simple_power.call(1, 4)
+# true
+# >>> is_simple_power.call(2, 2)
+# true
+# >>> is_simple_power.call(8, 2)
+# true
+# >>> is_simple_power.call(3, 2)
+# false
+# >>> is_simple_power.call(3, 1)
+# false
+# >>> is_simple_power.call(5, 3)
+# false
+def is_simple_power(x, n)
+","def is_simple_power(x, n)
+  return false if x <= 0 || n <= 1
+  return true if x == 1
+
+  power = n
+  while power <= x
+    return true if power == x
+    power *= n
+  end
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_simple_power
+    candidate = method(:is_simple_power)
+    assert_equal(true, candidate.call(16, 2))
+    assert_equal(false, candidate.call(143214, 16))
+    assert_equal(true, candidate.call(4, 2))
+    assert_equal(true, candidate.call(9, 3))
+    assert_equal(true, candidate.call(16, 4))
+    assert_equal(false, candidate.call(24, 2))
+    assert_equal(false, candidate.call(128, 4))
+    assert_equal(false, candidate.call(12, 6))
+    assert_equal(true, candidate.call(1, 1))
+    assert_equal(true, candidate.call(1, 12))
+  end
+end
+"
+HumanEval_77,kor_Hang,rb,"예: 참고: 입력값이 항상 유효하다고 가정할 수 있습니다.만약 이 ingeger가 어떤 정수 큐브라면정수 a를 가지고 true를 반환하는 함수를 쓰세요.# >>> iscube.call(1)
+# true
+# >>> iscube.call(2)
+# false
+# >>> iscube.call(-1)
+# true
+# >>> iscube.call(64)
+# true
+# >>> iscube.call(0)
+# true
+# >>> iscube.call(180)
+# false
+def iscube(a)
+","def iscube(a)
+  cube_root = a.abs**(1.0/3)
+  cube_root.round**3 == a
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_iscube
+    candidate = method(:iscube)
+    assert_equal(true, candidate.call(1))
+    assert_equal(false, candidate.call(2))
+    assert_equal(true, candidate.call(-1))
+    assert_equal(true, candidate.call(64))
+    assert_equal(false, candidate.call(180))
+    assert_equal(true, candidate.call(1000))
+    assert_equal(true, candidate.call(0))
+    assert_equal(false, candidate.call(1729))
+  end
+end
+"
+HumanEval_78,kor_Hang,rb,"예: 그리고 A,B,C,D,E,F는 항상 대문자로 쓰여져 있습니다.참고: 입력값이 항상 정확하거나 빈 문자열이라고 가정할 수 있습니다.B (= 십진수 11), D (= 십진수 13). 다음 숫자의 숫자를 찾아야 합니다. 2, 3, 5, 7,소수는 2, 3, 5, 7, 11, 13, 17... 십진 기호는 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F 입니다.1보다 큰 두 개의 더 작은 자연수의 곱이 아닌 1보다 큰 두 개의 더 작은 자연수의 곱이 아닌 1보다 큰 두 개의 더 작은 자연수의 곱이 아닌 1보다 작은 두 개의 더 작은 자연수의 곱이 아닌 1보다 작은 두 개의 더 작은 자연수의 곱이 아닌소수인 숫자는 자연수입니다데시멀 숫자를 문자열로 만들고 데시멀 숫자를 니다.수신하는 함수를 작성하도록 요청받았습니다.# >>> hex_key.call(""AB"")
+# 1
+# >>> hex_key.call(""1077E"")
+# 2
+# >>> hex_key.call(""ABED1A33"")
+# 4
+# >>> hex_key.call(""123456789ABCDEF0"")
+# 6
+# >>> hex_key.call(""2020"")
+# 2
+def hex_key(num)
+","def hex_key(num)
+  prime_hex_digits = ['2', '3', '5', '7', 'B', 'D']
+  num.chars.count { |digit| prime_hex_digits.include?(digit) }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_hex_key
+    candidate = method(:hex_key)
+    assert_equal(1, candidate.call(""AB""))
+    assert_equal(2, candidate.call(""1077E""))
+    assert_equal(4, candidate.call(""ABED1A33""))
+    assert_equal(2, candidate.call(""2020""))
+    assert_equal(6, candidate.call(""123456789ABCDEF0""))
+    assert_equal(12, candidate.call(""112233445566778899AABBCCDDEEFF00""))
+  end
+end
+"
+HumanEval_79,kor_Hang,rb,"예:  형식을 좀 더 쉽게 만들 수 있도록 추가 문자를 붙여 놓았습니다.문자열의 시작과 끝에 추가 문자 'db'가 있을 것입니다.문자열의 각 문자는 '0' 또는 '1'이 됩니다.이진 형식. 함수는 문자열을 반환해야 하며, 각 문자는 이진 을 나타냅니다.소수점으로 표시된 숫자를 로 변환하는 것입니다.# >>> decimal_to_binary.call(15)
+# ""db1111db""
+# >>> decimal_to_binary.call(32)
+# ""db100000db""
+def decimal_to_binary(decimal)
+","def decimal_to_binary(decimal)
+  ""db"" + decimal.to_s(2) + ""db""
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_decimal_to_binary
+    candidate = method(:decimal_to_binary)
+    assert_equal(""db0db"", candidate.call(0))
+    assert_equal(""db100000db"", candidate.call(32))
+    assert_equal(""db1100111db"", candidate.call(103))
+    assert_equal(""db1111db"", candidate.call(15))
+  end
+end
+"
+HumanEval_80,kor_Hang,rb,"예를 들어:문자열은 길이가 최소 3개이고 3개의 연속 문자마다 구별되는 경우 haprb입니다.string이 haprb인지 아닌지 확인하는 것입니다.string s를 얻게 됩니다.# >>> is_happy.call(""a"")
+# false
+# >>> is_happy.call(""aa"")
+# false
+# >>> is_happy.call(""abcd"")
+# true
+# >>> is_happy.call(""aabb"")
+# false
+# >>> is_happy.call(""adb"")
+# true
+# >>> is_happy.call(""xyy"")
+# false
+def is_happy(s)
+","def is_happy(s)
+  return false if s.length < 3
+  
+  (0..s.length - 3).each do |i|
+    return false if s[i] == s[i + 1] || s[i] == s[i + 2] || s[i + 1] == s[i + 2]
+  end
+  
+  true
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_happy
+    candidate = method(:is_happy)
+    assert_equal(false, candidate.call(""a""))
+    assert_equal(false, candidate.call(""aa""))
+    assert_equal(true, candidate.call(""abcd""))
+    assert_equal(false, candidate.call(""aabb""))
+    assert_equal(true, candidate.call(""adb""))
+    assert_equal(false, candidate.call(""xyy""))
+    assert_equal(true, candidate.call(""iopaxpoi""))
+    assert_equal(false, candidate.call(""iopaxioi""))
+  end
+end
+"
+HumanEval_81,kor_Hang,rb,"예: 0.0 E> 0.0 D- > 0.7 D> 1.0 D+ > 1.3 C- > 1.7 C> 2.0 C+ > 2.3 B- > 2.7 B> 3.0 B+ > 3.3 A- > 3.7 A 4.0 A+ 평균 점수, 글자 점수다음 표를 사용하여 문자 등급의 배열을 출력할 수 있는 함수: 그녀는 당신에게 몇몇 학생들의 GPA를 여러 가지로 나누어 주었고 당신은 글을 써야 합니다.유일한 문제는 그녀가 평가를 위해 사용한 코드를 잃어버렸다는 것입니다.학생에게 수업을 주며, 선생님도 자신의 점수를 매기는 알고리즘을 만들어내고 있습니다.학기 마지막 주인데 선생님께서 점수를 주셔야 해요# >>> grade_equation.call([4.0, 3, 1.7, 2, 3.5])
+# [""A+"", ""B"", ""C-"", ""C"", ""A-""]
+def numerical_letter_grade(grades)
+","def numerical_letter_grade(grades)
+  grades.map do |gpa|
+    case 
+    when gpa == 4.0
+      ""A+""
+    when gpa > 3.7
+      ""A""
+    when gpa > 3.3
+      ""A-""
+    when gpa > 3.0
+      ""B+""
+    when gpa > 2.7
+      ""B""
+    when gpa > 2.3
+      ""B-""
+    when gpa > 2.0
+      ""C+""
+    when gpa > 1.7
+      ""C""
+    when gpa > 1.3
+      ""C-""
+    when gpa > 1.0
+      ""D+""
+    when gpa > 0.7
+      ""D""
+    when gpa > 0.0
+      ""D-""
+    else
+      ""E""
+    end
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_numerical_letter_grade
+    candidate = method(:numerical_letter_grade)
+    assert_equal([""A+"", ""B"", ""C-"", ""C"", ""A-""], candidate.call([4.0, 3, 1.7, 2, 3.5]))
+    assert_equal([""D+""], candidate.call([1.2]))
+    assert_equal([""D-""], candidate.call([0.5]))
+    assert_equal([""E""], candidate.call([0.0]))
+    assert_equal([""D"", ""D-"", ""C-"", ""B"", ""B+""], candidate.call([1.0, 0.3, 1.5, 2.8, 3.3]))
+    assert_equal([""E"", ""D-""], candidate.call([0.0, 0.7]))
+  end
+end
+"
+HumanEval_82,kor_Hang,rb,"예제length는 소수인지 아니면 false인지문자열을 가져다가 문자열이 라면 true를 반환하는 함수를 작성합니다.# >>> prime_length.call(""Hello"")
+# true
+# >>> prime_length.call(""abcdcba"")
+# true
+# >>> prime_length.call(""kittens"")
+# true
+# >>> prime_length.call(""orange"")
+# false
+def prime_length(string)
+","def prime_length(string)
+  length = string.length
+  return false if length < 2
+
+  (2..Math.sqrt(length)).each do |i|
+    return false if length % i == 0
+  end
+
+  true
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_prime_length
+    candidate = method(:prime_length)
+    assert_equal(true, candidate.call(""Hello""))
+    assert_equal(true, candidate.call(""abcdcba""))
+    assert_equal(true, candidate.call(""kittens""))
+    assert_equal(false, candidate.call(""orange""))
+    assert_equal(true, candidate.call(""wow""))
+    assert_equal(true, candidate.call(""world""))
+    assert_equal(true, candidate.call(""MadaM""))
+    assert_equal(true, candidate.call(""Wow""))
+    assert_equal(false, candidate.call(""""))
+    assert_equal(true, candidate.call(""HI""))
+    assert_equal(true, candidate.call(""go""))
+    assert_equal(false, candidate.call(""gogo""))
+    assert_equal(false, candidate.call(""aaaaaaaaaaaaaaa""))
+    assert_equal(true, candidate.call(""Madam""))
+    assert_equal(false, candidate.call(""M""))
+    assert_equal(false, candidate.call(""0""))
+  end
+end
+"
+HumanEval_83,kor_Hang,rb,"1으로 시작하거나 끝나는 양수 정수입니다.양수 n을 주어, n자리의 숫자의 수를 반환합니다def starts_one_ends(n)
+","def starts_one_ends(n)
+  return 0 if n <= 0
+
+  # Count numbers starting with 1
+  start_with_1 = 9 ** (n - 1)
+
+  # Count numbers ending with 1
+  end_with_1 = 9 ** (n - 1)
+
+  # Adjust for double counting the number that both starts and ends with 1
+  both_start_and_end_with_1 = 9 ** (n - 2) if n > 1
+  
+  start_with_1 + end_with_1 - (both_start_and_end_with_1 || 0)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_starts_one_ends
+    candidate = method(:starts_one_ends)
+    assert_equal(1, candidate.call(1))
+    assert_equal(18, candidate.call(2))
+    assert_equal(180, candidate.call(3))
+    assert_equal(1800, candidate.call(4))
+    assert_equal(18000, candidate.call(5))
+  end
+end
+"
+HumanEval_84,kor_Hang,rb,"예제양수 N을 주어, 이진수에서 그 숫자의 총합을 반환합니다. # >>> solve.call(1000)
+# ""1""
+# >>> solve.call(150)
+# ""110""
+# >>> solve.call(147)
+# ""1100""
+# Variables:
+# @N integer
+# Constraints: 0 ≤ N ≤ 10000.
+# Output:
+# a string of binary number
+def solve(n)
+","def solve(n)
+  sum_of_digits = n.to_s.chars.map(&:to_i).sum
+  sum_of_digits.to_s(2)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_solve
+    candidate = method(:solve)
+    assert_equal(""1"", candidate.call(1000))
+    assert_equal(""110"", candidate.call(150))
+    assert_equal(""1100"", candidate.call(147))
+    assert_equal(""1001"", candidate.call(333))
+    assert_equal(""10010"", candidate.call(963))
+  end
+end
+"
+HumanEval_85,kor_Hang,rb,"예: 비공백된 정수 배열을 보면, 먼저 홀수인 짝수들을 더해봅시다# >>> add.call([4, 2, 6, 7])
+# 2
+def add(lst)
+","def add(lst)
+  lst.each_with_index.select { |num, index| index.odd? && num.even? }.map(&:first).sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_add
+    candidate = method(:add)
+    assert_equal(88, candidate.call([4, 88]))
+    assert_equal(122, candidate.call([4, 5, 6, 7, 2, 122]))
+    assert_equal(0, candidate.call([4, 0, 6, 7]))
+    assert_equal(12, candidate.call([4, 4, 6, 8]))
+  end
+end
+"
+HumanEval_86,kor_Hang,rb,"예를 들어:참고: 문장 안의 단어 순서와 빈 공간은 유지해야 합니다.ASCII 값에 따라 상승 순서로에서 모든 문자가 배치되는 새로운 단어로 대체됩니다.문자열의 순서 버전은 모든 단어들이 (공간으로 구분된)문자열을 가져다가 순서대로 돌려주는 함수를 쓰세요.# >>> anti_shuffle.call(""Hi"")
+# ""Hi""
+# >>> anti_shuffle.call(""hello"")
+# ""ehllo""
+# >>> anti_shuffle.call(""Hello World!!!"")
+# ""Hello !!!Wdlor""
+def anti_shuffle(s)
+","def anti_shuffle(s)
+  s.split(/(\s+)/).map { |word| word.chars.sort.join }.join
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_anti_shuffle
+    candidate = method(:anti_shuffle)
+    assert_equal(""Hi"", candidate.call(""Hi""))
+    assert_equal(""ehllo"", candidate.call(""hello""))
+    assert_equal(""bemnru"", candidate.call(""number""))
+    assert_equal(""abcd"", candidate.call(""abcd""))
+    assert_equal(""Hello !!!Wdlor"", candidate.call(""Hello World!!!""))
+    assert_equal("""", candidate.call(""""))
+    assert_equal("".Hi My aemn is Meirst .Rboot How aer ?ouy"", candidate.call(""Hi. My name is Mister Robot. How are you?""))
+  end
+end
+"
+HumanEval_87,kor_Hang,rb,"예: 또한 행의 좌표를 열에 따라 순서대로 정렬하세요.좌표는 처음에 행으로 순서대로 정렬합니다.각 배열은 좌표 - (줄, 열) 입니다. 0으로 시작됩니다.그리고 array의 array을 반환합니다, [(x1, y1), (x2, y2) ...] 이렇게 lst와 정수 x를 주어, 배열에서 정수 x를 찾아,각 행에는 다른 수의 열이 있을 수 있습니다.행렬과 비슷하지만 행렬과는 다르게2차원 데이터를 내장 배열로 제공받습니다.# >>> get_row.call([[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 1, 6], [1, 2, 3, 4, 5, 1]], 1)
+# [[0, 0], [1, 4], [1, 0], [2, 5], [2, 0]]
+# >>> get_row.call([], 1)
+# []
+# >>> get_row.call([[], [1], [1, 2, 3]], 3)
+# [[2, 2]]
+def get_row(lst, x)
+","def get_row(lst, x)
+  result = []
+
+  lst.each_with_index do |row, i|
+    row.each_with_index do |value, j|
+      result << [i, j] if value == x
+    end
+  end
+
+  result.sort_by { |coord| [coord[0], -coord[1]] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_get_row
+    candidate = method(:get_row)
+    assert_equal([[0, 0], [1, 4], [1, 0], [2, 5], [2, 0]], candidate.call([[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 1, 6], [1, 2, 3, 4, 5, 1]], 1))
+    assert_equal([[0, 1], [1, 1], [2, 1], [3, 1], [4, 1], [5, 1]], candidate.call([[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6]], 2))
+    assert_equal([[0, 0], [1, 0], [2, 1], [2, 0], [3, 2], [3, 0], [4, 3], [4, 0], [5, 4], [5, 0], [6, 5], [6, 0]], candidate.call([[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 1, 3, 4, 5, 6], [1, 2, 1, 4, 5, 6], [1, 2, 3, 1, 5, 6], [1, 2, 3, 4, 1, 6], [1, 2, 3, 4, 5, 1]], 1))
+    assert_equal([], candidate.call([], 1))
+    assert_equal([], candidate.call([[1]], 2))
+    assert_equal([[2, 2]], candidate.call([[], [1], [1, 2, 3]], 3))
+  end
+end
+"
+HumanEval_88,kor_Hang,rb,"예: * 주어진 배열을 변경하지 마십시오. 참고:또는 수를 줄이면 순서대로 정렬하세요.주어진 배열을 상승 순서로 정렬합니다. 만약  (첫 번째 인덱스 값, 마지막 인덱스 값) 이 홀수라면,음이 아닌 정수의 배열을 주어 정렬 후 주어진 배열의 코브를 반환합니다.# >>> sort_array.call([])
+# []
+# >>> sort_array.call([5])
+# [5]
+# >>> sort_array.call([2, 4, 3, 0, 1, 5])
+# [0, 1, 2, 3, 4, 5]
+# >>> sort_array.call([2, 4, 3, 0, 1, 5, 6])
+# [6, 5, 4, 3, 2, 1, 0]
+def sort_array(array)
+","def sort_array(array)
+  return array if array.empty? || array.size == 1
+
+  if (array.first + array.last).odd?
+    array.sort
+  else
+    array.sort.reverse
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sort_array
+    candidate = method(:sort_array)
+    assert_equal([], candidate.call([]))
+    assert_equal([5], candidate.call([5]))
+    assert_equal([0, 1, 2, 3, 4, 5], candidate.call([2, 4, 3, 0, 1, 5]))
+    assert_equal([6, 5, 4, 3, 2, 1, 0], candidate.call([2, 4, 3, 0, 1, 5, 6]))
+    assert_equal([1, 2], candidate.call([2, 1]))
+    assert_equal([0, 11, 15, 32, 42, 87], candidate.call([15, 42, 87, 32, 11, 0]))
+    assert_equal([23, 21, 14, 11], candidate.call([21, 14, 23, 11]))
+  end
+end
+"
+HumanEval_89,kor_Hang,rb,"예를 들어:2 곱하기 2 자리로 내려가야 합니다.알파벳은 글자가 알파벳을 회전하는 방식으로 암호화된 문자열을 반환합니다.문자를 인수로 사용하는 함수 인프라를 생성하고 # >>> encrypt.call(""hi"")
+# ""lm""
+# >>> encrypt.call(""asdfghjkl"")
+# ""ewhjklnop""
+# >>> encrypt.call(""gf"")
+# ""kj""
+# >>> encrypt.call(""et"")
+# ""ix""
+def encrypt(s)
+","def encrypt(s)
+  s.chars.map do |char|
+    if char =~ /[a-z]/
+      ((char.ord - 'a'.ord + 4) % 26 + 'a'.ord).chr
+    elsif char =~ /[A-Z]/
+      ((char.ord - 'A'.ord + 4) % 26 + 'A'.ord).chr
+    else
+      char
+    end
+  end.join
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_encrypt
+    candidate = method(:encrypt)
+    assert_equal(""lm"", candidate.call(""hi""))
+    assert_equal(""ewhjklnop"", candidate.call(""asdfghjkl""))
+    assert_equal(""kj"", candidate.call(""gf""))
+    assert_equal(""ix"", candidate.call(""et""))
+    assert_equal(""jeiajeaijeiak"", candidate.call(""faewfawefaewg""))
+    assert_equal(""lippsqcjvmirh"", candidate.call(""hellomyfriend""))
+    assert_equal(""hbdhpqrmpjylqmpyjlpmlyjrqpmqryjlpmqryjljygyjl"", candidate.call(""dxzdlmnilfuhmilufhlihufnmlimnufhlimnufhfucufh""))
+    assert_equal(""e"", candidate.call(""a""))
+  end
+end
+"
+HumanEval_90,kor_Hang,rb,"그런 요소가 없으면 nil를 반환합니다.함수 next_smallest를 쓰면 배열의 2번째로 작은 요소를 반환합니다.정수의 배열을 얻게 됩니다# >>> next_smallest.call([1, 2, 3, 4, 5])
+# 2
+# >>> next_smallest.call([5, 1, 4, 3, 2])
+# 2
+# >>> next_smallest.call([])
+# nil
+# >>> next_smallest.call([1, 1])
+# nil
+def next_smallest(lst)
+","def next_smallest(lst)
+  unique_sorted = lst.uniq.sort
+  unique_sorted.length >= 2 ? unique_sorted[1] : nil
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_next_smallest
+    candidate = method(:next_smallest)
+    assert_equal(2, candidate.call([1, 2, 3, 4, 5]))
+    assert_equal(2, candidate.call([5, 1, 4, 3, 2]))
+    assert_equal(nil, candidate.call([]))
+    assert_equal(nil, candidate.call([1, 1]))
+    assert_equal(1, candidate.call([1, 1, 1, 1, 0]))
+    assert_equal(nil, candidate.call([1, 1]))
+    assert_equal(-35, candidate.call([-35, 34, 12, -45]))
+  end
+end
+"
+HumanEval_91,kor_Hang,rb,"예를 들어:문장에는 '.', '?' 또는 '!'로 구분합니다.지루함은 ""I""로 시작하는 문장입니다.여러분은 단어들의 줄기를 받게 될 것이고, 여러분의 임무는 숫자를 세는 것입니다.# >>> is_bored.call(""Hello world"")
+# 0
+# >>> is_bored.call(""The sky is blue. The sun is shining. I love this weather"")
+# 1
+def is_bored(s)
+","def is_bored(s)
+  sentences = s.split(/(?<=[.?!])/)
+  sentences.count { |sentence| sentence.strip.start_with?('I') }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_bored
+    candidate = method(:is_bored)
+    assert_equal(0, candidate.call(""Hello world""))
+    assert_equal(0, candidate.call(""Is the sky blue?""))
+    assert_equal(1, candidate.call(""I love It !""))
+    assert_equal(0, candidate.call(""bIt""))
+    assert_equal(2, candidate.call(""I feel good today. I will be productive. will kill It""))
+    assert_equal(0, candidate.call(""You and I are going for a walk""))
+  end
+end
+"
+HumanEval_92,kor_Hang,rb,"예제다른 경우 모두 false를 반환합니다.만약 한 숫자가 다른 두 숫자의 합과 같고 모든 숫자가 정수라면 true를 반환합니다.3개의 숫자를 가지고 있는 함수를 만들어 보세요.# >>> any_int.call(5, 2, 7)
+# true
+# >>> any_int.call(3, 2, 2)
+# false
+# >>> any_int.call(3, -2, 1)
+# true
+# >>> any_int.call(3.6, -2.2, 2)
+# false
+def any_int(x, y, z)
+","def any_int(x, y, z)
+  if [x, y, z].all? { |n| n.is_a?(Integer) }
+    x == y + z || y == x + z || z == x + y
+  else
+    false
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_any_int
+    candidate = method(:any_int)
+    assert_equal(true, candidate.call(2, 3, 1))
+    assert_equal(false, candidate.call(2.5, 2, 3))
+    assert_equal(false, candidate.call(1.5, 5, 3.5))
+    assert_equal(false, candidate.call(2, 6, 2))
+    assert_equal(true, candidate.call(4, 2, 2))
+    assert_equal(false, candidate.call(2.2, 2.2, 2.2))
+    assert_equal(true, candidate.call(-4, 6, 2))
+    assert_equal(true, candidate.call(2, 1, 1))
+    assert_equal(true, candidate.call(3, 4, 7))
+    assert_equal(false, candidate.call(3.0, 4, 7))
+  end
+end
+"
+HumanEval_93,kor_Hang,rb,"예: 글자만 가정해영어 알파벳의 자음입니다.그보다 2 자리 앞쪽에 있는 글자를 가진 메시지모든 글자의 대문자를 바꿔서 모든 음절을 로 바꿔서메시지를 받아서 라는 식으로 암호화하는 함수를 쓰세요# >>> encode.call(""test"")
+# ""TGST""
+# >>> encode.call(""This is a message"")
+# ""tHKS KS C MGSSCGG""
+def encode(message)
+","def encode(message)
+  vowels = 'aeiou'
+  swap_vowels = {'a' => 'c', 'e' => 'g', 'i' => 'k', 'o' => 'q', 'u' => 'w'}
+  
+  encoded_message = message.chars.map do |char|
+    if vowels.include?(char.downcase)
+      new_char = swap_vowels[char.downcase]
+      char == char.upcase ? new_char.upcase : new_char.downcase
+    else
+      char == char.upcase ? char.downcase : char.upcase
+    end
+  end
+
+  encoded_message.join
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_encode
+    candidate = method(:encode)
+    assert_equal(""tgst"", candidate.call(""TEST""))
+    assert_equal(""mWDCSKR"", candidate.call(""Mudasir""))
+    assert_equal(""ygs"", candidate.call(""YES""))
+    assert_equal(""tHKS KS C MGSSCGG"", candidate.call(""This is a message""))
+    assert_equal(""k dQnT kNqW wHcT Tq wRkTg"", candidate.call(""I DoNt KnOw WhAt tO WrItE""))
+  end
+end
+"
+HumanEval_94,kor_Hang,rb,"예: 가장 큰 소수값을 찾아서 숫자의 합을 반환해야 합니다.정수의 배열을 얻게 됩니다# >>> skjkasdkd.call([0, 3, 2, 1, 3, 5, 7, 4, 5, 5, 5, 2, 181, 32, 4, 32, 3, 2, 32, 324, 4, 3])
+# 10
+# >>> skjkasdkd.call([1, 0, 1, 8, 2, 4597, 2, 1, 3, 40, 1, 2, 1, 2, 4, 2, 5, 1])
+# 25
+# >>> skjkasdkd.call([1, 3, 1, 32, 5107, 34, 83278, 109, 163, 23, 2323, 32, 30, 1, 9, 3])
+# 13
+# >>> skjkasdkd.call([0, 724, 32, 71, 99, 32, 6, 0, 5, 91, 83, 0, 5, 6])
+# 11
+# >>> skjkasdkd.call([0, 81, 12, 3, 1, 21])
+# 3
+# >>> skjkasdkd.call([0, 8, 1, 2, 1, 7])
+# 7
+def skjkasdkd(lst)
+","def skjkasdkd(lst)
+  require 'prime'
+
+  # Find the largest prime number in the array
+  largest_prime = lst.select { |num| Prime.prime?(num) }.max
+  
+  # Return 0 if no prime number is found
+  return 0 if largest_prime.nil?
+
+  # Calculate the sum of digits of the largest prime number
+  largest_prime.to_s.chars.map(&:to_i).sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_skjkasdkd
+    candidate = method(:skjkasdkd)
+    assert_equal(10, candidate.call([0, 3, 2, 1, 3, 5, 7, 4, 5, 5, 5, 2, 181, 32, 4, 32, 3, 2, 32, 324, 4, 3]))
+    assert_equal(25, candidate.call([1, 0, 1, 8, 2, 4597, 2, 1, 3, 40, 1, 2, 1, 2, 4, 2, 5, 1]))
+    assert_equal(13, candidate.call([1, 3, 1, 32, 5107, 34, 83278, 109, 163, 23, 2323, 32, 30, 1, 9, 3]))
+    assert_equal(11, candidate.call([0, 724, 32, 71, 99, 32, 6, 0, 5, 91, 83, 0, 5, 6]))
+    assert_equal(3, candidate.call([0, 81, 12, 3, 1, 21]))
+    assert_equal(7, candidate.call([0, 8, 1, 2, 1, 7]))
+    assert_equal(19, candidate.call([8191]))
+    assert_equal(19, candidate.call([8191, 123456, 127, 7]))
+    assert_equal(10, candidate.call([127, 97, 8192]))
+  end
+end
+"
+HumanEval_95,kor_Hang,rb,"예: 함수는 false를 반환해야 함은 주어진 해시가 비어있는 경우입니다. case 또는 모든 키가 대문자로 된 문자열이거나, false를 반환하지 않습니다.해시값이 주어지면 모든 키가 하위 에서 문자열이라면 true를 반환합니다.# >>> check_dict_case.call({""a"" => ""apple"", ""b"" => ""banana""})
+# true
+# >>> check_dict_case.call({""a"" => ""apple"", ""A"" => ""banana"", ""B"" => ""banana""})
+# false
+# >>> check_dict_case.call({""a"" => ""apple"", 8 => ""banana"", ""a"" => ""apple""})
+# false
+# >>> check_dict_case.call({""Name"" => ""John"", ""Age"" => ""36"", ""City"" => ""Houston""})
+# false
+# >>> check_dict_case.call({""STATE"" => ""NC"", ""ZIP"" => ""12345""})
+# true
+def check_dict_case(dict)
+","def check_dict_case(dict)
+  return false if dict.empty?
+
+  lowercase_keys = dict.keys.all? { |key| key.is_a?(String) && key == key.downcase }
+  uppercase_keys = dict.keys.all? { |key| key.is_a?(String) && key == key.upcase }
+
+  lowercase_keys || uppercase_keys
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_check_dict_case
+    candidate = method(:check_dict_case)
+    assert_equal(true, candidate.call({""p"" => ""pineapple"", ""b"" => ""banana""}))
+    assert_equal(false, candidate.call({""p"" => ""pineapple"", ""A"" => ""banana"", ""B"" => ""banana""}))
+    assert_equal(false, candidate.call({""p"" => ""pineapple"", ""5"" => ""banana"", ""a"" => ""apple""}))
+    assert_equal(false, candidate.call({""Name"" => ""John"", ""Age"" => ""36"", ""City"" => ""Houston""}))
+    assert_equal(true, candidate.call({""STATE"" => ""NC"", ""ZIP"" => ""12345""}))
+    assert_equal(true, candidate.call({""fruit"" => ""Orange"", ""taste"" => ""Sweet""}))
+    assert_equal(false, candidate.call({}))
+  end
+end
+"
+HumanEval_96,kor_Hang,rb,"예를 들어: n보다 작은 소수인 정수들음이 아닌 정수를 가져다가 첫 번째 n의 배열을 반환하는 함수를 구현합니다.# >>> count_up_to.call(5)
+# [2, 3]
+# >>> count_up_to.call(11)
+# [2, 3, 5, 7]
+# >>> count_up_to.call(0)
+# []
+# >>> count_up_to.call(20)
+# [2, 3, 5, 7, 11, 13, 17, 19]
+# >>> count_up_to.call(1)
+# []
+# >>> count_up_to.call(18)
+# [2, 3, 5, 7, 11, 13, 17]
+def count_up_to(n)
+","def count_up_to(n)
+  return [] if n <= 2
+  primes = []
+  (2...n).each do |num|
+    is_prime = true
+    (2..Math.sqrt(num)).each do |i|
+      if num % i == 0
+        is_prime = false
+        break
+      end
+    end
+    primes << num if is_prime
+  end
+  primes
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_count_up_to
+    candidate = method(:count_up_to)
+    assert_equal([2, 3], candidate.call(5))
+    assert_equal([2, 3, 5], candidate.call(6))
+    assert_equal([2, 3, 5], candidate.call(7))
+    assert_equal([2, 3, 5, 7], candidate.call(10))
+    assert_equal([], candidate.call(0))
+    assert_equal([2, 3, 5, 7, 11, 13, 17, 19], candidate.call(22))
+    assert_equal([], candidate.call(1))
+    assert_equal([2, 3, 5, 7, 11, 13, 17], candidate.call(18))
+    assert_equal([2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43], candidate.call(47))
+    assert_equal([2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97], candidate.call(101))
+  end
+end
+"
+HumanEval_97,kor_Hang,rb,"예: 입력값이 항상 유효하다고 가정합니다.단위 숫자의 곱입니다.두 개의 정수를 가져오는 함수를 완성하고 를 반환합니다.# >>> multiply.call(148, 412)
+# 16
+# >>> multiply.call(19, 28)
+# 72
+# >>> multiply.call(2020, 1851)
+# 0
+# >>> multiply.call(14, -15)
+# 20
+def multiply(a, b)
+","def multiply(a, b)
+  a_unit_digit = a.abs % 10
+  b_unit_digit = b.abs % 10
+  a_unit_digit * b_unit_digit
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_multiply
+    candidate = method(:multiply)
+    assert_equal(16, candidate.call(148, 412))
+    assert_equal(72, candidate.call(19, 28))
+    assert_equal(0, candidate.call(2020, 1851))
+    assert_equal(20, candidate.call(14, -15))
+    assert_equal(42, candidate.call(76, 67))
+    assert_equal(49, candidate.call(17, 27))
+    assert_equal(0, candidate.call(0, 1))
+    assert_equal(0, candidate.call(0, 0))
+  end
+end
+"
+HumanEval_98,kor_Hang,rb,"예를 들어:문자열 s를 주어, 대문자 모음의 숫자를 짝수 인덱스에서 계산해 봅시다.# >>> count_upper.call(""aBCdEf"")
+# 1
+# >>> count_upper.call(""abcdefg"")
+# 0
+# >>> count_upper.call(""dBBE"")
+# 0
+def count_upper(s)
+","def count_upper(s)
+  vowels = ['A', 'E', 'I', 'O', 'U']
+  count = 0
+
+  s.chars.each_with_index do |char, index|
+    if index.even? && vowels.include?(char)
+      count += 1
+    end
+  end
+
+  count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_count_upper
+    candidate = method(:count_upper)
+    assert_equal(1, candidate.call(""aBCdEf""))
+    assert_equal(0, candidate.call(""abcdefg""))
+    assert_equal(0, candidate.call(""dBBE""))
+    assert_equal(0, candidate.call(""B""))
+    assert_equal(1, candidate.call(""U""))
+    assert_equal(0, candidate.call(""""))
+    assert_equal(2, candidate.call(""EEEE""))
+  end
+end
+"
+HumanEval_99,kor_Hang,rb,"예제두 개의 정수에서 0에서 더 멀리 둥글게 니다.그리고 가장 가까운 정수를 반환합니다. 만약 수가 동거라면숫자를 나타내는 값 ( 문자열) 을 받는 함수를 생성합니다.# >>> closest_integer.call(""10"")
+# 10
+# >>> closest_integer.call(""15.3"")
+# 15
+# Note:
+# Rounding away from zero means that if the given number is equidistant
+# from two integers, the one you should return is the one that is the
+# farthest from zero. For example closest_integer(""14.5"") should
+# return 15 and closest_integer(""-14.5"") should return -15.
+def closest_integer(value)
+","def closest_integer(value)
+  number = value.to_f
+  if number > 0
+    (number + 0.5).floor
+  else
+    (number - 0.5).ceil
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_closest_integer
+    candidate = method(:closest_integer)
+    assert_equal(10, candidate.call(""10""))
+    assert_equal(15, candidate.call(""14.5""))
+    assert_equal(-16, candidate.call(""-15.5""))
+    assert_equal(15, candidate.call(""15.3""))
+    assert_equal(0, candidate.call(""0""))
+  end
+end
+"
+HumanEval_100,kor_Hang,rb,"예: i는 레벨 (i+1) 에 있는 돌의 수를 나타냅니다.각 레벨의 돌의 수를 array에서 반환합니다.- n이 짝수라면 다음 짝수입니다.- n이 홀수라면 다음 홀수다음 층의 돌의 수는:첫 번째 층에는 n개의 돌이 있습니다.양수 n을 주어, n개의 층의 돌을 쌓아야 합니다.# >>> make_a_pile.call(3)
+# [3, 5, 7]
+def make_a_pile(n)
+","def make_a_pile(n)
+  result = []
+  current_stones = n
+  n.times do
+    result << current_stones
+    current_stones += 2
+  end
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_make_a_pile
+    candidate = method(:make_a_pile)
+    assert_equal([3, 5, 7], candidate.call(3))
+    assert_equal([4, 6, 8, 10], candidate.call(4))
+    assert_equal([5, 7, 9, 11, 13], candidate.call(5))
+    assert_equal([6, 8, 10, 12, 14, 16], candidate.call(6))
+    assert_equal([8, 10, 12, 14, 16, 18, 20, 22], candidate.call(8))
+  end
+end
+"
+HumanEval_101,kor_Hang,rb,"예를 들어:문자열을 단어로 나누고 단어들의 배열을 반환합니다.여러분은 쉼표나 공백으로 분리된 단어들의 문자열을 받게 될 것입니다. 여러분의 임무는 # >>> words_string.call(""Hi, my name is John"")
+# [""Hi"", ""my"", ""name"", ""is"", ""John""]
+# >>> words_string.call(""One, two, three, four, five, six"")
+# [""One"", ""two"", ""three"", ""four"", ""five"", ""six""]
+def words_string(s)
+","def words_string(s)
+  s.split(/[\s,]+/)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_words_string
+    candidate = method(:words_string)
+    assert_equal([""Hi"", ""my"", ""name"", ""is"", ""John""], candidate.call(""Hi, my name is John""))
+    assert_equal([""One"", ""two"", ""three"", ""four"", ""five"", ""six""], candidate.call(""One, two, three, four, five, six""))
+    assert_equal([""Hi"", ""my"", ""name""], candidate.call(""Hi, my name""))
+    assert_equal([""One"", ""two"", ""three"", ""four"", ""five"", ""six""], candidate.call(""One,, two, three, four, five, six,""))
+    assert_equal([], candidate.call(""""))
+    assert_equal([""ahmed"", ""gamal""], candidate.call(""ahmed     , gamal""))
+  end
+end
+"
+HumanEval_102,kor_Hang,rb,"예를 들어:그런 숫자가 없다면, 함수는 -1을 반환해야 합니다.[x, y] 범위 안에 있는 가장 큰 짝수 정수입니다. 만약 이 함수는 양수 x와 y를 가지고 를 반환합니다.# >>> choose_num.call(12, 15)
+# 14
+# >>> choose_num.call(13, 12)
+# -1
+def choose_num(x, y)
+","def choose_num(x, y)
+  return -1 if x > y
+  # Start looking from the largest number
+  max_even = y.even? ? y : y - 1
+  # Iterate downwards to find the biggest even number
+  max_even.downto(x) do |n|
+    return n if n.even?
+  end
+  -1
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_choose_num
+    candidate = method(:choose_num)
+    assert_equal(14, candidate.call(12, 15))
+    assert_equal(-1, candidate.call(13, 12))
+    assert_equal(12354, candidate.call(33, 12354))
+    assert_equal(-1, candidate.call(5234, 5233))
+    assert_equal(28, candidate.call(6, 29))
+    assert_equal(-1, candidate.call(27, 10))
+    assert_equal(-1, candidate.call(7, 7))
+    assert_equal(546, candidate.call(546, 546))
+  end
+end
+"
+HumanEval_103,kor_Hang,rb,"예: n가 m보다 크면 -1을 반환합니다.가장 가까운 정수까지 합쳐서 이진수로 변환해 봅시다.n에서 m까지의 정수의 평균 (n과 m 포함)양수 n과 m를 두 개 주고, 을 계산하는 것이 여러분의 임무입니다.# >>> rounded_avg.call(1, 5)
+# ""0b11""
+# >>> rounded_avg.call(7, 5)
+# -1
+# >>> rounded_avg.call(10, 20)
+# ""0b1111""
+# >>> rounded_avg.call(20, 33)
+# ""0b11010""
+def rounded_avg(n, m)
+","def rounded_avg(n, m)
+  return -1 if n > m
+
+  sum = (n..m).reduce(:+)
+  count = m - n + 1
+  average = (sum.to_f / count).round
+  ""0b"" + average.to_i.to_s(2)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_rounded_avg
+    candidate = method(:rounded_avg)
+    assert_equal(""0b11"", candidate.call(1, 5))
+    assert_equal(""0b1010"", candidate.call(7, 13))
+    assert_equal(""0b1111001010"", candidate.call(964, 977))
+    assert_equal(""0b1111100100"", candidate.call(996, 997))
+    assert_equal(""0b1011000010"", candidate.call(560, 851))
+    assert_equal(""0b101101110"", candidate.call(185, 546))
+    assert_equal(""0b110101101"", candidate.call(362, 496))
+    assert_equal(""0b1001110010"", candidate.call(350, 902))
+    assert_equal(""0b11010111"", candidate.call(197, 233))
+    assert_equal(-1, candidate.call(7, 5))
+    assert_equal(-1, candidate.call(5, 1))
+    assert_equal(""0b101"", candidate.call(5, 5))
+  end
+end
+"
+HumanEval_104,kor_Hang,rb,"예를 들어:참고: 반환 된 배열은 증가 순서로 정렬되어야 합니다.짝수가 없는 요소입니다.양수 정수 x의 배열을 주어 모든 의 정렬 배열을 반환합니다.# >>> unique_digits.call([15, 33, 1422, 1])
+# [1, 15, 33]
+# >>> unique_digits.call([152, 323, 1422, 10])
+# []
+def unique_digits(x)
+","def unique_digits(x)
+  x.select { |num| num.to_s.chars.none? { |digit| digit.to_i.even? } }.sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_unique_digits
+    candidate = method(:unique_digits)
+    assert_equal([1, 15, 33], candidate.call([15, 33, 1422, 1]))
+    assert_equal([], candidate.call([152, 323, 1422, 10]))
+    assert_equal([111, 151], candidate.call([12345, 2033, 111, 151]))
+    assert_equal([31, 135], candidate.call([135, 103, 31]))
+  end
+end
+"
+HumanEval_105,kor_Hang,rb,"예를 들어:""하나"", ""두"", ""세"", ""네"", ""다섯"", ""여섯"", ""일곱"", ""여덟"", ""아홉"".에서 각 숫자를 에서 로 바꾸고정수의 배열을 주어 1과 9 사이의 정수를 정렬합니다.# >>> by_length.call([2, 1, 1, 4, 5, 8, 2, 3])
+# [""Eight"", ""Five"", ""Four"", ""Three"", ""Two"", ""Two"", ""One"", ""One""]
+# If the array is empty, return an empty array:
+# >>> by_length.call([])
+# []
+# If the array has any strange number ignore it:
+# >>> by_length.call([1, -1, 55])
+# [""One""]
+def by_length(arr)
+","def by_length(arr)
+  number_names = {
+    1 => ""One"",
+    2 => ""Two"",
+    3 => ""Three"",
+    4 => ""Four"",
+    5 => ""Five"",
+    6 => ""Six"",
+    7 => ""Seven"",
+    8 => ""Eight"",
+    9 => ""Nine""
+  }
+
+  filtered_sorted_reversed = arr.select { |x| x.between?(1, 9) }.sort.reverse
+  filtered_sorted_reversed.map { |num| number_names[num] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_by_length
+    candidate = method(:by_length)
+    assert_equal([""Eight"", ""Five"", ""Four"", ""Three"", ""Two"", ""Two"", ""One"", ""One""], candidate.call([2, 1, 1, 4, 5, 8, 2, 3]))
+    assert_equal([], candidate.call([]))
+    assert_equal([""One""], candidate.call([1, -1, 55]))
+    assert_equal([""Three"", ""Two"", ""One""], candidate.call([1, -1, 3, 2]))
+    assert_equal([""Nine"", ""Eight"", ""Four""], candidate.call([9, 4, 8]))
+  end
+end
+"
+HumanEval_106,kor_Hang,rb,"예: i의 인수는 1에서 i까지의 숫자의 곱입니다 (1 * 2 * ... * i).i는 1에서 시작됩니다.1부터 i까지의 숫자의 합이 될 수도 있습니다.그리고 크기가 n인 배열을 반환합니다. 즉, i의 인덱스 i의 값은 i의 인수분해값이 됩니다.n을 파라미터로 사용하는 함수 f를 구현합니다.# >>> f.call(5)
+# [1, 2, 6, 24, 15]
+def f(n)
+","def f(n)
+  (1..n).map do |i|
+    if i.even?
+      (1..i).inject(:*) || 1
+    else
+      (1..i).inject(:+)
+    end
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_f
+    candidate = method(:f)
+    assert_equal([1, 2, 6, 24, 15], candidate.call(5))
+    assert_equal([1, 2, 6, 24, 15, 720, 28], candidate.call(7))
+    assert_equal([1], candidate.call(1))
+    assert_equal([1, 2, 6], candidate.call(3))
+  end
+end
+"
+HumanEval_107,kor_Hang,rb,"예제 1:n) 을 포함해서 범위에 속하는 정수 팔린드로미스입니다.양수 n을 주어 짝수와 홀수의 수를 가진 배열을 반환합니다# >>> even_odd_palindrome.call(3)
+# [1, 2]
+# Explanation:
+# Integer palindrome are 1, 2, 3. one of them is even, and two of them are odd.
+# Example 2:
+# >>> even_odd_palindrome.call(12)
+# [4, 6]
+# Explanation:
+# Integer palindrome are 1, 2, 3, 4, 5, 6, 7, 8, 9, 11. four of them are even, and 6 of them are odd.
+# Note:
+# 1. 1 <= n <= 10^3
+# 2. returned array has the number of even and odd integer palindromes respectively.
+def even_odd_palindrome(n)
+","def even_odd_palindrome(n)
+  even_count = 0
+  odd_count = 0
+
+  (1..n).each do |num|
+    if num.to_s == num.to_s.reverse
+      if num.even?
+        even_count += 1
+      else
+        odd_count += 1
+      end
+    end
+  end
+
+  [even_count, odd_count]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_even_odd_palindrome
+    candidate = method(:even_odd_palindrome)
+    assert_equal([8, 13], candidate.call(123))
+    assert_equal([4, 6], candidate.call(12))
+    assert_equal([1, 2], candidate.call(3))
+    assert_equal([6, 8], candidate.call(63))
+    assert_equal([5, 6], candidate.call(25))
+    assert_equal([4, 6], candidate.call(19))
+    assert_equal([4, 5], candidate.call(9))
+    assert_equal([0, 1], candidate.call(1))
+  end
+end
+"
+HumanEval_108,kor_Hang,rb,"예를 들어 -123은 -1, 2, 3의 기호를 가지고 있습니다.만약 숫자가 음수라면 첫 번째 기호 숫자는 음수입니다.숫자 합이 0이 넘는 요소의 수정수의 배열을 가져다가 반환하는 함수 count_nums를 작성합니다.# >>> count_nums.call([])
+# 0
+# >>> count_nums.call([-1, 11, -11])
+# 1
+# >>> count_nums.call([1, 1, 2])
+# 3
+def count_nums(arr)
+","def count_nums(arr)
+  arr.count do |num|
+    num.to_s.chars.map(&:to_i).sum > 0
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_count_nums
+    candidate = method(:count_nums)
+    assert_equal(0, candidate.call([]))
+    assert_equal(0, candidate.call([-1, -2, 0]))
+    assert_equal(6, candidate.call([1, 1, 2, -2, 3, 4, 5]))
+    assert_equal(5, candidate.call([1, 6, 9, -6, 0, 1, 5]))
+    assert_equal(4, candidate.call([1, 100, 98, -7, 1, -1]))
+    assert_equal(5, candidate.call([12, 23, 34, -45, -56, 0]))
+    assert_equal(1, candidate.call([0, 1]))
+    assert_equal(1, candidate.call([1]))
+  end
+end
+"
+HumanEval_109,kor_Hang,rb,"예를 들어:참고: 주어진 배열은 고유한 요소를 가지고 있다는 것이 보장됩니다.주어진 배열이 비어 있다면 true를 반환합니다.그러면 true를 반환하거나 false를 반환합니다.위의 작업을 수행하여 정렬 된 배열을 얻을 수 있다면 배열의 시작 위치 즉 0th 인덱스입니다.로 이동됩니다.한 번 오른쪽으로 이동하면 배열의 모든 요소를 한 번 이동하게 됩니다.오른쪽 이동 동작을 얼마든지 할 수 있습니다.주어진 배열에 대한 다음 연산: 를 수행하여 배열을 감소하지 않는 순서로 정렬하는 것이 가능합니다.배열의 숫자는 무작위로 순서로 배치됩니다. 여러분의 임무는 우리는 N개의 정수 arr[1], arr[2], ..., arr[N]의 배열 'arr'을 가지고 있습니다.# >>> move_one_ball.call([3, 4, 5, 1, 2])
+# true
+# Explanation: By performin 2 right shift operations, non-decreasing order can
+# be achieved for the given array.
+# >>> move_one_ball.call([3, 5, 4, 1, 2])
+# false
+# Explanation:It is not possible to get non-decreasing order for the given
+# array by performing any number of right shift operations.
+def move_one_ball(arr)
+","def move_one_ball(arr)
+  return true if arr.empty?
+
+  n = arr.size
+  count_rotation_point = 0
+  rotation_index = -1
+
+  (0...n).each do |i|
+    next_index = (i + 1) % n
+    if arr[i] > arr[next_index]
+      count_rotation_point += 1
+      rotation_index = next_index
+    end
+  end
+
+  count_rotation_point <= 1
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_move_one_ball
+    candidate = method(:move_one_ball)
+    assert_equal(true, candidate.call([3, 4, 5, 1, 2]))
+    assert_equal(true, candidate.call([3, 5, 10, 1, 2]))
+    assert_equal(false, candidate.call([4, 3, 1, 2]))
+    assert_equal(false, candidate.call([3, 5, 4, 1, 2]))
+    assert_equal(true, candidate.call([]))
+  end
+end
+"
+HumanEval_110,kor_Hang,rb,"예를 들어:그렇지 않으면 ""NO""를 반환합니다.lst1의 모든 요소가 짝수인 경우, ""YES""를 반환합니다.만약 lst1과 lst2 사이의 요소를 교환할 수 있다면lst1과 lst2 사이에 교환되는 요소의 수에 제한이 없습니다.lst1을 짝수만 있는 배열로 만들 수 있습니다.그리고 요소 교환을 수행 할 수 있는지 여부를 결정합니다.이 문제에서는 두 개의 숫자의 배열을 가져가는 함수를 구현합니다.# >>> exchange.call([1, 2, 3, 4], [1, 2, 3, 4])
+# ""YES""
+# >>> exchange.call([1, 2, 3, 4], [1, 5, 3, 4])
+# ""NO""
+# It is assumed that the input arrays will be non-empty.
+def exchange(lst1, lst2)
+","def exchange(lst1, lst2)
+  # Check if lst1 already consists solely of even numbers
+  return ""YES"" if lst1.all?(&:even?)
+
+  # Check if there are at least as many even numbers in lst2
+  # as there are odd numbers in lst1
+  odd_count_lst1 = lst1.count(&:odd?)
+  even_count_lst2 = lst2.count(&:even?)
+
+  odd_count_lst1 <= even_count_lst2 ? ""YES"" : ""NO""
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_exchange
+    candidate = method(:exchange)
+    assert_equal(""YES"", candidate.call([1, 2, 3, 4], [1, 2, 3, 4]))
+    assert_equal(""NO"", candidate.call([1, 2, 3, 4], [1, 5, 3, 4]))
+    assert_equal(""YES"", candidate.call([1, 2, 3, 4], [2, 1, 4, 3]))
+    assert_equal(""YES"", candidate.call([5, 7, 3], [2, 6, 4]))
+    assert_equal(""NO"", candidate.call([5, 7, 3], [2, 6, 3]))
+    assert_equal(""NO"", candidate.call([3, 2, 6, 1, 8, 9], [3, 5, 5, 1, 1, 1]))
+    assert_equal(""YES"", candidate.call([100, 200], [200, 200]))
+  end
+end
+"
+HumanEval_111,kor_Hang,rb,"예: 여러 글자가 같은 경우 모두 반환합니다.가장 많이 반복되는 글자 중 하나이며, 해당 숫자를 포함합니다.작은 글자를 표시하는 문자열을 주어 해시값을 반환합니다.# >>> histogram.call(""a b c"")
+# {""a"" => 1, ""b"" => 1, ""c"" => 1}
+# >>> histogram.call(""a b b a"")
+# {""a"" => 2, ""b"" => 2}
+# >>> histogram.call(""a b c a b"")
+# {""a"" => 2, ""b"" => 2}
+# >>> histogram.call(""b b b b a"")
+# {""b"" => 4}
+# >>> histogram.call("""")
+# {}
+def histogram(test)
+","def histogram(test)
+  return {} if test.empty?
+
+  count = Hash.new(0)
+
+  test.split.each do |char|
+    count[char] += 1
+  end
+
+  max_count = count.values.max
+  count.select { |_, value| value == max_count }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_histogram
+    candidate = method(:histogram)
+    assert_equal({""a"" => 2, ""b"" => 2}, candidate.call(""a b b a""))
+    assert_equal({""a"" => 2, ""b"" => 2}, candidate.call(""a b c a b""))
+    assert_equal({""a"" => 1, ""b"" => 1, ""c"" => 1, ""d"" => 1, ""g"" => 1}, candidate.call(""a b c d g""))
+    assert_equal({""r"" => 1, ""t"" => 1, ""g"" => 1}, candidate.call(""r t g""))
+    assert_equal({""b"" => 4}, candidate.call(""b b b b a""))
+    assert_equal({""r"" => 1, ""t"" => 1, ""g"" => 1}, candidate.call(""r t g""))
+    assert_equal({}, candidate.call(""""))
+    assert_equal({""a"" => 1}, candidate.call(""a""))
+  end
+end
+"
+HumanEval_112,kor_Hang,rb,"예제 체크를 위해 결과 문자열과 true/false를 포함하는 배열을 반환해야 합니다.문자열은 앞과 뒤로 똑같이 읽으면 팔린드로마라고 합니다.그러면 결과 문자열이 팔린드로임인지 확인합니다.s와 c라는 두 개의 문자열을 가지고 있습니다. s의 모든 문자는 c의 모든 문자와 같다고 해서 삭제해야 합니다.과제# >>> reverse_delete.call(""abcde"", ""ae"")
+# [""bcd"", false]
+# >>> reverse_delete.call(""abcdef"", ""b"")
+# [""acdef"", false]
+# >>> reverse_delete.call(""abcdedcba"", ""ab"")
+# [""cdedc"", true]
+def reverse_delete(s, c)
+","def reverse_delete(s, c)
+  # Remove all characters in c from s
+  filtered_string = s.delete(c)
+  
+  # Check if the filtered string is a palindrome
+  is_palindrome = filtered_string == filtered_string.reverse
+  
+  # Return the result array
+  [filtered_string, is_palindrome]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_reverse_delete
+    candidate = method(:reverse_delete)
+    assert_equal([""bcd"", false], candidate.call(""abcde"", ""ae""))
+    assert_equal([""acdef"", false], candidate.call(""abcdef"", ""b""))
+    assert_equal([""cdedc"", true], candidate.call(""abcdedcba"", ""ab""))
+    assert_equal([""dik"", false], candidate.call(""dwik"", ""w""))
+    assert_equal(["""", true], candidate.call(""a"", ""a""))
+    assert_equal([""abcdedcba"", true], candidate.call(""abcdedcba"", """"))
+    assert_equal([""abcdedcba"", true], candidate.call(""abcdedcba"", ""v""))
+    assert_equal([""abba"", true], candidate.call(""vabba"", ""v""))
+    assert_equal(["""", true], candidate.call(""mamma"", ""mia""))
+  end
+end
+"
+HumanEval_113,kor_Hang,rb,"입력의 i'th 문자열에 홀수 숫자의.입력의 문자열 i"". 모든 i를 숫자 로 대체해야 합니다.출력값의 각 요소 i는 에서 홀수 요소의 수와 같아야 합니다.각 문자열이 숫자로만 구성된 문자열을 주어 배열을 반환합니다.# >>> odd_count.call([""1234567""])
+# [""the number of odd elements 4n the str4ng 4 of the 4nput.""]
+# >>> odd_count.call([""3"", ""11111111""])
+# [""the number of odd elements 1n the str1ng 1 of the 1nput."", ""the number of odd elements 8n the str8ng 8 of the 8nput.""]
+def odd_count(lst)
+","def odd_count(lst)
+  lst.map do |num_str|
+    count = num_str.count('13579')
+    ""the number of odd elements #{count}n the str#{count}ng #{count} of the #{count}nput.""
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_odd_count
+    candidate = method(:odd_count)
+    assert_equal([""the number of odd elements 4n the str4ng 4 of the 4nput.""], candidate.call([""1234567""]))
+    assert_equal([""the number of odd elements 1n the str1ng 1 of the 1nput."", ""the number of odd elements 8n the str8ng 8 of the 8nput.""], candidate.call([""3"", ""11111111""]))
+    assert_equal([""the number of odd elements 2n the str2ng 2 of the 2nput."", ""the number of odd elements 3n the str3ng 3 of the 3nput."", ""the number of odd elements 2n the str2ng 2 of the 2nput.""], candidate.call([""271"", ""137"", ""314""]))
+  end
+end
+"
+HumanEval_114,kor_Hang,rb,"예제         정수 n의 배열을 주어, 비공백 하위 배열의 최소 합을 찾아보세요# >>> minSubArraySum.call([2, 3, 4, 1, 2, 4])
+# 1
+# >>> minSubArraySum.call([-1, -2, -3])
+# -6
+def minSubArraySum(nums)
+","def minSubArraySum(nums)
+  min_sum = nums[0]
+  current_sum = 0
+  nums.each do |num|
+    if current_sum > 0
+      current_sum = num
+    else
+      current_sum += num
+    end
+    min_sum = [min_sum, current_sum].min
+  end
+  min_sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_minSubArraySum
+    candidate = method(:minSubArraySum)
+    assert_equal(1, candidate.call([2, 3, 4, 1, 2, 4]))
+    assert_equal(-6, candidate.call([-1, -2, -3]))
+    assert_equal(-14, candidate.call([-1, -2, -3, 2, -10]))
+    assert_equal(-9999999999999999, candidate.call([-9999999999999999]))
+    assert_equal(0, candidate.call([0, 10, 20, 1000000]))
+    assert_equal(-6, candidate.call([-1, -2, -3, 10, -5]))
+    assert_equal(-6, candidate.call([100, -1, -2, -3, 10, -5]))
+    assert_equal(3, candidate.call([10, 11, 13, 8, 3, 4]))
+    assert_equal(-33, candidate.call([100, -33, 32, -1, 0, -2]))
+    assert_equal(-10, candidate.call([-10]))
+    assert_equal(7, candidate.call([7]))
+    assert_equal(-1, candidate.call([1, -1]))
+  end
+end
+"
+HumanEval_115,kor_Hang,rb,"예제 1:버킷을 내려놓을 수 있는 횟수를 입력하세요.여러분의 임무는 우물을 비우는 데 버킷을 사용하는 것입니다.모든 버킷의 용량은 같죠.각 우물은 물 빼기 위해 사용할 수 있는 버킷이 있습니다.그리고 각 1은 물 단위를 나타냅니다.우물들의 직사각형 격자 모양이 주어집니다. 각 행은 하나의 우물을 나타냅니다.# >>> max_fill.call([[0, 0, 1, 0], [0, 1, 0, 0], [1, 1, 1, 1]], 1)
+# 6
+# Example 2:
+# >>> max_fill.call([[0, 0, 1, 1], [0, 0, 0, 0], [1, 1, 1, 1], [0, 1, 1, 1]], 2)
+# 5
+# Example 3:
+# >>> max_fill.call([[0, 0, 0], [0, 0, 0]], 5)
+# 0
+# Constraints:
+# * all wells have the same length
+# * 1 <= grid.length <= 10^2
+# * 1 <= grid[:,1].length <= 10^2
+# * grid[i][j] -> 0 | 1
+# * 1 <= capacity <= 10
+def max_fill(grid, capacity)
+","def max_fill(grid, capacity)
+  total_water_units = grid.flatten.sum
+  (total_water_units.to_f / capacity).ceil
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_max_fill
+    candidate = method(:max_fill)
+    assert_equal(6, candidate.call([[0, 0, 1, 0], [0, 1, 0, 0], [1, 1, 1, 1]], 1))
+    assert_equal(5, candidate.call([[0, 0, 1, 1], [0, 0, 0, 0], [1, 1, 1, 1], [0, 1, 1, 1]], 2))
+    assert_equal(0, candidate.call([[0, 0, 0], [0, 0, 0]], 5))
+    assert_equal(4, candidate.call([[1, 1, 1, 1], [1, 1, 1, 1]], 2))
+    assert_equal(2, candidate.call([[1, 1, 1, 1], [1, 1, 1, 1]], 9))
+  end
+end
+"
+HumanEval_116,kor_Hang,rb,"이 방법은 다음과 같습니다.같은 수의 1을 소수점 값에 따라 정렬합니다.이진 표현에서 1의 숫자는 상승 순서로 나타납니다.이 카타에서, 여러분은 에 따라 비 ऋण적인 정수들의 배열을 정렬해야 합니다.# >>> sort_array.call([1, 5, 2, 3, 4])
+# [1, 2, 3, 4, 5]
+# >>> sort_array.call([-2, -3, -4, -5, -6])
+# [-6, -5, -4, -3, -2]
+# >>> sort_array.call([1, 0, 2, 3, 4])
+# [0, 1, 2, 3, 4]
+def sort_array(arr)
+","def sort_array(arr)
+  arr.sort_by { |n| [n.to_s(2).count('1'), n] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sort_array
+    candidate = method(:sort_array)
+    assert_equal([1, 2, 4, 3, 5], candidate.call([1, 5, 2, 3, 4]))
+    assert_equal([-4, -2, -6, -5, -3], candidate.call([-2, -3, -4, -5, -6]))
+    assert_equal([0, 1, 2, 4, 3], candidate.call([1, 0, 2, 3, 4]))
+    assert_equal([], candidate.call([]))
+    assert_equal([2, 2, 4, 4, 3, 3, 5, 5, 5, 7, 77], candidate.call([2, 5, 77, 4, 5, 3, 5, 7, 2, 3, 4]))
+    assert_equal([32, 3, 5, 6, 12, 44], candidate.call([3, 6, 44, 12, 32, 5]))
+    assert_equal([2, 4, 8, 16, 32], candidate.call([2, 4, 8, 16, 32]))
+    assert_equal([2, 4, 8, 16, 32], candidate.call([2, 4, 8, 16, 32]))
+  end
+end
+"
+HumanEval_117,kor_Hang,rb,"예: 참고: 입력 문자열에는 문자와 공백만 포함된다고 가정할 수 있습니다.만약 문자열 s가 빈다면 함수는 빈 배열을 반환해야 합니다.n 자음, 이 단어들이 문자열 s에 나타나는 순서로.string s에서 정확히 를 포함하는 모든 단어의 배열을 반환하는 함수입니다.string s와 자연수 n을 주어, 여러분은 를 구현하는 임무를 받았습니다.# >>> select_words.call(""Mary had a little lamb"", 4)
+# [""little""]
+# >>> select_words.call(""Mary had a little lamb"", 3)
+# [""Mary"", ""lamb""]
+# >>> select_words.call(""simple white space"", 2)
+# []
+# >>> select_words.call(""Hello world"", 4)
+# [""world""]
+# >>> select_words.call(""Uncle sam"", 3)
+# [""Uncle""]
+def select_words(s, n)
+","def select_words(s, n)
+  vowels = ""aeiouAEIOU""
+  words = s.split
+  words.select do |word|
+    consonant_count = word.chars.count { |char| !vowels.include?(char) }
+    consonant_count == n
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_select_words
+    candidate = method(:select_words)
+    assert_equal([""little""], candidate.call(""Mary had a little lamb"", 4))
+    assert_equal([""Mary"", ""lamb""], candidate.call(""Mary had a little lamb"", 3))
+    assert_equal([], candidate.call(""simple white space"", 2))
+    assert_equal([""world""], candidate.call(""Hello world"", 4))
+    assert_equal([""Uncle""], candidate.call(""Uncle sam"", 3))
+    assert_equal([], candidate.call("""", 4))
+    assert_equal([""b"", ""c"", ""d"", ""f""], candidate.call(""a b c d e f"", 1))
+  end
+end
+"
+HumanEval_118,kor_Hang,rb,"예: 주어진 문자열에는 영어 문자만 포함되어 있다고 가정할 수 있습니다.위의 조건을 만족하는 음절을 찾아보세요.시작과 끝의 모음이 계산되지 않습니다. 그렇지 않은 경우 빈 문자열을 반환합니다.두 개의 자음 (case sensitive)단어 하나만 주어져 있는데, 그 단어 사이에 있는 가장 가까운 모음을 찾아내는 것이 여러분의 임무입니다.# >>> get_closest_vowel.call(""yogurt"")
+# ""u""
+# >>> get_closest_vowel.call(""FULL"")
+# ""U""
+# >>> get_closest_vowel.call(""quick"")
+# """"
+# >>> get_closest_vowel.call(""ab"")
+# """"
+def get_closest_vowel(word)
+","def get_closest_vowel(word)
+  vowels = ""aeiouAEIOU""
+  (1...word.length - 1).reverse_each do |i|
+    if vowels.include?(word[i]) && !vowels.include?(word[i - 1]) && !vowels.include?(word[i + 1])
+      return word[i]
+    end
+  end
+  return """"
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_get_closest_vowel
+    candidate = method(:get_closest_vowel)
+    assert_equal(""u"", candidate.call(""yogurt""))
+    assert_equal(""u"", candidate.call(""full""))
+    assert_equal("""", candidate.call(""easy""))
+    assert_equal("""", candidate.call(""eAsy""))
+    assert_equal("""", candidate.call(""ali""))
+    assert_equal(""a"", candidate.call(""bad""))
+    assert_equal(""o"", candidate.call(""most""))
+    assert_equal("""", candidate.call(""ab""))
+    assert_equal("""", candidate.call(""ba""))
+    assert_equal("""", candidate.call(""quick""))
+    assert_equal(""i"", candidate.call(""anime""))
+    assert_equal("""", candidate.call(""Asia""))
+    assert_equal(""o"", candidate.call(""Above""))
+  end
+end
+"
+HumanEval_119,kor_Hang,rb,"예: 좋은 문자열을 만들 수 있는 방법이 있다면 '예'를 반환하고, 그렇지 않으면 '아니오'를 반환합니다.""()) ""은 아닙니다.균형이 잡힌 것입니다. 예를 들어: 문자열 '(((() '은 좋지만 문자열 문자열 S는 모든 괄호가 S 안에 있는 경우에만 좋은 것으로 간주됩니다.어떤 순서로, 그 결과 문자열이 좋은 것이 될 것입니다.두 줄의 연결이 가능한지 확인하는 것이 여러분의 임무입니다.괄호 '(' 또는 괄호 ') '만 사용한다.두 개의 문자열이 주어져 있고, 두 문자열 모두 오픈으로 구성되어 있습니다.# >>> match_parens.call([""()("", "")""])
+# ""Yes""
+# >>> match_parens.call(["")"", "")""])
+# ""No""
+def match_parens(lst)
+","def match_parens(lst)
+  a, b = lst
+
+  # Define a helper method to check if a string is balanced
+  def balanced?(s)
+    count = 0
+    s.each_char do |c|
+      count += 1 if c == '('
+      count -= 1 if c == ')'
+      return false if count < 0
+    end
+    count == 0
+  end
+
+  # Check if either concatenation forms a good string
+  if balanced?(a + b) || balanced?(b + a)
+    ""Yes""
+  else
+    ""No""
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_match_parens
+    candidate = method(:match_parens)
+    assert_equal(""Yes"", candidate.call([""()("", "")""]))
+    assert_equal(""No"", candidate.call(["")"", "")""]))
+    assert_equal(""No"", candidate.call([""(()(())"", ""())())""]))
+    assert_equal(""Yes"", candidate.call(["")())"", ""(()()(""]))
+    assert_equal(""Yes"", candidate.call([""(())))"", ""(()())((""]))
+    assert_equal(""No"", candidate.call([""()"", ""())""]))
+    assert_equal(""Yes"", candidate.call([""(()("", ""()))()""]))
+    assert_equal(""No"", candidate.call([""(((("", ""((())""]))
+    assert_equal(""No"", candidate.call(["")(()"", ""(()(""]))
+    assert_equal(""No"", candidate.call(["")("", "")(""]))
+    assert_equal(""Yes"", candidate.call([""("", "")""]))
+    assert_equal(""Yes"", candidate.call(["")"", ""(""]))
+  end
+end
+"
+HumanEval_120,kor_Hang,rb,"예제 1:길이가 k이고, 최대 k개의 숫자가 arr에 들어있죠.정수 arr과 양수 k의 배열을 주어 정렬된 배열을 반환합니다.# >>> maximum.call([-3, -4, 5], 3)
+# [-4, -3, 5]
+# Example 2:
+# >>> maximum.call([4, -4, 4], 2)
+# [4, 4]
+# Example 3:
+# >>> maximum.call([-3, 2, 1, 2, -1, -2, 1], 1)
+# [2]
+# Note:
+# 1. The length of the array will be in the range of [1, 1000].
+# 2. The elements in the array will be in the range of [-1000, 1000].
+# 3. 0 <= k <= len(arr)
+def maximum(arr, k)
+","def maximum(arr, k)
+  arr.sort.last(k).sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_maximum
+    candidate = method(:maximum)
+    assert_equal([-4, -3, 5], candidate.call([-3, -4, 5], 3))
+    assert_equal([4, 4], candidate.call([4, -4, 4], 2))
+    assert_equal([2], candidate.call([-3, 2, 1, 2, -1, -2, 1], 1))
+    assert_equal([2, 20, 123], candidate.call([123, -123, 20, 0, 1, 2, -3], 3))
+    assert_equal([0, 1, 2, 20], candidate.call([-123, 20, 0, 1, 2, -3], 4))
+    assert_equal([-13, -8, 0, 0, 3, 5, 15], candidate.call([5, 15, 0, 3, -13, -8, 0], 7))
+    assert_equal([3, 5], candidate.call([-1, 0, 2, 5, 3, -10], 2))
+    assert_equal([5], candidate.call([1, 0, 5, -7], 1))
+    assert_equal([-4, 4], candidate.call([4, -4], 2))
+    assert_equal([-10, 10], candidate.call([-10, 10], 2))
+    assert_equal([], candidate.call([1, 2, 3, -23, 243, -400, 0], 0))
+  end
+end
+"
+HumanEval_121,kor_Hang,rb,"예제비공백된 정수 배열을 주어, 짝수 위치에 있는 모든 홀수들의 합을 반환합니다.# >>> solution.call([5, 8, 7, 1])
+# 12
+# >>> solution.call([3, 3, 3, 3, 3])
+# 9
+# >>> solution.call([30, 13, 24, 321])
+# 0
+def solution(lst)
+","def solution(lst)
+  lst.each_with_index.reduce(0) do |sum, (val, idx)|
+    (idx.even? && val.odd?) ? sum + val : sum
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_solution
+    candidate = method(:solution)
+    assert_equal(12, candidate.call([5, 8, 7, 1]))
+    assert_equal(9, candidate.call([3, 3, 3, 3, 3]))
+    assert_equal(0, candidate.call([30, 13, 24, 321]))
+    assert_equal(5, candidate.call([5, 9]))
+    assert_equal(0, candidate.call([2, 4, 8]))
+    assert_equal(23, candidate.call([30, 13, 23, 32]))
+    assert_equal(3, candidate.call([3, 13, 2, 9]))
+  end
+end
+"
+HumanEval_122,kor_Hang,rb,"예: arr의 첫 번째 k 요소에서 가장 많은 두 자릿수를 가진 요소의 합입니다. 실수 arr의 비공백 배열과 실수 k를 주어, return # >>> add_elements.call([111, 21, 3, 4000, 5, 6, 7, 8, 9], 4)
+# 24
+# Constraints:
+# 1. 1 <= len(arr) <= 100
+# 2. 1 <= k <= len(arr)
+def add_elements(arr, k)
+","def add_elements(arr, k)
+  arr.first(k).select { |num| num.abs.to_s.length <= 2 }.sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_add_elements
+    candidate = method(:add_elements)
+    assert_equal(-4, candidate.call([1, -2, -3, 41, 57, 76, 87, 88, 99], 3))
+    assert_equal(0, candidate.call([111, 121, 3, 4000, 5, 6], 2))
+    assert_equal(125, candidate.call([11, 21, 3, 90, 5, 6, 7, 8, 9], 4))
+    assert_equal(24, candidate.call([111, 21, 3, 4000, 5, 6, 7, 8, 9], 4))
+    assert_equal(1, candidate.call([1], 1))
+  end
+end
+"
+HumanEval_123,kor_Hang,rb,"get_odd_collatz(5) 는 [1, 5] # 5의 collatz 시퀀스는 [5, 16, 8, 4, 2, 1], 그래서 홀수들은 1과 5밖에 없습니다.예를 들어:2. 반환된 배열은 증가 순서로 정렬된다.1. Collatz(1) 은 [1] 입니다.참고:n의 값이 무엇이든, 순서는 항상 1에 도달할 것입니다.이전 항이 홀수라면 다음 항은 3 곱하기 이전 항입니다이전 항이 짝이면 다음 항은 의 절반이 됩니다다음과 같이: 어떤 양수 n으로 시작해 각 항은 에서 얻는다.콜라츠 추측은 수학에서 정의된 순서에 관한 추측입니다.양수 n을 주어, 트 순서로 홀수들을 가진 정렬 배열을 반환합니다.# >>> get_odd_collatz.call(5)
+# [1, 5]
+def get_odd_collatz(n)
+","def get_odd_collatz(n)
+  collatz_sequence = []
+  while n != 1
+    collatz_sequence << n if n.odd?
+    if n.even?
+      n = n / 2
+    else
+      n = 3 * n + 1
+    end
+  end
+  collatz_sequence << 1 if n == 1
+
+  collatz_sequence.sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_get_odd_collatz
+    candidate = method(:get_odd_collatz)
+    assert_equal([1, 5, 7, 11, 13, 17], candidate.call(14))
+    assert_equal([1, 5], candidate.call(5))
+    assert_equal([1, 3, 5], candidate.call(12))
+    assert_equal([1], candidate.call(1))
+  end
+end
+"
+HumanEval_124,kor_Hang,rb,"4. 날짜는 다음과 같은 형식으로 표시되어야 합니다: mm-dd-yyyy 3. 달은 1개월 미만 또는 12개월 이상 되지 않아야 합니다.2. 1,3,5,7,8,10,12 월에는 1 일 미만 또는 31 일 이상, 4,6,9,11 월에는 1 일 미만 또는 30 일 이상, 2 월에는 1 일 미만 또는 29 일 이상 일 수 없습니다.1. 날짜 문자열은 비어 있지 않습니다.이 날짜는 다음 규칙이 모두 충족되는 경우 유효합니다.날짜가 유효하다면 true를 반환한다 그렇지 않으면 false를 반환한다. 주어진 날짜 문자열을 검증하는 함수를 작성해야 합니다.# >>> valid_date.call(""03-11-2000"")
+# true
+# >>> valid_date.call(""15-01-2012"")
+# false
+# >>> valid_date.call(""04-0-2040"")
+# false
+# >>> valid_date.call(""06-04-2020"")
+# true
+# >>> valid_date.call(""06/04/2020"")
+# false
+def valid_date(date)
+","def valid_date(date)
+  return false if date.nil? || date.empty?
+  
+  # Check if the date format is correct
+  match = date.match(/^(\d{2})-(\d{2})-(\d{4})$/)
+  return false unless match
+  
+  month, day, year = match.captures.map(&:to_i)
+  
+  # Check if month is valid
+  return false if month < 1 || month > 12
+  
+  # Check if day is valid according to the month
+  case month
+  when 1, 3, 5, 7, 8, 10, 12
+    return day >= 1 && day <= 31
+  when 4, 6, 9, 11
+    return day >= 1 && day <= 30
+  when 2
+    return day >= 1 && day <= 29
+  else
+    return false
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_valid_date
+    candidate = method(:valid_date)
+    assert_equal(true, candidate.call(""03-11-2000""))
+    assert_equal(false, candidate.call(""15-01-2012""))
+    assert_equal(false, candidate.call(""04-0-2040""))
+    assert_equal(true, candidate.call(""06-04-2020""))
+    assert_equal(true, candidate.call(""01-01-2007""))
+    assert_equal(false, candidate.call(""03-32-2011""))
+    assert_equal(false, candidate.call(""""))
+    assert_equal(false, candidate.call(""04-31-3000""))
+    assert_equal(true, candidate.call(""06-06-2005""))
+    assert_equal(false, candidate.call(""21-31-2000""))
+    assert_equal(true, candidate.call(""04-12-2003""))
+    assert_equal(false, candidate.call(""04122003""))
+    assert_equal(false, candidate.call(""20030412""))
+    assert_equal(false, candidate.call(""2003-04""))
+    assert_equal(false, candidate.call(""2003-04-12""))
+    assert_equal(false, candidate.call(""04-2003""))
+  end
+end
+"
+HumanEval_125,kor_Hang,rb,"예제알파벳, ord (a) = 0, ord (b) = 1, ... ord (z) = 25코마에 나누어야 ',' 코마가 존재하지 않으면 에서 홀수 순서로 소문자 수를 반환해야 합니다.단어의 문자열을 주어, 당신이 원하는 텍스트에 빈 공간이 존재하지 않는 경우, 빈 공간에 분할된 단어의 배열을 반환합니다.# >>> split_words.call(""Hello world!"")
+# [""Hello"", ""world!""]
+# >>> split_words.call(""Hello,world!"")
+# [""Hello"", ""world!""]
+# >>> split_words.call(""abcdef"")
+# 3
+def split_words(txt)
+","def split_words(txt)
+  if txt.include?(' ')
+    return txt.split(' ')
+  elsif txt.include?(',')
+    return txt.split(',')
+  else
+    odd_count = txt.chars.count { |char| ('a'..'z').include?(char) && (char.ord - 'a'.ord).odd? }
+    return odd_count
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_split_words
+    candidate = method(:split_words)
+    assert_equal([""Hello"", ""world!""], candidate.call(""Hello world!""))
+    assert_equal([""Hello"", ""world!""], candidate.call(""Hello,world!""))
+    assert_equal([""Hello"", ""world,!""], candidate.call(""Hello world,!""))
+    assert_equal([""Hello,Hello,world"", ""!""], candidate.call(""Hello,Hello,world !""))
+    assert_equal(3, candidate.call(""abcdef""))
+    assert_equal(2, candidate.call(""aaabb""))
+    assert_equal(1, candidate.call(""aaaBb""))
+    assert_equal(0, candidate.call(""""))
+  end
+end
+"
+HumanEval_126,kor_Hang,rb,"예제number, return false. 음수와 정수만 가정하지 마십시오.배열이 동일한 배열의 1개 이상의 복제본을 가지고 있다면숫자의 배열을 주어, 정렬되었는지 아닌지를 반환합니다.# >>> is_sorted.call([5])
+# true
+# >>> is_sorted.call([1, 2, 3, 4, 5])
+# true
+# >>> is_sorted.call([1, 3, 2, 4, 5])
+# false
+# >>> is_sorted.call([1, 2, 3, 4, 5, 6])
+# true
+# >>> is_sorted.call([1, 2, 3, 4, 5, 6, 7])
+# true
+# >>> is_sorted.call([1, 3, 2, 4, 5, 6, 7])
+# false
+# >>> is_sorted.call([1, 2, 2, 3, 3, 4])
+# true
+# >>> is_sorted.call([1, 2, 2, 2, 3, 4])
+# false
+def is_sorted(lst)
+","def is_sorted(lst)
+  lst.each_cons(2).with_index do |(a, b), index|
+    return false if a > b
+    return false if index < lst.length - 2 && a == b && lst[index + 2] == b
+  end
+  true
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_sorted
+    candidate = method(:is_sorted)
+    assert_equal(true, candidate.call([5]))
+    assert_equal(true, candidate.call([1, 2, 3, 4, 5]))
+    assert_equal(false, candidate.call([1, 3, 2, 4, 5]))
+    assert_equal(true, candidate.call([1, 2, 3, 4, 5, 6]))
+    assert_equal(true, candidate.call([1, 2, 3, 4, 5, 6, 7]))
+    assert_equal(false, candidate.call([1, 3, 2, 4, 5, 6, 7]))
+    assert_equal(true, candidate.call([]))
+    assert_equal(true, candidate.call([1]))
+    assert_equal(false, candidate.call([3, 2, 1]))
+    assert_equal(false, candidate.call([1, 2, 2, 2, 3, 4]))
+    assert_equal(false, candidate.call([1, 2, 3, 3, 3, 4]))
+    assert_equal(true, candidate.call([1, 2, 2, 3, 3, 4]))
+    assert_equal(true, candidate.call([1, 2, 3, 4]))
+  end
+end
+"
+HumanEval_127,kor_Hang,rb,"[입출력] 샘플: 만약 두 간격이 서로 맞지 않는다면 ""NO""를 반환합니다.그렇지 않으면 ""NO""를 반환합니다.교차선의 길이가 소수라면 ""YES""를 반환합니다.1이 아닌 소수입니다예를 들어, 간격 (1, 3), (2, 4) 의 교차점은 (2, 3) 입니다.란 소수입니다.이 두 개의 길이가 겹쳐지는 지를 알아내는 것이 여러분의 임무입니다.각 주어진 간격에 대해, 그것의 시작은 그것의 끝보다 작거나 같다고 가정합니다.시작과 끝을 모두 포함합니다.주어진 간격은 닫힌 이 간격 (시작, 끝) 각 간격이 정수 쌍인 경우. 예를 들어, 간격 = (시작, 끝) = (1, 2).두 개의 간격이 주어집니다.# >>> intersection.call([1, 2], [2, 3])
+# ""NO""
+# >>> intersection.call([-1, 1], [0, 4])
+# ""NO""
+# >>> intersection.call([-3, -1], [-5, 5])
+# ""YES""
+def intersection(interval1, interval2)
+","def intersection(interval1, interval2)
+  start1, end1 = interval1
+  start2, end2 = interval2
+
+  intersection_start = [start1, start2].max
+  intersection_end = [end1, end2].min
+
+  if intersection_start > intersection_end
+    return ""NO""
+  end
+
+  intersection_length = intersection_end - intersection_start + 1
+
+  return ""YES"" if prime?(intersection_length)
+
+  ""NO""
+end
+
+def prime?(n)
+  return false if n <= 1
+  return true if n == 2 || n == 3
+
+  (2..Math.sqrt(n).to_i).each do |i|
+    return false if n % i == 0
+  end
+
+  true
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_intersection
+    candidate = method(:intersection)
+    assert_equal(""NO"", candidate.call([1, 2], [2, 3]))
+    assert_equal(""NO"", candidate.call([-1, 1], [0, 4]))
+    assert_equal(""YES"", candidate.call([-3, -1], [-5, 5]))
+    assert_equal(""YES"", candidate.call([-2, 2], [-4, 0]))
+    assert_equal(""NO"", candidate.call([-11, 2], [-1, -1]))
+    assert_equal(""NO"", candidate.call([1, 2], [3, 5]))
+    assert_equal(""NO"", candidate.call([1, 2], [1, 2]))
+    assert_equal(""NO"", candidate.call([-2, -2], [-3, -2]))
+  end
+end
+"
+HumanEval_128,kor_Hang,rb,"예: 참고: 빈 arr에 대해 nil를 반환합니다.각 숫자의 배열을 1 또는 0으로 나타냅니다.모든 기호의 곱으로 곱한 정수의 크기의 합 정수의 배열을 주어 줌으로써 # >>> prod_signs.call([1, 2, 2, -4])
+# 9
+# >>> prod_signs.call([0, 1])
+# 0
+# >>> prod_signs.call([])
+# nil
+def prod_signs(arr)
+","def prod_signs(arr)
+  return nil if arr.empty?
+  
+  product_signs = arr.reduce(1) { |prod, num| prod * num <=> 0 }
+  sum_magnitudes = arr.map(&:abs).sum
+  
+  product_signs * sum_magnitudes
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_prod_signs
+    candidate = method(:prod_signs)
+    assert_equal(-9, candidate.call([1, 2, 2, -4]))
+    assert_equal(0, candidate.call([0, 1]))
+    assert_equal(-10, candidate.call([1, 1, 1, 2, 3, -1, 1]))
+    assert_equal(nil, candidate.call([]))
+    assert_equal(20, candidate.call([2, 4, 1, 2, -1, -1, 9]))
+    assert_equal(4, candidate.call([-1, 1, -1, 1]))
+    assert_equal(-4, candidate.call([-1, 1, 1, 1]))
+    assert_equal(0, candidate.call([-1, 1, 1, 0]))
+  end
+end
+"
+HumanEval_129,kor_Hang,rb,"예: 최소 경로가 통과하는 셀에 대한 값의 순서 배열을 반환합니다.답이 단 하나일거란 게 확실해lst_A[j] = lst_B[j].lst_A[i] < lst_B[i]와 모든 j (1 <= j <i) 에 대해 우리는 lst_B보다 더 많다는 뜻입니다. 즉, i (1 <= i <= k) 라는 정수 인덱스가 존재한다는 뜻입니다.lst_A와 lst_B를 불러봅시다. lst_A는 사전적으로 덜 의미하죠.A와 B가 가는 셀의 값들의 순서 배열을 만든 후길이 A (길이 k) 는 길이 B (길이 k) 보다 작다고 간주됩니다.그릴 수 없죠반드시 구별되는)길이 k의 경로는 정확히 k개의 세포를 방문하는 것을 의미합니다.     다른 말로 하면, 여러분은 현재와 가장자리를 공유하는 세포로 갈 수 있습니다.모든 세포에서, 그리고 각 단계에 당신은 이웃 세포의 어느 이동할 수 있습니다, 그리드에서 길이 k의 최소 경로를 찾아야 합니다. 시작하실 수 있습니다.포함된 문자는 그리드의 셀에 정확히 한 번 나타납니다.그리드의 각 셀에는 값이 들어있습니다. [1, N * N] 범위의 모든 정수N 행과 N 열 (N >=2) 과 양수 k를 가진 그리드를 보면, # >>> minPath.call([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 3)
+# [1, 2, 1]
+# >>> minPath.call([[5, 9, 3], [4, 1, 6], [7, 8, 2]], 1)
+# [1]
+def minPath(grid, k)
+","def minPath(grid, k)
+  n = grid.size
+  directions = [[-1, 0], [1, 0], [0, -1], [0, 1]]
+  min_path = nil
+
+  n.times do |i|
+    n.times do |j|
+      queue = [[[i, j], [grid[i][j]]]]
+      until queue.empty?
+        position, path = queue.shift
+        if path.size == k
+          min_path = path if min_path.nil? || path < min_path
+          next
+        end
+        directions.each do |dx, dy|
+          x, y = position[0] + dx, position[1] + dy
+          if x.between?(0, n-1) && y.between?(0, n-1)
+            queue.push([[x, y], path + [grid[x][y]]])
+          end
+        end
+      end
+    end
+  end
+  min_path
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_minPath
+    candidate = method(:minPath)
+    assert_equal([1, 2, 1], candidate.call([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 3))
+    assert_equal([1], candidate.call([[5, 9, 3], [4, 1, 6], [7, 8, 2]], 1))
+    assert_equal([1, 2, 1, 2], candidate.call([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]], 4))
+    assert_equal([1, 10, 1, 10, 1, 10, 1], candidate.call([[6, 4, 13, 10], [5, 7, 12, 1], [3, 16, 11, 15], [8, 14, 9, 2]], 7))
+    assert_equal([1, 7, 1, 7, 1], candidate.call([[8, 14, 9, 2], [6, 4, 13, 15], [5, 7, 1, 12], [3, 10, 11, 16]], 5))
+    assert_equal([1, 6, 1, 6, 1, 6, 1, 6, 1], candidate.call([[11, 8, 7, 2], [5, 16, 14, 4], [9, 3, 15, 6], [12, 13, 10, 1]], 9))
+    assert_equal([1, 6, 1, 6, 1, 6, 1, 6, 1, 6, 1, 6], candidate.call([[12, 13, 10, 1], [9, 3, 15, 6], [5, 16, 14, 4], [11, 8, 7, 2]], 12))
+    assert_equal([1, 3, 1, 3, 1, 3, 1, 3], candidate.call([[2, 7, 4], [3, 1, 5], [6, 8, 9]], 8))
+    assert_equal([1, 5, 1, 5, 1, 5, 1, 5], candidate.call([[6, 1, 5], [3, 8, 9], [2, 7, 4]], 8))
+    assert_equal([1, 2, 1, 2, 1, 2, 1, 2, 1, 2], candidate.call([[1, 2], [3, 4]], 10))
+    assert_equal([1, 3, 1, 3, 1, 3, 1, 3, 1, 3], candidate.call([[1, 3], [3, 2]], 10))
+  end
+end
+"
+HumanEval_130,kor_Hang,rb,"예: 트리보나치 수열의 첫 번째 n + 1 숫자를 음이 아닌 정수 n을 주어, a의 배열을 반환해야 합니다2 + 3 + 3 = 83 곱하기 3 = 3 곱하기 2 + 3 곱하기 1 + 3 곱하기 43 tri(2) = 1 + (2 / 2) = 2 예를 들어:n는 홀수일 때 n는 1이므로tri (n) = 1 + n / 2 이고, n이 짝수라면3 트리보나치 염기서열은 다음과 같은 반복으로 정의됩니다.하지만 사람들이 모르는 것은 트리보나치 염기서열입니다.모든 사람들은 피보나치 수열을 알고 있습니다. 그것은 수학자들이 에 깊이 연구했습니다.# >>> tri.call(3)
+# [1, 3, 2, 8]
+def tri(n)
+","def tri(n)
+  sequence = [1, 3]
+  
+  (2..n).each do |i|
+    if i.even?
+      sequence[i] = 1 + i / 2
+    else
+      sequence[i] = sequence[i - 1] + sequence[i - 2] + sequence[i + 1] rescue 0
+    end
+  end
+  
+  sequence[0..n]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_tri
+    candidate = method(:tri)
+    assert_equal([1, 3, 2, 8], candidate.call(3))
+    assert_equal([1, 3, 2, 8, 3], candidate.call(4))
+    assert_equal([1, 3, 2, 8, 3, 15], candidate.call(5))
+    assert_equal([1, 3, 2, 8, 3, 15, 4], candidate.call(6))
+    assert_equal([1, 3, 2, 8, 3, 15, 4, 24], candidate.call(7))
+    assert_equal([1, 3, 2, 8, 3, 15, 4, 24, 5], candidate.call(8))
+    assert_equal([1, 3, 2, 8, 3, 15, 4, 24, 5, 35], candidate.call(9))
+    assert_equal([1, 3, 2, 8, 3, 15, 4, 24, 5, 35, 6, 48, 7, 63, 8, 80, 9, 99, 10, 120, 11], candidate.call(20))
+    assert_equal([1], candidate.call(0))
+    assert_equal([1, 3], candidate.call(1))
+  end
+end
+"
+HumanEval_131,kor_Hang,rb,"예를 들어:모든 숫자가 짝수인 경우 0을 반환합니다.양수 n을 주어 홀수들의 곱을 반환합니다.# >>> digits.call(1)
+# 1
+# >>> digits.call(4)
+# 0
+# >>> digits.call(235)
+# 15
+def digits(n)
+","def digits(n)
+  odd_digits = n.to_s.chars.map(&:to_i).select { |digit| digit.odd? }
+  return 0 if odd_digits.empty?
+  odd_digits.reduce(:*)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_digits
+    candidate = method(:digits)
+    assert_equal(5, candidate.call(5))
+    assert_equal(5, candidate.call(54))
+    assert_equal(1, candidate.call(120))
+    assert_equal(5, candidate.call(5014))
+    assert_equal(315, candidate.call(98765))
+    assert_equal(2625, candidate.call(5576543))
+    assert_equal(0, candidate.call(2468))
+  end
+end
+"
+HumanEval_132,kor_Hang,rb,"이 부분에서 적어도 한 개의 괄호가 둥글게 되어 있습니다.함수는 유효한 괄호의 하위열이 존재할 경우에만 true를 반환해야 합니다.사각형 괄호만 포함된 문자열을 입력으로 사용하는 함수를 생성합니다.# >>> is_nested.call(""[[]]"")
+# true
+# >>> is_nested.call(""[]]]]]]][[[[[]"")
+# false
+# >>> is_nested.call(""[][]"")
+# false
+# >>> is_nested.call(""[]"")
+# false
+# >>> is_nested.call(""[[][]]"")
+# true
+# >>> is_nested.call(""[[]][["")
+# true
+def is_nested(string)
+","def is_nested(string)
+  stack = []
+  has_nested = false
+
+  string.each_char do |char|
+    if char == '['
+      stack.push(char)
+    elsif char == ']'
+      if stack.empty?
+        return false
+      end
+      stack.pop
+      has_nested = true if stack.any?
+    end
+  end
+
+  has_nested
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_nested
+    candidate = method(:is_nested)
+    assert_equal(true, candidate.call(""[[]]""))
+    assert_equal(false, candidate.call(""[]]]]]]][[[[[]""))
+    assert_equal(false, candidate.call(""[][]""))
+    assert_equal(false, candidate.call(""[]""))
+    assert_equal(true, candidate.call(""[[[[]]]]""))
+    assert_equal(false, candidate.call(""[]]]]]]]]]]""))
+    assert_equal(true, candidate.call(""[][][[]]""))
+    assert_equal(false, candidate.call(""[[]""))
+    assert_equal(false, candidate.call(""[]]""))
+    assert_equal(true, candidate.call(""[[]][[""))
+    assert_equal(true, candidate.call(""[[][]]""))
+    assert_equal(false, candidate.call(""""))
+    assert_equal(false, candidate.call(""[[[[[[[[""))
+    assert_equal(false, candidate.call(""]]]]]]]]""))
+  end
+end
+"
+HumanEval_133,kor_Hang,rb,"예: 각 요소를 먼저 상위 int (~ 천장) 로 둥글게 묶어줍니다.주어진 배열의 제곱수의 합을 반환해야 합니다.숫자의 배열이 주어집니다.# >>> lst.call([1.0, 2.0, 3.0])
+# 14
+# >>> lst.call([1.0, 4.0, 9.0])
+# 98
+# >>> lst.call([1.0, 3.0, 5.0, 7.0])
+# 84
+# >>> lst.call([1.4, 4.2, 0.0])
+# 29
+# >>> lst.call([-2.4, 1.0, 1.0])
+# 6
+def sum_squares(lst)
+","def sum_squares(lst)
+  lst.map { |num| (num.ceil)**2 }.sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sum_squares
+    candidate = method(:sum_squares)
+    assert_equal(14, candidate.call([1.0, 2.0, 3.0]))
+    assert_equal(14, candidate.call([1.0, 2.0, 3.0]))
+    assert_equal(84, candidate.call([1.0, 3.0, 5.0, 7.0]))
+    assert_equal(29, candidate.call([1.4, 4.2, 0.0]))
+    assert_equal(6, candidate.call([-2.4, 1.0, 1.0]))
+    assert_equal(10230, candidate.call([100.0, 1.0, 15.0, 2.0]))
+    assert_equal(200000000, candidate.call([10000.0, 10000.0]))
+    assert_equal(75, candidate.call([-1.4, 4.6, 6.3]))
+    assert_equal(1086, candidate.call([-1.4, 17.9, 18.9, 19.9]))
+    assert_equal(0, candidate.call([0.0]))
+    assert_equal(1, candidate.call([-1.0]))
+    assert_equal(2, candidate.call([-1.0, 1.0, 0.0]))
+  end
+end
+"
+HumanEval_134,kor_Hang,rb,"예: 참고: ""word""는 공간으로 분리된 문자 그룹입니다.단어의 일부이고, 그렇지 않으면 거짓입니다.라는 문자열의 문자열은 알파벳 문자이며 는 아닙니다.마지막 문자가 라면 true를 반환하는 함수를 생성합니다.# >>> check_if_last_char_is_a_letter.call(""apple pie"")
+# false
+# >>> check_if_last_char_is_a_letter.call(""apple pi e"")
+# true
+# >>> check_if_last_char_is_a_letter.call(""apple pi e "")
+# false
+# >>> check_if_last_char_is_a_letter.call("""")
+# false
+def check_if_last_char_is_a_letter(txt)
+","check_if_last_char_is_a_letter = ->(txt) {
+  return false if txt.strip.empty?
+  words = txt.strip.split(' ')
+  last_word = words.last
+  return false if last_word.empty?
+  last_char = last_word[-1]
+
+  last_char =~ /[a-zA-Z]/ && (words.size == 1 || txt[txt.rindex(last_char) - 1] == ' ')
+}","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_check_if_last_char_is_a_letter
+    candidate = method(:check_if_last_char_is_a_letter)
+    assert_equal(false, candidate.call(""apple""))
+    assert_equal(true, candidate.call(""apple pi e""))
+    assert_equal(false, candidate.call(""eeeee""))
+    assert_equal(true, candidate.call(""A""))
+    assert_equal(false, candidate.call(""Pumpkin pie ""))
+    assert_equal(false, candidate.call(""Pumpkin pie 1""))
+    assert_equal(false, candidate.call(""""))
+    assert_equal(false, candidate.call(""eeeee e ""))
+    assert_equal(false, candidate.call(""apple pie""))
+    assert_equal(false, candidate.call(""apple pi e ""))
+  end
+end
+"
+HumanEval_135,kor_Hang,rb,"예:             그런 요소가 존재하지 않으면 -1을 반환합니다. 주어진 배열에는 가 포함되지 않습니다.바로 앞의 요소보다 크거나 같지는 않습니다. 만약 란 요소의 가장 큰 인덱스를 반환하는 함수를 생성합니다.# >>> can_arrange.call([1, 2, 4, 3, 5])
+# 3
+# >>> can_arrange.call([1, 2, 3])
+# -1
+def can_arrange(arr)
+","def can_arrange(arr)
+  (1...arr.length).reverse_each do |i|
+    return i if arr[i] < arr[i - 1]
+  end
+  -1
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_can_arrange
+    candidate = method(:can_arrange)
+    assert_equal(3, candidate.call([1, 2, 4, 3, 5]))
+    assert_equal(-1, candidate.call([1, 2, 4, 5]))
+    assert_equal(2, candidate.call([1, 4, 2, 5, 6, 7, 8, 9, 10]))
+    assert_equal(4, candidate.call([4, 8, 5, 7, 3]))
+    assert_equal(-1, candidate.call([]))
+  end
+end
+"
+HumanEval_136,kor_Hang,rb,"예: 음수나 양수 없는 경우, null로 반환합니다.괄호의 양수 정수들의 집합입니다.음수 중 가장 큰 숫자이고, b는 가장 작은 숫자입니다.'a'가 인 배열 (a, b) 을 반환하는 함수를 생성합니다.# >>> largest_smallest_integers.call([2, 4, 1, 3, 5, 7])
+# [nil, 1]
+# >>> largest_smallest_integers.call([])
+# [nil, nil]
+# >>> largest_smallest_integers.call([0])
+# [nil, nil]
+def largest_smallest_integers(lst)
+","def largest_smallest_integers(lst)
+  largest_negative = nil
+  smallest_positive = nil
+  
+  lst.each do |num|
+    if num < 0
+      largest_negative = num if largest_negative.nil? || num > largest_negative
+    elsif num > 0
+      smallest_positive = num if smallest_positive.nil? || num < smallest_positive
+    end
+  end
+  
+  [largest_negative, smallest_positive]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_largest_smallest_integers
+    candidate = method(:largest_smallest_integers)
+    assert_equal([nil, 1], candidate.call([2, 4, 1, 3, 5, 7]))
+    assert_equal([nil, 1], candidate.call([2, 4, 1, 3, 5, 7, 0]))
+    assert_equal([-2, 1], candidate.call([1, 3, 2, 4, 5, 6, -2]))
+    assert_equal([-7, 2], candidate.call([4, 5, 3, 6, 2, 7, -7]))
+    assert_equal([-9, 2], candidate.call([7, 3, 8, 4, 9, 2, 5, -9]))
+    assert_equal([nil, nil], candidate.call([]))
+    assert_equal([nil, nil], candidate.call([0]))
+    assert_equal([-1, nil], candidate.call([-1, -3, -5, -6]))
+    assert_equal([-1, nil], candidate.call([-1, -3, -5, -6, 0]))
+    assert_equal([-3, 1], candidate.call([-6, -4, -4, -3, 1]))
+    assert_equal([-3, 1], candidate.call([-6, -4, -4, -3, -100, 1]))
+  end
+end
+"
+HumanEval_137,kor_Hang,rb,"참고: 실수가 문자열로 표현되면 부동 소수점은 . 또는 , 값이 같다면 nil를 반환합니다.실제 숫자를 입력하고, 주어진 변수 타입에서 더 큰 변수를 반환합니다.를 나타내는 정수, 플로이트, 또는 문자열을 사용하는 함수를 생성합니다.# >>> compare_one.call(1, 2.5)
+# 2.5
+# >>> compare_one.call(1, ""2,3"")
+# ""2,3""
+# >>> compare_one.call(""5,1"", ""6"")
+# ""6""
+# >>> compare_one.call(""1"", 1)
+# nil
+def compare_one(a, b)
+","def compare_one(a, b)
+  a = a.to_s.tr(',', '.').to_f if a.is_a?(String) && a.include?(',')
+  b = b.to_s.tr(',', '.').to_f if b.is_a?(String) && b.include?(',')
+
+  if a.is_a?(String) && b.is_a?(String)
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Float) && b.is_a?(Float)
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Integer) && b.is_a?(Integer)
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Integer) && b.is_a?(Float)
+    a = a.to_f
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Float) && b.is_a?(Integer)
+    b = b.to_f
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(String) && b.is_a?(Float)
+    b = b.to_s # Only supporting variable type comparison, retain original types
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Float) && b.is_a?(String)
+    a = a.to_s # Only supporting variable type comparison, retain original types
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(String) && b.is_a?(Integer)
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Integer) && b.is_a?(String)
+    return nil if a == b
+    return a > b ? a : b
+  else
+    return nil
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_compare_one
+    candidate = method(:compare_one)
+    assert_equal(2, candidate.call(1, 2))
+    assert_equal(2.5, candidate.call(1, 2.5))
+    assert_equal(3, candidate.call(2, 3))
+    assert_equal(6, candidate.call(5, 6))
+    assert_equal(""2,3"", candidate.call(1, ""2,3""))
+    assert_equal(""6"", candidate.call(""5,1"", ""6""))
+    assert_equal(""2"", candidate.call(""1"", ""2""))
+    assert_equal(nil, candidate.call(""1"", 1))
+  end
+end
+"
+HumanEval_138,kor_Hang,rb,"예제주어진 숫자 n이 정확히 4개의 양수 짝수의 합으로 쓸 수 있는지 평가해 봅시다.# >>> is_equal_to_sum_even.call(4)
+# false
+# >>> is_equal_to_sum_even.call(6)
+# false
+# >>> is_equal_to_sum_even.call(8)
+# true
+def is_equal_to_sum_even(n)
+","def is_equal_to_sum_even(n)
+  return false if n < 8
+  n.even?
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_equal_to_sum_even
+    candidate = method(:is_equal_to_sum_even)
+    assert_equal(false, candidate.call(4))
+    assert_equal(false, candidate.call(6))
+    assert_equal(true, candidate.call(8))
+    assert_equal(true, candidate.call(10))
+    assert_equal(false, candidate.call(11))
+    assert_equal(true, candidate.call(12))
+    assert_equal(false, candidate.call(13))
+    assert_equal(true, candidate.call(16))
+  end
+end
+"
+HumanEval_139,kor_Hang,rb,"예를 들어:n > 0brazilian_factorial (n) = n! * (n-1)! * (n-2)! * ... * 1! 브라질의 인수는 다음과 같이 정의됩니다.# >>> special_factorial.call(4)
+# 288
+# The function will receive an integer as input and should return the special
+# factorial of this integer.
+def special_factorial(n)
+","def special_factorial(n)
+  return 1 if n <= 1
+  (1..n).inject(1) { |product, i| product * factorial(i) }
+end
+
+def factorial(num)
+  return 1 if num <= 1
+  (2..num).inject(1, :*)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_special_factorial
+    candidate = method(:special_factorial)
+    assert_equal(288, candidate.call(4))
+    assert_equal(34560, candidate.call(5))
+    assert_equal(125411328000, candidate.call(7))
+    assert_equal(1, candidate.call(1))
+  end
+end
+"
+HumanEval_140,kor_Hang,rb,"다음으로 모든 연속적인 공백을 - 로 대체합니다.그리고 만약 문자열이 2개 이상의 연속적인 스페이스를 가지고 있다면,문자열을 보면, 모든 공백을 밑줄로 대체합니다.# >>> fix_spaces.call("" Example"")
+# ""Example""
+# >>> fix_spaces.call("" Example 1"")
+# ""Example_1""
+# >>> fix_spaces.call("" Example 2"")
+# ""_Example_2""
+# >>> fix_spaces.call("" Example 3"")
+# ""_Example-3""
+def fix_spaces(text)
+","def fix_spaces(text)
+  text.strip.gsub(/\s{3,}/, '-').gsub(' ', '_')
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fix_spaces
+    candidate = method(:fix_spaces)
+    assert_equal(""Example"", candidate.call(""Example""))
+    assert_equal(""Mudasir_Hanif_"", candidate.call(""Mudasir Hanif ""))
+    assert_equal(""Yellow_Yellow__Dirty__Fellow"", candidate.call(""Yellow Yellow  Dirty  Fellow""))
+    assert_equal(""Exa-mple"", candidate.call(""Exa   mple""))
+    assert_equal(""-Exa_1_2_2_mple"", candidate.call(""   Exa 1 2 2 mple""))
+  end
+end
+"
+HumanEval_141,kor_Hang,rb,"예: - 점 뒤에 있는 하위 문자열은 다음 중 하나여야 합니다: ['txt', 'exe', 'dll']라틴어 알파벳 ('a'-'z' 및 'A'-'Z') - 점 앞의 하위 문자열은 빈 것이 되어서는 안되며, 에서 시작됩니다.- 파일 이름에는 정확히 한 점 '.' - 파일 이름에는 3자리 이상 ('0'-'9') 이 없어야 합니다.충족되는 경우:파일의 이름은 다음 조건이 모두 충족된 경우에만 유효하다고 간주됩니다.파일 이름이 유효하다면 '예'를, 그렇지 않으면 '아니오'를 반환합니다.파일 이름을 나타내는 문자열을 가져다가 를 반환하는 함수를 생성합니다.# >>> file_name_check.call(""example.txt"")
+# ""Yes""
+# >>> file_name_check.call(""1example.dll"")
+# ""No""
+def file_name_check(file_name)
+","def file_name_check(file_name)
+  # Check if there's exactly one dot in the filename
+  return 'No' unless file_name.count('.') == 1
+  
+  # Split the filename into the name and extension
+  name, extension = file_name.split('.')
+  
+  # Check if the name part starts with a letter
+  return 'No' if name.empty? || !name[0].match?(/[a-zA-Z]/)
+  
+  # Check if the extension is valid
+  return 'No' unless ['txt', 'exe', 'dll'].include?(extension)
+  
+  # Count digits in the file name
+  digit_count = file_name.count(""0-9"")
+  
+  # Check if digits are more than three
+  return 'No' if digit_count > 3
+  
+  'Yes'
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_file_name_check
+    candidate = method(:file_name_check)
+    assert_equal(""Yes"", candidate.call(""example.txt""))
+    assert_equal(""No"", candidate.call(""1example.dll""))
+    assert_equal(""No"", candidate.call(""s1sdf3.asd""))
+    assert_equal(""Yes"", candidate.call(""K.dll""))
+    assert_equal(""Yes"", candidate.call(""MY16FILE3.exe""))
+    assert_equal(""No"", candidate.call(""His12FILE94.exe""))
+    assert_equal(""No"", candidate.call(""_Y.txt""))
+    assert_equal(""No"", candidate.call(""?aREYA.exe""))
+    assert_equal(""No"", candidate.call(""/this_is_valid.dll""))
+    assert_equal(""No"", candidate.call(""this_is_valid.wow""))
+    assert_equal(""Yes"", candidate.call(""this_is_valid.txt""))
+    assert_equal(""No"", candidate.call(""this_is_valid.txtexe""))
+    assert_equal(""No"", candidate.call(""#this2_i4s_5valid.ten""))
+    assert_equal(""No"", candidate.call(""@this1_is6_valid.exe""))
+    assert_equal(""No"", candidate.call(""this_is_12valid.6exe4.txt""))
+    assert_equal(""No"", candidate.call(""all.exe.txt""))
+    assert_equal(""Yes"", candidate.call(""I563_No.exe""))
+    assert_equal(""Yes"", candidate.call(""Is3youfault.txt""))
+    assert_equal(""Yes"", candidate.call(""no_one#knows.dll""))
+    assert_equal(""No"", candidate.call(""1I563_Yes3.exe""))
+    assert_equal(""No"", candidate.call(""I563_Yes3.txtt""))
+    assert_equal(""No"", candidate.call(""final..txt""))
+    assert_equal(""No"", candidate.call(""final132""))
+    assert_equal(""No"", candidate.call(""_f4indsartal132.""))
+    assert_equal(""No"", candidate.call("".txt""))
+    assert_equal(""No"", candidate.call(""s.""))
+  end
+end
+"
+HumanEval_142,kor_Hang,rb,"예: 3 또는 4의 배수가 아닌 배열의 항목을 변경합니다. 함수는 모든 항목의 합을 반환합니다.3의 배수이고, 만약 그 인덱스가 3의 배수 아닌 4의 배수라면 정수 엔트리를 세로화할 것입니다. 함수는 이 함수는 정수의 배열을 가져옵니다. 배열의 모든 항목에 대해 함수는 인덱스가 a라면 정수 항목을 제곱합니다."" # >>> lst
+# [1, 2, 3]
+# >>> lst
+# []
+# >>> lst
+# [-1, -5, 2, -1, -5]
+def sum_squares(lst)
+","def sum_squares(lst)
+  lst.map.with_index do |num, index|
+    if index % 3 == 0
+      num ** 2
+    elsif index % 4 == 0
+      num ** 3
+    else
+      num
+    end
+  end.sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sum_squares
+    candidate = method(:sum_squares)
+    assert_equal(6, candidate.call([1, 2, 3]))
+    assert_equal(14, candidate.call([1, 4, 9]))
+    assert_equal(0, candidate.call([]))
+    assert_equal(9, candidate.call([1, 1, 1, 1, 1, 1, 1, 1, 1]))
+    assert_equal(-3, candidate.call([-1, -1, -1, -1, -1, -1, -1, -1, -1]))
+    assert_equal(0, candidate.call([0]))
+    assert_equal(-126, candidate.call([-1, -5, 2, -1, -5]))
+    assert_equal(3030, candidate.call([-56, -99, 1, 0, -2]))
+    assert_equal(0, candidate.call([-1, 0, 0, 0, 0, 0, 0, 0, -1]))
+    assert_equal(-14196, candidate.call([-16, -9, -2, 36, 36, 26, -20, 25, -40, 20, -4, 12, -26, 35, 37]))
+    assert_equal(-1448, candidate.call([-1, -3, 17, -1, -15, 13, -1, 14, -14, -12, -5, 14, -14, 6, 13, 11, 16, 16, 4, 10]))
+  end
+end
+"
+HumanEval_143,kor_Hang,rb,"예제 1:새로운 문자열의 단어 순서는 원래의 것과 같아야 합니다.△ △ △ △ △ △ △그리고 원래 문장의 단어를 포함하고 있는 문자열을 반환해야 합니다.문장에는 공백으로 분리된 단어들이 있습니다.문장을 나타내는 문자열을 주어집니다.# >>> words_in_sentence.call(""This is a test"")
+# ""is""
+# Example 2:
+# >>> words_in_sentence.call(""lets go for swimming"")
+# ""go for""
+# Constraints:
+# * 1 <= len(sentence) <= 100
+# * sentence contains only letters
+def words_in_sentence(sentence)
+","def words_in_sentence(sentence)
+  def is_prime?(num)
+    return false if num <= 1
+    (2..Math.sqrt(num)).none? { |i| num % i == 0 }
+  end
+  
+  words = sentence.split("" "")
+  prime_length_words = words.select { |word| is_prime?(word.length) }
+  prime_length_words.join("" "")
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_words_in_sentence
+    candidate = method(:words_in_sentence)
+    assert_equal(""is"", candidate.call(""This is a test""))
+    assert_equal(""go for"", candidate.call(""lets go for swimming""))
+    assert_equal(""there is no place"", candidate.call(""there is no place available here""))
+    assert_equal(""Hi am Hussein"", candidate.call(""Hi I am Hussein""))
+    assert_equal(""go for it"", candidate.call(""go for it""))
+    assert_equal("""", candidate.call(""here""))
+    assert_equal(""is"", candidate.call(""here is""))
+  end
+end
+"
+HumanEval_144,kor_Hang,rb,"x, n가 유효 분수이고, 분모는 0이 아니라는 것을 가정해 볼 수 있습니다.분자와 분모가 양수 정수인 경우 <분자>/<분모>를 사용한다.x와 n는 분수의 문자열 표현이고, 다음과 같은 형식을 가지고 있습니다.x * n. 함수는 x * n이 정수이고 false 라면 true를 반환합니다.여러분의 임무는 표현식을 단순화할 수 있는 함수를 구현하는 것입니다.# >>> simplify.call(""1/5"", ""5/1"")
+# true
+# >>> simplify.call(""1/6"", ""2/1"")
+# false
+# >>> simplify.call(""7/10"", ""10/2"")
+# false
+def simplify(x, n)
+","def simplify(x, n)
+  # Convert x and n to numerators and denominators
+  num_x, den_x = x.split('/').map(&:to_i)
+  num_n, den_n = n.split('/').map(&:to_i)
+
+  # Multiply fractions: (num_x * num_n) / (den_x * den_n)
+  numerator = num_x * num_n
+  denominator = den_x * den_n
+
+  # Check if the result is a whole number
+  numerator % denominator == 0
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_simplify
+    candidate = method(:simplify)
+    assert_equal(true, candidate.call(""1/5"", ""5/1""))
+    assert_equal(false, candidate.call(""1/6"", ""2/1""))
+    assert_equal(true, candidate.call(""5/1"", ""3/1""))
+    assert_equal(false, candidate.call(""7/10"", ""10/2""))
+    assert_equal(true, candidate.call(""2/10"", ""50/10""))
+    assert_equal(true, candidate.call(""7/2"", ""4/2""))
+    assert_equal(true, candidate.call(""11/6"", ""6/1""))
+    assert_equal(false, candidate.call(""2/3"", ""5/2""))
+    assert_equal(false, candidate.call(""5/2"", ""3/5""))
+    assert_equal(true, candidate.call(""2/4"", ""8/4""))
+    assert_equal(true, candidate.call(""2/4"", ""4/2""))
+    assert_equal(true, candidate.call(""1/5"", ""5/1""))
+    assert_equal(false, candidate.call(""1/5"", ""1/5""))
+  end
+end
+"
+HumanEval_145,kor_Hang,rb,"예를 들어:원래 배열의 인덱스에 따라 순서대로 배열합니다.참고: 몇 개의 항목이 있으면 숫자의 합이 비슷합니다.숫자의 합에 따라 순서대로 올라갑니다.주어진 정수 배열을 정렬하는 함수를 쓰세요.# >>> order_by_points.call([1, 11, -1, -11, -12])
+# [-1, -11, 1, -12, 11]
+# >>> order_by_points.call([])
+# []
+def order_by_points(nums)
+","def order_by_points(nums)
+  nums.sort_by.with_index do |num, index|
+    [num.to_s.chars.map(&:to_i).sum.abs, index]
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_order_by_points
+    candidate = method(:order_by_points)
+    assert_equal([-1, -11, 1, -12, 11], candidate.call([1, 11, -1, -11, -12]))
+    assert_equal([0, 2, 3, 6, 53, 423, 423, 423, 1234, 145, 37, 46, 56, 463, 3457], candidate.call([1234, 423, 463, 145, 2, 423, 423, 53, 6, 37, 3457, 3, 56, 0, 46]))
+    assert_equal([], candidate.call([]))
+    assert_equal([-3, -32, -98, -11, 1, 2, 43, 54], candidate.call([1, -11, -32, 43, 54, -98, 2, -3]))
+    assert_equal([1, 10, 2, 11, 3, 4, 5, 6, 7, 8, 9], candidate.call([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]))
+    assert_equal([-76, -21, 0, 4, 23, 6, 6], candidate.call([0, 6, 6, -76, -21, 23, 4]))
+  end
+end
+"
+HumanEval_146,kor_Hang,rb,"예를 들어:숫자의 처음과 마지막 숫자는 홀수 (1, 3, 5, 7, 9) 입니다.배열의 10보다 큰 요소의 수와 둘 다 숫자의 배열을 입력하고 반환하는 함수를 작성합니다.# >>> specialFilter.call([15, -73, 14, -15])
+# 1
+# >>> specialFilter.call([33, -2, -3, 45, 21, 109])
+# 2
+def specialFilter(nums)
+","def specialFilter(nums)
+  nums.count do |num|
+    num > 10 && num.to_s[0].to_i.odd? && num.to_s[-1].to_i.odd?
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_specialFilter
+    candidate = method(:specialFilter)
+    assert_equal(0, candidate.call([5, -2, 1, -5]))
+    assert_equal(1, candidate.call([15, -73, 14, -15]))
+    assert_equal(2, candidate.call([33, -2, -3, 45, 21, 109]))
+    assert_equal(4, candidate.call([43, -12, 93, 125, 121, 109]))
+    assert_equal(3, candidate.call([71, -2, -33, 75, 21, 19]))
+    assert_equal(0, candidate.call([1]))
+    assert_equal(0, candidate.call([]))
+  end
+end
+"
+HumanEval_147,kor_Hang,rb,"예:a[i] + a[j] + a[k]은 3의 배수입니다.a의 세 번 번 수 (a[i], a[j], a[k]) 를 반환합니다.각 i (1 ≤ i ≤ n) 에 대해 a[i] = i * i - i + 1의 값은양수 n을 주어집니다. n 길이의 정수 배열 a를 만들어야 합니다.# >>> get_max_triples.call(5)
+# 1
+# Explanation: 
+# a = [1, 3, 7, 13, 21]
+# The only valid triple is (1, 7, 13).
+def get_max_triples(n)
+","def get_max_triples(n)
+  a = Array.new(n) { |i| (i + 1) * (i + 1) - (i + 1) + 1 }
+  count = 0
+  
+  (0...n).each do |i|
+    (i+1...n).each do |j|
+      (j+1...n).each do |k|
+        count += 1 if (a[i] + a[j] + a[k]) % 3 == 0
+      end
+    end
+  end
+  
+  count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_get_max_triples
+    candidate = method(:get_max_triples)
+    assert_equal(1, candidate.call(5))
+    assert_equal(4, candidate.call(6))
+    assert_equal(36, candidate.call(10))
+    assert_equal(53361, candidate.call(100))
+  end
+end
+"
+HumanEval_148,kor_Hang,rb,"예제행성 이름이 맞지 않아요함수는 planet1 또는 planet2 라면 빈 배열을 반환해야 합니다.태양과 가까운 거리에 있는행성의 궤도와 행성의 궤도 사이에 위치해 있습니다.이 함수는 궤도가 행성의 이름 두 개를 문자열 planet1과 planet2로 가져가는 함수를 쓰세요.우라노스, 해왕성수성, 다음으로 금성, 지구, 화성, 목성, 토성,태양계에는 8개의 행성이 있는데 태양에 가장 가까운 행성입니다.# >>> bf.call(""Jupiter"", ""Neptune"")
+# [""Saturn"", ""Uranus""]
+# >>> bf.call(""Earth"", ""Mercury"")
+# ""Venus""
+# >>> bf.call(""Mercury"", ""Uranus"")
+# [""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn""]
+def bf(planet1, planet2)
+","def bf(planet1, planet2)
+  planets = [""Mercury"", ""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn"", ""Uranus"", ""Neptune""]
+  
+  idx1 = planets.index(planet1)
+  idx2 = planets.index(planet2)
+  
+  return [] if idx1.nil? || idx2.nil?
+
+  start_idx, end_idx = [idx1, idx2].sort
+  
+  planets[(start_idx + 1)...end_idx]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_bf
+    candidate = method(:bf)
+    assert_equal([""Saturn"", ""Uranus""], candidate.call(""Jupiter"", ""Neptune""))
+    assert_equal([""Venus""], candidate.call(""Earth"", ""Mercury""))
+    assert_equal([""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn""], candidate.call(""Mercury"", ""Uranus""))
+    assert_equal([""Earth"", ""Mars"", ""Jupiter"", ""Saturn"", ""Uranus""], candidate.call(""Neptune"", ""Venus""))
+    assert_equal([], candidate.call(""Earth"", ""Earth""))
+    assert_equal([], candidate.call(""Mars"", ""Earth""))
+    assert_equal([], candidate.call(""Jupiter"", ""Makemake""))
+  end
+end
+"
+HumanEval_149,kor_Hang,rb,"예를 들어:모든 단어의 길이가 같을 것이라고 가정할 수 있습니다.함수는 정렬된 순서로 문자열의 배열을 반환해야 합니다.두 단어의 길이가 같다면, 배열을 알파벳 순으로 정렬합니다.이 규칙에 따라 정렬된 배열을 반환해야 합니다.각 단어의 길이가 순서대로 올라갈 수 있어야 합니다.이중본이 있을 수 있습니다.배열은 항상 문자열의 배열이고 숫자의 배열은 아닙니다.그리고 정렬된 순서를 가진 결과 배열을 반환합니다. 홀수 길이의 문자열을 삭제합니다문자열의 배열을 파라미터로 받아들이는 함수를 쓰세요.# >>> list_sort.call([""aa"", ""a"", ""aaa""])
+# [""aa""]
+# >>> list_sort.call([""ab"", ""a"", ""aaa"", ""cd""])
+# [""ab"", ""cd""]
+def sorted_list_sum(lst)
+","def list_sort(arr)
+  arr.select { |s| s.length.even? }
+     .sort_by { |s| [s.length, s] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sorted_list_sum
+    candidate = method(:sorted_list_sum)
+    assert_equal([""aa""], candidate.call([""aa"", ""a"", ""aaa""]))
+    assert_equal([""AI"", ""asdf"", ""school""], candidate.call([""school"", ""AI"", ""asdf"", ""b""]))
+    assert_equal([], candidate.call([""d"", ""b"", ""c"", ""a""]))
+    assert_equal([""abcd"", ""dcba""], candidate.call([""d"", ""dcba"", ""abcd"", ""a""]))
+    assert_equal([""AI"", ""ai"", ""au""], candidate.call([""AI"", ""ai"", ""au""]))
+    assert_equal([], candidate.call([""a"", ""b"", ""b"", ""c"", ""c"", ""a""]))
+    assert_equal([""cc"", ""dd"", ""aaaa"", ""bbbb""], candidate.call([""aaaa"", ""bbbb"", ""dd"", ""cc""]))
+  end
+end
+"
+HumanEval_150,kor_Hang,rb,"예: 소수이고 y의 값을 반환해야 합니다n이 라면 x의 값을 반환하는 간단한 프로그램입니다.# >>> x_or_y.call(7, 34, 12)
+# 34
+# >>> x_or_y.call(15, 8, 5)
+# 5
+def x_or_y(n, x, y)
+","def x_or_y(n, x, y)
+  require 'prime'
+  n.prime? ? x : y
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_x_or_y
+    candidate = method(:x_or_y)
+    assert_equal(34, candidate.call(7, 34, 12))
+    assert_equal(5, candidate.call(15, 8, 5))
+    assert_equal(33, candidate.call(3, 33, 5212))
+    assert_equal(3, candidate.call(1259, 3, 52))
+    assert_equal(-1, candidate.call(7919, -1, 12))
+    assert_equal(583, candidate.call(3609, 1245, 583))
+    assert_equal(129, candidate.call(91, 56, 129))
+    assert_equal(1234, candidate.call(6, 34, 1234))
+    assert_equal(0, candidate.call(1, 2, 0))
+    assert_equal(2, candidate.call(2, 2, 0))
+  end
+end
+"
+HumanEval_151,kor_Hang,rb,"음수나 정수가 아닌 숫자를 무시합니다.숫자의 배열을 주어 숫자의 제곱의 합을 반환합니다# >>> double_the_difference.call([1, 3, 2, 0])
+# 10
+# >>> double_the_difference.call([-1, -2, 0])
+# 0
+# >>> double_the_difference.call([9, -2])
+# 81
+# >>> double_the_difference.call([0])
+# 0
+# If the input array is empty, return 0.
+def double_the_difference(lst)
+","def double_the_difference(lst)
+  lst.select { |n| n.is_a?(Integer) && n.odd? && n >= 0 }
+     .map { |n| n ** 2 }
+     .sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_double_the_difference
+    candidate = method(:double_the_difference)
+    assert_equal(0, candidate.call([]))
+    assert_equal(25, candidate.call([5.0, 4.0]))
+    assert_equal(0, candidate.call([0.1, 0.2, 0.3]))
+    assert_equal(0, candidate.call([-10.0, -20.0, -30.0]))
+    assert_equal(0, candidate.call([-1.0, -2.0, 8.0]))
+    assert_equal(34, candidate.call([0.2, 3.0, 5.0]))
+    assert_equal(165, candidate.call([-9.0, -7.0, -5.0, -3.0, -1.0, 1.0, 3.0, 5.0, 7.0, 9.0]))
+  end
+end
+"
+HumanEval_152,kor_Hang,rb,"예:값은 0이고, 그렇지 않다면, 값은 추측과 점수 사이의 절대적인 차이입니다.각 추측이 얼마나 멀리 떨어져 있는지 나타내는 같은 길이의 배열을 반환합니다. 만약 그들이 정확하게 추측했다면,각 색인이 일치하는 두 개의 점수와 추측 배열이 주어집니다.여러분의 임무는 한 사람이 여러 경기의 결과를 정확하게 추측했는지 확인하는 것입니다.확실히 기록하고 비교할 가치가 있습니다.그 순간의 생각과 감정은우리 모두는 그 느낌을 기억합니다.# >>> compare.call([1, 2, 3, 4, 5, 1], [1, 2, 3, 4, 2, -2])
+# [0, 0, 0, 0, 3, 3]
+# >>> compare.call([0, 5, 0, 0, 0, 4], [4, 1, 1, 0, 0, -2])
+# [4, 4, 1, 0, 0, 6]
+def compare(game, guess)
+","def compare(game, guess)
+  game.zip(guess).map { |score, prediction| (score - prediction).abs }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_compare
+    candidate = method(:compare)
+    assert_equal([0, 0, 0, 0, 3, 3], candidate.call([1, 2, 3, 4, 5, 1], [1, 2, 3, 4, 2, -2]))
+    assert_equal([0, 0, 0, 0, 0, 0], candidate.call([0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]))
+    assert_equal([2, 4, 6], candidate.call([1, 2, 3], [-1, -2, -3]))
+    assert_equal([2, 0, 0, 1], candidate.call([1, 2, 3, 5], [-1, 2, 3, 4]))
+  end
+end
+"
+HumanEval_153,kor_Hang,rb,"예: (그 강도는 -1) 입니다.'Slices.SErviNGSliCes'가 가장 강력한 확장자이기 때문에 'Slices.SErviNGSliCes'를 반환합니다.확장: ['SErviNGSliCes', 'Cheese', 'StuFfed'] 그러면 당신은 예를 들어, 의 클래스와 배열로 ""Slices""를 주어졌다면배열에서 먼저 나오는 것을 선택합니다.같은 강도 2개 이상의 확장자가 있다면,형식: ClassName.StrongestExtensionName. 가장 강력한 확장자를 찾아서 여기에 문자열을 반환해야 합니다.확장 이름에서, 강도는 CAP - SM 분수로 표시됩니다.확장자의 이름에 있는 글자, 그리고 SM는 소문자 의 수를 둡니다.확장자의 강도는 다음과 같습니다: CAP가 대문자의 숫자 라고 가정합니다.확장자는 클래스에 추가 클래스를 로드하는 데 사용된다.클래스의 이름 (스트링) 과 확장자의 배열이 주어집니다.# >>> Strongest_Extension.call(""my_class"", [""AA"", ""Be"", ""CC""])
+# ""my_class.AA""
+def Strongest_Extension(class_name, extensions)
+","def Strongest_Extension(class_name, extensions)
+  strongest_extension = extensions.max_by do |extension|
+    cap_count = extension.count('A-Z')
+    sm_count = extension.count('a-z')
+    cap_count - sm_count
+  end
+  ""#{class_name}.#{strongest_extension}""
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_Strongest_Extension
+    candidate = method(:Strongest_Extension)
+    assert_equal(""Watashi.eIGHt8OKe"", candidate.call(""Watashi"", [""tEN"", ""niNE"", ""eIGHt8OKe""]))
+    assert_equal(""Boku123.YEs.WeCaNe"", candidate.call(""Boku123"", [""nani"", ""NazeDa"", ""YEs.WeCaNe"", ""32145tggg""]))
+    assert_equal(""__YESIMHERE.NuLl__"", candidate.call(""__YESIMHERE"", [""t"", ""eMptY"", ""nothing"", ""zeR00"", ""NuLl__"", ""123NoooneB321""]))
+    assert_equal(""K.TAR"", candidate.call(""K"", [""Ta"", ""TAR"", ""t234An"", ""cosSo""]))
+    assert_equal(""__HAHA.123"", candidate.call(""__HAHA"", [""Tab"", ""123"", ""781345"", ""-_-""]))
+    assert_equal(""YameRore.okIWILL123"", candidate.call(""YameRore"", [""HhAas"", ""okIWILL123"", ""WorkOut"", ""Fails"", ""-_-""]))
+    assert_equal(""finNNalLLly.WoW"", candidate.call(""finNNalLLly"", [""Die"", ""NowW"", ""Wow"", ""WoW""]))
+    assert_equal(""_.Bb"", candidate.call(""_"", [""Bb"", ""91245""]))
+    assert_equal(""Sp.671235"", candidate.call(""Sp"", [""671235"", ""Bb""]))
+  end
+end
+"
+HumanEval_154,kor_Hang,rb,"두 단어로 되어 있습니다. 두 번째 단어 또는 두 번째 단어의 회전 중 하나가 첫 번째 단어의 하위 문자열이라면 true를 반환해야 합니다.# >>> cycpattern_check.call(""abcd"", ""abd"")
+# false
+# >>> cycpattern_check.call(""hello"", ""ell"")
+# true
+# >>> cycpattern_check.call(""whassup"", ""psus"")
+# false
+# >>> cycpattern_check.call(""abab"", ""baa"")
+# true
+# >>> cycpattern_check.call(""efef"", ""eeff"")
+# false
+# >>> cycpattern_check.call(""himenss"", ""simen"")
+# true
+def cycpattern_check(a, b)
+","def cycpattern_check(a, b)
+  (0...b.length).each do |i|
+    rotated_b = b[i..-1] + b[0...i]
+    return true if a.include?(rotated_b)
+  end
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_cycpattern_check
+    candidate = method(:cycpattern_check)
+    assert_equal(false, candidate.call(""xyzw"", ""xyw""))
+    assert_equal(true, candidate.call(""yello"", ""ell""))
+    assert_equal(false, candidate.call(""whattup"", ""ptut""))
+    assert_equal(true, candidate.call(""efef"", ""fee""))
+    assert_equal(false, candidate.call(""abab"", ""aabb""))
+    assert_equal(true, candidate.call(""winemtt"", ""tinem""))
+  end
+end
+"
+HumanEval_155,kor_Hang,rb,"예: 정수와 홀수 숫자를 가진 배열을 반환합니다.# >>> even_odd_count.call(-12)
+# [1, 1]
+# >>> even_odd_count.call(123)
+# [1, 2]
+def even_odd_count(num)
+","def even_odd_count(num)
+  num.to_s.chars.map(&:to_i).select { |digit| digit != 0 }.partition(&:even?).map(&:count)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_even_odd_count
+    candidate = method(:even_odd_count)
+    assert_equal([0, 1], candidate.call(7))
+    assert_equal([1, 1], candidate.call(-78))
+    assert_equal([2, 2], candidate.call(3452))
+    assert_equal([3, 3], candidate.call(346211))
+    assert_equal([3, 3], candidate.call(-345821))
+    assert_equal([1, 0], candidate.call(-2))
+    assert_equal([2, 3], candidate.call(-45347))
+    assert_equal([1, 0], candidate.call(0))
+  end
+end
+"
+HumanEval_156,kor_Hang,rb,"예: 제한: 1 <= num <= 1000그리고 작은 글자로 돌려주죠.양수 정수를 주어, 그 수를 로마자 숫자로 문자열로 얻습니다.# >>> int_to_mini_roman.call(19)
+# ""xix""
+# >>> int_to_mini_roman.call(152)
+# ""clii""
+# >>> int_to_mini_roman.call(426)
+# ""cdxxvi""
+def int_to_mini_roman(number)
+","def int_to_mini_roman(number)
+  values = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
+  numerals = ['m', 'cm', 'd', 'cd', 'c', 'xc', 'l', 'xl', 'x', 'ix', 'v', 'iv', 'i']
+
+  result = ''
+  values.each_with_index do |value, index|
+    while number >= value
+      number -= value
+      result += numerals[index]
+    end
+  end
+
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_int_to_mini_roman
+    candidate = method(:int_to_mini_roman)
+    assert_equal(""xix"", candidate.call(19))
+    assert_equal(""clii"", candidate.call(152))
+    assert_equal(""ccli"", candidate.call(251))
+    assert_equal(""cdxxvi"", candidate.call(426))
+    assert_equal(""d"", candidate.call(500))
+    assert_equal(""i"", candidate.call(1))
+    assert_equal(""iv"", candidate.call(4))
+    assert_equal(""xliii"", candidate.call(43))
+    assert_equal(""xc"", candidate.call(90))
+    assert_equal(""xciv"", candidate.call(94))
+    assert_equal(""dxxxii"", candidate.call(532))
+    assert_equal(""cm"", candidate.call(900))
+    assert_equal(""cmxciv"", candidate.call(994))
+    assert_equal(""m"", candidate.call(1000))
+  end
+end
+"
+HumanEval_157,kor_Hang,rb,"예: 90도.직각삼각형은 한 각이 직각 또는 양변이 직각삼각형이 될 수 있습니다.삼각형의 세 변의 길이를 주어, 3 칸의 길이가 0 이면 true를 반환합니다# >>> right_angle_triangle.call(3, 4, 5)
+# true
+# >>> right_angle_triangle.call(1, 2, 3)
+# false
+def right_angle_triangle(a, b, c)
+","def right_angle_triangle(a, b, c)
+  sides = [a, b, c].sort
+  sides[0]**2 + sides[1]**2 == sides[2]**2
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_right_angle_triangle
+    candidate = method(:right_angle_triangle)
+    assert_equal(true, candidate.call(3, 4, 5))
+    assert_equal(false, candidate.call(1, 2, 3))
+    assert_equal(true, candidate.call(10, 6, 8))
+    assert_equal(false, candidate.call(2, 2, 2))
+    assert_equal(true, candidate.call(7, 24, 25))
+    assert_equal(false, candidate.call(10, 5, 7))
+    assert_equal(true, candidate.call(5, 12, 13))
+    assert_equal(true, candidate.call(15, 8, 17))
+    assert_equal(true, candidate.call(48, 55, 73))
+    assert_equal(false, candidate.call(1, 1, 1))
+    assert_equal(false, candidate.call(2, 2, 10))
+  end
+end
+"
+HumanEval_158,kor_Hang,rb,"문자, 사전 순서에서 가장 먼저 나오는 것을 반환합니다.  단일한 문자열의 최대 수를 가지고 있다면배열에는 다른 단어가 들어 있습니다. 최대 숫자를 가진 단어가 반환됩니다.문자열의 배열을 받아들이는 함수를 쓰세요.# >>> find_max.call([""name"", ""of"", ""string""])
+# ""string""
+# >>> find_max.call([""name"", ""enam"", ""game""])
+# ""enam""
+# >>> find_max.call([""aaaaaaa"", ""bb"", ""cc""])
+# ""aaaaaaa""
+def find_max(words)
+","def find_max(words)
+  # Helper function to count unique characters
+  def unique_char_count(word)
+    word.chars.uniq.size
+  end
+
+  words.max_by { |word| [unique_char_count(word), -word] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_find_max
+    candidate = method(:find_max)
+    assert_equal(""string"", candidate.call([""name"", ""of"", ""string""]))
+    assert_equal(""enam"", candidate.call([""name"", ""enam"", ""game""]))
+    assert_equal(""aaaaaaa"", candidate.call([""aaaaaaa"", ""bb"", ""cc""]))
+    assert_equal(""abc"", candidate.call([""abc"", ""cba""]))
+    assert_equal(""footbott"", candidate.call([""play"", ""this"", ""game"", ""of"", ""footbott""]))
+    assert_equal(""gonna"", candidate.call([""we"", ""are"", ""gonna"", ""rock""]))
+    assert_equal(""nation"", candidate.call([""we"", ""are"", ""a"", ""mad"", ""nation""]))
+    assert_equal(""this"", candidate.call([""this"", ""is"", ""a"", ""prrk""]))
+    assert_equal(""b"", candidate.call([""b""]))
+    assert_equal(""play"", candidate.call([""play"", ""play"", ""play""]))
+  end
+end
+"
+HumanEval_159,kor_Hang,rb,"예: 만약 남은 당근이 충분하지 않다면, 남은 당근을 다 먹지만, 여전히 배고프게 될 것입니다.식사 후 남은 당근의 수 ] [먹은 당근의 총 수를 식사 후 돌려주면 됩니다.하지만 이제 하루의 식사를 완성하기 위해 더 많은 당근을 먹어야 합니다.당신은 배고픈 토끼이고, 이미 많은 양의 당근을 먹었습니다.# >>> eat.call(5, 6, 10)
+# [11, 4]
+# >>> eat.call(4, 8, 9)
+# [12, 1]
+# >>> eat.call(1, 10, 10)
+# [11, 0]
+# >>> eat.call(2, 11, 5)
+# [7, 0]
+# Variables:
+# @number : integer
+# the number of carrots that you have eaten.
+# @need : integer
+# the number of carrots that you need to eat.
+# @remaining : integer
+# the number of remaining carrots thet exist in stock
+# Constrain:
+# * 0 <= number <= 1000
+# * 0 <= need <= 1000
+# * 0 <= remaining <= 1000
+# Have fun :)
+def eat(number, need, remaining)
+","def eat(number, need, remaining)
+  total_eaten = number + [need, remaining].min
+  carrots_left = [remaining - need, 0].max
+  [total_eaten, carrots_left]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_eat
+    candidate = method(:eat)
+    assert_equal([11, 4], candidate.call(5, 6, 10))
+    assert_equal([12, 1], candidate.call(4, 8, 9))
+    assert_equal([11, 0], candidate.call(1, 10, 10))
+    assert_equal([7, 0], candidate.call(2, 11, 5))
+    assert_equal([9, 2], candidate.call(4, 5, 7))
+    assert_equal([5, 0], candidate.call(4, 5, 1))
+  end
+end
+"
+HumanEval_160,kor_Hang,rb,"연산자 배열에는 적어도 하나의 연산자가 있고, 연산자 배열에는 적어도 두 개의 연산자가 있습니다.오퍼랜드는 음이 아닌 정수의 배열입니다.연산자 배열의 길이는 연산자 배열의 길이가 1 빼기 같다는 것입니다.참고:=> 결과 = 9결과는 2 + 3 * 4 - 5 입니다.배열 = [2, 3, 4, 5] 운영자['+', '*', '-'] 예: 기하급수 (**)층 분할 ( // ) 곱하기 (*) 빼기 ( - ) 추가 (+)기본적인 대수 연산:표현식과 이 표현식의 평가를 반환합니다.두 번째 배열은 정수의 배열입니다. 주어진 두 배열을 이용하여 대수학을 만들 수 있습니다.두 개의 배열 연산자와 연산자를 주어 첫 번째 배열은 기본적인 대수 연산을 하고,def do_algebra(operator, operand)
+","def do_algebra(operator, operand)
+  expression = operand[0].to_s
+  operator.each_with_index do |op, index|
+    if op == '//'
+      expression += ' / ' + operand[index + 1].to_s
+    else
+      expression += ' ' + op + ' ' + operand[index + 1].to_s
+    end
+  end
+  eval(expression)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_do_algebra
+    candidate = method(:do_algebra)
+    assert_equal(37, candidate.call([""**"", ""*"", ""+""], [2, 3, 4, 5]))
+    assert_equal(9, candidate.call([""+"", ""*"", ""-""], [2, 3, 4, 5]))
+    assert_equal(8, candidate.call([""//"", ""*""], [7, 3, 4]))
+  end
+end
+"
+HumanEval_161,kor_Hang,rb,"예제함수는 결과 문자열을 반환해야 합니다.문자열에 문자가 없다면, 문자열을 역으로 눌러야 합니다.그렇지 않으면 그대로 유지하세요.s[i]가 글자라면, 밑에서 위로 또는 위쪽에서 아래로, string s를 얻게 됩니다.# >>> solve.call(""1234"")
+# ""4321""
+# >>> solve.call(""ab"")
+# ""AB""
+# >>> solve.call(""#a@C"")
+# ""#A@c""
+def solve(s)
+","def solve(s)
+  if s =~ /[a-zA-Z]/
+    s.chars.map { |char| char =~ /[a-zA-Z]/ ? char.swapcase : char }.join
+  else
+    s.reverse
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_solve
+    candidate = method(:solve)
+    assert_equal(""aSdF"", candidate.call(""AsDf""))
+    assert_equal(""4321"", candidate.call(""1234""))
+    assert_equal(""AB"", candidate.call(""ab""))
+    assert_equal(""#A@c"", candidate.call(""#a@C""))
+    assert_equal(""#aSDFw^45"", candidate.call(""#AsdfW^45""))
+    assert_equal(""2@6#"", candidate.call(""#6@2""))
+    assert_equal(""#$A^d"", candidate.call(""#$a^D""))
+    assert_equal(""#CCC"", candidate.call(""#ccc""))
+  end
+end
+"
+HumanEval_162,kor_Hang,rb,"'text'가 빈 문자열이라면 nil를 반환합니다.문자열 'text'을 주어 md5 해시 대응 문자열을 반환합니다. # >>> string_to_md5.call(""Hello world"")
+# ""3e25960a79dbc69b674cd4ec67a72c62""
+def string_to_md5(text)
+","require 'digest'
+
+def string_to_md5(text)
+  return nil if text.empty?
+  Digest::MD5.hexdigest(text)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_string_to_md5
+    candidate = method(:string_to_md5)
+    assert_equal(""3e25960a79dbc69b674cd4ec67a72c62"", candidate.call(""Hello world""))
+    assert_equal(nil, candidate.call(""""))
+    assert_equal(""0ef78513b0cb8cef12743f5aeb35f888"", candidate.call(""A B C""))
+    assert_equal(""5f4dcc3b5aa765d61d8327deb882cf99"", candidate.call(""password""))
+  end
+end
+"
+HumanEval_163,kor_Hang,rb,"예를 들어:그리고 b, 상승 순서로.양수 a와 b를 두 개로 나누어 a와 b 사이의 짝수 숫자를 반환합니다# >>> generate_integers.call(2, 8)
+# [2, 4, 6, 8]
+# >>> generate_integers.call(8, 2)
+# [2, 4, 6, 8]
+# >>> generate_integers.call(10, 14)
+# []
+def generate_integers(a, b)
+","def generate_integers(a, b)
+  (a..b).to_a.concat((b..a).to_a).select { |num| num.even? }.uniq.sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_generate_integers
+    candidate = method(:generate_integers)
+    assert_equal([2, 4, 6, 8], candidate.call(2, 10))
+    assert_equal([2, 4, 6, 8], candidate.call(10, 2))
+    assert_equal([2, 4, 6, 8], candidate.call(132, 2))
+    assert_equal([], candidate.call(17, 89))
+  end
+end
+"

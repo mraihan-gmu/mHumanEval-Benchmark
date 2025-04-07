@@ -1,0 +1,4634 @@
+task_id,nl,pl,prompt,canonical_solution,tests
+HumanEval_0,npi_Deva,rb,"जाँच गर्नुहोस् कि यदि दिइएको संख्याको सरणीमा, कुनै दुई संख्याहरू एक अर्काको नजिक छन् भने # >>> has_close_elements.call([1.0, 2.0, 3.0], 0.5)
+# false
+# >>> has_close_elements.call([1.0, 2.8, 3.0, 4.0, 5.0, 2.0], 0.3)
+# true
+def has_close_elements(numbers, threshold)
+","def has_close_elements(numbers, threshold)
+  numbers.combination(2).any? { |a, b| (a - b).abs < threshold }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_has_close_elements
+    candidate = method(:has_close_elements)
+    assert_equal(true, candidate.call([1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.3))
+    assert_equal(false, candidate.call([1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.05))
+    assert_equal(true, candidate.call([1.0, 2.0, 5.9, 4.0, 5.0], 0.95))
+    assert_equal(false, candidate.call([1.0, 2.0, 5.9, 4.0, 5.0], 0.8))
+    assert_equal(true, candidate.call([1.0, 2.0, 3.0, 4.0, 5.0, 2.0], 0.1))
+    assert_equal(true, candidate.call([1.1, 2.2, 3.1, 4.1, 5.1], 1.0))
+    assert_equal(false, candidate.call([1.1, 2.2, 3.1, 4.1, 5.1], 0.5))
+  end
+end
+"
+HumanEval_1,npi_Deva,rb,"इनपुट स्ट्रिङमा कुनै पनि स्पेसलाई बेवास्ता गर्नुहोस्।अलग-अलग समूहहरू सन्तुलित छन् (प्रत्येक खुला ब्रेस ठीकसँग बन्द छ) र एक अर्कामा नेस्टेड छैन ।समूहलाई अलग-अलग स्ट्रिङमा विभाजन गर्नुहोस् र तिनको एरे फर्काउनुहोस्।यो प्रकार्यको इनपुट एउटा स्ट्रिङ हो जसमा नेस्टेड कोष्ठकहरूको बहुविध समूहहरू छन्। तपाईँको लक्ष्य # >>> separate_paren_groups.call(""( ) (( )) (( )( ))"")
+# [""()"", ""(())"", ""(()())""]
+def separate_paren_groups(paren_string)
+","def separate_paren_groups(paren_string)
+  # Remove spaces from the string
+  paren_string = paren_string.gsub("" "", """")
+  
+  result = []
+  current_group = """"
+  balance = 0
+
+  paren_string.each_char do |char|
+    current_group += char
+    balance += 1 if char == '('
+    balance -= 1 if char == ')'
+
+    if balance == 0 && !current_group.empty?
+      result << current_group
+      current_group = """"
+    end
+  end
+
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_separate_paren_groups
+    candidate = method(:separate_paren_groups)
+    assert_equal([""(()())"", ""((()))"", ""()"", ""((())()())""], candidate.call(""(()()) ((())) () ((())()())""))
+    assert_equal([""()"", ""(())"", ""((()))"", ""(((())))""], candidate.call(""() (()) ((())) (((())))""))
+    assert_equal([""(()(())((())))""], candidate.call(""(()(())((())))""))
+    assert_equal([""()"", ""(())"", ""(()())""], candidate.call(""( ) (( )) (( )( ))""))
+  end
+end
+"
+HumanEval_2,npi_Deva,rb,"संख्याको दशमलव भाग फर्काउनुहोस्।(बाँकी भाग सधैँ १ भन्दा सानो हुन्छ)र पूर्णांक भाग (दिइएको संख्या भन्दा ठूलो पूर्णांक) र दशमलव सकारात्मक फ्लोटिंग प्वाइन्ट नम्बर दिइएको छ, यसलाई  मा विघटन गर्न सकिन्छ# >>> truncate_number.call(3.5)
+# 0.5
+def truncate_number(number)
+","def truncate_number(number)
+  number - number.to_i
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_truncate_number
+    candidate = method(:truncate_number)
+    assert_equal(0.5, candidate.call(3.5))
+    assert_equal(0.25, candidate.call(1.25))
+    assert_equal(0.0, candidate.call(123.0))
+  end
+end
+"
+HumanEval_3,npi_Deva,rb,"त्यस बिन्दुमा फंक्शनले true फर्काउनु पर्छ। अन्यथा यसले false फर्काउनु पर्छ।शून्य ब्यालेन्स. तपाईंको कार्य खाताको ब्यालेन्स कुनै पनि बिन्दुमा शून्य भन्दा तल खस्छ भने पत्ता लगाउन छ, र तपाईँलाई बैंक खातामा जम्मा गर्ने र निकाल्ने कार्यहरूको एक सरणी दिइन्छ जुन  बाट सुरु हुन्छ# >>> below_zero.call([1, 2, 3])
+# false
+# >>> below_zero.call([1, 2, -4, 5])
+# true
+def below_zero(operations)
+","def below_zero(operations)
+  balance = 0
+  operations.each do |operation|
+    balance += operation
+    return true if balance < 0
+  end
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_below_zero
+    candidate = method(:below_zero)
+    assert_equal(false, candidate.call([]))
+    assert_equal(false, candidate.call([1, 2, -3, 1, 2, -3]))
+    assert_equal(true, candidate.call([1, 2, -4, 5, 6]))
+    assert_equal(false, candidate.call([1, -1, 2, -2, 5, -5, 4, -4]))
+    assert_equal(true, candidate.call([1, -1, 2, -2, 5, -5, 4, -5]))
+    assert_equal(true, candidate.call([1, -2, 2, -2, 5, -5, 4, -4]))
+  end
+end
+"
+HumanEval_4,npi_Deva,rb,"MAD = औसत। x - x_mean।तत्व र केन्द्र बिन्दु (यस अवस्थामा औसत): औसत निरपेक्ष विचलन प्रत्येक इनपुट नम्बरहरूको दिइएको सरणीको लागि, औसत निरपेक्ष विचलन गणना गर्नुहोस्।# >>> mean_absolute_deviation.call([1.0, 2.0, 3.0, 4.0])
+# 1.0
+def mean_absolute_deviation(numbers)
+","def mean_absolute_deviation(numbers)
+  mean = numbers.sum.to_f / numbers.size
+  deviations = numbers.map { |num| (num - mean).abs }
+  deviations.sum / numbers.size
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_mean_absolute_deviation
+    candidate = method(:mean_absolute_deviation)
+    assert_equal(0.5, candidate.call([1.0, 2.0]))
+    assert_equal(1.0, candidate.call([1.0, 2.0, 3.0, 4.0]))
+    assert_equal(1.2, candidate.call([1.0, 2.0, 3.0, 4.0, 5.0]))
+  end
+end
+"
+HumanEval_5,npi_Deva,rb,"इनपुट एरेको प्रत्येक दुई लगातार तत्वहरू बीच एउटा नम्बर 'डिलिमिटर' घुसाउनुहोस् ∀numbers' # >>> intersperse.call([], 4)
+# []
+# >>> intersperse.call([1, 2, 3], 4)
+# [1, 4, 2, 4, 3]
+def intersperse(numbers, delimeter)
+","def intersperse(numbers, delimeter)
+  return numbers if numbers.empty?
+  result = []
+  numbers.each_with_index do |num, index|
+    result << num
+    result << delimeter unless index == numbers.size - 1
+  end
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_intersperse
+    candidate = method(:intersperse)
+    assert_equal([], candidate.call([], 7))
+    assert_equal([5, 8, 6, 8, 3, 8, 2], candidate.call([5, 6, 3, 2], 8))
+    assert_equal([2, 2, 2, 2, 2], candidate.call([2, 2, 2], 2))
+  end
+end
+"
+HumanEval_6,npi_Deva,rb,"उदाहरणका लागि, (() (()) मा अधिकतम दुईवटा स्तरहरू छन् जबकि ((())) मा तीनवटा छन्।प्रत्येक समूहको लागि, कोष्ठकहरूको गहिरो स्तरको गहिरो स्तर आउटपुट गर्नुहोस्।यो प्रकार्यको इनपुट एउटा स्ट्रिङ हो जुन अन्तरिक्षद्वारा विभाजित कण्ठस्थहरूको लागि बहु समूहहरूको प्रतिनिधित्व गर्दछ।# >>> parse_nested_parens.call(""(()()) ((())) () ((())()())"")
+# [2, 3, 1, 3]
+def parse_nested_parens(paren_string)
+","def parse_nested_parens(paren_string)
+  paren_string.split.map do |group|
+    max_depth = current_depth = 0
+    group.chars.each do |char|
+      if char == '('
+        current_depth += 1
+        max_depth = [max_depth, current_depth].max
+      elsif char == ')'
+        current_depth -= 1
+      end
+    end
+    max_depth
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_parse_nested_parens
+    candidate = method(:parse_nested_parens)
+    assert_equal([2, 3, 1, 3], candidate.call(""(()()) ((())) () ((())()())""))
+    assert_equal([1, 2, 3, 4], candidate.call(""() (()) ((())) (((())))""))
+    assert_equal([4], candidate.call(""(()(())((())))""))
+  end
+end
+"
+HumanEval_7,npi_Deva,rb,"दिइएको सबस्ट्रिंग समावेश गर्ने स्ट्रिंगहरूको इनपुट एरे मात्र फिल्टर गर्नुहोस् ।# >>> filter_by_substring.call([], ""a"")
+# []
+# >>> filter_by_substring.call([""abc"", ""bacd"", ""cde"", ""array""], ""a"")
+# [""abc"", ""bacd"", ""array""]
+def filter_by_substring(strings, substring)
+","def filter_by_substring(strings, substring)
+  strings.select { |string| string.include?(substring) }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_filter_by_substring
+    candidate = method(:filter_by_substring)
+    assert_equal([], candidate.call([], ""john""))
+    assert_equal([""xxx"", ""xxxAAA"", ""xxx""], candidate.call([""xxx"", ""asd"", ""xxy"", ""john doe"", ""xxxAAA"", ""xxx""], ""xxx""))
+    assert_equal([""xxx"", ""aaaxxy"", ""xxxAAA"", ""xxx""], candidate.call([""xxx"", ""asd"", ""aaaxxy"", ""john doe"", ""xxxAAA"", ""xxx""], ""xx""))
+    assert_equal([""grunt"", ""prune""], candidate.call([""grunt"", ""trumpet"", ""prune"", ""gruesome""], ""run""))
+  end
+end
+"
+HumanEval_8,npi_Deva,rb,"खाली योग ० बराबर हुनुपर्दछ र खाली उत्पाद १ बराबर हुनुपर्दछ।पूर्णांकहरूको दिइएको सरणीको लागि, सरणीमा सबै पूर्णांकहरूको योग र उत्पाद समावेश भएको एउटा सरणी फर्काउनुहोस्।# >>> sum_product.call([])
+# [0, 1]
+# >>> sum_product.call([1, 2, 3, 4])
+# [10, 24]
+def sum_product(numbers)
+","def sum_product(numbers)
+  sum = numbers.reduce(0, :+)
+  product = numbers.reduce(1, :*)
+  [sum, product]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sum_product
+    candidate = method(:sum_product)
+    assert_equal([0, 1], candidate.call([]))
+    assert_equal([3, 1], candidate.call([1, 1, 1]))
+    assert_equal([100, 0], candidate.call([100, 0]))
+    assert_equal([15, 105], candidate.call([3, 5, 7]))
+    assert_equal([10, 10], candidate.call([10]))
+  end
+end
+"
+HumanEval_9,npi_Deva,rb,"पूर्णांकहरूको दिइएको सरणीबाट, दिइएको क्षण सम्म भेटिएको अधिकतम रोलिंग तत्वको सरणी उत्पन्न गर्नुहोस् # >>> rolling_max.call([1, 2, 3, 2, 3, 4, 2])
+# [1, 2, 3, 3, 3, 4, 4]
+def rolling_max(numbers)
+","def rolling_max(numbers)
+  max_so_far = numbers.first
+  numbers.map do |num|
+    max_so_far = [max_so_far, num].max
+  end
+end
+
+# Example usage:
+# puts rolling_max([1, 2, 3, 2, 3, 4, 2]).inspect","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_rolling_max
+    candidate = method(:rolling_max)
+    assert_equal([], candidate.call([]))
+    assert_equal([1, 2, 3, 4], candidate.call([1, 2, 3, 4]))
+    assert_equal([4, 4, 4, 4], candidate.call([4, 3, 2, 1]))
+    assert_equal([3, 3, 3, 100, 100], candidate.call([3, 2, 3, 100, 3]))
+  end
+end
+"
+HumanEval_10,npi_Deva,rb,"- स्ट्रिंग रिभर्सको अन्त्यमा स्ट्रिंग प्रिफिक्स थप्नुहोस् जुन पालिन्ड्रोमिक प्रत्यय भन्दा पहिले आउँछ।- प्रदान गरिएको स्ट्रिंगको सबैभन्दा लामो पोस्टफिक्स फेला पार्नुहोस् जुन पालिन्ड्रोम हो।एल्गोरिथ्मको विचार सरल छ: दिइएको स्ट्रिङबाट सुरु हुने सबैभन्दा छोटो पालिन्ड्रोम खोज्नुहोस्।# >>> make_palindrome.call("""")
+# """"
+# >>> make_palindrome.call(""cat"")
+# ""catac""
+# >>> make_palindrome.call(""cata"")
+# ""catac""
+def make_palindrome(string)
+","def make_palindrome(string)
+  return string if string.empty?
+
+  def is_palindrome?(s)
+    s == s.reverse
+  end
+
+  (0...string.length).reverse_each do |i|
+    if is_palindrome?(string[i..-1])
+      return string + string[0...i].reverse
+    end
+  end
+
+  string
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_make_palindrome
+    candidate = method(:make_palindrome)
+    assert_equal("""", candidate.call(""""))
+    assert_equal(""x"", candidate.call(""x""))
+    assert_equal(""xyzyx"", candidate.call(""xyz""))
+    assert_equal(""xyx"", candidate.call(""xyx""))
+    assert_equal(""jerryrrej"", candidate.call(""jerry""))
+  end
+end
+"
+HumanEval_11,npi_Deva,rb,"यी इनपुटहरूमा बाइनरी XOR प्रदर्शन गर्नुहोस् र परिणामलाई स्ट्रिङको रूपमा पनि फर्काउनुहोस्।इनपुट दुई स्ट्रिंगहरू a र b हुन् जसमा केवल 1s र 0s हुन्छ।# >>> string_xor.call(""010"", ""110"")
+# ""100""
+def string_xor(a, b)
+","def string_xor(a, b)
+  result = """"
+  a.length.times do |i|
+    result << (a[i] == b[i] ? ""0"" : ""1"")
+  end
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_string_xor
+    candidate = method(:string_xor)
+    assert_equal(""010010"", candidate.call(""111000"", ""101010""))
+    assert_equal(""0"", candidate.call(""1"", ""1""))
+    assert_equal(""0101"", candidate.call(""0101"", ""0000""))
+  end
+end
+"
+HumanEval_12,npi_Deva,rb,"समान लम्बाइको स्ट्रिङहरू। इनपुट एरे खाली छ भने शून्य फर्काउनुहोस्।स्ट्रिंगको एरेबाट, सबैभन्दा लामो फिर्ता गर्नुहोस्। बहु  को मामलामा पहिलो फिर्ता गर्नुहोस्।# >>> longest.call([])
+# nil
+# >>> longest.call([""a"", ""b"", ""c""])
+# ""a""
+# >>> longest.call([""a"", ""bb"", ""ccc""])
+# ""ccc""
+def longest(strings)
+","def longest(strings)
+  return nil if strings.empty?
+  strings.max_by(&:length)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_longest
+    candidate = method(:longest)
+    assert_equal(nil, candidate.call([]))
+    assert_equal(""x"", candidate.call([""x"", ""y"", ""z""]))
+    assert_equal(""zzzz"", candidate.call([""x"", ""yyy"", ""zzzz"", ""www"", ""kkkk"", ""abc""]))
+  end
+end
+"
+HumanEval_13,npi_Deva,rb,"दुई पूर्णांक a र b को सबैभन्दा ठूलो सामान्य विभाजक फर्काउँदछ ।# >>> greatest_common_divisor.call(3, 5)
+# 1
+# >>> greatest_common_divisor.call(25, 15)
+# 5
+def greatest_common_divisor(a, b)
+","def greatest_common_divisor(a, b)
+  while b != 0
+    a, b = b, a % b
+  end
+  a
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_greatest_common_divisor
+    candidate = method(:greatest_common_divisor)
+    assert_equal(1, candidate.call(3, 7))
+    assert_equal(5, candidate.call(10, 15))
+    assert_equal(7, candidate.call(49, 14))
+    assert_equal(12, candidate.call(144, 60))
+  end
+end
+"
+HumanEval_14,npi_Deva,rb,"सबै उपसर्गहरूको एरे फर्काउँछ छोटो देखि लामो सम्म इनपुट स्ट्रिङको # >>> all_prefixes.call(""abc"")
+# [""a"", ""ab"", ""abc""]
+def all_prefixes(string)
+","def all_prefixes(string)
+  (1..string.length).map { |i| string[0, i] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_all_prefixes
+    candidate = method(:all_prefixes)
+    assert_equal([], candidate.call(""""))
+    assert_equal([""a"", ""as"", ""asd"", ""asdf"", ""asdfg"", ""asdfgh""], candidate.call(""asdfgh""))
+    assert_equal([""W"", ""WW"", ""WWW""], candidate.call(""WWW""))
+  end
+end
+"
+HumanEval_15,npi_Deva,rb,"0 देखि n सम्म समावेशी अन्तरिक्ष-सीमित संख्याहरू समावेश भएको स्ट्रिङ फर्काउँदछ।# >>> string_sequence.call(0)
+# ""0""
+# >>> string_sequence.call(5)
+# ""0 1 2 3 4 5""
+def string_sequence(n)
+","def string_sequence(n)
+  (0..n).to_a.join(' ')
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_string_sequence
+    candidate = method(:string_sequence)
+    assert_equal(""0"", candidate.call(0))
+    assert_equal(""0 1 2 3"", candidate.call(3))
+    assert_equal(""0 1 2 3 4 5 6 7 8 9 10"", candidate.call(10))
+  end
+end
+"
+HumanEval_16,npi_Deva,rb,"एउटा स्ट्रिङ दिइएको छ, कति फरक अक्षरहरू (केसको पर्वाह नगरी) यो समावेश गर्दछ पत्ता लगाउनुहोस् # >>> count_distinct_characters.call(""xyzXYZ"")
+# 3
+# >>> count_distinct_characters.call(""Jerry"")
+# 4
+def count_distinct_characters(string)
+","def count_distinct_characters(string)
+  string.downcase.chars.uniq.count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_count_distinct_characters
+    candidate = method(:count_distinct_characters)
+    assert_equal(0, candidate.call(""""))
+    assert_equal(5, candidate.call(""abcde""))
+    assert_equal(5, candidate.call(""abcdecadeCADE""))
+    assert_equal(1, candidate.call(""aaaaAAAAaaaa""))
+    assert_equal(5, candidate.call(""Jerry jERRY JeRRRY""))
+  end
+end
+"
+HumanEval_17,npi_Deva,rb,"' 'हाहाहा' - क्वार्टर नोट, एक बीटसम्म रहन्छ 'ओ रक्सि' - आधा नोट, दुई पटकसम्म चलेको हुन्छ ।'ओ' - पूरा नोट, चार पटकसम्म रहन्छ ।यहाँ एउटा किंवदन्ती छ:अन्तिम होइन।तपाईँको कार्य यो स्ट्रिङलाई पार्स गर्नु हो र पूर्णांकहरूको एरे फर्काउनु हो जुन प्रत्येकले कति पटक धड्किन्छ भन्नेसँग मेल खान्छ ।यो प्रकार्यको इनपुट विशेष ASCII ढाँचामा संगीत नोटहरू प्रतिनिधित्व गर्ने स्ट्रिङ हो।# >>> parse_music.call(""o o| .| o| o| .| .| .| .| o o"")
+# [4, 2, 1, 2, 2, 1, 1, 1, 1, 4, 4]
+def parse_music(music_string)
+","def parse_music(music_string)
+  # Split the input string into individual notes.
+  notes = music_string.split
+
+  # Map each note to its corresponding number of beats.
+  notes.map do |note|
+    case note
+    when 'o'
+      4
+    when 'o|'
+      2
+    when '.|'
+      1
+    else
+      0
+    end
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_parse_music
+    candidate = method(:parse_music)
+    assert_equal([], candidate.call(""""))
+    assert_equal([4, 4, 4, 4], candidate.call(""o o o o""))
+    assert_equal([1, 1, 1, 1], candidate.call("".| .| .| .|""))
+    assert_equal([2, 2, 1, 1, 4, 4, 4, 4], candidate.call(""o| o| .| .| o o o o""))
+    assert_equal([2, 1, 2, 1, 4, 2, 4, 2], candidate.call(""o| .| o| .| o o| o o|""))
+  end
+end
+"
+HumanEval_18,npi_Deva,rb,"मूल स्ट्रिङमा दिइएको सबस्ट्रिंग कति पटक फेला पार्न सकिन्छ भन्ने पत्ता लगाउनुहोस्। ओभरल्यापिङ केसहरू गणना गर्नुहोस्।# >>> how_many_times.call("""", ""a"")
+# 0
+# >>> how_many_times.call(""aaa"", ""a"")
+# 3
+# >>> how_many_times.call(""aaaa"", ""aa"")
+# 3
+def how_many_times(string, substring)
+","def how_many_times(string, substring)
+  return 0 if substring.empty?
+  count = 0
+  i = 0
+  while i <= string.length - substring.length
+    if string[i, substring.length] == substring
+      count += 1
+    end
+    i += 1
+  end
+  count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_how_many_times
+    candidate = method(:how_many_times)
+    assert_equal(0, candidate.call("""", ""x""))
+    assert_equal(4, candidate.call(""xyxyxyx"", ""x""))
+    assert_equal(4, candidate.call(""cacacacac"", ""cac""))
+    assert_equal(1, candidate.call(""john doe"", ""john""))
+  end
+end
+"
+HumanEval_19,npi_Deva,rb,"साना देखि ठूला सम्म क्रमबद्ध संख्याहरु सहितको स्ट्रिङ फर्काउँदछ ।वैध विकल्पहरू 'शून्य', 'एक', 'दुई', 'तीन', 'चार', 'पाँच', 'छ', 'सात', 'आठ' र 'नौ' हुन्। इनपुट 'शून्य' देखि 'नौ' सम्मको संख्यात्मकहरूको अन्तरिक्ष-सीमित स्ट्रिङ हो।# >>> sort_numbers.call(""three one five"")
+# ""one three five""
+def sort_numbers(numbers)
+","def sort_numbers(numbers)
+  numeral_map = {
+    'zero' => 0,
+    'one' => 1,
+    'two' => 2,
+    'three' => 3,
+    'four' => 4,
+    'five' => 5,
+    'six' => 6,
+    'seven' => 7,
+    'eight' => 8,
+    'nine' => 9
+  }
+
+  number_words = numbers.split
+  sorted_numbers = number_words.sort_by { |word| numeral_map[word] }
+  sorted_numbers.join(' ')
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sort_numbers
+    candidate = method(:sort_numbers)
+    assert_equal("""", candidate.call(""""))
+    assert_equal(""three"", candidate.call(""three""))
+    assert_equal(""three five nine"", candidate.call(""three five nine""))
+    assert_equal(""zero four five seven eight nine"", candidate.call(""five zero four seven nine eight""))
+    assert_equal(""zero one two three four five six"", candidate.call(""six five four three two one zero""))
+  end
+end
+"
+HumanEval_20,npi_Deva,rb,"अन्य र तिनीहरूलाई क्रममा फर्काउनुहोस् (सानो संख्या, ठूलो संख्या) ।संख्याहरूको एक आपूर्ति गरिएको सरणीबाट (कम्तिमा दुई लम्बाईको) चयन गर्नुहोस् र दुई फिर्ता गर्नुहोस् जुन प्रत्येकको नजिक छ # >>> find_closest_elements.call([1.0, 2.0, 3.0, 4.0, 5.0, 2.2])
+# [2.0, 2.2]
+# >>> find_closest_elements.call([1.0, 2.0, 3.0, 4.0, 5.0, 2.0])
+# [2.0, 2.0]
+def find_closest_elements(numbers)
+","def find_closest_elements(numbers)
+  sorted_numbers = numbers.sort
+  closest_pair = [sorted_numbers[0], sorted_numbers[1]]
+  min_difference = (sorted_numbers[1] - sorted_numbers[0]).abs
+
+  (1...(sorted_numbers.length - 1)).each do |i|
+    current_difference = (sorted_numbers[i + 1] - sorted_numbers[i]).abs
+    if current_difference < min_difference
+      min_difference = current_difference
+      closest_pair = [sorted_numbers[i], sorted_numbers[i + 1]]
+    end
+  end
+
+  closest_pair
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_find_closest_elements
+    candidate = method(:find_closest_elements)
+    assert_equal([3.9, 4.0], candidate.call([1.0, 2.0, 3.9, 4.0, 5.0, 2.2]))
+    assert_equal([5.0, 5.9], candidate.call([1.0, 2.0, 5.9, 4.0, 5.0]))
+    assert_equal([2.0, 2.2], candidate.call([1.0, 2.0, 3.0, 4.0, 5.0, 2.2]))
+    assert_equal([2.0, 2.0], candidate.call([1.0, 2.0, 3.0, 4.0, 5.0, 2.0]))
+    assert_equal([2.2, 3.1], candidate.call([1.1, 2.2, 3.1, 4.1, 5.1]))
+  end
+end
+"
+HumanEval_21,npi_Deva,rb,"यस्तो कि सब भन्दा सानो संख्या ० र सब भन्दा ठूलो १ हुनेछ संख्याहरूको एरे दिइएको छ (कम्तिमा दुई तत्वहरूको), त्यो एरेमा रैखिक रूपान्तरण लागू गर्नुहोस्, # >>> rescale_to_unit.call([1.0, 2.0, 3.0, 4.0, 5.0])
+# [0.0, 0.25, 0.5, 0.75, 1.0]
+def rescale_to_unit(numbers)
+","def rescale_to_unit(numbers)
+  min = numbers.min
+  max = numbers.max
+  range = max - min
+  return numbers.map { |num| (num - min) / range.to_f }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_rescale_to_unit
+    candidate = method(:rescale_to_unit)
+    assert_equal([0.0, 1.0], candidate.call([2.0, 49.9]))
+    assert_equal([1.0, 0.0], candidate.call([100.0, 49.9]))
+    assert_equal([0.0, 0.25, 0.5, 0.75, 1.0], candidate.call([1.0, 2.0, 3.0, 4.0, 5.0]))
+    assert_equal([0.25, 0.0, 1.0, 0.5, 0.75], candidate.call([2.0, 1.0, 5.0, 3.0, 4.0]))
+    assert_equal([0.25, 0.0, 1.0, 0.5, 0.75], candidate.call([12.0, 11.0, 15.0, 13.0, 14.0]))
+  end
+end
+"
+HumanEval_22,npi_Deva,rb,"कुनै पनि rbthon मानहरूको दिइएको एरेलाई पूर्णांकहरूको लागि मात्र फिल्टर गर्नुहोस् ।# >>> filter_integers.call([""a"", 3.14, 5])
+# [5]
+# >>> filter_integers.call([1, 2, 3, ""abc"", {}, []])
+# [1, 2, 3]
+def filter_integers(values)
+","def filter_integers(values)
+  values.select { |value| value.is_a?(Integer) }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_filter_integers
+    candidate = method(:filter_integers)
+    assert_equal([], candidate.call([]))
+    assert_equal([4, 9], candidate.call([4, {}, [], 23.2, 9, ""adasd""]))
+    assert_equal([3, 3, 3], candidate.call([3, ""c"", 3, 3, ""a"", ""b""]))
+  end
+end
+"
+HumanEval_23,npi_Deva,rb,"दिइएको स्ट्रिंगको लम्बाई फिर्ता गर्नुहोस् ।# >>> strlen.call("""")
+# 0
+# >>> strlen.call(""abc"")
+# 3
+def strlen(string)
+","strlen = lambda do |string|
+  string.length
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_strlen
+    candidate = method(:strlen)
+    assert_equal(0, candidate.call(""""))
+    assert_equal(1, candidate.call(""x""))
+    assert_equal(9, candidate.call(""asdasnakj""))
+  end
+end
+"
+HumanEval_24,npi_Deva,rb,"दिइएको संख्या n को लागि, n भन्दा सानो, n लाई समान रूपले विभाजित गर्ने सबैभन्दा ठूलो संख्या खोज्नुहोस् # >>> largest_divisor.call(15)
+# 5
+def largest_divisor(n)
+","def largest_divisor(n)
+  (n - 1).downto(1) do |i|
+    return i if n % i == 0
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_largest_divisor
+    candidate = method(:largest_divisor)
+    assert_equal(1, candidate.call(3))
+    assert_equal(1, candidate.call(7))
+    assert_equal(5, candidate.call(10))
+    assert_equal(50, candidate.call(100))
+    assert_equal(7, candidate.call(49))
+  end
+end
+"
+HumanEval_25,npi_Deva,rb,"इनपुट नम्बर सबै कारकहरूको गुणनफल बराबर हुनुपर्छ ।प्रत्येक कारकलाई कारककरणमा कति पटक देखा पर्दछ भन्नेसँग मेल खाने गरी क्रमबद्ध गर्नुपर्दछ।दिइएको पूर्णांकको अभाज्य गुणकहरूको सरणीलाई सानो देखि ठूलो सम्मको क्रममा फर्काउँछ।# >>> factorize.call(8)
+# [2, 2, 2]
+# >>> factorize.call(25)
+# [5, 5]
+# >>> factorize.call(70)
+# [2, 5, 7]
+def factorize(n)
+","def factorize(n)
+  factors = []
+  divisor = 2
+  while n > 1
+    while n % divisor == 0
+      factors << divisor
+      n /= divisor
+    end
+    divisor += 1
+  end
+  factors
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_factorize
+    candidate = method(:factorize)
+    assert_equal([2], candidate.call(2))
+    assert_equal([2, 2], candidate.call(4))
+    assert_equal([2, 2, 2], candidate.call(8))
+    assert_equal([3, 19], candidate.call(57))
+    assert_equal([3, 3, 19, 19], candidate.call(3249))
+    assert_equal([3, 3, 3, 19, 19, 19], candidate.call(185193))
+    assert_equal([3, 19, 19, 19], candidate.call(20577))
+    assert_equal([2, 3, 3], candidate.call(18))
+  end
+end
+"
+HumanEval_26,npi_Deva,rb,"आगतमा जस्तै तत्वहरूको क्रम राख्नुहोस्।पूर्णांकहरूको एरेबाट, सबै तत्वहरू हटाउनुहोस् जुन एक पटक भन्दा बढी देखा पर्दछ।# >>> remove_duplicates.call([1, 2, 3, 2, 4])
+# [1, 3, 4]
+def remove_duplicates(numbers)
+","def remove_duplicates(numbers)
+  numbers.select { |num| numbers.count(num) == 1 }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_remove_duplicates
+    candidate = method(:remove_duplicates)
+    assert_equal([], candidate.call([]))
+    assert_equal([1, 2, 3, 4], candidate.call([1, 2, 3, 4]))
+    assert_equal([1, 4, 5], candidate.call([1, 2, 3, 2, 4, 3, 5]))
+  end
+end
+"
+HumanEval_27,npi_Deva,rb,"दिइएको स्ट्रिङका लागि, लघु अक्षरलाई ठूला अक्षरमा र ठूला अक्षरलाई लघु अक्षरमा पल्टाउनुहोस्।# >>> flip_case.call(""Hello"")
+# ""hELLO""
+def flip_case(string)
+","def flip_case(string)
+  string.swapcase
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_flip_case
+    candidate = method(:flip_case)
+    assert_equal("""", candidate.call(""""))
+    assert_equal(""hELLO!"", candidate.call(""Hello!""))
+    assert_equal(""tHESE VIOLENT DELIGHTS HAVE VIOLENT ENDS"", candidate.call(""These violent delights have violent ends""))
+  end
+end
+"
+HumanEval_28,npi_Deva,rb,"स्ट्रिंगहरूको एरेलाई एकल स्ट्रिंगमा जोड्ने# >>> concatenate.call([])
+# """"
+# >>> concatenate.call([""a"", ""b"", ""c""])
+# ""abc""
+def concatenate(strings)
+","def concatenate(strings)
+  strings.join
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_concatenate
+    candidate = method(:concatenate)
+    assert_equal("""", candidate.call([]))
+    assert_equal(""xyz"", candidate.call([""x"", ""y"", ""z""]))
+    assert_equal(""xyzwk"", candidate.call([""x"", ""y"", ""z"", ""w"", ""k""]))
+  end
+end
+"
+HumanEval_29,npi_Deva,rb,"दिइएको उपसर्गबाट सुरु हुने stringहरूको लागि मात्र इनपुट array फिल्टर गर्नुहोस्।# >>> filter_by_prefix.call([], ""a"")
+# []
+# >>> filter_by_prefix.call([""abc"", ""bcd"", ""cde"", ""array""], ""a"")
+# [""abc"", ""array""]
+def filter_by_prefix(strings, prefix)
+","def filter_by_prefix(strings, prefix)
+  strings.select { |string| string.start_with?(prefix) }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_filter_by_prefix
+    candidate = method(:filter_by_prefix)
+    assert_equal([], candidate.call([], ""john""))
+    assert_equal([""xxx"", ""xxxAAA"", ""xxx""], candidate.call([""xxx"", ""asd"", ""xxy"", ""john doe"", ""xxxAAA"", ""xxx""], ""xxx""))
+  end
+end
+"
+HumanEval_30,npi_Deva,rb,"पङ्क्तिमा केवल सकारात्मक संख्याहरू फर्काउँदछ ।# >>> get_positive.call([-1, 2, -4, 5, 6])
+# [2, 5, 6]
+# >>> get_positive.call([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])
+# [5, 3, 2, 3, 9, 123, 1]
+def get_positive(l)
+","get_positive = lambda do |l|
+  l.select { |num| num > 0 }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_get_positive
+    candidate = method(:get_positive)
+    assert_equal([4, 5, 6], candidate.call([-1, -2, 4, 5, 6]))
+    assert_equal([5, 3, 2, 3, 3, 9, 123, 1], candidate.call([5, 3, -5, 2, 3, 3, 9, 0, 123, 1, -10]))
+    assert_equal([], candidate.call([-1, -2]))
+    assert_equal([], candidate.call([]))
+  end
+end
+"
+HumanEval_31,npi_Deva,rb,"यदि दिइएको संख्या अभाज्य हो भने सत्य फर्काउनुहोस्, र अन्यथा गलत।# >>> is_prime.call(6)
+# false
+# >>> is_prime.call(101)
+# true
+# >>> is_prime.call(11)
+# true
+# >>> is_prime.call(13441)
+# true
+# >>> is_prime.call(61)
+# true
+# >>> is_prime.call(4)
+# false
+# >>> is_prime.call(1)
+# false
+def is_prime(n)
+","is_prime = lambda do |n|
+  return false if n <= 1
+  return true if n == 2
+  return false if n.even?
+
+  max_divisor = Math.sqrt(n).to_i
+  (3..max_divisor).step(2).each do |i|
+    return false if n % i == 0
+  end
+
+  true
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_prime
+    candidate = method(:is_prime)
+    assert_equal(false, candidate.call(6))
+    assert_equal(true, candidate.call(101))
+    assert_equal(true, candidate.call(11))
+    assert_equal(true, candidate.call(13441))
+    assert_equal(true, candidate.call(61))
+    assert_equal(false, candidate.call(4))
+    assert_equal(false, candidate.call(1))
+    assert_equal(true, candidate.call(5))
+    assert_equal(true, candidate.call(11))
+    assert_equal(true, candidate.call(17))
+    assert_equal(false, candidate.call(85))
+    assert_equal(false, candidate.call(77))
+    assert_equal(false, candidate.call(255379))
+  end
+end
+"
+HumanEval_33,npi_Deva,rb,"l को सम्बन्धित सूचकांकहरूको मानहरूमा, तर क्रमबद्ध।l' तीनद्वारा विभाजित नहुने सूचकांकमा l सँग मिल्दोजुल्दो हुन्छ, जबकि तीनद्वारा विभाजित हुने सूचकांकमा यसको मान बराबर हुन्छ ।यो फंक्शनले एउटा एर्रे लिन्छ l र एउटा एर्रे फर्काउँछ l' यस्तो कि # >>> sort_third.call([1, 2, 3])
+# [1, 2, 3]
+# >>> sort_third.call([5, 6, 3, 4, 8, 9, 2])
+# [2, 6, 3, 4, 8, 9, 5]
+def sort_third(l)
+","def sort_third(l)
+  divisible_by_three = l.each_with_index.select { |_, idx| idx % 3 == 0 }.map(&:first).sort
+  l.each_with_index.map { |val, idx| idx % 3 == 0 ? divisible_by_three.shift : val }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sort_third
+    candidate = method(:sort_third)
+    assert_equal([2, 6, 3, 4, 8, 9, 5], candidate.call([5, 6, 3, 4, 8, 9, 2]))
+    assert_equal([2, 8, 3, 4, 6, 9, 5], candidate.call([5, 8, 3, 4, 6, 9, 2]))
+    assert_equal([2, 6, 9, 4, 8, 3, 5], candidate.call([5, 6, 9, 4, 8, 3, 2]))
+    assert_equal([2, 6, 3, 4, 8, 9, 5, 1], candidate.call([5, 6, 3, 4, 8, 9, 2, 1]))
+  end
+end
+"
+HumanEval_34,npi_Deva,rb,"एरेमा क्रमबद्ध अनन्य तत्वहरू फर्काउँदछ# >>> unique.call([5, 3, 5, 2, 3, 3, 9, 0, 123])
+# [0, 2, 3, 5, 9, 123]
+def unique(l)
+","def unique(l)
+  l.uniq.sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_unique
+    candidate = method(:unique)
+    assert_equal([0, 2, 3, 5, 9, 123], candidate.call([5, 3, 5, 2, 3, 3, 9, 0, 123]))
+  end
+end
+"
+HumanEval_35,npi_Deva,rb,"array मा अधिकतम तत्व फर्काउँछ. # >>> max_element.call([1, 2, 3])
+# 3
+# >>> max_element.call([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])
+# 123
+def max_element(l)
+","def max_element(l)
+  l.max
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_max_element
+    candidate = method(:max_element)
+    assert_equal(3, candidate.call([1, 2, 3]))
+    assert_equal(124, candidate.call([5, 3, -5, 2, -3, 3, 9, 0, 124, 1, -10]))
+  end
+end
+"
+HumanEval_36,npi_Deva,rb,"अंक 7 को संख्या फिर्ता गर्नुहोस् जुन n भन्दा कम पूर्णांकमा देखा पर्दछ जुन 11 वा 13 द्वारा विभाजित हुन्छ।# >>> fizz_buzz.call(50)
+# 0
+# >>> fizz_buzz.call(78)
+# 2
+# >>> fizz_buzz.call(79)
+# 3
+def fizz_buzz(n)
+","def fizz_buzz(n)
+  count = 0
+  (1...n).each do |i|
+    if i % 11 == 0 || i % 13 == 0
+      count += i.to_s.count('7')
+    end
+  end
+  count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fizz_buzz
+    candidate = method(:fizz_buzz)
+    assert_equal(0, candidate.call(50))
+    assert_equal(2, candidate.call(78))
+    assert_equal(3, candidate.call(79))
+    assert_equal(3, candidate.call(100))
+    assert_equal(6, candidate.call(200))
+    assert_equal(192, candidate.call(4000))
+    assert_equal(639, candidate.call(10000))
+    assert_equal(8026, candidate.call(100000))
+  end
+end
+"
+HumanEval_37,npi_Deva,rb,"l को सम सूचकांकको मानमा, तर क्रमबद्ध।l' l सँग समान छ, जबकि यसको मानहरू समान छन्।यो फंक्शनले एउटा एर्रे लिन्छ l र एउटा एर्रे फर्काउँछ l' यस्तो कि # >>> sort_even.call([1, 2, 3])
+# [1, 2, 3]
+# >>> sort_even.call([5, 6, 3, 4])
+# [3, 6, 5, 4]
+def sort_even(l)
+","def sort_even(l)
+  even_indices = l.each_index.select { |i| i.even? }
+  even_values = even_indices.map { |i| l[i] }.sort
+  
+  even_index = 0
+  l.each_with_index.map do |value, index|
+    if index.even?
+      even_values[even_index].tap { even_index += 1 }
+    else
+      value
+    end
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sort_even
+    candidate = method(:sort_even)
+    assert_equal([1, 2, 3], candidate.call([1, 2, 3]))
+    assert_equal([-10, 3, -5, 2, -3, 3, 5, 0, 9, 1, 123], candidate.call([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10]))
+    assert_equal([-12, 8, 3, 4, 5, 2, 12, 11, 23, -10], candidate.call([5, 8, -12, 4, 23, 2, 3, 11, 12, -10]))
+  end
+end
+"
+HumanEval_39,npi_Deva,rb,"prime_fib फर्काउँछ n-th नम्बर जुन फिबोनैचि नम्बर हो र यो पनि प्राइम हो। # >>> prime_fib.call(1)
+# 2
+# >>> prime_fib.call(2)
+# 3
+# >>> prime_fib.call(3)
+# 5
+# >>> prime_fib.call(4)
+# 13
+# >>> prime_fib.call(5)
+# 89
+def prime_fib(n)
+","def prime_fib(n)
+  require 'prime'
+  
+  fibs = Enumerator.new do |y|
+    a, b = 0, 1
+    loop do
+      a, b = b, a + b
+      y << b
+    end
+  end
+  
+  prime_fibs = fibs.lazy.select { |fib| Prime.prime?(fib) }
+  prime_fibs.first(n).last
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_prime_fib
+    candidate = method(:prime_fib)
+    assert_equal(2, candidate.call(1))
+    assert_equal(3, candidate.call(2))
+    assert_equal(5, candidate.call(3))
+    assert_equal(13, candidate.call(4))
+    assert_equal(89, candidate.call(5))
+    assert_equal(233, candidate.call(6))
+    assert_equal(1597, candidate.call(7))
+    assert_equal(28657, candidate.call(8))
+    assert_equal(514229, candidate.call(9))
+    assert_equal(433494437, candidate.call(10))
+  end
+end
+"
+HumanEval_40,npi_Deva,rb,"शून्यको योग, र अन्यथा गलत।यो फर्काउँछ यदि त्यहाँ तीन भिन्न तत्वहरू छन् एर्रेमा कि triples_sum_to_zero ले पूर्णांकहरूको एरेलाई इनपुटको रूपमा लिन्छ।# >>> triples_sum_to_zero.call([1, 3, 5, 0])
+# false
+# >>> triples_sum_to_zero.call([1, 3, -2, 1])
+# true
+# >>> triples_sum_to_zero.call([1, 2, 3, 7])
+# false
+# >>> triples_sum_to_zero.call([2, 4, -5, 3, 9, 7])
+# true
+# >>> triples_sum_to_zero.call([1])
+# false
+def triples_sum_to_zero(l)
+","def triples_sum_to_zero(l)
+  n = l.length
+  (0...n-2).each do |i|
+    ((i+1)...n-1).each do |j|
+      ((j+1)...n).each do |k|
+        return true if l[i] + l[j] + l[k] == 0
+      end
+    end
+  end
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_triples_sum_to_zero
+    candidate = method(:triples_sum_to_zero)
+    assert_equal(false, candidate.call([1, 3, 5, 0]))
+    assert_equal(false, candidate.call([1, 3, 5, -1]))
+    assert_equal(true, candidate.call([1, 3, -2, 1]))
+    assert_equal(false, candidate.call([1, 2, 3, 7]))
+    assert_equal(false, candidate.call([1, 2, 5, 7]))
+    assert_equal(true, candidate.call([2, 4, -5, 3, 9, 7]))
+    assert_equal(false, candidate.call([1]))
+    assert_equal(false, candidate.call([1, 3, 5, -100]))
+    assert_equal(false, candidate.call([100, 3, 5, -100]))
+  end
+end
+"
+HumanEval_41,npi_Deva,rb,"यो प्रकार्यले यस्ता टक्करहरूको संख्या आउटपुट गर्दछ।यिनीहरू एक अर्कामा ठोक्किन नपरेझैं आफ्नो यात्राको मार्गमा छन् ।तर, यी कारहरू अत्यन्तै बलियो र बलियो छन्, त्यसैले तिनीहरू निरन्तर चल्छन्।जब एउटा कार जुन बायाँबाट दायाँतिर जाँदैछ दायाँबाट बायाँतिर जाँदै गरेको कारलाई ठक्कर दिन्छ।सबै कारहरु एकै गतिमा चल्छन्. दुई कारहरु एक अर्कामा ठोक्किन्छन् भनिन्छ.कारहरूको दुई सेटहरू सुरुमा धेरै टाढाबाट सुरु हुन्छ n कारहरू बायाँबाट दायाँतिर दौडिरहेका छन्; एकै समयमा, n कारहरूको भिन्न सेट एउटा सडक कल्पना गर्नुहोस् जुन एकदमै सीधा अनि अनन्त लामो रेखा हो।def car_race_collision(n)
+","def car_race_collision(n)
+  n
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_car_race_collision
+    candidate = method(:car_race_collision)
+    assert_equal(4, candidate.call(2))
+    assert_equal(9, candidate.call(3))
+    assert_equal(16, candidate.call(4))
+    assert_equal(64, candidate.call(8))
+    assert_equal(100, candidate.call(10))
+  end
+end
+"
+HumanEval_42,npi_Deva,rb,"तत्वहरू १ ले वृद्धि भएको एरे फर्काउनुहोस्।# >>> incr_list.call([1, 2, 3])
+# [2, 3, 4]
+# >>> incr_list.call([5, 3, 5, 2, 3, 3, 9, 0, 123])
+# [6, 4, 6, 3, 4, 4, 10, 1, 124]
+def incr_list(l)
+","def incr_list(l)
+  l.map { |x| x + 1 }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_incr_list
+    candidate = method(:incr_list)
+    assert_equal([], candidate.call([]))
+    assert_equal([4, 3, 2], candidate.call([3, 2, 1]))
+    assert_equal([6, 3, 6, 3, 4, 4, 10, 1, 124], candidate.call([5, 2, 5, 2, 3, 3, 9, 0, 123]))
+  end
+end
+"
+HumanEval_43,npi_Deva,rb,"शून्यको योग, र अन्यथा गलत।यो सत्य फर्काउँछ यदि त्यहाँ एर्रेमा दुई भिन्न तत्वहरू छन् जुन pairs_sum_to_zero ले पूर्णांकहरूको एरेलाई इनपुटको रूपमा लिन्छ।# >>> pairs_sum_to_zero.call([1, 3, 5, 0])
+# false
+# >>> pairs_sum_to_zero.call([1, 3, -2, 1])
+# false
+# >>> pairs_sum_to_zero.call([1, 2, 3, 7])
+# false
+# >>> pairs_sum_to_zero.call([2, 4, -5, 3, 5, 7])
+# true
+# >>> pairs_sum_to_zero.call([1])
+# false
+def pairs_sum_to_zero(l)
+","def pairs_sum_to_zero(l)
+  num_set = l.to_set
+  l.each do |num|
+    return true if num != 0 && num_set.include?(-num)
+  end
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_pairs_sum_to_zero
+    candidate = method(:pairs_sum_to_zero)
+    assert_equal(false, candidate.call([1, 3, 5, 0]))
+    assert_equal(false, candidate.call([1, 3, -2, 1]))
+    assert_equal(false, candidate.call([1, 2, 3, 7]))
+    assert_equal(true, candidate.call([2, 4, -5, 3, 5, 7]))
+    assert_equal(false, candidate.call([1]))
+    assert_equal(true, candidate.call([-3, 9, -1, 3, 2, 30]))
+    assert_equal(true, candidate.call([-3, 9, -1, 3, 2, 31]))
+    assert_equal(false, candidate.call([-3, 9, -1, 4, 2, 30]))
+    assert_equal(false, candidate.call([-3, 9, -1, 4, 2, 31]))
+  end
+end
+"
+HumanEval_44,npi_Deva,rb,"आधार संख्या १० भन्दा कम छ।रूपान्तरण पछि स्ट्रिंग प्रतिनिधित्व फिर्ता गर्नुहोस्।आगत संख्या x को संख्यात्मक आधारलाई आधारमा परिवर्तन गर्नुहोस्।# >>> change_base.call(8, 3)
+# ""22""
+# >>> change_base.call(8, 2)
+# ""1000""
+# >>> change_base.call(7, 2)
+# ""111""
+def change_base(x, base)
+","def change_base(x, base)
+  return '0' if x == 0
+  digits = []
+  while x > 0
+    digits << (x % base).to_s
+    x /= base
+  end
+  digits.reverse.join
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_change_base
+    candidate = method(:change_base)
+    assert_equal(""22"", candidate.call(8, 3))
+    assert_equal(""100"", candidate.call(9, 3))
+    assert_equal(""11101010"", candidate.call(234, 2))
+    assert_equal(""10000"", candidate.call(16, 2))
+    assert_equal(""1000"", candidate.call(8, 2))
+    assert_equal(""111"", candidate.call(7, 2))
+    assert_equal(""2"", candidate.call(2, 3))
+    assert_equal(""3"", candidate.call(3, 4))
+    assert_equal(""4"", candidate.call(4, 5))
+    assert_equal(""5"", candidate.call(5, 6))
+    assert_equal(""6"", candidate.call(6, 7))
+    assert_equal(""7"", candidate.call(7, 8))
+  end
+end
+"
+HumanEval_45,npi_Deva,rb,"त्रिभुजको लागि एक पक्षको लम्बाई र उच्च रिटर्न क्षेत्र दिइएको छ।# >>> triangle_area.call(5, 3)
+# 7.5
+def triangle_area(a, h)
+","def triangle_area(a, h)
+  (a * h) / 2.0
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_triangle_area
+    candidate = method(:triangle_area)
+    assert_equal(7.5, candidate.call(5, 3))
+    assert_equal(2.0, candidate.call(2, 2))
+    assert_equal(40.0, candidate.call(10, 8))
+  end
+end
+"
+HumanEval_46,npi_Deva,rb,"कृपया fib4 संख्या अनुक्रमको n-औं तत्वको कुशलतापूर्वक गणना गर्न एउटा प्रकार्य लेख्नुहोस्। पुनरावृत्ति प्रयोग नगर्नुहोस्।फाइबर (n) -> फाइबर (n-1) + फाइबर (n-2) + फाइबर (n-3) + फाइबर (n-4) ।fib4(3) -> 0 fib4(2) -> 2 fib4(1) -> 0 fib4(0) -> 0 फाइबोनैकी अनुक्रम जस्तै फाइबोनैकी अनुक्रमको परिभाषा निम्न प्रकार छ:# >>> fib4.call(5)
+# 4
+# >>> fib4.call(6)
+# 8
+# >>> fib4.call(7)
+# 14
+def fib4(n)
+","def fib4(n)
+  return 0 if n == 0 || n == 1 || n == 3
+  return 2 if n == 2
+
+  fib4_seq = [0, 0, 2, 0]
+  (4..n).each do |i|
+    fib4_seq[i] = fib4_seq[i-1] + fib4_seq[i-2] + fib4_seq[i-3] + fib4_seq[i-4]
+  end
+  fib4_seq[n]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fib4
+    candidate = method(:fib4)
+    assert_equal(4, candidate.call(5))
+    assert_equal(28, candidate.call(8))
+    assert_equal(104, candidate.call(10))
+    assert_equal(386, candidate.call(12))
+  end
+end
+"
+HumanEval_47,npi_Deva,rb,"array l मा तत्वहरूको मध्यमा फिर्ता गर्नुहोस्।# >>> median.call([3, 1, 2, 4, 5])
+# 3
+# >>> median.call([-10, 4, 6, 1000, 10, 20])
+# 15.0
+def median(l)
+","def median(l)
+  sorted = l.sort
+  len = sorted.length
+  if len.odd?
+    sorted[len / 2]
+  else
+    (sorted[len / 2 - 1] + sorted[len / 2]) / 2.0
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_median
+    candidate = method(:median)
+    assert_equal(3, candidate.call([3, 1, 2, 4, 5]))
+    assert_equal(8.0, candidate.call([-10, 4, 6, 1000, 10, 20]))
+    assert_equal(5, candidate.call([5]))
+    assert_equal(5.5, candidate.call([6, 5]))
+    assert_equal(7, candidate.call([8, 1, 3, 9, 9, 2, 7]))
+  end
+end
+"
+HumanEval_48,npi_Deva,rb,"दिइएको स्ट्रिङ पालिन्ड्रोम हो कि होइन जाँच गर्छ ।# >>> is_palindrome.call("""")
+# true
+# >>> is_palindrome.call(""aba"")
+# true
+# >>> is_palindrome.call(""aaaaa"")
+# true
+# >>> is_palindrome.call(""zbcd"")
+# false
+def is_palindrome(text)
+","is_palindrome = lambda do |text|
+  text == text.reverse
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_palindrome
+    candidate = method(:is_palindrome)
+    assert_equal(true, candidate.call(""""))
+    assert_equal(true, candidate.call(""aba""))
+    assert_equal(true, candidate.call(""aaaaa""))
+    assert_equal(false, candidate.call(""zbcd""))
+    assert_equal(true, candidate.call(""xywyx""))
+    assert_equal(false, candidate.call(""xywyz""))
+    assert_equal(false, candidate.call(""xywzx""))
+  end
+end
+"
+HumanEval_49,npi_Deva,rb,"२^n मोडुलो p फर्काउनुहोस् (संख्याको बारेमा सचेत हुनुहोस्) ।# >>> modp.call(3, 5)
+# 3
+# >>> modp.call(1101, 101)
+# 2
+# >>> modp.call(0, 101)
+# 1
+# >>> modp.call(3, 11)
+# 8
+# >>> modp.call(100, 101)
+# 1
+def modp(n, p)
+","def modp(n, p)
+  return 1 if p == 1
+  2.pow(n, p)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_modp
+    candidate = method(:modp)
+    assert_equal(3, candidate.call(3, 5))
+    assert_equal(2, candidate.call(1101, 101))
+    assert_equal(1, candidate.call(0, 101))
+    assert_equal(8, candidate.call(3, 11))
+    assert_equal(1, candidate.call(100, 101))
+    assert_equal(4, candidate.call(30, 5))
+    assert_equal(3, candidate.call(31, 5))
+  end
+end
+"
+HumanEval_51,npi_Deva,rb,"remove_vowels एक प्रकार्य हो जसले स्ट्रिंग लिन्छ र स्वर बिना स्ट्रिंग फर्काउँछ।# >>> remove_vowels.call("""")
+# """"
+# >>> remove_vowels.call(""abcdef"")
+# ""bcdf""
+# >>> remove_vowels.call(""aaaaa"")
+# """"
+# >>> remove_vowels.call(""aaBAA"")
+# ""B""
+# >>> remove_vowels.call(""zbcd"")
+# ""zbcd""
+def remove_vowels(text)
+","def remove_vowels(text)
+  text.delete('aeiouAEIOU')
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_remove_vowels
+    candidate = method(:remove_vowels)
+    assert_equal("""", candidate.call(""""))
+    assert_equal(""bcdf
+ghjklm"", candidate.call(""abcdef
+ghijklm""))
+    assert_equal(""fdcb"", candidate.call(""fedcba""))
+    assert_equal("""", candidate.call(""eeeee""))
+    assert_equal(""cB"", candidate.call(""acBAA""))
+    assert_equal(""cB"", candidate.call(""EcBOO""))
+    assert_equal(""ybcd"", candidate.call(""ybcd""))
+  end
+end
+"
+HumanEval_52,npi_Deva,rb,"यदि array l मा सबै संख्याहरू threshold t भन्दा कम छन् भने true फर्काउनुहोस्।# >>> below_threshold.call([1, 2, 4, 10], 100)
+# true
+# >>> below_threshold.call([1, 20, 4, 10], 5)
+# false
+def below_threshold(l, t)
+","def below_threshold(l, t)
+  l.all? { |num| num < t }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_below_threshold
+    candidate = method(:below_threshold)
+    assert_equal(true, candidate.call([1, 2, 4, 10], 100))
+    assert_equal(false, candidate.call([1, 20, 4, 10], 5))
+    assert_equal(true, candidate.call([1, 20, 4, 10], 21))
+    assert_equal(true, candidate.call([1, 20, 4, 10], 22))
+    assert_equal(true, candidate.call([1, 8, 4, 10], 11))
+    assert_equal(false, candidate.call([1, 8, 4, 10], 10))
+  end
+end
+"
+HumanEval_53,npi_Deva,rb,"दुई संख्या x र y जोड्नुहोस् # >>> add.call(2, 3)
+# 5
+# >>> add.call(5, 7)
+# 12
+def add(x, y)
+","add = ->(x, y) { x + y }","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_add
+    candidate = method(:add)
+    assert_equal(1, candidate.call(0, 1))
+    assert_equal(1, candidate.call(1, 0))
+    assert_equal(5, candidate.call(2, 3))
+    assert_equal(12, candidate.call(5, 7))
+    assert_equal(12, candidate.call(7, 5))
+  end
+end
+"
+HumanEval_54,npi_Deva,rb,"दुई शब्दमा एउटै अक्षर छ कि छैन जाँच गर्नुहोस्।# >>> same_chars.call(""eabcdzzzz"", ""dddzzzzzzzddeddabc"")
+# true
+# >>> same_chars.call(""abcd"", ""dddddddabc"")
+# true
+# >>> same_chars.call(""dddddddabc"", ""abcd"")
+# true
+# >>> same_chars.call(""eabcd"", ""dddddddabc"")
+# false
+# >>> same_chars.call(""abcd"", ""dddddddabce"")
+# false
+# >>> same_chars.call(""eabcdzzzz"", ""dddzzzzzzzddddabc"")
+# false
+def same_chars(s0, s1)
+","def same_chars(s0, s1)
+  s0.chars.uniq.all? { |char| s1.include?(char) } &&
+  s1.chars.uniq.all? { |char| s0.include?(char) }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_same_chars
+    candidate = method(:same_chars)
+    assert_equal(true, candidate.call(""eabcdzzzz"", ""dddzzzzzzzddeddabc""))
+    assert_equal(true, candidate.call(""abcd"", ""dddddddabc""))
+    assert_equal(true, candidate.call(""dddddddabc"", ""abcd""))
+    assert_equal(false, candidate.call(""eabcd"", ""dddddddabc""))
+    assert_equal(false, candidate.call(""abcd"", ""dddddddabcf""))
+    assert_equal(false, candidate.call(""eabcdzzzz"", ""dddzzzzzzzddddabc""))
+    assert_equal(false, candidate.call(""aabb"", ""aaccc""))
+  end
+end
+"
+HumanEval_55,npi_Deva,rb,"n-th फिबोनैचि संख्या फर्काउनुहोस्।# >>> fib.call(10)
+# 55
+# >>> fib.call(1)
+# 1
+# >>> fib.call(8)
+# 21
+def fib(n)
+","def fib(n)
+  return n if n <= 1
+  fib(n - 1) + fib(n - 2)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fib
+    candidate = method(:fib)
+    assert_equal(55, candidate.call(10))
+    assert_equal(1, candidate.call(1))
+    assert_equal(21, candidate.call(8))
+    assert_equal(89, candidate.call(11))
+    assert_equal(144, candidate.call(12))
+  end
+end
+"
+HumanEval_56,npi_Deva,rb,"यदि प्रत्येक खोल्ने कोष्ठकमा एक सम्बन्धित बन्द कोष्ठक छ भने सही फिर्ता गर्नुहोस्।कोष्ठकमा ""<"" र "">"" को स्ट्रिङ छ।# >>> correct_bracketing.call(""<"")
+# false
+# >>> correct_bracketing.call(""<>"")
+# true
+# >>> correct_bracketing.call(""<<><>>"")
+# true
+# >>> correct_bracketing.call(""><<>"")
+# false
+def correct_bracketing(brackets)
+","def correct_bracketing(brackets)
+  balance = 0
+  brackets.chars.each do |char|
+    if char == '<'
+      balance += 1
+    elsif char == '>'
+      balance -= 1
+    end
+    return false if balance < 0
+  end
+  balance == 0
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_correct_bracketing
+    candidate = method(:correct_bracketing)
+    assert_equal(true, candidate.call(""<>""))
+    assert_equal(true, candidate.call(""<<><>>""))
+    assert_equal(true, candidate.call(""<><><<><>><>""))
+    assert_equal(true, candidate.call(""<><><<<><><>><>><<><><<>>>""))
+    assert_equal(false, candidate.call(""<<<><>>>>""))
+    assert_equal(false, candidate.call(""><<>""))
+    assert_equal(false, candidate.call(""<""))
+    assert_equal(false, candidate.call(""<<<<""))
+    assert_equal(false, candidate.call("">""))
+    assert_equal(false, candidate.call(""<<>""))
+    assert_equal(false, candidate.call(""<><><<><>><>><<>""))
+    assert_equal(false, candidate.call(""<><><<><>><>>><>""))
+  end
+end
+"
+HumanEval_57,npi_Deva,rb,"फर्काउनुहोस् सत्य एरे तत्वहरू एकतरफा रूपमा बढ्दै वा घट्दै छन्।# >>> monotonic.call([1, 2, 4, 20])
+# true
+# >>> monotonic.call([1, 20, 4, 10])
+# false
+# >>> monotonic.call([4, 1, 0, -10])
+# true
+def monotonic(l)
+","def monotonic(l)
+  increasing = true
+  decreasing = true
+
+  (0...l.length - 1).each do |i|
+    if l[i] < l[i + 1]
+      decreasing = false
+    elsif l[i] > l[i + 1]
+      increasing = false
+    end
+  end
+
+  increasing || decreasing
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_monotonic
+    candidate = method(:monotonic)
+    assert_equal(true, candidate.call([1, 2, 4, 10]))
+    assert_equal(true, candidate.call([1, 2, 4, 20]))
+    assert_equal(false, candidate.call([1, 20, 4, 10]))
+    assert_equal(true, candidate.call([4, 1, 0, -10]))
+    assert_equal(true, candidate.call([4, 1, 1, 0]))
+    assert_equal(false, candidate.call([1, 2, 3, 2, 5, 60]))
+    assert_equal(true, candidate.call([1, 2, 3, 4, 5, 60]))
+    assert_equal(true, candidate.call([9, 9, 9, 9]))
+  end
+end
+"
+HumanEval_58,npi_Deva,rb,"दुई एरेहरूको लागि क्रमबद्ध अद्वितीय साझा तत्वहरू फर्काउँछ।# >>> common.call([1, 4, 3, 34, 653, 2, 5], [5, 7, 1, 5, 9, 653, 121])
+# [1, 5, 653]
+# >>> common.call([5, 3, 2, 8], [3, 2])
+# [2, 3]
+def common(l1, l2)
+","def common(l1, l2)
+  (l1 & l2).uniq.sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_common
+    candidate = method(:common)
+    assert_equal([1, 5, 653], candidate.call([1, 4, 3, 34, 653, 2, 5], [5, 7, 1, 5, 9, 653, 121]))
+    assert_equal([2, 3], candidate.call([5, 3, 2, 8], [3, 2]))
+    assert_equal([2, 3, 4], candidate.call([4, 3, 2, 8], [3, 2, 4]))
+    assert_equal([], candidate.call([4, 3, 2, 8], []))
+  end
+end
+"
+HumanEval_59,npi_Deva,rb,"n को सबैभन्दा ठूलो प्राइम कारक फर्काउनुहोस्। मानौं n > 1 र प्राइम होइन। # >>> largest_prime_factor.call(13195)
+# 29
+# >>> largest_prime_factor.call(2048)
+# 2
+def largest_prime_factor(n)
+","def largest_prime_factor(n)
+  factor = 2
+  while factor * factor <= n
+    if n % factor == 0
+      n /= factor
+    else
+      factor += 1
+    end
+  end
+  n
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_largest_prime_factor
+    candidate = method(:largest_prime_factor)
+    assert_equal(5, candidate.call(15))
+    assert_equal(3, candidate.call(27))
+    assert_equal(7, candidate.call(63))
+    assert_equal(11, candidate.call(330))
+    assert_equal(29, candidate.call(13195))
+  end
+end
+"
+HumanEval_60,npi_Deva,rb,"sum_to_n एउटा फंक्शन हो जसले १ देखि n सम्मका नम्बरहरूको योगफल दिन्छ ।# >>> sum_to_n.call(30)
+# 465
+# >>> sum_to_n.call(100)
+# 5050
+# >>> sum_to_n.call(5)
+# 15
+# >>> sum_to_n.call(10)
+# 55
+# >>> sum_to_n.call(1)
+# 1
+def sum_to_n(n)
+","def sum_to_n(n)
+  (1..n).sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sum_to_n
+    candidate = method(:sum_to_n)
+    assert_equal(1, candidate.call(1))
+    assert_equal(21, candidate.call(6))
+    assert_equal(66, candidate.call(11))
+    assert_equal(465, candidate.call(30))
+    assert_equal(5050, candidate.call(100))
+  end
+end
+"
+HumanEval_61,npi_Deva,rb,"यदि प्रत्येक खोल्ने कोष्ठकमा एक सम्बन्धित बन्द कोष्ठक छ भने सही फिर्ता गर्नुहोस्।कोष्ठकमा ""("" र """") को स्ट्रिङ हुन्छ ।# >>> correct_bracketing.call(""("")
+# false
+# >>> correct_bracketing.call(""()"")
+# true
+# >>> correct_bracketing.call(""(()())"")
+# true
+# >>> correct_bracketing.call("")(()"")
+# false
+def correct_bracketing(brackets)
+","def correct_bracketing(brackets)
+  balance = 0
+  brackets.each_char do |char|
+    if char == '('
+      balance += 1
+    elsif char == ')'
+      balance -= 1
+    end
+    return false if balance < 0
+  end
+  balance == 0
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_correct_bracketing
+    candidate = method(:correct_bracketing)
+    assert_equal(true, candidate.call(""()""))
+    assert_equal(true, candidate.call(""(()())""))
+    assert_equal(true, candidate.call(""()()(()())()""))
+    assert_equal(true, candidate.call(""()()((()()())())(()()(()))""))
+    assert_equal(false, candidate.call(""((()())))""))
+    assert_equal(false, candidate.call("")(()""))
+    assert_equal(false, candidate.call(""(""))
+    assert_equal(false, candidate.call(""((((""))
+    assert_equal(false, candidate.call("")""))
+    assert_equal(false, candidate.call(""(()""))
+    assert_equal(false, candidate.call(""()()(()())())(()""))
+    assert_equal(false, candidate.call(""()()(()())()))()""))
+  end
+end
+"
+HumanEval_62,npi_Deva,rb,"यो बहुपदको व्युत्पन्नलाई उही रूपमा फर्काउनुहोस्।xs[0] + xs[1] * x + xs[2] * x^2 + .... xs बहुपदको गुणांक हो।# >>> derivative.call([3, 1, 2, 4, 5])
+# [1, 4, 12, 20]
+# >>> derivative.call([1, 2, 3])
+# [2, 6]
+def derivative(xs)
+","def derivative(xs)
+  return [] if xs.length < 2
+  xs.each_with_index.map { |coef, index| coef * index }[1..-1]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_derivative
+    candidate = method(:derivative)
+    assert_equal([1, 4, 12, 20], candidate.call([3, 1, 2, 4, 5]))
+    assert_equal([2, 6], candidate.call([1, 2, 3]))
+    assert_equal([2, 2], candidate.call([3, 2, 1]))
+    assert_equal([2, 2, 0, 16], candidate.call([3, 2, 1, 0, 4]))
+    assert_equal([], candidate.call([1]))
+  end
+end
+"
+HumanEval_63,npi_Deva,rb,"कृपया एउटा प्रकार्य लेख्नुहोस् जसले फाइबफिस नम्बर अनुक्रमको n-औं तत्वलाई कुशलतापूर्वक गणना गर्न सक्छ।फाइब्रिड (n) == फाइब्रिड (n-1) + फाइब्रिड (n-2) + फाइब्रिड (n-3) ।१)फिक्फिफ ((१) == ० फिसिबी फिसिबीफिबफिब नम्बर अनुक्रम फिबोनैकी अनुक्रम जस्तै अनुक्रम हो जुन निम्नानुसार परिभाषित गरिएको छ: # >>> fibfib.call(1)
+# 0
+# >>> fibfib.call(5)
+# 4
+# >>> fibfib.call(8)
+# 24
+def fibfib(n)
+","def fibfib(n)
+  return 0 if n == 0 || n == 1
+  return 1 if n == 2
+
+  a, b, c = 0, 0, 1
+  (3..n).each do
+    a, b, c = b, c, a + b + c
+  end
+  c
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fibfib
+    candidate = method(:fibfib)
+    assert_equal(1, candidate.call(2))
+    assert_equal(0, candidate.call(1))
+    assert_equal(4, candidate.call(5))
+    assert_equal(24, candidate.call(8))
+    assert_equal(81, candidate.call(10))
+    assert_equal(274, candidate.call(12))
+    assert_equal(927, candidate.call(14))
+  end
+end
+"
+HumanEval_64,npi_Deva,rb,"उदाहरण: स्वर, तर जब यो दिइएको शब्दको अन्त्यमा हुन्छ।यहाँ स्वरहरू 'अ', 'ई', 'आई', 'ओ', 'यू' हुन्। यहाँ 'वाई' पनि 'ए' हो।एउटा शब्द इनपुटको रूपमा र स्ट्रिंगमा स्वरहरूको संख्या फर्काउँछ।एक प्रकार्य vowels_count लेख्नुहोस् जसले  प्रतिनिधित्व गर्ने स्ट्रिङ लिन्छ# >>> vowels_count.call(""abcde"")
+# 2
+# >>> vowels_count.call(""ACEDY"")
+# 3
+def vowels_count(s)
+","def vowels_count(s)
+  vowels = ['a', 'e', 'i', 'o', 'u']
+  count = 0
+  
+  s.chars.each_with_index do |char, index|
+    if vowels.include?(char.downcase)
+      count += 1
+    elsif char.downcase == 'y' && index == s.length - 1
+      count += 1
+    end
+  end
+  
+  count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_vowels_count
+    candidate = method(:vowels_count)
+    assert_equal(2, candidate.call(""abcde""))
+    assert_equal(3, candidate.call(""Alone""))
+    assert_equal(2, candidate.call(""key""))
+    assert_equal(1, candidate.call(""bye""))
+    assert_equal(2, candidate.call(""keY""))
+    assert_equal(1, candidate.call(""bYe""))
+    assert_equal(3, candidate.call(""ACEDY""))
+  end
+end
+"
+HumanEval_65,npi_Deva,rb,"यदि शिफ्ट > अंकहरूको संख्या, उल्टो अंकहरू फर्काउनुहोस्।र परिणामलाई स्ट्रिङको रूपमा फर्काउँछ ।वृत्तीय सरेर पूर्णांक x को अंकहरु सरेर, अंकहरु दायाँ सरेर सरेर # >>> circular_shift.call(12, 1)
+# ""21""
+# >>> circular_shift.call(12, 2)
+# ""12""
+def circular_shift(x, shift)
+","def circular_shift(x, shift)
+  digits = x.to_s.chars
+  num_digits = digits.length
+
+  if shift > num_digits
+    return digits.reverse.join
+  else
+    shift = shift % num_digits
+    shifted_digits = digits.rotate(-shift)
+    return shifted_digits.join
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_circular_shift
+    candidate = method(:circular_shift)
+    assert_equal(""001"", candidate.call(100, 2))
+    assert_equal(""12"", candidate.call(12, 2))
+    assert_equal(""79"", candidate.call(97, 8))
+    assert_equal(""21"", candidate.call(12, 1))
+    assert_equal(""11"", candidate.call(11, 101))
+  end
+end
+"
+HumanEval_66,npi_Deva,rb,"उदाहरणहरू: एएससीआईआई कोडहरू।एउटा यस्तो प्रकार्य लेख्नुहोस् जसले एउटा स्ट्रिङलाई इनपुटको रूपमा लिन्छ र माथिल्लो अक्षरहरूको योग मात्र फर्काउँछ' कार्य # >>> digitSum.call("""")
+# 0
+# >>> digitSum.call(""abAB"")
+# 131
+# >>> digitSum.call(""abcCd"")
+# 67
+# >>> digitSum.call(""helloE"")
+# 69
+# >>> digitSum.call(""woArBld"")
+# 131
+# >>> digitSum.call(""aAaaaXa"")
+# 153
+def digitSum(s)
+","def digitSum(s)
+  s.chars.select { |char| char =~ /[A-Z]/ }.map(&:ord).sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_digitSum
+    candidate = method(:digitSum)
+    assert_equal(0, candidate.call(""""))
+    assert_equal(131, candidate.call(""abAB""))
+    assert_equal(67, candidate.call(""abcCd""))
+    assert_equal(69, candidate.call(""helloE""))
+    assert_equal(131, candidate.call(""woArBld""))
+    assert_equal(153, candidate.call(""aAaaaXa""))
+    assert_equal(151, candidate.call("" How are yOu?""))
+    assert_equal(327, candidate.call(""You arE Very Smart""))
+  end
+end
+"
+HumanEval_67,npi_Deva,rb,"एक्जाम्बेलका लागि: बास्केटमा बास्केटमा आमो फलहरूको संख्या फिर्ता गर्नुहोस्।सुन्तला र स्याउ र फलहरूको कुल संख्या प्रतिनिधित्व गर्ने पूर्णांक स्याउ, सुन्तला र आमको फल, कुल संख्याको प्रतिनिधित्व गर्ने स्ट्रिङ दिइएको छफलफूलको टोकरीमा वितरण गरिन्छ ।यस कार्यमा, तपाईंलाई एउटा स्ट्रिङ दिइनेछ जसले स्याउ र सुन्तलाको संख्यालाई प्रतिनिधित्व गर्छ ।# >>> fruit_distribution.call(""5 apples and 6 oranges"", 19)
+# 8
+# >>> fruit_distribution.call(""0 apples and 1 oranges"", 3)
+# 2
+# >>> fruit_distribution.call(""2 apples and 3 oranges"", 100)
+# 95
+# >>> fruit_distribution.call(""100 apples and 1 oranges"", 120)
+# 19
+def fruit_distribution(s, n)
+","def fruit_distribution(s, n)
+  numbers = s.scan(/\d+/).map(&:to_i)
+  apples = numbers[0]
+  oranges = numbers[1]
+  total_fruits = n
+  mangos = total_fruits - (apples + oranges)
+  mangos
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fruit_distribution
+    candidate = method(:fruit_distribution)
+    assert_equal(8, candidate.call(""5 apples and 6 oranges"", 19))
+    assert_equal(10, candidate.call(""5 apples and 6 oranges"", 21))
+    assert_equal(2, candidate.call(""0 apples and 1 oranges"", 3))
+    assert_equal(2, candidate.call(""1 apples and 0 oranges"", 3))
+    assert_equal(95, candidate.call(""2 apples and 3 oranges"", 100))
+    assert_equal(0, candidate.call(""2 apples and 3 oranges"", 5))
+    assert_equal(19, candidate.call(""1 apples and 100 oranges"", 120))
+  end
+end
+"
+HumanEval_68,npi_Deva,rb,"उदाहरण १: यदि त्यहाँ कुनै पनि मानहरू छैनन् वा दिइएको एर्रे खाली छ भने, फिर्ती गर्नुहोस् [] ।चुँडाइएको नोड एउटा एरेमा फर्काउनुपर्छ, [ smalest_value, यसको अनुक्रमणिका ], यदि एउटै सानोतिनो मान भएका धेरै नोडहरू भेटिएमा, सबैभन्दा सानो इन्डेक्स भएको नोड फर्काउनुहोस्। चुँडाइएका नोडहरू सबैभन्दा सानो सम मान भएको नोड हुनुपर्छ।तपाईंको कार्य नोडहरू मध्ये एक छान्नु र यसलाई फिर्ता गर्नु हो।""एक वृक्षको एउटा शाखाको प्रतिनिधित्व गर्ने एउटा सरणी दिइएको छ जसको गैर-ऋणात्मक पूर्णांक नोडहरू छन् # >>> pluck.call([4, 2, 3])
+# [2, 1]
+# Explanation: 2 has the smallest even value, and 2 has the smallest index.
+# Example 2:
+# >>> pluck.call([1, 2, 3])
+# [2, 1]
+# Explanation: 2 has the smallest even value, and 2 has the smallest index.
+# Example 3:
+# >>> pluck.call([])
+# []
+# Example 4:
+# >>> pluck.call([5, 0, 3, 0, 4, 2])
+# [0, 1]
+# Explanation: 0 is the smallest value, but  there are two zeros,
+# so we will choose the first zero, which has the smallest index.
+# Constraints:
+# * 1 <= nodes.length <= 10000
+# * 0 <= node.value
+def pluck(arr)
+","def pluck(arr)
+  smallest_even = nil
+  smallest_index = nil
+  
+  arr.each_with_index do |value, index|
+    if value.even?
+      if smallest_even.nil? || value < smallest_even
+        smallest_even = value
+        smallest_index = index
+      end
+    end
+  end
+
+  smallest_even.nil? ? [] : [smallest_even, smallest_index]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_pluck
+    candidate = method(:pluck)
+    assert_equal([2, 1], candidate.call([4, 2, 3]))
+    assert_equal([2, 1], candidate.call([1, 2, 3]))
+    assert_equal([], candidate.call([]))
+    assert_equal([0, 1], candidate.call([5, 0, 3, 0, 4, 2]))
+    assert_equal([0, 3], candidate.call([1, 2, 3, 0, 5, 3]))
+    assert_equal([4, 1], candidate.call([5, 4, 8, 4, 8]))
+    assert_equal([6, 1], candidate.call([7, 6, 7, 1]))
+    assert_equal([], candidate.call([7, 9, 7, 1]))
+  end
+end
+"
+HumanEval_69,npi_Deva,rb,"उदाहरणहरू: यदि यस्तो मान अवस्थित छैन भने, -१ फर्काउनुहोस्।पूर्णांकको आवृत्ति भनेको यो संख्या हो जुन यो एरेमा देखा पर्दछ।शून्य, र यसको आवृत्ति पूर्णांकको मान भन्दा ठूलो वा बराबर छ।तपाईँलाई धनात्मक पूर्णांकहरूको एउटा गैर-खाली सरणी दिइएको छ। सबैभन्दा ठूलो पूर्णांक फर्काउनुहोस् जुन  भन्दा ठूलो छ।# >>> search.call([4, 1, 2, 2, 3, 1])
+# 2
+# >>> search.call([1, 2, 2, 3, 3, 3, 4, 4, 4])
+# 3
+# >>> search.call([5, 5, 4, 4, 4])
+# -1
+def search(lst)
+","def search(lst)
+  freq_hash = lst.each_with_object(Hash.new(0)) { |num, hash| hash[num] += 1 }
+  valid_numbers = freq_hash.select { |num, freq| freq >= num }.keys
+  valid_numbers.empty? ? -1 : valid_numbers.max
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_search
+    candidate = method(:search)
+    assert_equal(1, candidate.call([5, 5, 5, 5, 1]))
+    assert_equal(4, candidate.call([4, 1, 4, 1, 4, 4]))
+    assert_equal(-1, candidate.call([3, 3]))
+    assert_equal(8, candidate.call([8, 8, 8, 8, 8, 8, 8, 8]))
+    assert_equal(2, candidate.call([2, 3, 3, 2, 2]))
+    assert_equal(1, candidate.call([2, 7, 8, 8, 4, 8, 7, 3, 9, 6, 5, 10, 4, 3, 6, 7, 1, 7, 4, 10, 8, 1]))
+    assert_equal(2, candidate.call([3, 2, 8, 2]))
+    assert_equal(1, candidate.call([6, 7, 1, 8, 8, 10, 5, 8, 5, 3, 10]))
+    assert_equal(-1, candidate.call([8, 8, 3, 6, 5, 6, 4]))
+    assert_equal(1, candidate.call([6, 9, 6, 7, 1, 4, 7, 1, 8, 8, 9, 8, 10, 10, 8, 4, 10, 4, 10, 1, 2, 9, 5, 7, 9]))
+    assert_equal(1, candidate.call([1, 9, 10, 1, 3]))
+    assert_equal(5, candidate.call([6, 9, 7, 5, 8, 7, 5, 3, 7, 5, 10, 10, 3, 6, 10, 2, 8, 6, 5, 4, 9, 5, 3, 10]))
+    assert_equal(1, candidate.call([1]))
+    assert_equal(4, candidate.call([8, 8, 10, 6, 4, 3, 5, 8, 2, 4, 2, 8, 4, 6, 10, 4, 2, 1, 10, 2, 1, 1, 5]))
+    assert_equal(2, candidate.call([2, 10, 4, 8, 2, 10, 5, 1, 2, 9, 5, 5, 6, 3, 8, 6, 4, 10]))
+    assert_equal(1, candidate.call([1, 6, 10, 1, 6, 9, 10, 8, 6, 8, 7, 3]))
+    assert_equal(4, candidate.call([9, 2, 4, 1, 5, 1, 5, 2, 5, 7, 7, 7, 3, 10, 1, 5, 4, 2, 8, 4, 1, 9, 10, 7, 10, 2, 8, 10, 9, 4]))
+    assert_equal(4, candidate.call([2, 6, 4, 2, 8, 7, 5, 6, 4, 10, 4, 6, 3, 7, 8, 8, 3, 1, 4, 2, 2, 10, 7]))
+    assert_equal(2, candidate.call([9, 8, 6, 10, 2, 6, 10, 2, 7, 8, 10, 3, 8, 2, 6, 2, 3, 1]))
+    assert_equal(-1, candidate.call([5, 5, 3, 9, 5, 6, 3, 2, 8, 5, 6, 10, 10, 6, 8, 4, 10, 7, 7, 10, 8]))
+    assert_equal(-1, candidate.call([10]))
+    assert_equal(2, candidate.call([9, 7, 7, 2, 4, 7, 2, 10, 9, 7, 5, 7, 2]))
+    assert_equal(1, candidate.call([5, 4, 10, 2, 1, 1, 10, 3, 6, 1, 8]))
+    assert_equal(1, candidate.call([7, 9, 9, 9, 3, 4, 1, 5, 9, 1, 2, 1, 1, 10, 7, 5, 6, 7, 6, 7, 7, 6]))
+    assert_equal(-1, candidate.call([3, 10, 10, 9, 2]))
+  end
+end
+"
+HumanEval_70,npi_Deva,rb,"उदाहरणहरू: त्यसपछि बाँकी पूर्णांकको अधिकतम, त्यसपछि न्यूनतम र यस्तै।जब तपाईँ न्यूनतम मानबाट सुरु गर्नुहुन्छ, पूर्णांकहरूको एरे दिइएको छ, अनौठो क्रममा एरे फर्काउनुहोस्।# >>> strange_sort_list.call([1, 2, 3, 4])
+# [1, 4, 2, 3]
+# >>> strange_sort_list.call([5, 5, 5, 5])
+# [5, 5, 5, 5]
+# >>> strange_sort_list.call([])
+# []
+def strange_sort_list(lst)
+","def strange_sort_list(lst)
+  result = []
+  lst.sort!
+  until lst.empty?
+    result << lst.shift
+    result << lst.pop unless lst.empty?
+  end
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_strange_sort_list
+    candidate = method(:strange_sort_list)
+    assert_equal([1, 4, 2, 3], candidate.call([1, 2, 3, 4]))
+    assert_equal([5, 9, 6, 8, 7], candidate.call([5, 6, 7, 8, 9]))
+    assert_equal([1, 5, 2, 4, 3], candidate.call([1, 2, 3, 4, 5]))
+    assert_equal([1, 9, 5, 8, 6, 7], candidate.call([5, 6, 7, 8, 9, 1]))
+    assert_equal([5, 5, 5, 5], candidate.call([5, 5, 5, 5]))
+    assert_equal([], candidate.call([]))
+    assert_equal([1, 8, 2, 7, 3, 6, 4, 5], candidate.call([1, 2, 3, 4, 5, 6, 7, 8]))
+    assert_equal([-5, 5, -5, 5, 0, 2, 2, 2], candidate.call([0, 2, 2, 2, 5, 5, -5, -5]))
+    assert_equal([111111], candidate.call([111111]))
+  end
+end
+"
+HumanEval_71,npi_Deva,rb,"उदाहरण: तेस्रो पक्षको तुलनामा।तीन पक्षले वैध त्रिकोण बनाउँछ जब कुनै दुई पक्षको योग ठूलो हुन्छ अन्यथा फिर्ता -1 यदि तीन पक्षहरू मान्य त्रिकोण बनाउँछन् भने त्रिकोणलाई २ दशमलव बिन्दुमा गोल गरिन्छ।त्रिकोणको तीन पक्षको लम्बाई दिईएको छ।  को क्षेत्रफल फर्काउनुहोस्# >>> triangle_area.call(3, 4, 5)
+# 6.0
+# >>> triangle_area.call(1, 2, 10)
+# -1
+def triangle_area(a, b, c)
+","def triangle_area(a, b, c)
+  # Check for valid triangle
+  if a + b > c && a + c > b && b + c > a
+    # Calculate the semi-perimeter
+    s = (a + b + c) / 2.0
+    # Calculate the area using Heron's formula
+    area = Math.sqrt(s * (s - a) * (s - b) * (s - c))
+    # Round to 2 decimal points
+    return area.round(2)
+  else
+    return -1
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_triangle_area
+    candidate = method(:triangle_area)
+    assert_equal(6.0, candidate.call(3, 4, 5))
+    assert_equal(-1, candidate.call(1, 2, 10))
+    assert_equal(8.18, candidate.call(4, 8, 5))
+    assert_equal(1.73, candidate.call(2, 2, 2))
+    assert_equal(-1, candidate.call(1, 2, 3))
+    assert_equal(16.25, candidate.call(10, 5, 7))
+    assert_equal(-1, candidate.call(2, 6, 3))
+    assert_equal(0.43, candidate.call(1, 1, 1))
+    assert_equal(-1, candidate.call(2, 2, 10))
+  end
+end
+"
+HumanEval_72,npi_Deva,rb,"उदाहरण: वस्तु q उड्छ यदि यो सन्तुलित छ (यो एक palindromic array हो) र यसको तत्वहरूको योग अधिकतम सम्भावित वजन w भन्दा कम वा बराबर छ।एउटा यस्तो फंक्शन लेख्नुहोस् जुन वस्तु q उड्छ भने सत्य फर्काउँछ, अन्यथा गलत।# >>> will_it_fly.call([1, 2], 5)
+# false
+# # 1+2 is less than the maximum possible weight, but it's unbalanced.
+# >>> will_it_fly.call([3, 2, 3], 1)
+# false
+# # it's balanced, but 3+2+3 is more than the maximum possible weight.
+# >>> will_it_fly.call([3, 2, 3], 9)
+# true
+# # 3+2+3 is less than the maximum possible weight, and it's balanced.
+# >>> will_it_fly.call([3], 5)
+# true
+# # 3 is less than the maximum possible weight, and it's balanced.
+def will_it_fly(q, w)
+","def will_it_fly(q, w)
+  is_palindrome = q == q.reverse
+  total_weight = q.sum
+  is_balanced_and_under_weight = is_palindrome && total_weight <= w
+  is_balanced_and_under_weight
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_will_it_fly
+    candidate = method(:will_it_fly)
+    assert_equal(true, candidate.call([3, 2, 3], 9))
+    assert_equal(false, candidate.call([1, 2], 5))
+    assert_equal(true, candidate.call([3], 5))
+    assert_equal(false, candidate.call([3, 2, 3], 1))
+    assert_equal(false, candidate.call([1, 2, 3], 6))
+    assert_equal(true, candidate.call([5], 5))
+  end
+end
+"
+HumanEval_73,npi_Deva,rb,"उदाहरणका लागि: एक परिवर्तनमा, तपाईं एक तत्वलाई कुनै पनि अन्य तत्वमा परिवर्तन गर्न सक्नुहुन्छ।पलिन्ड्रोमिक एरे एउटा एरे हो जुन पूर्णांकको एर एर दिइएको छ, तत्वहरूको न्यूनतम संख्या फेला पार्नुहोस् जुन # >>> smallest_change.call([1, 2, 3, 5, 4, 7, 9, 6])
+# 4
+# >>> smallest_change.call([1, 2, 3, 4, 3, 2, 2])
+# 1
+# >>> smallest_change.call([1, 2, 3, 2, 1])
+# 0
+def smallest_change(arr)
+","def smallest_change(arr)
+  changes = 0
+  left = 0
+  right = arr.length - 1
+
+  while left < right
+    if arr[left] != arr[right]
+      changes += 1
+    end
+    left += 1
+    right -= 1
+  end
+
+  changes
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_smallest_change
+    candidate = method(:smallest_change)
+    assert_equal(4, candidate.call([1, 2, 3, 5, 4, 7, 9, 6]))
+    assert_equal(1, candidate.call([1, 2, 3, 4, 3, 2, 2]))
+    assert_equal(1, candidate.call([1, 4, 2]))
+    assert_equal(1, candidate.call([1, 4, 4, 2]))
+    assert_equal(0, candidate.call([1, 2, 3, 2, 1]))
+    assert_equal(0, candidate.call([3, 1, 1, 3]))
+    assert_equal(0, candidate.call([1]))
+    assert_equal(1, candidate.call([0, 1]))
+  end
+end
+"
+HumanEval_74,npi_Deva,rb,"उदाहरणहरू यदि दुई एरेहरूमा समान संख्यामा वर्णहरू छन् भने, पहिलो एरे फर्काउनुहोस्।एरेको सबै स्ट्रिंगमा क्यारहरूको कुल संख्या अर्को एरे भन्दा कम छ।एउटा यस्तो प्रकार्य लेख्नुहोस् जसले दुईवटा स्ट्रिङको एरे स्वीकार गर्छ र एरे फर्काउँछ जसमा # >>> total_match.call([], [])
+# []
+# >>> total_match.call([""hi"", ""admin""], [""hI"", ""Hi""])
+# [""hI"", ""Hi""]
+# >>> total_match.call([""hi"", ""admin""], [""hi"", ""hi"", ""admin"", ""project""])
+# [""hi"", ""admin""]
+# >>> total_match.call([""hi"", ""admin""], [""hI"", ""hi"", ""hi""])
+# [""hI"", ""hi"", ""hi""]
+# >>> total_match.call([""4""], [""1"", ""2"", ""3"", ""4"", ""5""])
+# [""4""]
+def total_match(lst1, lst2)
+","def total_match(lst1, lst2)
+  total_chars1 = lst1.map(&:length).sum
+  total_chars2 = lst2.map(&:length).sum
+
+  if total_chars1 < total_chars2
+    lst1
+  elsif total_chars2 < total_chars1
+    lst2
+  else
+    lst1
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_total_match
+    candidate = method(:total_match)
+    assert_equal([], candidate.call([], []))
+    assert_equal([""hi"", ""hi""], candidate.call([""hi"", ""admin""], [""hi"", ""hi""]))
+    assert_equal([""hi"", ""admin""], candidate.call([""hi"", ""admin""], [""hi"", ""hi"", ""admin"", ""project""]))
+    assert_equal([""4""], candidate.call([""4""], [""1"", ""2"", ""3"", ""4"", ""5""]))
+    assert_equal([""hI"", ""Hi""], candidate.call([""hi"", ""admin""], [""hI"", ""Hi""]))
+    assert_equal([""hI"", ""hi"", ""hi""], candidate.call([""hi"", ""admin""], [""hI"", ""hi"", ""hi""]))
+    assert_equal([""hi"", ""admin""], candidate.call([""hi"", ""admin""], [""hI"", ""hi"", ""hii""]))
+    assert_equal([], candidate.call([], [""this""]))
+    assert_equal([], candidate.call([""this""], []))
+  end
+end
+"
+HumanEval_75,npi_Deva,rb,"उदाहरण: (a) १०० भन्दा कम छ भन्ने कुरा थाहा पाउँदा र अन्यथा गलत।एउटा यस्तो फंक्शन लेख्नुहोस् जुन सही फर्काउँछ यदि दिइएको संख्या ३ अभाज्य संख्याहरूको गुणन हो भने# >>> is_multiply_prime.call(30)
+# true
+# 30 = 2 * 3 * 5
+def is_multiply_prime(a)
+","require 'prime'
+
+def is_multiply_prime(a)
+  return false if a >= 100
+  prime_factors = a.prime_division
+  return true if prime_factors.size == 3 && prime_factors.all? { |_, exponent| exponent == 1 }
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_multiply_prime
+    candidate = method(:is_multiply_prime)
+    assert_equal(false, candidate.call(5))
+    assert_equal(true, candidate.call(30))
+    assert_equal(true, candidate.call(8))
+    assert_equal(false, candidate.call(10))
+    assert_equal(true, candidate.call(125))
+    assert_equal(true, candidate.call(105))
+    assert_equal(false, candidate.call(126))
+    assert_equal(false, candidate.call(729))
+    assert_equal(false, candidate.call(891))
+    assert_equal(true, candidate.call(1001))
+  end
+end
+"
+HumanEval_76,npi_Deva,rb,"उदाहरणका लागि: x n को साधारण शक्ति हो यदि n**int=x n को शक्ति र अन्य अवस्थामा गलत।तपाईँको कार्य भनेको एउटा फलन लेख्नु हो जुन यदि कुनै संख्या x एउटा साधारण  हो भने सत्य फर्काउँछ# >>> is_simple_power.call(1, 4)
+# true
+# >>> is_simple_power.call(2, 2)
+# true
+# >>> is_simple_power.call(8, 2)
+# true
+# >>> is_simple_power.call(3, 2)
+# false
+# >>> is_simple_power.call(3, 1)
+# false
+# >>> is_simple_power.call(5, 3)
+# false
+def is_simple_power(x, n)
+","def is_simple_power(x, n)
+  return false if x <= 0 || n <= 1
+  return true if x == 1
+
+  power = n
+  while power <= x
+    return true if power == x
+    power *= n
+  end
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_simple_power
+    candidate = method(:is_simple_power)
+    assert_equal(true, candidate.call(16, 2))
+    assert_equal(false, candidate.call(143214, 16))
+    assert_equal(true, candidate.call(4, 2))
+    assert_equal(true, candidate.call(9, 3))
+    assert_equal(true, candidate.call(16, 4))
+    assert_equal(false, candidate.call(24, 2))
+    assert_equal(false, candidate.call(128, 4))
+    assert_equal(false, candidate.call(12, 6))
+    assert_equal(true, candidate.call(1, 1))
+    assert_equal(true, candidate.call(1, 12))
+  end
+end
+"
+HumanEval_77,npi_Deva,rb,"उदाहरणहरू: नोटः तपाईँले इनपुट सधैँ मान्य छ भन्ने मान्न सक्नुहुन्छ।यदि यो इन्जेगर कुनै पूर्णांकको घन हो भनेएउटा यस्तो फलन लेख्नुहोस् जसले पूर्णांक a लिन्छ र true फर्काउँछ ।# >>> iscube.call(1)
+# true
+# >>> iscube.call(2)
+# false
+# >>> iscube.call(-1)
+# true
+# >>> iscube.call(64)
+# true
+# >>> iscube.call(0)
+# true
+# >>> iscube.call(180)
+# false
+def iscube(a)
+","def iscube(a)
+  cube_root = a.abs**(1.0/3)
+  cube_root.round**3 == a
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_iscube
+    candidate = method(:iscube)
+    assert_equal(true, candidate.call(1))
+    assert_equal(false, candidate.call(2))
+    assert_equal(true, candidate.call(-1))
+    assert_equal(true, candidate.call(64))
+    assert_equal(false, candidate.call(180))
+    assert_equal(true, candidate.call(1000))
+    assert_equal(true, candidate.call(0))
+    assert_equal(false, candidate.call(1729))
+  end
+end
+"
+HumanEval_78,npi_Deva,rb,"उदाहरणहरू: र प्रतीकहरू ए, बी, सी, डी, ई, एफ सधैं ठूला अक्षरहरू हुन्।नोट: तपाईँले इनपुट सधैँ सही वा खाली स्ट्रिङ मान्न सक्नुहुन्छ, B (= दशमलव ११), D (= दशमलव १३) ।त्यसैले तपाईँले निम्न अंकहरूको संख्या निर्धारण गर्नुपर्दछ: २, ३, ५, ७, अभाज्य संख्याहरू २, ३, ५, ७, ११, १३, १७,... हुन्।हेक्जाडेसिमल अंकहरू ०, १, २, ३, ४, ५, ६, ७, ८, ९, ए, बी, सी, डी, ई, एफ हुन्।१ भन्दा ठूलो जो दुई सानो प्राकृतिक संख्याको गुणनफल होइन) ।अभाज्य संख्याहरू (अभाज्य संख्या, वा अभाज्य, एक प्राकृतिक संख्या हो)हेक्साडेसिमल नम्बरलाई स्ट्रिंगको रूपमा प्रयोग गर्दछ र हेक्साडेसिमलको संख्या गणना गर्दछ ।तपाईँलाई एउटा यस्तो प्रकार्य लेख्न भनिएको छ जसले प्राप्त गर्दछ ।# >>> hex_key.call(""AB"")
+# 1
+# >>> hex_key.call(""1077E"")
+# 2
+# >>> hex_key.call(""ABED1A33"")
+# 4
+# >>> hex_key.call(""123456789ABCDEF0"")
+# 6
+# >>> hex_key.call(""2020"")
+# 2
+def hex_key(num)
+","def hex_key(num)
+  prime_hex_digits = ['2', '3', '5', '7', 'B', 'D']
+  num.chars.count { |digit| prime_hex_digits.include?(digit) }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_hex_key
+    candidate = method(:hex_key)
+    assert_equal(1, candidate.call(""AB""))
+    assert_equal(2, candidate.call(""1077E""))
+    assert_equal(4, candidate.call(""ABED1A33""))
+    assert_equal(2, candidate.call(""2020""))
+    assert_equal(6, candidate.call(""123456789ABCDEF0""))
+    assert_equal(12, candidate.call(""112233445566778899AABBCCDDEEFF00""))
+  end
+end
+"
+HumanEval_79,npi_Deva,rb,"उदाहरणहरू: त्यहाँ स्ट्रिङको सुरुवात र अन्त्यमा अतिरिक्त दुई अक्षर 'db' हुनेछ।संख्या. स्ट्रिङमा प्रत्येक क्यारेक्टर '०' वा '१' हुनेछ.बाइनरी ढाँचा। प्रकार्यले एउटा स्ट्रिङ फर्काउनु पर्छ, प्रत्येक वर्ण बाइनरी  को प्रतिनिधित्व गर्दछ।तपाईँलाई दशमलवको रूपमा एउटा नम्बर दिइनेछ र तपाईँको कार्य यसलाई  मा रूपान्तरण गर्नु हो ।# >>> decimal_to_binary.call(15)
+# ""db1111db""
+# >>> decimal_to_binary.call(32)
+# ""db100000db""
+def decimal_to_binary(decimal)
+","def decimal_to_binary(decimal)
+  ""db"" + decimal.to_s(2) + ""db""
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_decimal_to_binary
+    candidate = method(:decimal_to_binary)
+    assert_equal(""db0db"", candidate.call(0))
+    assert_equal(""db100000db"", candidate.call(32))
+    assert_equal(""db1100111db"", candidate.call(103))
+    assert_equal(""db1111db"", candidate.call(15))
+  end
+end
+"
+HumanEval_80,npi_Deva,rb,"उदाहरणका लागि: एउटा स्ट्रिङ haprb हो यदि यसको लम्बाइ कम्तिमा ३ हो र हरेक ३ लगातार अक्षरहरू भिन्न छन् तपाईँको कार्य भनेको स्ट्रिंग haprb छ कि छैन जाँच गर्नु हो।तपाईँलाई एउटा string s दिइएको छ ।# >>> is_happy.call(""a"")
+# false
+# >>> is_happy.call(""aa"")
+# false
+# >>> is_happy.call(""abcd"")
+# true
+# >>> is_happy.call(""aabb"")
+# false
+# >>> is_happy.call(""adb"")
+# true
+# >>> is_happy.call(""xyy"")
+# false
+def is_happy(s)
+","def is_happy(s)
+  return false if s.length < 3
+  
+  (0..s.length - 3).each do |i|
+    return false if s[i] == s[i + 1] || s[i] == s[i + 2] || s[i + 1] == s[i + 2]
+  end
+  
+  true
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_happy
+    candidate = method(:is_happy)
+    assert_equal(false, candidate.call(""a""))
+    assert_equal(false, candidate.call(""aa""))
+    assert_equal(true, candidate.call(""abcd""))
+    assert_equal(false, candidate.call(""aabb""))
+    assert_equal(true, candidate.call(""adb""))
+    assert_equal(false, candidate.call(""xyy""))
+    assert_equal(true, candidate.call(""iopaxpoi""))
+    assert_equal(false, candidate.call(""iopaxioi""))
+  end
+end
+"
+HumanEval_81,npi_Deva,rb,"उदाहरण: ०.० ई > ०.० D- > 0.7 D > १.० डी+ > १.३ C- > १.७ डिग्री सेल्सियस> २.० C+ > २.३ B- > २.७ खर्ब> ३.० बी+ > ३.३ ए- > ३.७ ए ४.० ए+ औसत अंक, अक्षरको ग्रेडएउटा प्रकार्य जसले निम्न तालिका प्रयोग गरेर अक्षर ग्रेडहरूको एरे आउटपुट गर्न सक्छ: उनले तपाईंलाई केही विद्यार्थीहरूको लागि GPA को एक सरणी दिएकी छन् र तपाईंले लेख्नु पर्छ ।समस्या के हो भने उनले ग्रेडिङका लागि प्रयोग गर्ने कोड हराएकी छन्।विद्यार्थीलाई ग्रेडिङका लागि शिक्षकले आफ्नै एल्गोरिथ्म बनाउँदै आएका छन् ।सेमेस्टरको अन्तिम हप्ता हो र शिक्षकले ग्रेड दिनुपर्छ ।# >>> grade_equation.call([4.0, 3, 1.7, 2, 3.5])
+# [""A+"", ""B"", ""C-"", ""C"", ""A-""]
+def numerical_letter_grade(grades)
+","def numerical_letter_grade(grades)
+  grades.map do |gpa|
+    case 
+    when gpa == 4.0
+      ""A+""
+    when gpa > 3.7
+      ""A""
+    when gpa > 3.3
+      ""A-""
+    when gpa > 3.0
+      ""B+""
+    when gpa > 2.7
+      ""B""
+    when gpa > 2.3
+      ""B-""
+    when gpa > 2.0
+      ""C+""
+    when gpa > 1.7
+      ""C""
+    when gpa > 1.3
+      ""C-""
+    when gpa > 1.0
+      ""D+""
+    when gpa > 0.7
+      ""D""
+    when gpa > 0.0
+      ""D-""
+    else
+      ""E""
+    end
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_numerical_letter_grade
+    candidate = method(:numerical_letter_grade)
+    assert_equal([""A+"", ""B"", ""C-"", ""C"", ""A-""], candidate.call([4.0, 3, 1.7, 2, 3.5]))
+    assert_equal([""D+""], candidate.call([1.2]))
+    assert_equal([""D-""], candidate.call([0.5]))
+    assert_equal([""E""], candidate.call([0.0]))
+    assert_equal([""D"", ""D-"", ""C-"", ""B"", ""B+""], candidate.call([1.0, 0.3, 1.5, 2.8, 3.3]))
+    assert_equal([""E"", ""D-""], candidate.call([0.0, 0.7]))
+  end
+end
+"
+HumanEval_82,npi_Deva,rb,"उदाहरणहरू लम्बाई अभाज्य संख्या हो वा अन्यथा गलत हो एउटा यस्तो प्रकार्य लेख्नुहोस् जसले एउटा स्ट्रिङ लिन्छ र यदि स्ट्रिङ # >>> prime_length.call(""Hello"")
+# true
+# >>> prime_length.call(""abcdcba"")
+# true
+# >>> prime_length.call(""kittens"")
+# true
+# >>> prime_length.call(""orange"")
+# false
+def prime_length(string)
+","def prime_length(string)
+  length = string.length
+  return false if length < 2
+
+  (2..Math.sqrt(length)).each do |i|
+    return false if length % i == 0
+  end
+
+  true
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_prime_length
+    candidate = method(:prime_length)
+    assert_equal(true, candidate.call(""Hello""))
+    assert_equal(true, candidate.call(""abcdcba""))
+    assert_equal(true, candidate.call(""kittens""))
+    assert_equal(false, candidate.call(""orange""))
+    assert_equal(true, candidate.call(""wow""))
+    assert_equal(true, candidate.call(""world""))
+    assert_equal(true, candidate.call(""MadaM""))
+    assert_equal(true, candidate.call(""Wow""))
+    assert_equal(false, candidate.call(""""))
+    assert_equal(true, candidate.call(""HI""))
+    assert_equal(true, candidate.call(""go""))
+    assert_equal(false, candidate.call(""gogo""))
+    assert_equal(false, candidate.call(""aaaaaaaaaaaaaaa""))
+    assert_equal(true, candidate.call(""Madam""))
+    assert_equal(false, candidate.call(""M""))
+    assert_equal(false, candidate.call(""0""))
+  end
+end
+"
+HumanEval_83,npi_Deva,rb,"सकारात्मक पूर्णांकहरू जुन १ बाट सुरु वा अन्त्य हुन्छ ।सकारात्मक पूर्णांक n दिइएको छ, n-अंकको संख्याको गणना फिर्ता गर्नुहोस् def starts_one_ends(n)
+","def starts_one_ends(n)
+  return 0 if n <= 0
+
+  # Count numbers starting with 1
+  start_with_1 = 9 ** (n - 1)
+
+  # Count numbers ending with 1
+  end_with_1 = 9 ** (n - 1)
+
+  # Adjust for double counting the number that both starts and ends with 1
+  both_start_and_end_with_1 = 9 ** (n - 2) if n > 1
+  
+  start_with_1 + end_with_1 - (both_start_and_end_with_1 || 0)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_starts_one_ends
+    candidate = method(:starts_one_ends)
+    assert_equal(1, candidate.call(1))
+    assert_equal(18, candidate.call(2))
+    assert_equal(180, candidate.call(3))
+    assert_equal(1800, candidate.call(4))
+    assert_equal(18000, candidate.call(5))
+  end
+end
+"
+HumanEval_84,npi_Deva,rb,"उदाहरण सकारात्मक पूर्णांक N दिइएको छ, यसको अंकहरूको कुल योग बाइनरीमा फर्काउनुहोस्। # >>> solve.call(1000)
+# ""1""
+# >>> solve.call(150)
+# ""110""
+# >>> solve.call(147)
+# ""1100""
+# Variables:
+# @N integer
+# Constraints: 0 ≤ N ≤ 10000.
+# Output:
+# a string of binary number
+def solve(n)
+","def solve(n)
+  sum_of_digits = n.to_s.chars.map(&:to_i).sum
+  sum_of_digits.to_s(2)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_solve
+    candidate = method(:solve)
+    assert_equal(""1"", candidate.call(1000))
+    assert_equal(""110"", candidate.call(150))
+    assert_equal(""1100"", candidate.call(147))
+    assert_equal(""1001"", candidate.call(333))
+    assert_equal(""10010"", candidate.call(963))
+  end
+end
+"
+HumanEval_85,npi_Deva,rb,"उदाहरणहरू: पूर्णांकहरूको एक गैर-खाली एर्रे दिइएको lst. जोडी तत्वहरू जो अनौंठो सूचकांकमा छन् जोड्नुहोस् .. # >>> add.call([4, 2, 6, 7])
+# 2
+def add(lst)
+","def add(lst)
+  lst.each_with_index.select { |num, index| index.odd? && num.even? }.map(&:first).sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_add
+    candidate = method(:add)
+    assert_equal(88, candidate.call([4, 88]))
+    assert_equal(122, candidate.call([4, 5, 6, 7, 2, 122]))
+    assert_equal(0, candidate.call([4, 0, 6, 7]))
+    assert_equal(12, candidate.call([4, 4, 6, 8]))
+  end
+end
+"
+HumanEval_86,npi_Deva,rb,"उदाहरणका लागि: नोट: वाक्यमा शब्द र खाली ठाउँको क्रम राख्नुपर्छ । मूल्यको आधारमा आरोही क्रममानयाँ शब्दले प्रतिस्थापित गरिन्छ जहाँ सबै अक्षरहरू क्रमबद्ध छन् स्ट्रिङको क्रमबद्ध संस्करण, एउटा स्ट्रिङ हो जहाँ सबै शब्दहरू (स्पेसद्वारा विभाजित) एउटा यस्तो फंक्शन लेख्नुहोस् जसले एउटा स्ट्रिङ लिन्छ र त्यसको अर्डर गरिएको संस्करण फर्काउँछ ।# >>> anti_shuffle.call(""Hi"")
+# ""Hi""
+# >>> anti_shuffle.call(""hello"")
+# ""ehllo""
+# >>> anti_shuffle.call(""Hello World!!!"")
+# ""Hello !!!Wdlor""
+def anti_shuffle(s)
+","def anti_shuffle(s)
+  s.split(/(\s+)/).map { |word| word.chars.sort.join }.join
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_anti_shuffle
+    candidate = method(:anti_shuffle)
+    assert_equal(""Hi"", candidate.call(""Hi""))
+    assert_equal(""ehllo"", candidate.call(""hello""))
+    assert_equal(""bemnru"", candidate.call(""number""))
+    assert_equal(""abcd"", candidate.call(""abcd""))
+    assert_equal(""Hello !!!Wdlor"", candidate.call(""Hello World!!!""))
+    assert_equal("""", candidate.call(""""))
+    assert_equal("".Hi My aemn is Meirst .Rboot How aer ?ouy"", candidate.call(""Hi. My name is Mister Robot. How are you?""))
+  end
+end
+"
+HumanEval_87,npi_Deva,rb,"उदाहरणहरू: साथै, पङ्क्ति को निर्देशांकहरू पङ्क्तिहरू द्वारा क्रमबद्ध गर्नुहोस्।निर्देशांकहरूलाई क्रमशः क्रमबद्ध गर्नुहोस्।प्रत्येक एर्रे एक निर्देशांक हो - (पंक्ति, स्तम्भहरू), ० बाट सुरु हुन्छ।र arrays को array फर्काउँछ, [(x1, y1), (x2, y2) ...] यस्तो कि lst, र पूर्णांक x दिइएको छ, array मा पूर्णांक x फेला पार्नुहोस्, प्रत्येक पङ्क्तिमा स्तम्भहरूको भिन्न संख्या हुन सक्छ।जो म्याट्रिक्स जस्तै हो, तर म्याट्रिक्स जस्तो होइन,तपाईँलाई एउटा दुई आयामिक डाटा दिइन्छ, एउटा नेस्टेड एर्रेको रूपमा, # >>> get_row.call([[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 1, 6], [1, 2, 3, 4, 5, 1]], 1)
+# [[0, 0], [1, 4], [1, 0], [2, 5], [2, 0]]
+# >>> get_row.call([], 1)
+# []
+# >>> get_row.call([[], [1], [1, 2, 3]], 3)
+# [[2, 2]]
+def get_row(lst, x)
+","def get_row(lst, x)
+  result = []
+
+  lst.each_with_index do |row, i|
+    row.each_with_index do |value, j|
+      result << [i, j] if value == x
+    end
+  end
+
+  result.sort_by { |coord| [coord[0], -coord[1]] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_get_row
+    candidate = method(:get_row)
+    assert_equal([[0, 0], [1, 4], [1, 0], [2, 5], [2, 0]], candidate.call([[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 1, 6], [1, 2, 3, 4, 5, 1]], 1))
+    assert_equal([[0, 1], [1, 1], [2, 1], [3, 1], [4, 1], [5, 1]], candidate.call([[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6]], 2))
+    assert_equal([[0, 0], [1, 0], [2, 1], [2, 0], [3, 2], [3, 0], [4, 3], [4, 0], [5, 4], [5, 0], [6, 5], [6, 0]], candidate.call([[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 1, 3, 4, 5, 6], [1, 2, 1, 4, 5, 6], [1, 2, 3, 1, 5, 6], [1, 2, 3, 4, 1, 6], [1, 2, 3, 4, 5, 1]], 1))
+    assert_equal([], candidate.call([], 1))
+    assert_equal([], candidate.call([[1]], 2))
+    assert_equal([[2, 2]], candidate.call([[], [1], [1, 2, 3]], 3))
+  end
+end
+"
+HumanEval_88,npi_Deva,rb,"उदाहरणहरू: * दिइएको एरे परिवर्तन नगर्नुहोस्। नोट: वा यसलाई घट्दो क्रममा क्रमबद्ध गर्नुहोस् यदि योग ((पहिलो अनुक्रमणिका मान, अन्तिम अनुक्रमणिका मान) पनि छ।यदि योग ((पहिलो सूचकांक मान, अन्तिम सूचकांक मान) अनौठो छ भने, गैर-ऋणात्मक पूर्णांकहरूको एउटा सरणी दिइएको छ, क्रमबद्ध गरेपछि दिइएको सरणीको एक कर्ब फर्काउनुहोस्, # >>> sort_array.call([])
+# []
+# >>> sort_array.call([5])
+# [5]
+# >>> sort_array.call([2, 4, 3, 0, 1, 5])
+# [0, 1, 2, 3, 4, 5]
+# >>> sort_array.call([2, 4, 3, 0, 1, 5, 6])
+# [6, 5, 4, 3, 2, 1, 0]
+def sort_array(array)
+","def sort_array(array)
+  return array if array.empty? || array.size == 1
+
+  if (array.first + array.last).odd?
+    array.sort
+  else
+    array.sort.reverse
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sort_array
+    candidate = method(:sort_array)
+    assert_equal([], candidate.call([]))
+    assert_equal([5], candidate.call([5]))
+    assert_equal([0, 1, 2, 3, 4, 5], candidate.call([2, 4, 3, 0, 1, 5]))
+    assert_equal([6, 5, 4, 3, 2, 1, 0], candidate.call([2, 4, 3, 0, 1, 5, 6]))
+    assert_equal([1, 2], candidate.call([2, 1]))
+    assert_equal([0, 11, 15, 32, 42, 87], candidate.call([15, 42, 87, 32, 11, 0]))
+    assert_equal([23, 21, 14, 11], candidate.call([21, 14, 23, 11]))
+  end
+end
+"
+HumanEval_89,npi_Deva,rb,"उदाहरणका लागि: २ गुणा २ स्थानमा झर्छ ।वर्णमाला यस्तो तरिकाले घुमाउनुपर्छ कि अक्षरहरू अक्षरको क्रममा अक्षरको संख्या घुमाएर एउटा कडी फर्काउँछ।एउटा फंक्शन सिर्जना गर्नुहोस् जसले एउटा स्ट्रिंगलाई तर्कको रूपमा लिन्छ र # >>> encrypt.call(""hi"")
+# ""lm""
+# >>> encrypt.call(""asdfghjkl"")
+# ""ewhjklnop""
+# >>> encrypt.call(""gf"")
+# ""kj""
+# >>> encrypt.call(""et"")
+# ""ix""
+def encrypt(s)
+","def encrypt(s)
+  s.chars.map do |char|
+    if char =~ /[a-z]/
+      ((char.ord - 'a'.ord + 4) % 26 + 'a'.ord).chr
+    elsif char =~ /[A-Z]/
+      ((char.ord - 'A'.ord + 4) % 26 + 'A'.ord).chr
+    else
+      char
+    end
+  end.join
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_encrypt
+    candidate = method(:encrypt)
+    assert_equal(""lm"", candidate.call(""hi""))
+    assert_equal(""ewhjklnop"", candidate.call(""asdfghjkl""))
+    assert_equal(""kj"", candidate.call(""gf""))
+    assert_equal(""ix"", candidate.call(""et""))
+    assert_equal(""jeiajeaijeiak"", candidate.call(""faewfawefaewg""))
+    assert_equal(""lippsqcjvmirh"", candidate.call(""hellomyfriend""))
+    assert_equal(""hbdhpqrmpjylqmpyjlpmlyjrqpmqryjlpmqryjljygyjl"", candidate.call(""dxzdlmnilfuhmilufhlihufnmlimnufhlimnufhfucufh""))
+    assert_equal(""e"", candidate.call(""a""))
+  end
+end
+"
+HumanEval_90,npi_Deva,rb,"यदि त्यस्तो कुनै तत्व छैन भने शून्य फर्काउनुहोस्।एउटा फंक्शन लेख्नुहोस् next_smallest ({}) जसले एरेको दोस्रो सबैभन्दा सानो एलिमेन्ट फर्काउँछ।तपाईँलाई पूर्णांकहरूको एउटा सरणी दिइएको छ।# >>> next_smallest.call([1, 2, 3, 4, 5])
+# 2
+# >>> next_smallest.call([5, 1, 4, 3, 2])
+# 2
+# >>> next_smallest.call([])
+# nil
+# >>> next_smallest.call([1, 1])
+# nil
+def next_smallest(lst)
+","def next_smallest(lst)
+  unique_sorted = lst.uniq.sort
+  unique_sorted.length >= 2 ? unique_sorted[1] : nil
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_next_smallest
+    candidate = method(:next_smallest)
+    assert_equal(2, candidate.call([1, 2, 3, 4, 5]))
+    assert_equal(2, candidate.call([5, 1, 4, 3, 2]))
+    assert_equal(nil, candidate.call([]))
+    assert_equal(nil, candidate.call([1, 1]))
+    assert_equal(1, candidate.call([1, 1, 1, 1, 0]))
+    assert_equal(nil, candidate.call([1, 1]))
+    assert_equal(-35, candidate.call([-35, 34, 12, -45]))
+  end
+end
+"
+HumanEval_91,npi_Deva,rb,"उदाहरणका लागि: वाक्यहरू ',' '?' वा '!' द्वारा सीमित हुन्छन्।बोरियत भनेको ""म"" शब्दबाट शुरु हुने वाक्य हो।तपाईंलाई शब्दहरूको एक शृङ्खला दिइनेछ, र तपाईंको कार्य संख्या गणना गर्नु हो ।# >>> is_bored.call(""Hello world"")
+# 0
+# >>> is_bored.call(""The sky is blue. The sun is shining. I love this weather"")
+# 1
+def is_bored(s)
+","def is_bored(s)
+  sentences = s.split(/(?<=[.?!])/)
+  sentences.count { |sentence| sentence.strip.start_with?('I') }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_bored
+    candidate = method(:is_bored)
+    assert_equal(0, candidate.call(""Hello world""))
+    assert_equal(0, candidate.call(""Is the sky blue?""))
+    assert_equal(1, candidate.call(""I love It !""))
+    assert_equal(0, candidate.call(""bIt""))
+    assert_equal(2, candidate.call(""I feel good today. I will be productive. will kill It""))
+    assert_equal(0, candidate.call(""You and I are going for a walk""))
+  end
+end
+"
+HumanEval_92,npi_Deva,rb,"उदाहरणहरू अन्य कुनै पनि अवस्थामा गलत फर्काउँछ।यदि कुनै एउटा संख्या अन्य दुईको योग बराबर छ भने सत्य फर्काउँछ, र सबै संख्याहरू पूर्णांकहरू हुन्।एउटा यस्तो फंक्शन बनाउनुहोस् जसमा ३ वटा संख्याहरू समावेश छन्।# >>> any_int.call(5, 2, 7)
+# true
+# >>> any_int.call(3, 2, 2)
+# false
+# >>> any_int.call(3, -2, 1)
+# true
+# >>> any_int.call(3.6, -2.2, 2)
+# false
+def any_int(x, y, z)
+","def any_int(x, y, z)
+  if [x, y, z].all? { |n| n.is_a?(Integer) }
+    x == y + z || y == x + z || z == x + y
+  else
+    false
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_any_int
+    candidate = method(:any_int)
+    assert_equal(true, candidate.call(2, 3, 1))
+    assert_equal(false, candidate.call(2.5, 2, 3))
+    assert_equal(false, candidate.call(1.5, 5, 3.5))
+    assert_equal(false, candidate.call(2, 6, 2))
+    assert_equal(true, candidate.call(4, 2, 2))
+    assert_equal(false, candidate.call(2.2, 2.2, 2.2))
+    assert_equal(true, candidate.call(-4, 6, 2))
+    assert_equal(true, candidate.call(2, 1, 1))
+    assert_equal(true, candidate.call(3, 4, 7))
+    assert_equal(false, candidate.call(3.0, 4, 7))
+  end
+end
+"
+HumanEval_93,npi_Deva,rb,"उदाहरणहरू: अक्षर मात्र मान्नुहोस।अङ्ग्रेजी वर्णमालामा स्वर।सन्देशको अक्षर जुन त्यसभन्दा २ स्थान अगाडि देखिन्छ ।यसले सबै अक्षरहरूको केस बदल्छ,  मा सबै स्वरहरूलाई प्रतिस्थापन गर्दछएउटा फंक्शन लेख्नुहोस् जसले सन्देश लिन्छ र यस्तो सन्देशमा एन्कोड गर्दछ# >>> encode.call(""test"")
+# ""TGST""
+# >>> encode.call(""This is a message"")
+# ""tHKS KS C MGSSCGG""
+def encode(message)
+","def encode(message)
+  vowels = 'aeiou'
+  swap_vowels = {'a' => 'c', 'e' => 'g', 'i' => 'k', 'o' => 'q', 'u' => 'w'}
+  
+  encoded_message = message.chars.map do |char|
+    if vowels.include?(char.downcase)
+      new_char = swap_vowels[char.downcase]
+      char == char.upcase ? new_char.upcase : new_char.downcase
+    else
+      char == char.upcase ? char.downcase : char.upcase
+    end
+  end
+
+  encoded_message.join
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_encode
+    candidate = method(:encode)
+    assert_equal(""tgst"", candidate.call(""TEST""))
+    assert_equal(""mWDCSKR"", candidate.call(""Mudasir""))
+    assert_equal(""ygs"", candidate.call(""YES""))
+    assert_equal(""tHKS KS C MGSSCGG"", candidate.call(""This is a message""))
+    assert_equal(""k dQnT kNqW wHcT Tq wRkTg"", candidate.call(""I DoNt KnOw WhAt tO WrItE""))
+  end
+end
+"
+HumanEval_94,npi_Deva,rb,"उदाहरणहरू: तपाईँले सबैभन्दा ठूलो अभाज्य मान खोज्नुपर्छ र त्यसको अङ्कहरूको योग फर्काउनुपर्छ।तपाईँलाई पूर्णांकहरूको एउटा सरणी दिइएको छ।# >>> skjkasdkd.call([0, 3, 2, 1, 3, 5, 7, 4, 5, 5, 5, 2, 181, 32, 4, 32, 3, 2, 32, 324, 4, 3])
+# 10
+# >>> skjkasdkd.call([1, 0, 1, 8, 2, 4597, 2, 1, 3, 40, 1, 2, 1, 2, 4, 2, 5, 1])
+# 25
+# >>> skjkasdkd.call([1, 3, 1, 32, 5107, 34, 83278, 109, 163, 23, 2323, 32, 30, 1, 9, 3])
+# 13
+# >>> skjkasdkd.call([0, 724, 32, 71, 99, 32, 6, 0, 5, 91, 83, 0, 5, 6])
+# 11
+# >>> skjkasdkd.call([0, 81, 12, 3, 1, 21])
+# 3
+# >>> skjkasdkd.call([0, 8, 1, 2, 1, 7])
+# 7
+def skjkasdkd(lst)
+","def skjkasdkd(lst)
+  require 'prime'
+
+  # Find the largest prime number in the array
+  largest_prime = lst.select { |num| Prime.prime?(num) }.max
+  
+  # Return 0 if no prime number is found
+  return 0 if largest_prime.nil?
+
+  # Calculate the sum of digits of the largest prime number
+  largest_prime.to_s.chars.map(&:to_i).sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_skjkasdkd
+    candidate = method(:skjkasdkd)
+    assert_equal(10, candidate.call([0, 3, 2, 1, 3, 5, 7, 4, 5, 5, 5, 2, 181, 32, 4, 32, 3, 2, 32, 324, 4, 3]))
+    assert_equal(25, candidate.call([1, 0, 1, 8, 2, 4597, 2, 1, 3, 40, 1, 2, 1, 2, 4, 2, 5, 1]))
+    assert_equal(13, candidate.call([1, 3, 1, 32, 5107, 34, 83278, 109, 163, 23, 2323, 32, 30, 1, 9, 3]))
+    assert_equal(11, candidate.call([0, 724, 32, 71, 99, 32, 6, 0, 5, 91, 83, 0, 5, 6]))
+    assert_equal(3, candidate.call([0, 81, 12, 3, 1, 21]))
+    assert_equal(7, candidate.call([0, 8, 1, 2, 1, 7]))
+    assert_equal(19, candidate.call([8191]))
+    assert_equal(19, candidate.call([8191, 123456, 127, 7]))
+    assert_equal(10, candidate.call([127, 97, 8192]))
+  end
+end
+"
+HumanEval_95,npi_Deva,rb,"उदाहरणहरू: फलनले गलत फर्काउनु पर्छ यदि दिइएको ह्यास खाली छ भने।case वा सबै कुञ्जीहरू माथिल्लो अक्षरमा स्ट्रिंगहरू हुन्, अन्यथा फर्काउनुहोस् false. यदि सबै कुञ्जीहरू lower मा string हरू हुन् भने, एउटा hash दिईयो भने, true फर्काउनुहोस् # >>> check_dict_case.call({""a"" => ""apple"", ""b"" => ""banana""})
+# true
+# >>> check_dict_case.call({""a"" => ""apple"", ""A"" => ""banana"", ""B"" => ""banana""})
+# false
+# >>> check_dict_case.call({""a"" => ""apple"", 8 => ""banana"", ""a"" => ""apple""})
+# false
+# >>> check_dict_case.call({""Name"" => ""John"", ""Age"" => ""36"", ""City"" => ""Houston""})
+# false
+# >>> check_dict_case.call({""STATE"" => ""NC"", ""ZIP"" => ""12345""})
+# true
+def check_dict_case(dict)
+","def check_dict_case(dict)
+  return false if dict.empty?
+
+  lowercase_keys = dict.keys.all? { |key| key.is_a?(String) && key == key.downcase }
+  uppercase_keys = dict.keys.all? { |key| key.is_a?(String) && key == key.upcase }
+
+  lowercase_keys || uppercase_keys
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_check_dict_case
+    candidate = method(:check_dict_case)
+    assert_equal(true, candidate.call({""p"" => ""pineapple"", ""b"" => ""banana""}))
+    assert_equal(false, candidate.call({""p"" => ""pineapple"", ""A"" => ""banana"", ""B"" => ""banana""}))
+    assert_equal(false, candidate.call({""p"" => ""pineapple"", ""5"" => ""banana"", ""a"" => ""apple""}))
+    assert_equal(false, candidate.call({""Name"" => ""John"", ""Age"" => ""36"", ""City"" => ""Houston""}))
+    assert_equal(true, candidate.call({""STATE"" => ""NC"", ""ZIP"" => ""12345""}))
+    assert_equal(true, candidate.call({""fruit"" => ""Orange"", ""taste"" => ""Sweet""}))
+    assert_equal(false, candidate.call({}))
+  end
+end
+"
+HumanEval_96,npi_Deva,rb,"उदाहरणका लागि: पूर्णांकहरू जुन अभाज्य संख्याहरू हुन् र n भन्दा कम छन्।एउटा फंक्शन लागू गर्नुहोस् जसले गैर-ऋणात्मक पूर्णांक लिन्छ र पहिलो n को एरे फर्काउँछ ।# >>> count_up_to.call(5)
+# [2, 3]
+# >>> count_up_to.call(11)
+# [2, 3, 5, 7]
+# >>> count_up_to.call(0)
+# []
+# >>> count_up_to.call(20)
+# [2, 3, 5, 7, 11, 13, 17, 19]
+# >>> count_up_to.call(1)
+# []
+# >>> count_up_to.call(18)
+# [2, 3, 5, 7, 11, 13, 17]
+def count_up_to(n)
+","def count_up_to(n)
+  return [] if n <= 2
+  primes = []
+  (2...n).each do |num|
+    is_prime = true
+    (2..Math.sqrt(num)).each do |i|
+      if num % i == 0
+        is_prime = false
+        break
+      end
+    end
+    primes << num if is_prime
+  end
+  primes
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_count_up_to
+    candidate = method(:count_up_to)
+    assert_equal([2, 3], candidate.call(5))
+    assert_equal([2, 3, 5], candidate.call(6))
+    assert_equal([2, 3, 5], candidate.call(7))
+    assert_equal([2, 3, 5, 7], candidate.call(10))
+    assert_equal([], candidate.call(0))
+    assert_equal([2, 3, 5, 7, 11, 13, 17, 19], candidate.call(22))
+    assert_equal([], candidate.call(1))
+    assert_equal([2, 3, 5, 7, 11, 13, 17], candidate.call(18))
+    assert_equal([2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43], candidate.call(47))
+    assert_equal([2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97], candidate.call(101))
+  end
+end
+"
+HumanEval_97,npi_Deva,rb,"उदाहरणहरू: मानौं कि इनपुट सधैं मान्य छ।तिनीहरूको एकाई अंकहरूको गुणनफल।दुई पूर्णांक लिने र फर्काउने फलन पूरा गर्नुहोस् ।# >>> multiply.call(148, 412)
+# 16
+# >>> multiply.call(19, 28)
+# 72
+# >>> multiply.call(2020, 1851)
+# 0
+# >>> multiply.call(14, -15)
+# 20
+def multiply(a, b)
+","def multiply(a, b)
+  a_unit_digit = a.abs % 10
+  b_unit_digit = b.abs % 10
+  a_unit_digit * b_unit_digit
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_multiply
+    candidate = method(:multiply)
+    assert_equal(16, candidate.call(148, 412))
+    assert_equal(72, candidate.call(19, 28))
+    assert_equal(0, candidate.call(2020, 1851))
+    assert_equal(20, candidate.call(14, -15))
+    assert_equal(42, candidate.call(76, 67))
+    assert_equal(49, candidate.call(17, 27))
+    assert_equal(0, candidate.call(0, 1))
+    assert_equal(0, candidate.call(0, 0))
+  end
+end
+"
+HumanEval_98,npi_Deva,rb,"उदाहरणका लागि: स्ट्रिंग s दिइएको छ, जोडी सूचकांकमा ठूला स्वरहरूको संख्या गणना गर्नुहोस्।# >>> count_upper.call(""aBCdEf"")
+# 1
+# >>> count_upper.call(""abcdefg"")
+# 0
+# >>> count_upper.call(""dBBE"")
+# 0
+def count_upper(s)
+","def count_upper(s)
+  vowels = ['A', 'E', 'I', 'O', 'U']
+  count = 0
+
+  s.chars.each_with_index do |char, index|
+    if index.even? && vowels.include?(char)
+      count += 1
+    end
+  end
+
+  count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_count_upper
+    candidate = method(:count_upper)
+    assert_equal(1, candidate.call(""aBCdEf""))
+    assert_equal(0, candidate.call(""abcdefg""))
+    assert_equal(0, candidate.call(""dBBE""))
+    assert_equal(0, candidate.call(""B""))
+    assert_equal(1, candidate.call(""U""))
+    assert_equal(0, candidate.call(""""))
+    assert_equal(2, candidate.call(""EEEE""))
+  end
+end
+"
+HumanEval_99,npi_Deva,rb,"उदाहरणहरू दुई पूर्णांकबाट, यसलाई शून्यबाट टाढा राउन्ड गर्नुहोस्।र यसको नजीकको पूर्णांक फर्काउँछ यदि संख्या बराबर दूरीमा छ भनेएउटा प्रकार्य सिर्जना गर्नुहोस् जसले एउटा मान (स्ट्रिङ) लिन्छ जसले एउटा संख्यालाई प्रतिनिधित्व गर्दछ ।# >>> closest_integer.call(""10"")
+# 10
+# >>> closest_integer.call(""15.3"")
+# 15
+# Note:
+# Rounding away from zero means that if the given number is equidistant
+# from two integers, the one you should return is the one that is the
+# farthest from zero. For example closest_integer(""14.5"") should
+# return 15 and closest_integer(""-14.5"") should return -15.
+def closest_integer(value)
+","def closest_integer(value)
+  number = value.to_f
+  if number > 0
+    (number + 0.5).floor
+  else
+    (number - 0.5).ceil
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_closest_integer
+    candidate = method(:closest_integer)
+    assert_equal(10, candidate.call(""10""))
+    assert_equal(15, candidate.call(""14.5""))
+    assert_equal(-16, candidate.call(""-15.5""))
+    assert_equal(15, candidate.call(""15.3""))
+    assert_equal(0, candidate.call(""0""))
+  end
+end
+"
+HumanEval_100,npi_Deva,rb,"उदाहरणहरू: i ले स्तरमा ढुङ्गाहरूको संख्या दर्शाउँछ (i+1) ।एउटा एरेमा प्रत्येक स्तरमा ढुङ्गाहरूको संख्या फर्काउँदछ, जहाँ तत्वमा अनुक्रमणिका - अर्को सम संख्या यदि n सम हो भने।- अर्को विषम संख्या यदि n विषम छ भने।अर्को तहमा ढुङ्गाहरूको संख्या: पहिलो तहमा n ढुङ्गाहरू छन्।सकारात्मक पूर्णांक n दिइएको छ, तपाईंले n स्तरको ढुङ्गाको ढेर बनाउनु पर्छ।# >>> make_a_pile.call(3)
+# [3, 5, 7]
+def make_a_pile(n)
+","def make_a_pile(n)
+  result = []
+  current_stones = n
+  n.times do
+    result << current_stones
+    current_stones += 2
+  end
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_make_a_pile
+    candidate = method(:make_a_pile)
+    assert_equal([3, 5, 7], candidate.call(3))
+    assert_equal([4, 6, 8, 10], candidate.call(4))
+    assert_equal([5, 7, 9, 11, 13], candidate.call(5))
+    assert_equal([6, 8, 10, 12, 14, 16], candidate.call(6))
+    assert_equal([8, 10, 12, 14, 16, 18, 20, 22], candidate.call(8))
+  end
+end
+"
+HumanEval_101,npi_Deva,rb,"उदाहरणका लागि: शब्दहरूमा स्ट्रिङ विभाजन गर्न र शब्दहरूको एरे फर्काउन।तपाईंलाई कम्पास वा स्पेसद्वारा विभाजित शब्दहरूको एउटा स्ट्रिङ दिइनेछ। तपाईंको कार्य हो # >>> words_string.call(""Hi, my name is John"")
+# [""Hi"", ""my"", ""name"", ""is"", ""John""]
+# >>> words_string.call(""One, two, three, four, five, six"")
+# [""One"", ""two"", ""three"", ""four"", ""five"", ""six""]
+def words_string(s)
+","def words_string(s)
+  s.split(/[\s,]+/)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_words_string
+    candidate = method(:words_string)
+    assert_equal([""Hi"", ""my"", ""name"", ""is"", ""John""], candidate.call(""Hi, my name is John""))
+    assert_equal([""One"", ""two"", ""three"", ""four"", ""five"", ""six""], candidate.call(""One, two, three, four, five, six""))
+    assert_equal([""Hi"", ""my"", ""name""], candidate.call(""Hi, my name""))
+    assert_equal([""One"", ""two"", ""three"", ""four"", ""five"", ""six""], candidate.call(""One,, two, three, four, five, six,""))
+    assert_equal([], candidate.call(""""))
+    assert_equal([""ahmed"", ""gamal""], candidate.call(""ahmed     , gamal""))
+  end
+end
+"
+HumanEval_102,npi_Deva,rb,"उदाहरणका लागि: त्यहाँ त्यस्तो कुनै संख्या छैन, तब फंक्शनले -१ फर्काउनु पर्छ।यदि  भनेको [x, y] सम्मको सबैभन्दा ठूलो पूर्णांक हो भनेयो फंक्शनले दुई सकारात्मक संख्या x र y लिन्छ र  फर्काउँछ# >>> choose_num.call(12, 15)
+# 14
+# >>> choose_num.call(13, 12)
+# -1
+def choose_num(x, y)
+","def choose_num(x, y)
+  return -1 if x > y
+  # Start looking from the largest number
+  max_even = y.even? ? y : y - 1
+  # Iterate downwards to find the biggest even number
+  max_even.downto(x) do |n|
+    return n if n.even?
+  end
+  -1
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_choose_num
+    candidate = method(:choose_num)
+    assert_equal(14, candidate.call(12, 15))
+    assert_equal(-1, candidate.call(13, 12))
+    assert_equal(12354, candidate.call(33, 12354))
+    assert_equal(-1, candidate.call(5234, 5233))
+    assert_equal(28, candidate.call(6, 29))
+    assert_equal(-1, candidate.call(27, 10))
+    assert_equal(-1, candidate.call(7, 7))
+    assert_equal(546, candidate.call(546, 546))
+  end
+end
+"
+HumanEval_103,npi_Deva,rb,"उदाहरण: यदि n m भन्दा ठूलो छ भने, फर्काउनुहोस् -१।उत्तरलाई नजिकको पूर्णांकमा गोल गर्नुहोस् र त्यसलाई बाइनरीमा रूपान्तरण गर्नुहोस्।n देखि m सम्मका पूर्णांकहरूको औसत (n र m सहित) ।तपाईँलाई दुईवटा सकारात्मक पूर्णांक n र m दिइएको छ, र तपाईँको कार्य भनेको  को गणना गर्नु हो# >>> rounded_avg.call(1, 5)
+# ""0b11""
+# >>> rounded_avg.call(7, 5)
+# -1
+# >>> rounded_avg.call(10, 20)
+# ""0b1111""
+# >>> rounded_avg.call(20, 33)
+# ""0b11010""
+def rounded_avg(n, m)
+","def rounded_avg(n, m)
+  return -1 if n > m
+
+  sum = (n..m).reduce(:+)
+  count = m - n + 1
+  average = (sum.to_f / count).round
+  ""0b"" + average.to_i.to_s(2)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_rounded_avg
+    candidate = method(:rounded_avg)
+    assert_equal(""0b11"", candidate.call(1, 5))
+    assert_equal(""0b1010"", candidate.call(7, 13))
+    assert_equal(""0b1111001010"", candidate.call(964, 977))
+    assert_equal(""0b1111100100"", candidate.call(996, 997))
+    assert_equal(""0b1011000010"", candidate.call(560, 851))
+    assert_equal(""0b101101110"", candidate.call(185, 546))
+    assert_equal(""0b110101101"", candidate.call(362, 496))
+    assert_equal(""0b1001110010"", candidate.call(350, 902))
+    assert_equal(""0b11010111"", candidate.call(197, 233))
+    assert_equal(-1, candidate.call(7, 5))
+    assert_equal(-1, candidate.call(5, 1))
+    assert_equal(""0b101"", candidate.call(5, 5))
+  end
+end
+"
+HumanEval_104,npi_Deva,rb,"उदाहरणका लागि: नोट: फर्काइएको एरेलाई बढ्दो क्रममा क्रमबद्ध गर्नुपर्दछ।कुनै पनि अंक नरहेको तत्वसकारात्मक पूर्णांक x को एउटा सरणी दिइएको छ, सबै  को क्रमबद्ध सरणी फर्काउनुहोस्# >>> unique_digits.call([15, 33, 1422, 1])
+# [1, 15, 33]
+# >>> unique_digits.call([152, 323, 1422, 10])
+# []
+def unique_digits(x)
+","def unique_digits(x)
+  x.select { |num| num.to_s.chars.none? { |digit| digit.to_i.even? } }.sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_unique_digits
+    candidate = method(:unique_digits)
+    assert_equal([1, 15, 33], candidate.call([15, 33, 1422, 1]))
+    assert_equal([], candidate.call([152, 323, 1422, 10]))
+    assert_equal([111, 151], candidate.call([12345, 2033, 111, 151]))
+    assert_equal([31, 135], candidate.call([135, 103, 31]))
+  end
+end
+"
+HumanEval_105,npi_Deva,rb,"उदाहरणका लागि: ""एक"", ""दुई"", ""तीन"", ""चार"", ""पाँच"", ""छ"", ""सात"", ""आठ"", ""नौ"" नतिजाको एरे उल्टाउनुहोस्, र त्यसपछि प्रत्येक अंकलाई यसको सम्बन्धित नामबाट पूर्णांकहरूको एउटा सरणी दिइएको छ, १ र ९ सम्मका पूर्णांकहरू क्रमबद्ध गर्नुहोस्,# >>> by_length.call([2, 1, 1, 4, 5, 8, 2, 3])
+# [""Eight"", ""Five"", ""Four"", ""Three"", ""Two"", ""Two"", ""One"", ""One""]
+# If the array is empty, return an empty array:
+# >>> by_length.call([])
+# []
+# If the array has any strange number ignore it:
+# >>> by_length.call([1, -1, 55])
+# [""One""]
+def by_length(arr)
+","def by_length(arr)
+  number_names = {
+    1 => ""One"",
+    2 => ""Two"",
+    3 => ""Three"",
+    4 => ""Four"",
+    5 => ""Five"",
+    6 => ""Six"",
+    7 => ""Seven"",
+    8 => ""Eight"",
+    9 => ""Nine""
+  }
+
+  filtered_sorted_reversed = arr.select { |x| x.between?(1, 9) }.sort.reverse
+  filtered_sorted_reversed.map { |num| number_names[num] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_by_length
+    candidate = method(:by_length)
+    assert_equal([""Eight"", ""Five"", ""Four"", ""Three"", ""Two"", ""Two"", ""One"", ""One""], candidate.call([2, 1, 1, 4, 5, 8, 2, 3]))
+    assert_equal([], candidate.call([]))
+    assert_equal([""One""], candidate.call([1, -1, 55]))
+    assert_equal([""Three"", ""Two"", ""One""], candidate.call([1, -1, 3, 2]))
+    assert_equal([""Nine"", ""Eight"", ""Four""], candidate.call([9, 4, 8]))
+  end
+end
+"
+HumanEval_106,npi_Deva,rb,"उदाहरण: i को कारक 1 देखि i सम्मका संख्याहरूको गुणन हो (1 * 2 * ... * i) ।i १ बाट सुरु हुन्छ।वा १ देखि i सम्मका संख्याहरूको योगफल।र आकार n को एउटा सरणी फर्काउँछ, यस्तो कि अनुक्रमणिका i मा तत्वको मान i को कारक हो यदि i सम छ भने फलन f लाई लागू गर्नुहोस् जसले n लाई परिमितिको रूपमा लिन्छ, # >>> f.call(5)
+# [1, 2, 6, 24, 15]
+def f(n)
+","def f(n)
+  (1..n).map do |i|
+    if i.even?
+      (1..i).inject(:*) || 1
+    else
+      (1..i).inject(:+)
+    end
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_f
+    candidate = method(:f)
+    assert_equal([1, 2, 6, 24, 15], candidate.call(5))
+    assert_equal([1, 2, 6, 24, 15, 720, 28], candidate.call(7))
+    assert_equal([1], candidate.call(1))
+    assert_equal([1, 2, 6], candidate.call(3))
+  end
+end
+"
+HumanEval_107,npi_Deva,rb,"उदाहरण १: पूर्णांक पालिन्ड्रोमहरू जुन दायरामा पर्दछन् ((१, एन), समावेशी।सकारात्मक पूर्णांक n दिइएको छ, एउटा एरे फर्काउनुहोस् जसमा सम र विषम संख्या छ # >>> even_odd_palindrome.call(3)
+# [1, 2]
+# Explanation:
+# Integer palindrome are 1, 2, 3. one of them is even, and two of them are odd.
+# Example 2:
+# >>> even_odd_palindrome.call(12)
+# [4, 6]
+# Explanation:
+# Integer palindrome are 1, 2, 3, 4, 5, 6, 7, 8, 9, 11. four of them are even, and 6 of them are odd.
+# Note:
+# 1. 1 <= n <= 10^3
+# 2. returned array has the number of even and odd integer palindromes respectively.
+def even_odd_palindrome(n)
+","def even_odd_palindrome(n)
+  even_count = 0
+  odd_count = 0
+
+  (1..n).each do |num|
+    if num.to_s == num.to_s.reverse
+      if num.even?
+        even_count += 1
+      else
+        odd_count += 1
+      end
+    end
+  end
+
+  [even_count, odd_count]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_even_odd_palindrome
+    candidate = method(:even_odd_palindrome)
+    assert_equal([8, 13], candidate.call(123))
+    assert_equal([4, 6], candidate.call(12))
+    assert_equal([1, 2], candidate.call(3))
+    assert_equal([6, 8], candidate.call(63))
+    assert_equal([5, 6], candidate.call(25))
+    assert_equal([4, 6], candidate.call(19))
+    assert_equal([4, 5], candidate.call(9))
+    assert_equal([0, 1], candidate.call(1))
+  end
+end
+"
+HumanEval_108,npi_Deva,rb,"उदाहरणका लागि, -१२३ को अंक -१, २ र ३ मा हस्ताक्षर छ।यदि कुनै संख्या ऋणात्मक छ भने, तब यसको पहिलो हस्ताक्षरित अंक ऋणात्मक हुनेछ: तत्वहरूको संख्या जसको अंकहरूको योगफल > ० छ।एउटा फंक्शन count_nums लेख्नुहोस् जसले पूर्णांकहरूको एउटा सरणी लिन्छ र फर्काउँछ # >>> count_nums.call([])
+# 0
+# >>> count_nums.call([-1, 11, -11])
+# 1
+# >>> count_nums.call([1, 1, 2])
+# 3
+def count_nums(arr)
+","def count_nums(arr)
+  arr.count do |num|
+    num.to_s.chars.map(&:to_i).sum > 0
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_count_nums
+    candidate = method(:count_nums)
+    assert_equal(0, candidate.call([]))
+    assert_equal(0, candidate.call([-1, -2, 0]))
+    assert_equal(6, candidate.call([1, 1, 2, -2, 3, 4, 5]))
+    assert_equal(5, candidate.call([1, 6, 9, -6, 0, 1, 5]))
+    assert_equal(4, candidate.call([1, 100, 98, -7, 1, -1]))
+    assert_equal(5, candidate.call([12, 23, 34, -45, -56, 0]))
+    assert_equal(1, candidate.call([0, 1]))
+    assert_equal(1, candidate.call([1]))
+  end
+end
+"
+HumanEval_109,npi_Deva,rb,"उदाहरणका लागि: नोटः दिइएको एरेमा अद्वितीय तत्वहरू हुनुको ग्यारेन्टी छ।यदि दिइएको एरे खाली छ भने तब true फर्काउनुहोस्।त्यसपछि सही फर्काउनुहोस् वा गलत फर्काउनुहोस्यदि माथिको अपरेशन गरेर क्रमबद्ध एर्रे प्राप्त गर्न सम्भव छ भने एरेमा सुरुको स्थिति अर्थात् ० औं सूचकांक।एरेको अन्तिम एलिमेन्ट  मा सार्ने छएक दायाँ सार्ने कार्यले एरेका सबै तत्वहरूलाई एकद्वारा सार्ने हो ।तपाईँलाई दायाँ पछाडि कुनै पनि संख्यामा अपरेशन गर्न अनुमति छ।दिइएको एरेमा निम्न अपरेशन: यो सम्भव छ कि एउटा एर्रे क्रमबद्ध गर्न सकिन्छ गैर-घटेको क्रममा प्रदर्शन गरेर एरेमा संख्याहरू अनियमित रूपमा क्रमबद्ध हुनेछन्। तपाईंको कार्य यो निर्धारण गर्नु हो कि हामीसँग एन पूर्णांकको एर्रे 'एर' छ arr[1], arr[2], ..., arr[N]।# >>> move_one_ball.call([3, 4, 5, 1, 2])
+# true
+# Explanation: By performin 2 right shift operations, non-decreasing order can
+# be achieved for the given array.
+# >>> move_one_ball.call([3, 5, 4, 1, 2])
+# false
+# Explanation:It is not possible to get non-decreasing order for the given
+# array by performing any number of right shift operations.
+def move_one_ball(arr)
+","def move_one_ball(arr)
+  return true if arr.empty?
+
+  n = arr.size
+  count_rotation_point = 0
+  rotation_index = -1
+
+  (0...n).each do |i|
+    next_index = (i + 1) % n
+    if arr[i] > arr[next_index]
+      count_rotation_point += 1
+      rotation_index = next_index
+    end
+  end
+
+  count_rotation_point <= 1
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_move_one_ball
+    candidate = method(:move_one_ball)
+    assert_equal(true, candidate.call([3, 4, 5, 1, 2]))
+    assert_equal(true, candidate.call([3, 5, 10, 1, 2]))
+    assert_equal(false, candidate.call([4, 3, 1, 2]))
+    assert_equal(false, candidate.call([3, 5, 4, 1, 2]))
+    assert_equal(true, candidate.call([]))
+  end
+end
+"
+HumanEval_110,npi_Deva,rb,"उदाहरणका लागि: अन्यथा, ""NO"" फर्काउनुहोस्।lst1 को सबै तत्वहरू पनि हुन, ""YES"" फर्काउनुहोस्।यदि lst1 र lst2 बीचमा तत्वहरू आदान प्रदान गर्न सम्भव छ भनेlst1 र lst2 बीच आदानप्रदान तत्वहरूको संख्यामा कुनै सीमा छैन।lst1 लाई केवल सम संख्याहरूको सरणी बनाउनको लागि।र तत्वहरूको आदान प्रदान गर्न सम्भव छ कि छैन भनेर निर्धारण गर्दछ ।यो समस्यामा, तपाईँले एउटा फंक्शन लागू गर्नुहुनेछ जुन दुई नम्बरको एरे लिन्छ, # >>> exchange.call([1, 2, 3, 4], [1, 2, 3, 4])
+# ""YES""
+# >>> exchange.call([1, 2, 3, 4], [1, 5, 3, 4])
+# ""NO""
+# It is assumed that the input arrays will be non-empty.
+def exchange(lst1, lst2)
+","def exchange(lst1, lst2)
+  # Check if lst1 already consists solely of even numbers
+  return ""YES"" if lst1.all?(&:even?)
+
+  # Check if there are at least as many even numbers in lst2
+  # as there are odd numbers in lst1
+  odd_count_lst1 = lst1.count(&:odd?)
+  even_count_lst2 = lst2.count(&:even?)
+
+  odd_count_lst1 <= even_count_lst2 ? ""YES"" : ""NO""
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_exchange
+    candidate = method(:exchange)
+    assert_equal(""YES"", candidate.call([1, 2, 3, 4], [1, 2, 3, 4]))
+    assert_equal(""NO"", candidate.call([1, 2, 3, 4], [1, 5, 3, 4]))
+    assert_equal(""YES"", candidate.call([1, 2, 3, 4], [2, 1, 4, 3]))
+    assert_equal(""YES"", candidate.call([5, 7, 3], [2, 6, 4]))
+    assert_equal(""NO"", candidate.call([5, 7, 3], [2, 6, 3]))
+    assert_equal(""NO"", candidate.call([3, 2, 6, 1, 8, 9], [3, 5, 5, 1, 1, 1]))
+    assert_equal(""YES"", candidate.call([100, 200], [200, 200]))
+  end
+end
+"
+HumanEval_111,npi_Deva,rb,"उदाहरण: यदि धेरै अक्षरहरू एउटै घटना छ भने, तिनीहरूलाई सबै फिर्ता।सबैभन्दा धेरै पटक दोहोरिएको अक्षरको संख्यास्पेस विभाजित लघु अक्षरहरूको प्रतिनिधित्व गर्ने स्ट्रिङ दिइएको छ, ह्यास फिर्ता गर्नुहोस् # >>> histogram.call(""a b c"")
+# {""a"" => 1, ""b"" => 1, ""c"" => 1}
+# >>> histogram.call(""a b b a"")
+# {""a"" => 2, ""b"" => 2}
+# >>> histogram.call(""a b c a b"")
+# {""a"" => 2, ""b"" => 2}
+# >>> histogram.call(""b b b b a"")
+# {""b"" => 4}
+# >>> histogram.call("""")
+# {}
+def histogram(test)
+","def histogram(test)
+  return {} if test.empty?
+
+  count = Hash.new(0)
+
+  test.split.each do |char|
+    count[char] += 1
+  end
+
+  max_count = count.values.max
+  count.select { |_, value| value == max_count }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_histogram
+    candidate = method(:histogram)
+    assert_equal({""a"" => 2, ""b"" => 2}, candidate.call(""a b b a""))
+    assert_equal({""a"" => 2, ""b"" => 2}, candidate.call(""a b c a b""))
+    assert_equal({""a"" => 1, ""b"" => 1, ""c"" => 1, ""d"" => 1, ""g"" => 1}, candidate.call(""a b c d g""))
+    assert_equal({""r"" => 1, ""t"" => 1, ""g"" => 1}, candidate.call(""r t g""))
+    assert_equal({""b"" => 4}, candidate.call(""b b b b a""))
+    assert_equal({""r"" => 1, ""t"" => 1, ""g"" => 1}, candidate.call(""r t g""))
+    assert_equal({}, candidate.call(""""))
+    assert_equal({""a"" => 1}, candidate.call(""a""))
+  end
+end
+"
+HumanEval_112,npi_Deva,rb,"उदाहरण तपाईँले जाँचको लागि परिणाम स्ट्रिङ र true/false समावेश भएको एउटा एरे फर्काउनु पर्छ।यदि यो पछाडि र अगाडि समान पढ्छ भने स्ट्रिङलाई पालिन्ड्रोम भनिन्छ।त्यसपछि जाँच गर्नुहोस् कि परिणाम स्ट्रिङ पालिन्ड्रोम हो कि होइन।हामीलाई दुईवटा स्ट्रिङ s र c दिइएको छ, तपाईँले s मा भएका सबै अक्षरहरू मेटाउनु पर्छ जुन c मा भएका कुनै पनि अक्षरको बराबर छ कार्य # >>> reverse_delete.call(""abcde"", ""ae"")
+# [""bcd"", false]
+# >>> reverse_delete.call(""abcdef"", ""b"")
+# [""acdef"", false]
+# >>> reverse_delete.call(""abcdedcba"", ""ab"")
+# [""cdedc"", true]
+def reverse_delete(s, c)
+","def reverse_delete(s, c)
+  # Remove all characters in c from s
+  filtered_string = s.delete(c)
+  
+  # Check if the filtered string is a palindrome
+  is_palindrome = filtered_string == filtered_string.reverse
+  
+  # Return the result array
+  [filtered_string, is_palindrome]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_reverse_delete
+    candidate = method(:reverse_delete)
+    assert_equal([""bcd"", false], candidate.call(""abcde"", ""ae""))
+    assert_equal([""acdef"", false], candidate.call(""abcdef"", ""b""))
+    assert_equal([""cdedc"", true], candidate.call(""abcdedcba"", ""ab""))
+    assert_equal([""dik"", false], candidate.call(""dwik"", ""w""))
+    assert_equal(["""", true], candidate.call(""a"", ""a""))
+    assert_equal([""abcdedcba"", true], candidate.call(""abcdedcba"", """"))
+    assert_equal([""abcdedcba"", true], candidate.call(""abcdedcba"", ""v""))
+    assert_equal([""abba"", true], candidate.call(""vabba"", ""v""))
+    assert_equal(["""", true], candidate.call(""mamma"", ""mia""))
+  end
+end
+"
+HumanEval_113,npi_Deva,rb,"इनपुटको i'th स्ट्रिङमा अनौठो अंकहरूको संख्या।जहाँ सबै i हरूलाई नम्बरले प्रतिस्थापन गर्नुपर्दछ।आउटपुटको प्रत्येक तत्व i ""अनौठो तत्वहरूको संख्या हुनुपर्दछ।स्ट्रिंगहरूको एउटा सरणी दिइएको छ, जहाँ प्रत्येक स्ट्रिंगमा केवल अंकहरू हुन्छन्, एउटा सरणी फर्काउनुहोस्।# >>> odd_count.call([""1234567""])
+# [""the number of odd elements 4n the str4ng 4 of the 4nput.""]
+# >>> odd_count.call([""3"", ""11111111""])
+# [""the number of odd elements 1n the str1ng 1 of the 1nput."", ""the number of odd elements 8n the str8ng 8 of the 8nput.""]
+def odd_count(lst)
+","def odd_count(lst)
+  lst.map do |num_str|
+    count = num_str.count('13579')
+    ""the number of odd elements #{count}n the str#{count}ng #{count} of the #{count}nput.""
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_odd_count
+    candidate = method(:odd_count)
+    assert_equal([""the number of odd elements 4n the str4ng 4 of the 4nput.""], candidate.call([""1234567""]))
+    assert_equal([""the number of odd elements 1n the str1ng 1 of the 1nput."", ""the number of odd elements 8n the str8ng 8 of the 8nput.""], candidate.call([""3"", ""11111111""]))
+    assert_equal([""the number of odd elements 2n the str2ng 2 of the 2nput."", ""the number of odd elements 3n the str3ng 3 of the 3nput."", ""the number of odd elements 2n the str2ng 2 of the 2nput.""], candidate.call([""271"", ""137"", ""314""]))
+  end
+end
+"
+HumanEval_114,npi_Deva,rb,"उदाहरण पूर्णांक n को एउटा सरणी दिइएको छ, कुनै पनि खाली उप-सरणीको न्यूनतम योगफल पत्ता लगाउनुहोस् # >>> minSubArraySum.call([2, 3, 4, 1, 2, 4])
+# 1
+# >>> minSubArraySum.call([-1, -2, -3])
+# -6
+def minSubArraySum(nums)
+","def minSubArraySum(nums)
+  min_sum = nums[0]
+  current_sum = 0
+  nums.each do |num|
+    if current_sum > 0
+      current_sum = num
+    else
+      current_sum += num
+    end
+    min_sum = [min_sum, current_sum].min
+  end
+  min_sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_minSubArraySum
+    candidate = method(:minSubArraySum)
+    assert_equal(1, candidate.call([2, 3, 4, 1, 2, 4]))
+    assert_equal(-6, candidate.call([-1, -2, -3]))
+    assert_equal(-14, candidate.call([-1, -2, -3, 2, -10]))
+    assert_equal(-9999999999999999, candidate.call([-9999999999999999]))
+    assert_equal(0, candidate.call([0, 10, 20, 1000000]))
+    assert_equal(-6, candidate.call([-1, -2, -3, 10, -5]))
+    assert_equal(-6, candidate.call([100, -1, -2, -3, 10, -5]))
+    assert_equal(3, candidate.call([10, 11, 13, 8, 3, 4]))
+    assert_equal(-33, candidate.call([100, -33, 32, -1, 0, -2]))
+    assert_equal(-10, candidate.call([-10]))
+    assert_equal(7, candidate.call([7]))
+    assert_equal(-1, candidate.call([1, -1]))
+  end
+end
+"
+HumanEval_115,npi_Deva,rb,"उदाहरण १: तपाईँले बाल्टिनहरू तल ल्याउन आवश्यक पटक को संख्या आउटपुट।तपाईंको काम कुवाहरू खाली गर्न बाल्टिनहरू प्रयोग गर्नु हो।र सबै बाल्टिनको क्षमता बराबर छ।प्रत्येक कुवामा पानी निकाल्न प्रयोग गर्न सकिने एउटा बाल्टिन हुन्छ।र प्रत्येक 1 पङ्क्तिमा पानीको एक एकाइ प्रतिनिधित्व गर्दछ।तपाईँलाई कुवाहरूको एक आयताकार ग्रिड दिइएको छ। प्रत्येक पङ्क्तिले एउटा कुवालाई प्रतिनिधित्व गर्छ, # >>> max_fill.call([[0, 0, 1, 0], [0, 1, 0, 0], [1, 1, 1, 1]], 1)
+# 6
+# Example 2:
+# >>> max_fill.call([[0, 0, 1, 1], [0, 0, 0, 0], [1, 1, 1, 1], [0, 1, 1, 1]], 2)
+# 5
+# Example 3:
+# >>> max_fill.call([[0, 0, 0], [0, 0, 0]], 5)
+# 0
+# Constraints:
+# * all wells have the same length
+# * 1 <= grid.length <= 10^2
+# * 1 <= grid[:,1].length <= 10^2
+# * grid[i][j] -> 0 | 1
+# * 1 <= capacity <= 10
+def max_fill(grid, capacity)
+","def max_fill(grid, capacity)
+  total_water_units = grid.flatten.sum
+  (total_water_units.to_f / capacity).ceil
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_max_fill
+    candidate = method(:max_fill)
+    assert_equal(6, candidate.call([[0, 0, 1, 0], [0, 1, 0, 0], [1, 1, 1, 1]], 1))
+    assert_equal(5, candidate.call([[0, 0, 1, 1], [0, 0, 0, 0], [1, 1, 1, 1], [0, 1, 1, 1]], 2))
+    assert_equal(0, candidate.call([[0, 0, 0], [0, 0, 0]], 5))
+    assert_equal(4, candidate.call([[1, 1, 1, 1], [1, 1, 1, 1]], 2))
+    assert_equal(2, candidate.call([[1, 1, 1, 1], [1, 1, 1, 1]], 9))
+  end
+end
+"
+HumanEval_116,npi_Deva,rb,"यो निम्नानुसार कार्यान्वयन हुनुपर्छ: दशमलव मानको आधारमा क्रमबद्ध गर्नुहोस्।संख्याको क्रममा एकको संख्यायस काटामा, तपाईँले गैर-ऋणात्मक पूर्णांकहरूको एउटा सरणीलाई क्रमबद्ध गर्नुपर्नेछ # >>> sort_array.call([1, 5, 2, 3, 4])
+# [1, 2, 3, 4, 5]
+# >>> sort_array.call([-2, -3, -4, -5, -6])
+# [-6, -5, -4, -3, -2]
+# >>> sort_array.call([1, 0, 2, 3, 4])
+# [0, 1, 2, 3, 4]
+def sort_array(arr)
+","def sort_array(arr)
+  arr.sort_by { |n| [n.to_s(2).count('1'), n] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sort_array
+    candidate = method(:sort_array)
+    assert_equal([1, 2, 4, 3, 5], candidate.call([1, 5, 2, 3, 4]))
+    assert_equal([-4, -2, -6, -5, -3], candidate.call([-2, -3, -4, -5, -6]))
+    assert_equal([0, 1, 2, 4, 3], candidate.call([1, 0, 2, 3, 4]))
+    assert_equal([], candidate.call([]))
+    assert_equal([2, 2, 4, 4, 3, 3, 5, 5, 5, 7, 77], candidate.call([2, 5, 77, 4, 5, 3, 5, 7, 2, 3, 4]))
+    assert_equal([32, 3, 5, 6, 12, 44], candidate.call([3, 6, 44, 12, 32, 5]))
+    assert_equal([2, 4, 8, 16, 32], candidate.call([2, 4, 8, 16, 32]))
+    assert_equal([2, 4, 8, 16, 32], candidate.call([2, 4, 8, 16, 32]))
+  end
+end
+"
+HumanEval_117,npi_Deva,rb,"उदाहरणहरू: नोट: तपाईँले इनपुट स्ट्रिङमा अक्षर र स्पेस मात्र समावेश भएको मान्न सक्नुहुन्छ ।यदि string s खाली छ भने फंक्शनले खाली एरे फर्काउनु पर्छ।n व्यञ्जन, क्रममा यी शब्दहरू स्ट्रिंग s मा देखा पर्दछ।एउटा प्रकार्य जसले string s बाट सबै शब्दहरूको एरे फर्काउँछ जसमा ठीक एउटा स्ट्रिंग s र एउटा नेचुरल नम्बर n दिइएको छ, तपाईँलाई कार्यान्वयन गर्ने काम दिइएको छ # >>> select_words.call(""Mary had a little lamb"", 4)
+# [""little""]
+# >>> select_words.call(""Mary had a little lamb"", 3)
+# [""Mary"", ""lamb""]
+# >>> select_words.call(""simple white space"", 2)
+# []
+# >>> select_words.call(""Hello world"", 4)
+# [""world""]
+# >>> select_words.call(""Uncle sam"", 3)
+# [""Uncle""]
+def select_words(s, n)
+","def select_words(s, n)
+  vowels = ""aeiouAEIOU""
+  words = s.split
+  words.select do |word|
+    consonant_count = word.chars.count { |char| !vowels.include?(char) }
+    consonant_count == n
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_select_words
+    candidate = method(:select_words)
+    assert_equal([""little""], candidate.call(""Mary had a little lamb"", 4))
+    assert_equal([""Mary"", ""lamb""], candidate.call(""Mary had a little lamb"", 3))
+    assert_equal([], candidate.call(""simple white space"", 2))
+    assert_equal([""world""], candidate.call(""Hello world"", 4))
+    assert_equal([""Uncle""], candidate.call(""Uncle sam"", 3))
+    assert_equal([], candidate.call("""", 4))
+    assert_equal([""b"", ""c"", ""d"", ""f""], candidate.call(""a b c d e f"", 1))
+  end
+end
+"
+HumanEval_118,npi_Deva,rb,"उदाहरण: तपाईँले दिइएको स्ट्रिङमा अङ्ग्रेजी अक्षर मात्र समावेश भएको मान्न सक्नुहुन्छ ।कुनै स्वर माथि उल्लेखित शर्त पूरा गरेको भेट्टाउनुहोस्।सुरु र अन्त्यमा स्वरहरू गणना हुँदैनन् यदि तपाईँले गर्नुभएन भने खाली string फर्काउनुहोस्शब्दको दाहिने तर्फबाट दुई व्यंजन (केस संवेदनशील) ।तपाईंलाई एउटा शब्द दिइएको छ. तपाईंको काम भनेको बीचमा रहेको सबैभन्दा नजिकको स्वर पत्ता लगाउनु हो # >>> get_closest_vowel.call(""yogurt"")
+# ""u""
+# >>> get_closest_vowel.call(""FULL"")
+# ""U""
+# >>> get_closest_vowel.call(""quick"")
+# """"
+# >>> get_closest_vowel.call(""ab"")
+# """"
+def get_closest_vowel(word)
+","def get_closest_vowel(word)
+  vowels = ""aeiouAEIOU""
+  (1...word.length - 1).reverse_each do |i|
+    if vowels.include?(word[i]) && !vowels.include?(word[i - 1]) && !vowels.include?(word[i + 1])
+      return word[i]
+    end
+  end
+  return """"
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_get_closest_vowel
+    candidate = method(:get_closest_vowel)
+    assert_equal(""u"", candidate.call(""yogurt""))
+    assert_equal(""u"", candidate.call(""full""))
+    assert_equal("""", candidate.call(""easy""))
+    assert_equal("""", candidate.call(""eAsy""))
+    assert_equal("""", candidate.call(""ali""))
+    assert_equal(""a"", candidate.call(""bad""))
+    assert_equal(""o"", candidate.call(""most""))
+    assert_equal("""", candidate.call(""ab""))
+    assert_equal("""", candidate.call(""ba""))
+    assert_equal("""", candidate.call(""quick""))
+    assert_equal(""i"", candidate.call(""anime""))
+    assert_equal("""", candidate.call(""Asia""))
+    assert_equal(""o"", candidate.call(""Above""))
+  end
+end
+"
+HumanEval_119,npi_Deva,rb,"उदाहरणहरू: यदि राम्रो स्ट्रिंग बनाउने तरिका छ भने 'हो' फर्काउनुहोस्, र अन्यथा 'होइन' फर्काउनुहोस्।"" (()) "" होइन।उदाहरणका लागि: string '(()))) राम्रो छ, जबकि string एउटा स्ट्रिङ S लाई राम्रो मानिन्छ यदि र केवल यदि S मा सबै कोष्ठकहरू केही क्रम, कि परिणामस्वरूप स्ट्रिङ राम्रो हुनेछ।तपाईंको काम भनेको जाँच गर्नु हो कि यदि यो सम्भव छ भने दुई तारहरू जोड्न सकिन्छ कोष्ठक "" (("" वा नजिक कोष्ठक "") "" मात्र।तपाईँलाई दुईवटा स्ट्रिङको एउटा एरे दिइएको छ, दुवै स्ट्रिङमा खुला हुन्छ ।# >>> match_parens.call([""()("", "")""])
+# ""Yes""
+# >>> match_parens.call(["")"", "")""])
+# ""No""
+def match_parens(lst)
+","def match_parens(lst)
+  a, b = lst
+
+  # Define a helper method to check if a string is balanced
+  def balanced?(s)
+    count = 0
+    s.each_char do |c|
+      count += 1 if c == '('
+      count -= 1 if c == ')'
+      return false if count < 0
+    end
+    count == 0
+  end
+
+  # Check if either concatenation forms a good string
+  if balanced?(a + b) || balanced?(b + a)
+    ""Yes""
+  else
+    ""No""
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_match_parens
+    candidate = method(:match_parens)
+    assert_equal(""Yes"", candidate.call([""()("", "")""]))
+    assert_equal(""No"", candidate.call(["")"", "")""]))
+    assert_equal(""No"", candidate.call([""(()(())"", ""())())""]))
+    assert_equal(""Yes"", candidate.call(["")())"", ""(()()(""]))
+    assert_equal(""Yes"", candidate.call([""(())))"", ""(()())((""]))
+    assert_equal(""No"", candidate.call([""()"", ""())""]))
+    assert_equal(""Yes"", candidate.call([""(()("", ""()))()""]))
+    assert_equal(""No"", candidate.call([""(((("", ""((())""]))
+    assert_equal(""No"", candidate.call(["")(()"", ""(()(""]))
+    assert_equal(""No"", candidate.call(["")("", "")(""]))
+    assert_equal(""Yes"", candidate.call([""("", "")""]))
+    assert_equal(""Yes"", candidate.call(["")"", ""(""]))
+  end
+end
+"
+HumanEval_120,npi_Deva,rb,"उदाहरण १: लम्बाई k को अधिकतम k संख्याको साथ arr मा।पूर्णांकहरूको एर र सकारात्मक पूर्णांक k को एर्रे दिइएको छ, क्रमबद्ध एर्रे फर्काउनुहोस् # >>> maximum.call([-3, -4, 5], 3)
+# [-4, -3, 5]
+# Example 2:
+# >>> maximum.call([4, -4, 4], 2)
+# [4, 4]
+# Example 3:
+# >>> maximum.call([-3, 2, 1, 2, -1, -2, 1], 1)
+# [2]
+# Note:
+# 1. The length of the array will be in the range of [1, 1000].
+# 2. The elements in the array will be in the range of [-1000, 1000].
+# 3. 0 <= k <= len(arr)
+def maximum(arr, k)
+","def maximum(arr, k)
+  arr.sort.last(k).sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_maximum
+    candidate = method(:maximum)
+    assert_equal([-4, -3, 5], candidate.call([-3, -4, 5], 3))
+    assert_equal([4, 4], candidate.call([4, -4, 4], 2))
+    assert_equal([2], candidate.call([-3, 2, 1, 2, -1, -2, 1], 1))
+    assert_equal([2, 20, 123], candidate.call([123, -123, 20, 0, 1, 2, -3], 3))
+    assert_equal([0, 1, 2, 20], candidate.call([-123, 20, 0, 1, 2, -3], 4))
+    assert_equal([-13, -8, 0, 0, 3, 5, 15], candidate.call([5, 15, 0, 3, -13, -8, 0], 7))
+    assert_equal([3, 5], candidate.call([-1, 0, 2, 5, 3, -10], 2))
+    assert_equal([5], candidate.call([1, 0, 5, -7], 1))
+    assert_equal([-4, 4], candidate.call([4, -4], 2))
+    assert_equal([-10, 10], candidate.call([-10, 10], 2))
+    assert_equal([], candidate.call([1, 2, 3, -23, 243, -400, 0], 0))
+  end
+end
+"
+HumanEval_121,npi_Deva,rb,"उदाहरणहरू पूर्णांकहरूको एक गैर-खाली सरणी दिईएको छ, सबै अनौठो तत्वहरूको योग फिर्ता गर्नुहोस् जुन पनि स्थानहरूमा छन्।# >>> solution.call([5, 8, 7, 1])
+# 12
+# >>> solution.call([3, 3, 3, 3, 3])
+# 9
+# >>> solution.call([30, 13, 24, 321])
+# 0
+def solution(lst)
+","def solution(lst)
+  lst.each_with_index.reduce(0) do |sum, (val, idx)|
+    (idx.even? && val.odd?) ? sum + val : sum
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_solution
+    candidate = method(:solution)
+    assert_equal(12, candidate.call([5, 8, 7, 1]))
+    assert_equal(9, candidate.call([3, 3, 3, 3, 3]))
+    assert_equal(0, candidate.call([30, 13, 24, 321]))
+    assert_equal(5, candidate.call([5, 9]))
+    assert_equal(0, candidate.call([2, 4, 8]))
+    assert_equal(23, candidate.call([30, 13, 23, 32]))
+    assert_equal(3, candidate.call([3, 13, 2, 9]))
+  end
+end
+"
+HumanEval_122,npi_Deva,rb,"उदाहरण: एरको पहिलो k तत्वहरूबाट अधिकतम दुई अंकहरू भएको तत्वहरूको योग।पूर्णांक arr र पूर्णांक k को गैर-खाली एर्रे दिइएको छ, फर्काउनुहोस् # >>> add_elements.call([111, 21, 3, 4000, 5, 6, 7, 8, 9], 4)
+# 24
+# Constraints:
+# 1. 1 <= len(arr) <= 100
+# 2. 1 <= k <= len(arr)
+def add_elements(arr, k)
+","def add_elements(arr, k)
+  arr.first(k).select { |num| num.abs.to_s.length <= 2 }.sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_add_elements
+    candidate = method(:add_elements)
+    assert_equal(-4, candidate.call([1, -2, -3, 41, 57, 76, 87, 88, 99], 3))
+    assert_equal(0, candidate.call([111, 121, 3, 4000, 5, 6], 2))
+    assert_equal(125, candidate.call([11, 21, 3, 90, 5, 6, 7, 8, 9], 4))
+    assert_equal(24, candidate.call([111, 21, 3, 4000, 5, 6, 7, 8, 9], 4))
+    assert_equal(1, candidate.call([1], 1))
+  end
+end
+"
+HumanEval_123,npi_Deva,rb,"get_odd_collatz(5) फर्काउँछ [१, ५] # 5 को लागि कोलाट्ज अनुक्रम [5, 16, 8, 4, 2, 1], त्यसैले बेग्लै संख्याहरू मात्र 1, र 5 हुन्। उदाहरणका लागि: २. फर्काइएको एरे क्रमशः क्रमबद्ध।१. कोलाट्ज (१) = १।नोट: यो अनुमान छ कि n को कुनै पनि मानको फरक पर्दैन, अनुक्रम सधैँ 1 सम्म पुग्नेछ।यदि अघिल्लो पद अनौठो छ भने, अर्को पद अघिल्लो पदको ३ गुणा हुन्छ अघिल्लो पद निम्नानुसार: यदि अघिल्लो पद जोडी छ भने, अर्को पद  को आधा होनिम्नानुसार: कुनै पनि सकारात्मक पूर्णांक n बाट सुरु गर्नुहोस्। त्यसपछि प्रत्येक पद  बाट प्राप्त हुन्छ।कोलाट्ज अनुमान गणितको एउटा अनुमान हो जुन परिभाषित अनुक्रमसँग सम्बन्धित छ ।सकारात्मक पूर्णांक n दिइएको छ, क्रमबद्ध एरे फर्काउनुहोस् जुन कोलाट्ज अनुक्रममा अनौठो संख्याहरू छन्। # >>> get_odd_collatz.call(5)
+# [1, 5]
+def get_odd_collatz(n)
+","def get_odd_collatz(n)
+  collatz_sequence = []
+  while n != 1
+    collatz_sequence << n if n.odd?
+    if n.even?
+      n = n / 2
+    else
+      n = 3 * n + 1
+    end
+  end
+  collatz_sequence << 1 if n == 1
+
+  collatz_sequence.sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_get_odd_collatz
+    candidate = method(:get_odd_collatz)
+    assert_equal([1, 5, 7, 11, 13, 17], candidate.call(14))
+    assert_equal([1, 5], candidate.call(5))
+    assert_equal([1, 3, 5], candidate.call(12))
+    assert_equal([1], candidate.call(1))
+  end
+end
+"
+HumanEval_124,npi_Deva,rb,"४. मिति यस प्रकारको हुनुपर्छ: mm-dd-yyyy ३. महिना १ भन्दा कम वा १२ भन्दा बढी हुनु हुँदैन।२. महिना १,३,५,७,८,१०,१२ का लागि दिनको संख्या १ भन्दा कम वा ३१ दिन भन्दा बढी नहोस् र महिना ४,६,९,११ का लागि दिनको संख्या १ भन्दा कम वा ३० दिन भन्दा बढी नहोस् र महिना २ का लागि दिनको संख्या १ भन्दा कम वा २९ भन्दा बढी नहोस् ।१. मिति स्ट्रिङ खाली छैन।यदि निम्न सबै नियमहरू पूरा भएमा मिति मान्य हुन्छ: यदि मिति मान्य छ भने सत्य फर्काउँछ अन्यथा गलत ।तपाईँले एउटा फलन लेख्नु पर्छ जसले दिइएको मिति स्ट्रिंगलाई मान्य गर्दछ र # >>> valid_date.call(""03-11-2000"")
+# true
+# >>> valid_date.call(""15-01-2012"")
+# false
+# >>> valid_date.call(""04-0-2040"")
+# false
+# >>> valid_date.call(""06-04-2020"")
+# true
+# >>> valid_date.call(""06/04/2020"")
+# false
+def valid_date(date)
+","def valid_date(date)
+  return false if date.nil? || date.empty?
+  
+  # Check if the date format is correct
+  match = date.match(/^(\d{2})-(\d{2})-(\d{4})$/)
+  return false unless match
+  
+  month, day, year = match.captures.map(&:to_i)
+  
+  # Check if month is valid
+  return false if month < 1 || month > 12
+  
+  # Check if day is valid according to the month
+  case month
+  when 1, 3, 5, 7, 8, 10, 12
+    return day >= 1 && day <= 31
+  when 4, 6, 9, 11
+    return day >= 1 && day <= 30
+  when 2
+    return day >= 1 && day <= 29
+  else
+    return false
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_valid_date
+    candidate = method(:valid_date)
+    assert_equal(true, candidate.call(""03-11-2000""))
+    assert_equal(false, candidate.call(""15-01-2012""))
+    assert_equal(false, candidate.call(""04-0-2040""))
+    assert_equal(true, candidate.call(""06-04-2020""))
+    assert_equal(true, candidate.call(""01-01-2007""))
+    assert_equal(false, candidate.call(""03-32-2011""))
+    assert_equal(false, candidate.call(""""))
+    assert_equal(false, candidate.call(""04-31-3000""))
+    assert_equal(true, candidate.call(""06-06-2005""))
+    assert_equal(false, candidate.call(""21-31-2000""))
+    assert_equal(true, candidate.call(""04-12-2003""))
+    assert_equal(false, candidate.call(""04122003""))
+    assert_equal(false, candidate.call(""20030412""))
+    assert_equal(false, candidate.call(""2003-04""))
+    assert_equal(false, candidate.call(""2003-04-12""))
+    assert_equal(false, candidate.call(""04-2003""))
+  end
+end
+"
+HumanEval_125,npi_Deva,rb,"उदाहरणहरू वर्णमाला, अर्डर (a) = ०, अर्डर (b) = १, ... अर्डर (z) = २५यदि कुनै अल्पविराम अवस्थित छैन भने तपाईँले  मा अनौठो क्रममा सानो अक्षरहरूको संख्या फर्काउनु पर्छशब्दहरूको एक स्ट्रिंग दिइएको छ, खाली स्थानमा विभाजित शब्दहरूको एरे फिर्ता गर्नुहोस्, यदि कुनै खाली स्थान पाठमा अवस्थित छैन भने तपाईं # >>> split_words.call(""Hello world!"")
+# [""Hello"", ""world!""]
+# >>> split_words.call(""Hello,world!"")
+# [""Hello"", ""world!""]
+# >>> split_words.call(""abcdef"")
+# 3
+def split_words(txt)
+","def split_words(txt)
+  if txt.include?(' ')
+    return txt.split(' ')
+  elsif txt.include?(',')
+    return txt.split(',')
+  else
+    odd_count = txt.chars.count { |char| ('a'..'z').include?(char) && (char.ord - 'a'.ord).odd? }
+    return odd_count
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_split_words
+    candidate = method(:split_words)
+    assert_equal([""Hello"", ""world!""], candidate.call(""Hello world!""))
+    assert_equal([""Hello"", ""world!""], candidate.call(""Hello,world!""))
+    assert_equal([""Hello"", ""world,!""], candidate.call(""Hello world,!""))
+    assert_equal([""Hello,Hello,world"", ""!""], candidate.call(""Hello,Hello,world !""))
+    assert_equal(3, candidate.call(""abcdef""))
+    assert_equal(2, candidate.call(""aaabb""))
+    assert_equal(1, candidate.call(""aaaBb""))
+    assert_equal(0, candidate.call(""""))
+  end
+end
+"
+HumanEval_126,npi_Deva,rb,"उदाहरणहरू संख्या, फर्काउँछ गलत कुनै नकारात्मक संख्या र केवल पूर्णांक मान्नुहोस्।यदि array सँग 1 भन्दा बढी डुप्लिकेटहरू छन् भनेसंख्याहरूको एरे दिइएको छ, फर्काउनुहोस् कि तिनीहरू क्रमबद्ध छन् वा छैनन्।# >>> is_sorted.call([5])
+# true
+# >>> is_sorted.call([1, 2, 3, 4, 5])
+# true
+# >>> is_sorted.call([1, 3, 2, 4, 5])
+# false
+# >>> is_sorted.call([1, 2, 3, 4, 5, 6])
+# true
+# >>> is_sorted.call([1, 2, 3, 4, 5, 6, 7])
+# true
+# >>> is_sorted.call([1, 3, 2, 4, 5, 6, 7])
+# false
+# >>> is_sorted.call([1, 2, 2, 3, 3, 4])
+# true
+# >>> is_sorted.call([1, 2, 2, 2, 3, 4])
+# false
+def is_sorted(lst)
+","def is_sorted(lst)
+  lst.each_cons(2).with_index do |(a, b), index|
+    return false if a > b
+    return false if index < lst.length - 2 && a == b && lst[index + 2] == b
+  end
+  true
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_sorted
+    candidate = method(:is_sorted)
+    assert_equal(true, candidate.call([5]))
+    assert_equal(true, candidate.call([1, 2, 3, 4, 5]))
+    assert_equal(false, candidate.call([1, 3, 2, 4, 5]))
+    assert_equal(true, candidate.call([1, 2, 3, 4, 5, 6]))
+    assert_equal(true, candidate.call([1, 2, 3, 4, 5, 6, 7]))
+    assert_equal(false, candidate.call([1, 3, 2, 4, 5, 6, 7]))
+    assert_equal(true, candidate.call([]))
+    assert_equal(true, candidate.call([1]))
+    assert_equal(false, candidate.call([3, 2, 1]))
+    assert_equal(false, candidate.call([1, 2, 2, 2, 3, 4]))
+    assert_equal(false, candidate.call([1, 2, 3, 3, 3, 4]))
+    assert_equal(true, candidate.call([1, 2, 2, 3, 3, 4]))
+    assert_equal(true, candidate.call([1, 2, 3, 4]))
+  end
+end
+"
+HumanEval_127,npi_Deva,rb,"[इनपुट/आउटपुट] नमूनाहरूः यदि दुई अन्तरालहरू पार गर्दैनन् भने, ""NO"" फर्काउनुहोस्।अन्यथा, ""NO"" फर्काउनुहोस्।यदि चौराहेको लम्बाई अभाज्य संख्या हो भने, ""YES"" फिर्ता गर्नुहोस्, जसको लम्बाई १ हो, जुन अभाज्य संख्या होइन।उदाहरणका लागि, अन्तरालहरूको अन्तरिक्ष (1, 3), (2, 4) (2, 3) हो।अन्तरकाल एक अभाज्य संख्या हो।तपाईँको काम यी दुईको अन्तरालको लम्बाइ हो कि होइन भनेर निर्धारण गर्नु हो ।प्रत्येक दिइएको अन्तरालको लागि, यो मानिएको छ कि यसको सुरुवात यसको अन्त भन्दा कम वा बराबर छ।सुरु र अन्त्य दुवै समावेश गर्दछ।दिइएको अन्तरालहरू बन्द छन् जसको अर्थ अन्तराल (सुरुवात, अन्त) जहाँ प्रत्येक अन्तराल पूर्णांकहरूको एक जोडी हो। उदाहरणका लागि, अन्तराल = (सुरुवात, अन्त) = (1, 2) ।तपाईंलाई दुई अन्तरालहरू दिइएको छ, # >>> intersection.call([1, 2], [2, 3])
+# ""NO""
+# >>> intersection.call([-1, 1], [0, 4])
+# ""NO""
+# >>> intersection.call([-3, -1], [-5, 5])
+# ""YES""
+def intersection(interval1, interval2)
+","def intersection(interval1, interval2)
+  start1, end1 = interval1
+  start2, end2 = interval2
+
+  intersection_start = [start1, start2].max
+  intersection_end = [end1, end2].min
+
+  if intersection_start > intersection_end
+    return ""NO""
+  end
+
+  intersection_length = intersection_end - intersection_start + 1
+
+  return ""YES"" if prime?(intersection_length)
+
+  ""NO""
+end
+
+def prime?(n)
+  return false if n <= 1
+  return true if n == 2 || n == 3
+
+  (2..Math.sqrt(n).to_i).each do |i|
+    return false if n % i == 0
+  end
+
+  true
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_intersection
+    candidate = method(:intersection)
+    assert_equal(""NO"", candidate.call([1, 2], [2, 3]))
+    assert_equal(""NO"", candidate.call([-1, 1], [0, 4]))
+    assert_equal(""YES"", candidate.call([-3, -1], [-5, 5]))
+    assert_equal(""YES"", candidate.call([-2, 2], [-4, 0]))
+    assert_equal(""NO"", candidate.call([-11, 2], [-1, -1]))
+    assert_equal(""NO"", candidate.call([1, 2], [3, 5]))
+    assert_equal(""NO"", candidate.call([1, 2], [1, 2]))
+    assert_equal(""NO"", candidate.call([-2, -2], [-3, -2]))
+  end
+end
+"
+HumanEval_128,npi_Deva,rb,"उदाहरण: नोट: खाली एरको लागि शून्य फर्काउनुहोस्।प्रत्येक नम्बरको एरे, १, -१ वा ० द्वारा प्रतिनिधित्व गरिएको।पूर्णांकहरूको परिमाणको योगफल सबै चिन्हहरूको गुणनद्वारा गुणा गरिएको तपाईँलाई पूर्णांकको एउटा एर्रे दिइएको छ र तपाईँले फर्काउनु पर्छ ।# >>> prod_signs.call([1, 2, 2, -4])
+# 9
+# >>> prod_signs.call([0, 1])
+# 0
+# >>> prod_signs.call([])
+# nil
+def prod_signs(arr)
+","def prod_signs(arr)
+  return nil if arr.empty?
+  
+  product_signs = arr.reduce(1) { |prod, num| prod * num <=> 0 }
+  sum_magnitudes = arr.map(&:abs).sum
+  
+  product_signs * sum_magnitudes
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_prod_signs
+    candidate = method(:prod_signs)
+    assert_equal(-9, candidate.call([1, 2, 2, -4]))
+    assert_equal(0, candidate.call([0, 1]))
+    assert_equal(-10, candidate.call([1, 1, 1, 2, 3, -1, 1]))
+    assert_equal(nil, candidate.call([]))
+    assert_equal(20, candidate.call([2, 4, 1, 2, -1, -1, 9]))
+    assert_equal(4, candidate.call([-1, 1, -1, 1]))
+    assert_equal(-4, candidate.call([-1, 1, 1, 1]))
+    assert_equal(0, candidate.call([-1, 1, 1, 0]))
+  end
+end
+"
+HumanEval_129,npi_Deva,rb,"उदाहरणहरू: न्यूनतम पथमा जाने कक्षहरूमा मानहरूको क्रमबद्ध सरणी फर्काउँछ।यसको उत्तर अद्वितीय छ भन्ने कुराको ग्यारेन्टी छ।lst_A[j] = lst_B[j] ।यस्तो कि lst_A[i] < lst_B[i] र कुनै पनि j (1 <= j < i) को लागि हामीसँग lst_B भन्दा, अर्को शब्दमा, त्यहाँ एक पूर्णांक सूचकांक i (1 <= i <= k) (हामी तिनीहरूलाई lst_A र lst_B भन्छौं), lst_A लेक्सिकोग्राफिक रूपमा कम छ A र B को सेलमा मानहरूको अर्डर गरिएको एर्रे बनाइसकेपछिएउटा पथ A (लम्बाइ k) एउटा पथ B (लम्बाइ k) भन्दा सानो मानिन्छ यदि तपाईं ग्रिडबाट बाहिर जान सक्नुहुन्न।(अनिवार्य रूपमा भिन्न) ।कृपया ध्यान दिनुहोस् कि लम्बाइ k को बाटोको अर्थ हो कि ठीक k कक्षहरू भ्रमण गर्नु (न अर्को शब्दमा, तपाई सेलमा जान सक्नुहुन्छ जुन तपाईसँग कन्ट्र्यान्टको किनारा साझा गर्दछ ।कुनै पनि सेलबाट, र प्रत्येक चरणमा तपाईं कुनै पनि छिमेकी सेलमा जान सक्नुहुन्छ, तपाईँले ग्रिडमा लम्बाइ k को न्यूनतम पथ खोज्नुपर्छ। तपाईँ सुरु गर्न सक्नुहुन्छ समावेशी ग्रिडको कक्षहरूमा ठीक एक पटक देखा पर्दछ।ग्रिडको प्रत्येक कक्षमा मान हुन्छ। [१, एन * एन] को दायरामा प्रत्येक पूर्णांक।एन पङ्क्ति र एन स्तम्भहरू (एन >= 2) र सकारात्मक पूर्णांक k भएको ग्रिड दिइएको छ, # >>> minPath.call([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 3)
+# [1, 2, 1]
+# >>> minPath.call([[5, 9, 3], [4, 1, 6], [7, 8, 2]], 1)
+# [1]
+def minPath(grid, k)
+","def minPath(grid, k)
+  n = grid.size
+  directions = [[-1, 0], [1, 0], [0, -1], [0, 1]]
+  min_path = nil
+
+  n.times do |i|
+    n.times do |j|
+      queue = [[[i, j], [grid[i][j]]]]
+      until queue.empty?
+        position, path = queue.shift
+        if path.size == k
+          min_path = path if min_path.nil? || path < min_path
+          next
+        end
+        directions.each do |dx, dy|
+          x, y = position[0] + dx, position[1] + dy
+          if x.between?(0, n-1) && y.between?(0, n-1)
+            queue.push([[x, y], path + [grid[x][y]]])
+          end
+        end
+      end
+    end
+  end
+  min_path
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_minPath
+    candidate = method(:minPath)
+    assert_equal([1, 2, 1], candidate.call([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 3))
+    assert_equal([1], candidate.call([[5, 9, 3], [4, 1, 6], [7, 8, 2]], 1))
+    assert_equal([1, 2, 1, 2], candidate.call([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]], 4))
+    assert_equal([1, 10, 1, 10, 1, 10, 1], candidate.call([[6, 4, 13, 10], [5, 7, 12, 1], [3, 16, 11, 15], [8, 14, 9, 2]], 7))
+    assert_equal([1, 7, 1, 7, 1], candidate.call([[8, 14, 9, 2], [6, 4, 13, 15], [5, 7, 1, 12], [3, 10, 11, 16]], 5))
+    assert_equal([1, 6, 1, 6, 1, 6, 1, 6, 1], candidate.call([[11, 8, 7, 2], [5, 16, 14, 4], [9, 3, 15, 6], [12, 13, 10, 1]], 9))
+    assert_equal([1, 6, 1, 6, 1, 6, 1, 6, 1, 6, 1, 6], candidate.call([[12, 13, 10, 1], [9, 3, 15, 6], [5, 16, 14, 4], [11, 8, 7, 2]], 12))
+    assert_equal([1, 3, 1, 3, 1, 3, 1, 3], candidate.call([[2, 7, 4], [3, 1, 5], [6, 8, 9]], 8))
+    assert_equal([1, 5, 1, 5, 1, 5, 1, 5], candidate.call([[6, 1, 5], [3, 8, 9], [2, 7, 4]], 8))
+    assert_equal([1, 2, 1, 2, 1, 2, 1, 2, 1, 2], candidate.call([[1, 2], [3, 4]], 10))
+    assert_equal([1, 3, 1, 3, 1, 3, 1, 3, 1, 3], candidate.call([[1, 3], [3, 2]], 10))
+  end
+end
+"
+HumanEval_130,npi_Deva,rb,"उदाहरणहरू: त्रिबोनाची अनुक्रमको पहिलो एन + १ नम्बर।तपाईँलाई एउटा गैर ऋणात्मक पूर्णांक n दिइएको छ, तपाईँले एउटा array फर्काउनु पर्छ = २ + ३ + ३ = ८ tri(3) = tri(2) + tri(1) + tri(4) tri ((4) = 3 tri(2) = 1 + (2 / 2) = 2 उदाहरणका लागि: tri(n) = tri(n - 1) + tri(n - 2) + tri(n + 1), यदि n अनौठो छ भने। tri (n) = 1 + n / 2, यदि n सम हो भने। tri(1) = 3 ट्रिबोनैकी अनुक्रम पुनरावृत्ति द्वारा परिभाषित गरिएको छः तर मानिसहरूलाई थाहा छैन कि ट्राइबोनाची अनुक्रम के हो।सबैले फिबोनैचि अनुक्रमलाई चिन्छन्, यसलाई गणितज्ञहरुले सन् १९५० मा गहिरो अध्ययन गरेका थिए ।# >>> tri.call(3)
+# [1, 3, 2, 8]
+def tri(n)
+","def tri(n)
+  sequence = [1, 3]
+  
+  (2..n).each do |i|
+    if i.even?
+      sequence[i] = 1 + i / 2
+    else
+      sequence[i] = sequence[i - 1] + sequence[i - 2] + sequence[i + 1] rescue 0
+    end
+  end
+  
+  sequence[0..n]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_tri
+    candidate = method(:tri)
+    assert_equal([1, 3, 2, 8], candidate.call(3))
+    assert_equal([1, 3, 2, 8, 3], candidate.call(4))
+    assert_equal([1, 3, 2, 8, 3, 15], candidate.call(5))
+    assert_equal([1, 3, 2, 8, 3, 15, 4], candidate.call(6))
+    assert_equal([1, 3, 2, 8, 3, 15, 4, 24], candidate.call(7))
+    assert_equal([1, 3, 2, 8, 3, 15, 4, 24, 5], candidate.call(8))
+    assert_equal([1, 3, 2, 8, 3, 15, 4, 24, 5, 35], candidate.call(9))
+    assert_equal([1, 3, 2, 8, 3, 15, 4, 24, 5, 35, 6, 48, 7, 63, 8, 80, 9, 99, 10, 120, 11], candidate.call(20))
+    assert_equal([1], candidate.call(0))
+    assert_equal([1, 3], candidate.call(1))
+  end
+end
+"
+HumanEval_131,npi_Deva,rb,"उदाहरणका लागि: यदि सबै अंकहरू सम छन् भने ० फर्काउनुहोस्।सकारात्मक पूर्णांक n दिइएको छ, बेजोड अंकहरूको गुणनफल फर्काउनुहोस्।# >>> digits.call(1)
+# 1
+# >>> digits.call(4)
+# 0
+# >>> digits.call(235)
+# 15
+def digits(n)
+","def digits(n)
+  odd_digits = n.to_s.chars.map(&:to_i).select { |digit| digit.odd? }
+  return 0 if odd_digits.empty?
+  odd_digits.reduce(:*)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_digits
+    candidate = method(:digits)
+    assert_equal(5, candidate.call(5))
+    assert_equal(5, candidate.call(54))
+    assert_equal(1, candidate.call(120))
+    assert_equal(5, candidate.call(5014))
+    assert_equal(315, candidate.call(98765))
+    assert_equal(2625, candidate.call(5576543))
+    assert_equal(0, candidate.call(2468))
+  end
+end
+"
+HumanEval_132,npi_Deva,rb,"जहाँ कम्तिमा एउटा ब्रैकेट उप-क्रममा नेस्टेड छ।फलनले यदि र केवल यदि कोष्ठकहरूको मान्य उपक्रम छ भने मात्र true फर्काउनु पर्छ ।एउटा यस्तो प्रकार्य सिर्जना गर्नुहोस् जसले इनपुटको रूपमा एउटा स्ट्रिङ लिन्छ जसमा केवल वर्ग कोष्ठकहरू हुन्छन्।# >>> is_nested.call(""[[]]"")
+# true
+# >>> is_nested.call(""[]]]]]]][[[[[]"")
+# false
+# >>> is_nested.call(""[][]"")
+# false
+# >>> is_nested.call(""[]"")
+# false
+# >>> is_nested.call(""[[][]]"")
+# true
+# >>> is_nested.call(""[[]][["")
+# true
+def is_nested(string)
+","def is_nested(string)
+  stack = []
+  has_nested = false
+
+  string.each_char do |char|
+    if char == '['
+      stack.push(char)
+    elsif char == ']'
+      if stack.empty?
+        return false
+      end
+      stack.pop
+      has_nested = true if stack.any?
+    end
+  end
+
+  has_nested
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_nested
+    candidate = method(:is_nested)
+    assert_equal(true, candidate.call(""[[]]""))
+    assert_equal(false, candidate.call(""[]]]]]]][[[[[]""))
+    assert_equal(false, candidate.call(""[][]""))
+    assert_equal(false, candidate.call(""[]""))
+    assert_equal(true, candidate.call(""[[[[]]]]""))
+    assert_equal(false, candidate.call(""[]]]]]]]]]]""))
+    assert_equal(true, candidate.call(""[][][[]]""))
+    assert_equal(false, candidate.call(""[[]""))
+    assert_equal(false, candidate.call(""[]]""))
+    assert_equal(true, candidate.call(""[[]][[""))
+    assert_equal(true, candidate.call(""[[][]]""))
+    assert_equal(false, candidate.call(""""))
+    assert_equal(false, candidate.call(""[[[[[[[[""))
+    assert_equal(false, candidate.call(""]]]]]]]]""))
+  end
+end
+"
+HumanEval_133,npi_Deva,rb,"उदाहरणहरू: प्रत्येक तत्वलाई एरेमा माथिल्लो int ((छत) सम्म राउन्ड गर्नुहोस्।तपाईँले दिइएको सरणीमा वर्गमा संख्याहरूको योग फर्काउनु पर्छ, तपाईँलाई नम्बरहरूको एउटा सरणी दिइएको छ।# >>> lst.call([1.0, 2.0, 3.0])
+# 14
+# >>> lst.call([1.0, 4.0, 9.0])
+# 98
+# >>> lst.call([1.0, 3.0, 5.0, 7.0])
+# 84
+# >>> lst.call([1.4, 4.2, 0.0])
+# 29
+# >>> lst.call([-2.4, 1.0, 1.0])
+# 6
+def sum_squares(lst)
+","def sum_squares(lst)
+  lst.map { |num| (num.ceil)**2 }.sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sum_squares
+    candidate = method(:sum_squares)
+    assert_equal(14, candidate.call([1.0, 2.0, 3.0]))
+    assert_equal(14, candidate.call([1.0, 2.0, 3.0]))
+    assert_equal(84, candidate.call([1.0, 3.0, 5.0, 7.0]))
+    assert_equal(29, candidate.call([1.4, 4.2, 0.0]))
+    assert_equal(6, candidate.call([-2.4, 1.0, 1.0]))
+    assert_equal(10230, candidate.call([100.0, 1.0, 15.0, 2.0]))
+    assert_equal(200000000, candidate.call([10000.0, 10000.0]))
+    assert_equal(75, candidate.call([-1.4, 4.6, 6.3]))
+    assert_equal(1086, candidate.call([-1.4, 17.9, 18.9, 19.9]))
+    assert_equal(0, candidate.call([0.0]))
+    assert_equal(1, candidate.call([-1.0]))
+    assert_equal(2, candidate.call([-1.0, 1.0, 0.0]))
+  end
+end
+"
+HumanEval_134,npi_Deva,rb,"उदाहरणहरू: नोटः ""शब्द"" स्पेसद्वारा विभाजित अक्षरहरूको समूह हो।एक शब्दको एक भाग, र अन्यथा गलत।दिइएको स्ट्रिङको अक्षर वर्णमालाको वर्ण हो र  होइन ।एउटा यस्तो प्रकार्य सिर्जना गर्नुहोस् जुन अन्तिम वर्ण  भएमा सत्य फर्काउँछ# >>> check_if_last_char_is_a_letter.call(""apple pie"")
+# false
+# >>> check_if_last_char_is_a_letter.call(""apple pi e"")
+# true
+# >>> check_if_last_char_is_a_letter.call(""apple pi e "")
+# false
+# >>> check_if_last_char_is_a_letter.call("""")
+# false
+def check_if_last_char_is_a_letter(txt)
+","check_if_last_char_is_a_letter = ->(txt) {
+  return false if txt.strip.empty?
+  words = txt.strip.split(' ')
+  last_word = words.last
+  return false if last_word.empty?
+  last_char = last_word[-1]
+
+  last_char =~ /[a-zA-Z]/ && (words.size == 1 || txt[txt.rindex(last_char) - 1] == ' ')
+}","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_check_if_last_char_is_a_letter
+    candidate = method(:check_if_last_char_is_a_letter)
+    assert_equal(false, candidate.call(""apple""))
+    assert_equal(true, candidate.call(""apple pi e""))
+    assert_equal(false, candidate.call(""eeeee""))
+    assert_equal(true, candidate.call(""A""))
+    assert_equal(false, candidate.call(""Pumpkin pie ""))
+    assert_equal(false, candidate.call(""Pumpkin pie 1""))
+    assert_equal(false, candidate.call(""""))
+    assert_equal(false, candidate.call(""eeeee e ""))
+    assert_equal(false, candidate.call(""apple pie""))
+    assert_equal(false, candidate.call(""apple pi e ""))
+  end
+end
+"
+HumanEval_135,npi_Deva,rb,"उदाहरणहरू: दोहोरो मानहरू।कुनै यस्तो तत्व अवस्थित छैन भने फिर्ता -१ दिइएको एर्रेमा समावेश हुनेछैन यदि                                                                                                                                                                                                                                                                                                                                      एउटा यस्तो प्रकार्य सिर्जना गर्नुहोस् जसले कुनै तत्वको सबैभन्दा ठूलो अनुक्रमणिका फर्काउँछ जुन # >>> can_arrange.call([1, 2, 4, 3, 5])
+# 3
+# >>> can_arrange.call([1, 2, 3])
+# -1
+def can_arrange(arr)
+","def can_arrange(arr)
+  (1...arr.length).reverse_each do |i|
+    return i if arr[i] < arr[i - 1]
+  end
+  -1
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_can_arrange
+    candidate = method(:can_arrange)
+    assert_equal(3, candidate.call([1, 2, 4, 3, 5]))
+    assert_equal(-1, candidate.call([1, 2, 4, 5]))
+    assert_equal(2, candidate.call([1, 4, 2, 5, 6, 7, 8, 9, 10]))
+    assert_equal(4, candidate.call([4, 8, 5, 7, 3]))
+    assert_equal(-1, candidate.call([]))
+  end
+end
+"
+HumanEval_136,npi_Deva,rb,"उदाहरणहरू: यदि त्यहाँ कुनै नकारात्मक वा सकारात्मक पूर्णांक छैन भने, तिनीहरूलाई शून्यको रूपमा फर्काउनुहोस्।सबैभन्दा ठूलो ऋणात्मक पूर्णांक, र 'b' सबैभन्दा सानो हो एउटा फंक्शन सिर्जना गर्नुहोस् जसले एउटा एरे (a, b) फर्काउँछ, जहाँ 'a'  हो# >>> largest_smallest_integers.call([2, 4, 1, 3, 5, 7])
+# [nil, 1]
+# >>> largest_smallest_integers.call([])
+# [nil, nil]
+# >>> largest_smallest_integers.call([0])
+# [nil, nil]
+def largest_smallest_integers(lst)
+","def largest_smallest_integers(lst)
+  largest_negative = nil
+  smallest_positive = nil
+  
+  lst.each do |num|
+    if num < 0
+      largest_negative = num if largest_negative.nil? || num > largest_negative
+    elsif num > 0
+      smallest_positive = num if smallest_positive.nil? || num < smallest_positive
+    end
+  end
+  
+  [largest_negative, smallest_positive]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_largest_smallest_integers
+    candidate = method(:largest_smallest_integers)
+    assert_equal([nil, 1], candidate.call([2, 4, 1, 3, 5, 7]))
+    assert_equal([nil, 1], candidate.call([2, 4, 1, 3, 5, 7, 0]))
+    assert_equal([-2, 1], candidate.call([1, 3, 2, 4, 5, 6, -2]))
+    assert_equal([-7, 2], candidate.call([4, 5, 3, 6, 2, 7, -7]))
+    assert_equal([-9, 2], candidate.call([7, 3, 8, 4, 9, 2, 5, -9]))
+    assert_equal([nil, nil], candidate.call([]))
+    assert_equal([nil, nil], candidate.call([0]))
+    assert_equal([-1, nil], candidate.call([-1, -3, -5, -6]))
+    assert_equal([-1, nil], candidate.call([-1, -3, -5, -6, 0]))
+    assert_equal([-3, 1], candidate.call([-6, -4, -4, -3, 1]))
+    assert_equal([-3, 1], candidate.call([-6, -4, -4, -3, -100, 1]))
+  end
+end
+"
+HumanEval_137,npi_Deva,rb,"नोट: यदि वास्तविक संख्यालाई स्ट्रिङको रूपमा प्रतिनिधित्व गरिएको छ भने, फ्लोटिंग प्वाइन्ट हुन सक्छ . वा , यदि मानहरू बराबर छन् भने शून्य फर्काउनुहोस्।वास्तविक संख्याहरू, र यसको दिइएको चर प्रकारमा ठूलो चर फर्काउँछ।एउटा यस्तो प्रकार्य सिर्जना गर्नुहोस् जसले पूर्णांक, फ्लोट्स, वा स्ट्रिङहरू  प्रतिनिधित्व गर्दछ# >>> compare_one.call(1, 2.5)
+# 2.5
+# >>> compare_one.call(1, ""2,3"")
+# ""2,3""
+# >>> compare_one.call(""5,1"", ""6"")
+# ""6""
+# >>> compare_one.call(""1"", 1)
+# nil
+def compare_one(a, b)
+","def compare_one(a, b)
+  a = a.to_s.tr(',', '.').to_f if a.is_a?(String) && a.include?(',')
+  b = b.to_s.tr(',', '.').to_f if b.is_a?(String) && b.include?(',')
+
+  if a.is_a?(String) && b.is_a?(String)
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Float) && b.is_a?(Float)
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Integer) && b.is_a?(Integer)
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Integer) && b.is_a?(Float)
+    a = a.to_f
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Float) && b.is_a?(Integer)
+    b = b.to_f
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(String) && b.is_a?(Float)
+    b = b.to_s # Only supporting variable type comparison, retain original types
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Float) && b.is_a?(String)
+    a = a.to_s # Only supporting variable type comparison, retain original types
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(String) && b.is_a?(Integer)
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Integer) && b.is_a?(String)
+    return nil if a == b
+    return a > b ? a : b
+  else
+    return nil
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_compare_one
+    candidate = method(:compare_one)
+    assert_equal(2, candidate.call(1, 2))
+    assert_equal(2.5, candidate.call(1, 2.5))
+    assert_equal(3, candidate.call(2, 3))
+    assert_equal(6, candidate.call(5, 6))
+    assert_equal(""2,3"", candidate.call(1, ""2,3""))
+    assert_equal(""6"", candidate.call(""5,1"", ""6""))
+    assert_equal(""2"", candidate.call(""1"", ""2""))
+    assert_equal(nil, candidate.call(""1"", 1))
+  end
+end
+"
+HumanEval_138,npi_Deva,rb,"उदाहरण यदि दिइएको संख्या n लाई ठीक 4 सकारात्मक संख्याहरूको योगको रूपमा लेख्न सकिन्छ भने मूल्यांकन गर्नुहोस् # >>> is_equal_to_sum_even.call(4)
+# false
+# >>> is_equal_to_sum_even.call(6)
+# false
+# >>> is_equal_to_sum_even.call(8)
+# true
+def is_equal_to_sum_even(n)
+","def is_equal_to_sum_even(n)
+  return false if n < 8
+  n.even?
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_equal_to_sum_even
+    candidate = method(:is_equal_to_sum_even)
+    assert_equal(false, candidate.call(4))
+    assert_equal(false, candidate.call(6))
+    assert_equal(true, candidate.call(8))
+    assert_equal(true, candidate.call(10))
+    assert_equal(false, candidate.call(11))
+    assert_equal(true, candidate.call(12))
+    assert_equal(false, candidate.call(13))
+    assert_equal(true, candidate.call(16))
+  end
+end
+"
+HumanEval_139,npi_Deva,rb,"उदाहरणका लागि: जहाँ n > 0 ब्राजिलियन_फ्याक्टोरियल (n) = n! * (n-1)! * (n-2)! * ... * 1! ब्राजिलको कारकलाई निम्नानुसार परिभाषित गरिएको छ: # >>> special_factorial.call(4)
+# 288
+# The function will receive an integer as input and should return the special
+# factorial of this integer.
+def special_factorial(n)
+","def special_factorial(n)
+  return 1 if n <= 1
+  (1..n).inject(1) { |product, i| product * factorial(i) }
+end
+
+def factorial(num)
+  return 1 if num <= 1
+  (2..num).inject(1, :*)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_special_factorial
+    candidate = method(:special_factorial)
+    assert_equal(288, candidate.call(4))
+    assert_equal(34560, candidate.call(5))
+    assert_equal(125411328000, candidate.call(7))
+    assert_equal(1, candidate.call(1))
+  end
+end
+"
+HumanEval_140,npi_Deva,rb,"त्यसपछि सबै लगातार स्पेसहरू -  सँग बदल्नुहोस्र यदि एउटा स्ट्रिङमा दुई भन्दा बढी लगातार स्पेसहरू छन् भने, पाठको स्ट्रिंग दिइएको छ, यसमा सबै खाली स्थानहरू अण्डरस्कोरहरूसँग बदल्नुहोस्, # >>> fix_spaces.call("" Example"")
+# ""Example""
+# >>> fix_spaces.call("" Example 1"")
+# ""Example_1""
+# >>> fix_spaces.call("" Example 2"")
+# ""_Example_2""
+# >>> fix_spaces.call("" Example 3"")
+# ""_Example-3""
+def fix_spaces(text)
+","def fix_spaces(text)
+  text.strip.gsub(/\s{3,}/, '-').gsub(' ', '_')
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fix_spaces
+    candidate = method(:fix_spaces)
+    assert_equal(""Example"", candidate.call(""Example""))
+    assert_equal(""Mudasir_Hanif_"", candidate.call(""Mudasir Hanif ""))
+    assert_equal(""Yellow_Yellow__Dirty__Fellow"", candidate.call(""Yellow Yellow  Dirty  Fellow""))
+    assert_equal(""Exa-mple"", candidate.call(""Exa   mple""))
+    assert_equal(""-Exa_1_2_2_mple"", candidate.call(""   Exa 1 2 2 mple""))
+  end
+end
+"
+HumanEval_141,npi_Deva,rb,"उदाहरणहरू: - डट पछि सबस्ट्रिंग यी मध्ये एक हुनुपर्दछः ['txt', 'exe', 'dll'] ल्याटिन वर्णमाला ('a'-'z' र 'A'-'Z') ।- डट अघि सबस्ट्रिंग खाली हुनु हुँदैन, र यो  बाट अक्षरबाट सुरु हुन्छ- फाइलको नाममा ठ्याक्कै एउटा बिन्दु '.' हुन्छ ।- फाइलको नाममा तीन अंकभन्दा बढी ('0'-'9') हुनुहुँदैन ।एउटा फाइलको नाम मान्य मानिन्छ यदि र केवल यदि सबै निम्न सर्तहरू पूरा भएमा 'Yes' यदि फाइलको नाम मान्य छ भने, र 'No' फर्काउँछ अन्यथा।एउटा प्रकार्य सिर्जना गर्नुहोस् जसले फाइलको नाम प्रतिनिधित्व गर्ने स्ट्रिङ लिन्छ र  फर्काउँछ# >>> file_name_check.call(""example.txt"")
+# ""Yes""
+# >>> file_name_check.call(""1example.dll"")
+# ""No""
+def file_name_check(file_name)
+","def file_name_check(file_name)
+  # Check if there's exactly one dot in the filename
+  return 'No' unless file_name.count('.') == 1
+  
+  # Split the filename into the name and extension
+  name, extension = file_name.split('.')
+  
+  # Check if the name part starts with a letter
+  return 'No' if name.empty? || !name[0].match?(/[a-zA-Z]/)
+  
+  # Check if the extension is valid
+  return 'No' unless ['txt', 'exe', 'dll'].include?(extension)
+  
+  # Count digits in the file name
+  digit_count = file_name.count(""0-9"")
+  
+  # Check if digits are more than three
+  return 'No' if digit_count > 3
+  
+  'Yes'
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_file_name_check
+    candidate = method(:file_name_check)
+    assert_equal(""Yes"", candidate.call(""example.txt""))
+    assert_equal(""No"", candidate.call(""1example.dll""))
+    assert_equal(""No"", candidate.call(""s1sdf3.asd""))
+    assert_equal(""Yes"", candidate.call(""K.dll""))
+    assert_equal(""Yes"", candidate.call(""MY16FILE3.exe""))
+    assert_equal(""No"", candidate.call(""His12FILE94.exe""))
+    assert_equal(""No"", candidate.call(""_Y.txt""))
+    assert_equal(""No"", candidate.call(""?aREYA.exe""))
+    assert_equal(""No"", candidate.call(""/this_is_valid.dll""))
+    assert_equal(""No"", candidate.call(""this_is_valid.wow""))
+    assert_equal(""Yes"", candidate.call(""this_is_valid.txt""))
+    assert_equal(""No"", candidate.call(""this_is_valid.txtexe""))
+    assert_equal(""No"", candidate.call(""#this2_i4s_5valid.ten""))
+    assert_equal(""No"", candidate.call(""@this1_is6_valid.exe""))
+    assert_equal(""No"", candidate.call(""this_is_12valid.6exe4.txt""))
+    assert_equal(""No"", candidate.call(""all.exe.txt""))
+    assert_equal(""Yes"", candidate.call(""I563_No.exe""))
+    assert_equal(""Yes"", candidate.call(""Is3youfault.txt""))
+    assert_equal(""Yes"", candidate.call(""no_one#knows.dll""))
+    assert_equal(""No"", candidate.call(""1I563_Yes3.exe""))
+    assert_equal(""No"", candidate.call(""I563_Yes3.txtt""))
+    assert_equal(""No"", candidate.call(""final..txt""))
+    assert_equal(""No"", candidate.call(""final132""))
+    assert_equal(""No"", candidate.call(""_f4indsartal132.""))
+    assert_equal(""No"", candidate.call("".txt""))
+    assert_equal(""No"", candidate.call(""s.""))
+  end
+end
+"
+HumanEval_142,npi_Deva,rb,"उदाहरणहरू: एरेमा प्रविष्टिहरू परिवर्तन गर्नुहोस् जसको अनुक्रमणिका 3 वा 4 को गुणक होइन। फंक्शनले सबै प्रविष्टिहरूको योगफल फर्काउँछ।३ को बहु र पूर्णांक प्रविष्टिलाई घन बनाउनेछ यदि यसको अनुक्रमणिका ४ को बहु हो र ३ को बहु होइन।यो फंक्शनले पूर्णांकहरूको एउटा सरणी लिनेछ। सरणीमा सबै प्रविष्टिहरूको लागि, फंक्शनले पूर्णांक प्रविष्टिलाई वर्गमा राख्नुपर्दछ यदि यसको अनुक्रमणिका a हो भने।"" # >>> lst
+# [1, 2, 3]
+# >>> lst
+# []
+# >>> lst
+# [-1, -5, 2, -1, -5]
+def sum_squares(lst)
+","def sum_squares(lst)
+  lst.map.with_index do |num, index|
+    if index % 3 == 0
+      num ** 2
+    elsif index % 4 == 0
+      num ** 3
+    else
+      num
+    end
+  end.sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sum_squares
+    candidate = method(:sum_squares)
+    assert_equal(6, candidate.call([1, 2, 3]))
+    assert_equal(14, candidate.call([1, 4, 9]))
+    assert_equal(0, candidate.call([]))
+    assert_equal(9, candidate.call([1, 1, 1, 1, 1, 1, 1, 1, 1]))
+    assert_equal(-3, candidate.call([-1, -1, -1, -1, -1, -1, -1, -1, -1]))
+    assert_equal(0, candidate.call([0]))
+    assert_equal(-126, candidate.call([-1, -5, 2, -1, -5]))
+    assert_equal(3030, candidate.call([-56, -99, 1, 0, -2]))
+    assert_equal(0, candidate.call([-1, 0, 0, 0, 0, 0, 0, 0, -1]))
+    assert_equal(-14196, candidate.call([-16, -9, -2, 36, 36, 26, -20, 25, -40, 20, -4, 12, -26, 35, 37]))
+    assert_equal(-1448, candidate.call([-1, -3, 17, -1, -15, 13, -1, 14, -14, -12, -5, 14, -14, 6, 13, 11, 16, 16, 4, 10]))
+  end
+end
+"
+HumanEval_143,npi_Deva,rb,"उदाहरण १: नयाँ स्ट्रिङमा शब्दहरूको क्रम मूल स्ट्रिङको जस्तै हुनुपर्छ।जसको लम्बाई अभाज्य संख्या हो, र तपाईँले मूल वाक्यबाट शब्दहरू समावेश भएको स्ट्रिङ फर्काउनुपर्छ, वाक्यमा केही शब्दहरू स्पेसद्वारा अलग गरिएको छ, तपाईँलाई एउटा वाक्यको प्रतिनिधित्व गर्ने स्ट्रिङ दिइएको छ, # >>> words_in_sentence.call(""This is a test"")
+# ""is""
+# Example 2:
+# >>> words_in_sentence.call(""lets go for swimming"")
+# ""go for""
+# Constraints:
+# * 1 <= len(sentence) <= 100
+# * sentence contains only letters
+def words_in_sentence(sentence)
+","def words_in_sentence(sentence)
+  def is_prime?(num)
+    return false if num <= 1
+    (2..Math.sqrt(num)).none? { |i| num % i == 0 }
+  end
+  
+  words = sentence.split("" "")
+  prime_length_words = words.select { |word| is_prime?(word.length) }
+  prime_length_words.join("" "")
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_words_in_sentence
+    candidate = method(:words_in_sentence)
+    assert_equal(""is"", candidate.call(""This is a test""))
+    assert_equal(""go for"", candidate.call(""lets go for swimming""))
+    assert_equal(""there is no place"", candidate.call(""there is no place available here""))
+    assert_equal(""Hi am Hussein"", candidate.call(""Hi I am Hussein""))
+    assert_equal(""go for it"", candidate.call(""go for it""))
+    assert_equal("""", candidate.call(""here""))
+    assert_equal(""is"", candidate.call(""here is""))
+  end
+end
+"
+HumanEval_144,npi_Deva,rb,"तपाई मान्न सक्नुहुन्छ कि x, र n मान्य भिन्नता हुन्, र शून्यलाई denominator को रुपमा प्रयोग गर्नुहुन्न.<numerator>/<denominator> जहाँ दुवै संख्या र denominator सकारात्मक पूर्णांक हो।x र n दुवै, एउटा भिन्नको स्ट्रिङ प्रतिनिधित्व हो, र निम्न ढाँचा छ, x * n. यदि x * n पूर्णांकमा मूल्याङ्कन हुन्छ र false तपाईँको कार्य भनेको एउटा यस्तो प्रकार्य कार्यान्वयन गर्नु हो जसले अभिव्यक्तिलाई सरल बनाउनेछ ।# >>> simplify.call(""1/5"", ""5/1"")
+# true
+# >>> simplify.call(""1/6"", ""2/1"")
+# false
+# >>> simplify.call(""7/10"", ""10/2"")
+# false
+def simplify(x, n)
+","def simplify(x, n)
+  # Convert x and n to numerators and denominators
+  num_x, den_x = x.split('/').map(&:to_i)
+  num_n, den_n = n.split('/').map(&:to_i)
+
+  # Multiply fractions: (num_x * num_n) / (den_x * den_n)
+  numerator = num_x * num_n
+  denominator = den_x * den_n
+
+  # Check if the result is a whole number
+  numerator % denominator == 0
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_simplify
+    candidate = method(:simplify)
+    assert_equal(true, candidate.call(""1/5"", ""5/1""))
+    assert_equal(false, candidate.call(""1/6"", ""2/1""))
+    assert_equal(true, candidate.call(""5/1"", ""3/1""))
+    assert_equal(false, candidate.call(""7/10"", ""10/2""))
+    assert_equal(true, candidate.call(""2/10"", ""50/10""))
+    assert_equal(true, candidate.call(""7/2"", ""4/2""))
+    assert_equal(true, candidate.call(""11/6"", ""6/1""))
+    assert_equal(false, candidate.call(""2/3"", ""5/2""))
+    assert_equal(false, candidate.call(""5/2"", ""3/5""))
+    assert_equal(true, candidate.call(""2/4"", ""8/4""))
+    assert_equal(true, candidate.call(""2/4"", ""4/2""))
+    assert_equal(true, candidate.call(""1/5"", ""5/1""))
+    assert_equal(false, candidate.call(""1/5"", ""1/5""))
+  end
+end
+"
+HumanEval_145,npi_Deva,rb,"उदाहरणका लागि: मूल एरेमा उनीहरूको अनुक्रमणिकाको आधारमा तिनीहरूलाई क्रमबद्ध गर्नुहोस्।नोटः यदि त्यहाँ धेरै वस्तुहरू छन् भने तिनीहरूको अंकहरूको समान योग,                                                                   एउटा यस्तो फलन लेख्नुहोस् जसले दिइएको पूर्णांकहरूको सरणीलाई क्रमबद्ध गर्दछ ।# >>> order_by_points.call([1, 11, -1, -11, -12])
+# [-1, -11, 1, -12, 11]
+# >>> order_by_points.call([])
+# []
+def order_by_points(nums)
+","def order_by_points(nums)
+  nums.sort_by.with_index do |num, index|
+    [num.to_s.chars.map(&:to_i).sum.abs, index]
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_order_by_points
+    candidate = method(:order_by_points)
+    assert_equal([-1, -11, 1, -12, 11], candidate.call([1, 11, -1, -11, -12]))
+    assert_equal([0, 2, 3, 6, 53, 423, 423, 423, 1234, 145, 37, 46, 56, 463, 3457], candidate.call([1234, 423, 463, 145, 2, 423, 423, 53, 6, 37, 3457, 3, 56, 0, 46]))
+    assert_equal([], candidate.call([]))
+    assert_equal([-3, -32, -98, -11, 1, 2, 43, 54], candidate.call([1, -11, -32, 43, 54, -98, 2, -3]))
+    assert_equal([1, 10, 2, 11, 3, 4, 5, 6, 7, 8, 9], candidate.call([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]))
+    assert_equal([-76, -21, 0, 4, 23, 6, 6], candidate.call([0, 6, 6, -76, -21, 23, 4]))
+  end
+end
+"
+HumanEval_146,npi_Deva,rb,"उदाहरणका लागि: कुनै संख्याको पहिलो र अन्तिम अंकहरू अनौठो हुन्छन् (1, 3, 5, 7, 9) ।एरेमा एलिमेन्टको संख्या जुन १० भन्दा ठूलो छ र दुबै एउटा यस्तो प्रकार्य लेख्नुहोस् जसले संख्याहरूको एरेलाई इनपुट र रिटर्नको रूपमा लिन्छ ।# >>> specialFilter.call([15, -73, 14, -15])
+# 1
+# >>> specialFilter.call([33, -2, -3, 45, 21, 109])
+# 2
+def specialFilter(nums)
+","def specialFilter(nums)
+  nums.count do |num|
+    num > 10 && num.to_s[0].to_i.odd? && num.to_s[-1].to_i.odd?
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_specialFilter
+    candidate = method(:specialFilter)
+    assert_equal(0, candidate.call([5, -2, 1, -5]))
+    assert_equal(1, candidate.call([15, -73, 14, -15]))
+    assert_equal(2, candidate.call([33, -2, -3, 45, 21, 109]))
+    assert_equal(4, candidate.call([43, -12, 93, 125, 121, 109]))
+    assert_equal(3, candidate.call([71, -2, -33, 75, 21, 19]))
+    assert_equal(0, candidate.call([1]))
+    assert_equal(0, candidate.call([]))
+  end
+end
+"
+HumanEval_147,npi_Deva,rb,"उदाहरण: र a[i] + a[j] + a[k] ३ को गुणक हो।ट्रिपलको संख्या फिर्ता गर्नुहोस् (a[i], a[j], a[k]) जहाँ i < j < k, प्रत्येक i (1 ≤ i ≤ n) को लागि, a[i] = i * i - i + 1 को मान।तपाईँलाई सकारात्मक पूर्णाङ्क n दिइएको छ तपाईँले पूर्णाङ्क सरणी a को लम्बाइ n बनाउनु पर्छ।# >>> get_max_triples.call(5)
+# 1
+# Explanation: 
+# a = [1, 3, 7, 13, 21]
+# The only valid triple is (1, 7, 13).
+def get_max_triples(n)
+","def get_max_triples(n)
+  a = Array.new(n) { |i| (i + 1) * (i + 1) - (i + 1) + 1 }
+  count = 0
+  
+  (0...n).each do |i|
+    (i+1...n).each do |j|
+      (j+1...n).each do |k|
+        count += 1 if (a[i] + a[j] + a[k]) % 3 == 0
+      end
+    end
+  end
+  
+  count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_get_max_triples
+    candidate = method(:get_max_triples)
+    assert_equal(1, candidate.call(5))
+    assert_equal(4, candidate.call(6))
+    assert_equal(36, candidate.call(10))
+    assert_equal(53361, candidate.call(100))
+  end
+end
+"
+HumanEval_148,npi_Deva,rb,"उदाहरणहरू यी ग्रहहरूको नाम सही छैन।फलनले खाली एरे फर्काउनु पर्छ यदि planet1 वा planet2 सूर्यको निकटता।ग्रह १ को कक्ष र ग्रह २ को कक्ष बीचमा अवस्थित छ,  द्वारा क्रमबद्धयो फंक्शनले सबै ग्रहहरू समावेश भएको एउटा एर्रे फर्काउनु पर्छ जसको कक्षहरू एउटा फलन लेख्नुहोस् जसले ग्रह १ र ग्रह २ को रूपमा दुई ग्रहको नाम लिन्छ।युरेनस, नेप्च्यून।बुध, शुक्र, पृथ्वी, मंगल, बृहस्पति, शनि,हाम्रो सौर्यमण्डलमा आठवटा ग्रहहरू छन्: सूर्यको सबैभन्दा नजिकको ।# >>> bf.call(""Jupiter"", ""Neptune"")
+# [""Saturn"", ""Uranus""]
+# >>> bf.call(""Earth"", ""Mercury"")
+# ""Venus""
+# >>> bf.call(""Mercury"", ""Uranus"")
+# [""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn""]
+def bf(planet1, planet2)
+","def bf(planet1, planet2)
+  planets = [""Mercury"", ""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn"", ""Uranus"", ""Neptune""]
+  
+  idx1 = planets.index(planet1)
+  idx2 = planets.index(planet2)
+  
+  return [] if idx1.nil? || idx2.nil?
+
+  start_idx, end_idx = [idx1, idx2].sort
+  
+  planets[(start_idx + 1)...end_idx]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_bf
+    candidate = method(:bf)
+    assert_equal([""Saturn"", ""Uranus""], candidate.call(""Jupiter"", ""Neptune""))
+    assert_equal([""Venus""], candidate.call(""Earth"", ""Mercury""))
+    assert_equal([""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn""], candidate.call(""Mercury"", ""Uranus""))
+    assert_equal([""Earth"", ""Mars"", ""Jupiter"", ""Saturn"", ""Uranus""], candidate.call(""Neptune"", ""Venus""))
+    assert_equal([], candidate.call(""Earth"", ""Earth""))
+    assert_equal([], candidate.call(""Mars"", ""Earth""))
+    assert_equal([], candidate.call(""Jupiter"", ""Makemake""))
+  end
+end
+"
+HumanEval_149,npi_Deva,rb,"उदाहरणका लागि: तपाईं सबै शब्दहरू एउटै लम्बाइ हुनेछ भन्ने मान्न सक्छ।फलनले क्रमबद्ध क्रममा स्ट्रिङहरूको एरे फर्काउनु पर्छ।यदि दुई शब्दको लम्बाइ बराबर छ भने, एरेलाई वर्णमाला क्रममा क्रमबद्ध गर्नुहोस्।यो नियम द्वारा क्रमबद्ध एरे फर्काउनु पर्छ।एरेको क्रम प्रत्येक शब्दको लम्बाइ अनुसार बढ्दै जानुपर्छ, र तपाईँले र यसमा डुप्लिकेटहरू हुन सक्छन्।एरे सधैँ स्ट्रिंगहरूको एरे हुन्छ र कहिल्यै संख्याहरूको एरे हुँदैन,र क्रमबद्ध क्रम संग परिणाम एरे फर्काउँछ, योबाट अनौठो लम्बाइ भएका स्ट्रिङहरु मेटाउँछ, एउटा प्रकार्य लेख्नुहोस् जसले स्ट्रिंगहरूको सरणीलाई प्यारामिटरको रूपमा स्वीकार गर्दछ, # >>> list_sort.call([""aa"", ""a"", ""aaa""])
+# [""aa""]
+# >>> list_sort.call([""ab"", ""a"", ""aaa"", ""cd""])
+# [""ab"", ""cd""]
+def sorted_list_sum(lst)
+","def list_sort(arr)
+  arr.select { |s| s.length.even? }
+     .sort_by { |s| [s.length, s] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sorted_list_sum
+    candidate = method(:sorted_list_sum)
+    assert_equal([""aa""], candidate.call([""aa"", ""a"", ""aaa""]))
+    assert_equal([""AI"", ""asdf"", ""school""], candidate.call([""school"", ""AI"", ""asdf"", ""b""]))
+    assert_equal([], candidate.call([""d"", ""b"", ""c"", ""a""]))
+    assert_equal([""abcd"", ""dcba""], candidate.call([""d"", ""dcba"", ""abcd"", ""a""]))
+    assert_equal([""AI"", ""ai"", ""au""], candidate.call([""AI"", ""ai"", ""au""]))
+    assert_equal([], candidate.call([""a"", ""b"", ""b"", ""c"", ""c"", ""a""]))
+    assert_equal([""cc"", ""dd"", ""aaaa"", ""bbbb""], candidate.call([""aaaa"", ""bbbb"", ""dd"", ""cc""]))
+  end
+end
+"
+HumanEval_150,npi_Deva,rb,"उदाहरणहरू: एउटा अभाज्य संख्या हो र y को मान फर्काउनु पर्छ अन्यथा।एउटा साधारण कार्यक्रम जसले x को मान फर्काउछ यदि n  हो भने# >>> x_or_y.call(7, 34, 12)
+# 34
+# >>> x_or_y.call(15, 8, 5)
+# 5
+def x_or_y(n, x, y)
+","def x_or_y(n, x, y)
+  require 'prime'
+  n.prime? ? x : y
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_x_or_y
+    candidate = method(:x_or_y)
+    assert_equal(34, candidate.call(7, 34, 12))
+    assert_equal(5, candidate.call(15, 8, 5))
+    assert_equal(33, candidate.call(3, 33, 5212))
+    assert_equal(3, candidate.call(1259, 3, 52))
+    assert_equal(-1, candidate.call(7919, -1, 12))
+    assert_equal(583, candidate.call(3609, 1245, 583))
+    assert_equal(129, candidate.call(91, 56, 129))
+    assert_equal(1234, candidate.call(6, 34, 1234))
+    assert_equal(0, candidate.call(1, 2, 0))
+    assert_equal(2, candidate.call(2, 2, 0))
+  end
+end
+"
+HumanEval_151,npi_Deva,rb,"संख्याहरु लाई बेवास्ता गर्नुहोस् जुन नकारात्मक वा पूर्णांक होइन।संख्याहरूको एउटा सरणी दिइएको छ, संख्याहरूको वर्गहरूको योग फर्काउनुहोस् # >>> double_the_difference.call([1, 3, 2, 0])
+# 10
+# >>> double_the_difference.call([-1, -2, 0])
+# 0
+# >>> double_the_difference.call([9, -2])
+# 81
+# >>> double_the_difference.call([0])
+# 0
+# If the input array is empty, return 0.
+def double_the_difference(lst)
+","def double_the_difference(lst)
+  lst.select { |n| n.is_a?(Integer) && n.odd? && n >= 0 }
+     .map { |n| n ** 2 }
+     .sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_double_the_difference
+    candidate = method(:double_the_difference)
+    assert_equal(0, candidate.call([]))
+    assert_equal(25, candidate.call([5.0, 4.0]))
+    assert_equal(0, candidate.call([0.1, 0.2, 0.3]))
+    assert_equal(0, candidate.call([-10.0, -20.0, -30.0]))
+    assert_equal(0, candidate.call([-1.0, -2.0, 8.0]))
+    assert_equal(34, candidate.call([0.2, 3.0, 5.0]))
+    assert_equal(165, candidate.call([-9.0, -7.0, -5.0, -3.0, -1.0, 1.0, 3.0, 5.0, 7.0, 9.0]))
+  end
+end
+"
+HumanEval_152,npi_Deva,rb,"उदाहरण: मान ० हो र यदि होइन भने मान अनुमान र स्कोर बीचको निरपेक्ष भिन्नता हो।यदि तिनीहरूले सही अनुमान गरेका छन् भने, तपाईंलाई दुईवटा स्कोर र अनुमानको सरणी दिइएको छ, जहाँ प्रत्येक सूचकांकले मेल खान्छ।तपाईंको काम भनेको एक व्यक्तिले धेरै खेलहरूको नतिजा सही अनुमान गरेको छ कि छैन भनेर निर्धारण गर्नु हो।यो निश्चित रूपमा उल्लेख गर्न र तुलना गर्न लायक छ।यस घटनाको बारेमा अन्ततः थाहा हुन्छ।मलाई लाग्छ हामी सबैलाई त्यो अनुभूति याद छ जब कुनै लामो समयदेखि प्रतिक्षा गरिएको परिणामको# >>> compare.call([1, 2, 3, 4, 5, 1], [1, 2, 3, 4, 2, -2])
+# [0, 0, 0, 0, 3, 3]
+# >>> compare.call([0, 5, 0, 0, 0, 4], [4, 1, 1, 0, 0, -2])
+# [4, 4, 1, 0, 0, 6]
+def compare(game, guess)
+","def compare(game, guess)
+  game.zip(guess).map { |score, prediction| (score - prediction).abs }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_compare
+    candidate = method(:compare)
+    assert_equal([0, 0, 0, 0, 3, 3], candidate.call([1, 2, 3, 4, 5, 1], [1, 2, 3, 4, 2, -2]))
+    assert_equal([0, 0, 0, 0, 0, 0], candidate.call([0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]))
+    assert_equal([2, 4, 6], candidate.call([1, 2, 3], [-1, -2, -3]))
+    assert_equal([2, 0, 0, 1], candidate.call([1, 2, 3, 5], [-1, 2, 3, 4]))
+  end
+end
+"
+HumanEval_153,npi_Deva,rb,"उदाहरण: (यसको शक्ति -१ हो) ।'Slices.SERVINGSliCes' फर्काउनुहोस् किनकि 'SERVINGSliCes' सबैभन्दा बलियो विस्तार हो।['सेर्विनग्सलिस', 'चीज', 'स्टुफड'] भने तपाईंले उदाहरणका लागि, यदि तपाईँलाई ""Slices"" को रूपमा वर्ग र  को एउटा सरणी दिइएको छ भनेएरेमा पहिलो आउने एउटा चयन गर्नुहोस्।यदि दुई वा दुईभन्दा बढी एक्सटेन्सनहरू एउटै शक्ति भएका छन् भने, तपाईंलेढाँचाः ClassName.StrongestExtensionName. तपाईँले सबैभन्दा बलियो विस्तार खोज्नु पर्छ र यसमा एउटा स्ट्रिङ फर्काउनु पर्छ ।विस्तारको नाममा, शक्ति CAP - SM को अंशद्वारा दिइएको छ।विस्तारको नाममा अक्षरहरू, र SM लाई सानो अक्षरहरूको संख्या मान्नुहोस् विस्तारको शक्ति निम्नानुसार छ: CAP माथिल्लो अक्षरको संख्या हो ।विस्तारहरू कक्षामा अतिरिक्त वर्गहरू लोड गर्न प्रयोग गर्न सकिन्छ।तपाईँलाई एउटा वर्गको नाम (स्ट्रिङ) र विस्तारहरूको एउटा सरणी दिइनेछ ।# >>> Strongest_Extension.call(""my_class"", [""AA"", ""Be"", ""CC""])
+# ""my_class.AA""
+def Strongest_Extension(class_name, extensions)
+","def Strongest_Extension(class_name, extensions)
+  strongest_extension = extensions.max_by do |extension|
+    cap_count = extension.count('A-Z')
+    sm_count = extension.count('a-z')
+    cap_count - sm_count
+  end
+  ""#{class_name}.#{strongest_extension}""
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_Strongest_Extension
+    candidate = method(:Strongest_Extension)
+    assert_equal(""Watashi.eIGHt8OKe"", candidate.call(""Watashi"", [""tEN"", ""niNE"", ""eIGHt8OKe""]))
+    assert_equal(""Boku123.YEs.WeCaNe"", candidate.call(""Boku123"", [""nani"", ""NazeDa"", ""YEs.WeCaNe"", ""32145tggg""]))
+    assert_equal(""__YESIMHERE.NuLl__"", candidate.call(""__YESIMHERE"", [""t"", ""eMptY"", ""nothing"", ""zeR00"", ""NuLl__"", ""123NoooneB321""]))
+    assert_equal(""K.TAR"", candidate.call(""K"", [""Ta"", ""TAR"", ""t234An"", ""cosSo""]))
+    assert_equal(""__HAHA.123"", candidate.call(""__HAHA"", [""Tab"", ""123"", ""781345"", ""-_-""]))
+    assert_equal(""YameRore.okIWILL123"", candidate.call(""YameRore"", [""HhAas"", ""okIWILL123"", ""WorkOut"", ""Fails"", ""-_-""]))
+    assert_equal(""finNNalLLly.WoW"", candidate.call(""finNNalLLly"", [""Die"", ""NowW"", ""Wow"", ""WoW""]))
+    assert_equal(""_.Bb"", candidate.call(""_"", [""Bb"", ""91245""]))
+    assert_equal(""Sp.671235"", candidate.call(""Sp"", [""671235"", ""Bb""]))
+  end
+end
+"
+HumanEval_154,npi_Deva,rb,"तपाईँलाई २ शब्द दिइएको छ. तपाईँले यदि दोस्रो शब्द वा यसको कुनै घुमाव पहिलो शब्दमा एउटा सबस्ट्रिंग हो भने सत्य फर्काउनु पर्छ # >>> cycpattern_check.call(""abcd"", ""abd"")
+# false
+# >>> cycpattern_check.call(""hello"", ""ell"")
+# true
+# >>> cycpattern_check.call(""whassup"", ""psus"")
+# false
+# >>> cycpattern_check.call(""abab"", ""baa"")
+# true
+# >>> cycpattern_check.call(""efef"", ""eeff"")
+# false
+# >>> cycpattern_check.call(""himenss"", ""simen"")
+# true
+def cycpattern_check(a, b)
+","def cycpattern_check(a, b)
+  (0...b.length).each do |i|
+    rotated_b = b[i..-1] + b[0...i]
+    return true if a.include?(rotated_b)
+  end
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_cycpattern_check
+    candidate = method(:cycpattern_check)
+    assert_equal(false, candidate.call(""xyzw"", ""xyw""))
+    assert_equal(true, candidate.call(""yello"", ""ell""))
+    assert_equal(false, candidate.call(""whattup"", ""ptut""))
+    assert_equal(true, candidate.call(""efef"", ""fee""))
+    assert_equal(false, candidate.call(""abab"", ""aabb""))
+    assert_equal(true, candidate.call(""winemtt"", ""tinem""))
+  end
+end
+"
+HumanEval_155,npi_Deva,rb,"उदाहरण: एक पूर्णांक दिइएको छ. क्रमशः सम र विषम अंकहरूको संख्या भएको एरे फर्काउनुहोस्. # >>> even_odd_count.call(-12)
+# [1, 1]
+# >>> even_odd_count.call(123)
+# [1, 2]
+def even_odd_count(num)
+","def even_odd_count(num)
+  num.to_s.chars.map(&:to_i).select { |digit| digit != 0 }.partition(&:even?).map(&:count)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_even_odd_count
+    candidate = method(:even_odd_count)
+    assert_equal([0, 1], candidate.call(7))
+    assert_equal([1, 1], candidate.call(-78))
+    assert_equal([2, 2], candidate.call(3452))
+    assert_equal([3, 3], candidate.call(346211))
+    assert_equal([3, 3], candidate.call(-345821))
+    assert_equal([1, 0], candidate.call(-2))
+    assert_equal([2, 3], candidate.call(-45347))
+    assert_equal([1, 0], candidate.call(0))
+  end
+end
+"
+HumanEval_156,npi_Deva,rb,"उदाहरणहरू: प्रतिबन्धहरू: १ <= संख्या <= १००० र यसलाई सानो अक्षरमा फर्काउनुहोस्।सकारात्मक पूर्णाङ्क दिइएको छ, यसको रोमन अंक बराबर स्ट्रिङको रूपमा प्राप्त गर्नुहोस्, # >>> int_to_mini_roman.call(19)
+# ""xix""
+# >>> int_to_mini_roman.call(152)
+# ""clii""
+# >>> int_to_mini_roman.call(426)
+# ""cdxxvi""
+def int_to_mini_roman(number)
+","def int_to_mini_roman(number)
+  values = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
+  numerals = ['m', 'cm', 'd', 'cd', 'c', 'xc', 'l', 'xl', 'x', 'ix', 'v', 'iv', 'i']
+
+  result = ''
+  values.each_with_index do |value, index|
+    while number >= value
+      number -= value
+      result += numerals[index]
+    end
+  end
+
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_int_to_mini_roman
+    candidate = method(:int_to_mini_roman)
+    assert_equal(""xix"", candidate.call(19))
+    assert_equal(""clii"", candidate.call(152))
+    assert_equal(""ccli"", candidate.call(251))
+    assert_equal(""cdxxvi"", candidate.call(426))
+    assert_equal(""d"", candidate.call(500))
+    assert_equal(""i"", candidate.call(1))
+    assert_equal(""iv"", candidate.call(4))
+    assert_equal(""xliii"", candidate.call(43))
+    assert_equal(""xc"", candidate.call(90))
+    assert_equal(""xciv"", candidate.call(94))
+    assert_equal(""dxxxii"", candidate.call(532))
+    assert_equal(""cm"", candidate.call(900))
+    assert_equal(""cmxciv"", candidate.call(994))
+    assert_equal(""m"", candidate.call(1000))
+  end
+end
+"
+HumanEval_157,npi_Deva,rb,"उदाहरण: ९० डिग्री।एक दायाँ कोणको त्रिकोण एक त्रिकोण हो जसमा एक कोण दायाँ कोण हो वा यदि कुनै पनि पक्षले दायाँ-एङ्गलको त्रिकोण बनाउँछ भने, अन्यथा गलत हुन्छ।त्रिकोणको तीन पक्षको लम्बाई दिइएको छ. यदि तीन # >>> right_angle_triangle.call(3, 4, 5)
+# true
+# >>> right_angle_triangle.call(1, 2, 3)
+# false
+def right_angle_triangle(a, b, c)
+","def right_angle_triangle(a, b, c)
+  sides = [a, b, c].sort
+  sides[0]**2 + sides[1]**2 == sides[2]**2
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_right_angle_triangle
+    candidate = method(:right_angle_triangle)
+    assert_equal(true, candidate.call(3, 4, 5))
+    assert_equal(false, candidate.call(1, 2, 3))
+    assert_equal(true, candidate.call(10, 6, 8))
+    assert_equal(false, candidate.call(2, 2, 2))
+    assert_equal(true, candidate.call(7, 24, 25))
+    assert_equal(false, candidate.call(10, 5, 7))
+    assert_equal(true, candidate.call(5, 12, 13))
+    assert_equal(true, candidate.call(15, 8, 17))
+    assert_equal(true, candidate.call(48, 55, 73))
+    assert_equal(false, candidate.call(1, 1, 1))
+    assert_equal(false, candidate.call(2, 2, 10))
+  end
+end
+"
+HumanEval_158,npi_Deva,rb,"अक्षरहरू, लेक्सिकोग्राफिक क्रममा पहिलो आउँछ कि एक फिर्ता।यदि बहुविध स्ट्रिङहरूमा अधिकतम संख्यामा अद्वितीय अक्षरहरू छन् भने सरणीमा विभिन्न शब्दहरू छन्। अधिकतम संख्याको साथ शब्द फिर्ता गर्नुहोस् एउटा यस्तो फलन लेख्नुहोस् जसले स्ट्रिंगहरूको एरे स्वीकार गर्दछ।# >>> find_max.call([""name"", ""of"", ""string""])
+# ""string""
+# >>> find_max.call([""name"", ""enam"", ""game""])
+# ""enam""
+# >>> find_max.call([""aaaaaaa"", ""bb"", ""cc""])
+# ""aaaaaaa""
+def find_max(words)
+","def find_max(words)
+  # Helper function to count unique characters
+  def unique_char_count(word)
+    word.chars.uniq.size
+  end
+
+  words.max_by { |word| [unique_char_count(word), -word] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_find_max
+    candidate = method(:find_max)
+    assert_equal(""string"", candidate.call([""name"", ""of"", ""string""]))
+    assert_equal(""enam"", candidate.call([""name"", ""enam"", ""game""]))
+    assert_equal(""aaaaaaa"", candidate.call([""aaaaaaa"", ""bb"", ""cc""]))
+    assert_equal(""abc"", candidate.call([""abc"", ""cba""]))
+    assert_equal(""footbott"", candidate.call([""play"", ""this"", ""game"", ""of"", ""footbott""]))
+    assert_equal(""gonna"", candidate.call([""we"", ""are"", ""gonna"", ""rock""]))
+    assert_equal(""nation"", candidate.call([""we"", ""are"", ""a"", ""mad"", ""nation""]))
+    assert_equal(""this"", candidate.call([""this"", ""is"", ""a"", ""prrk""]))
+    assert_equal(""b"", candidate.call([""b""]))
+    assert_equal(""play"", candidate.call([""play"", ""play"", ""play""]))
+  end
+end
+"
+HumanEval_159,npi_Deva,rb,"उदाहरण: यदि त्यहाँ पर्याप्त बाँकी गाजर छैन भने, तपाईंले बाँकी सबै गाजर खानुहुनेछ, तर अझै भोक लाग्नेछ।[खाना खाएपछि बाँकी गाजरको संख्या] [ खाना खाइसकेपछि खाएको गाजरको कुल संख्या, तर, अब तपाईंले दिनभरिको भोजन पूरा गर्नका लागि अझ धेरै गाजर खानुपर्छ।तिमी भोकै कुखुरा हौ, र तिमीले पहिले नै निश्चित संख्यामा गाजर खाइसकेका छौ,# >>> eat.call(5, 6, 10)
+# [11, 4]
+# >>> eat.call(4, 8, 9)
+# [12, 1]
+# >>> eat.call(1, 10, 10)
+# [11, 0]
+# >>> eat.call(2, 11, 5)
+# [7, 0]
+# Variables:
+# @number : integer
+# the number of carrots that you have eaten.
+# @need : integer
+# the number of carrots that you need to eat.
+# @remaining : integer
+# the number of remaining carrots thet exist in stock
+# Constrain:
+# * 0 <= number <= 1000
+# * 0 <= need <= 1000
+# * 0 <= remaining <= 1000
+# Have fun :)
+def eat(number, need, remaining)
+","def eat(number, need, remaining)
+  total_eaten = number + [need, remaining].min
+  carrots_left = [remaining - need, 0].max
+  [total_eaten, carrots_left]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_eat
+    candidate = method(:eat)
+    assert_equal([11, 4], candidate.call(5, 6, 10))
+    assert_equal([12, 1], candidate.call(4, 8, 9))
+    assert_equal([11, 0], candidate.call(1, 10, 10))
+    assert_equal([7, 0], candidate.call(2, 11, 5))
+    assert_equal([9, 2], candidate.call(4, 5, 7))
+    assert_equal([5, 0], candidate.call(4, 5, 1))
+  end
+end
+"
+HumanEval_160,npi_Deva,rb,"अपरेटर एर्रेमा कम्तिमा एउटा अपरेटर हुन्छ, र अपरेन्ड एर्रेमा कम्तिमा दुई अपरेन्ड हुन्छ।अपरेन्ड गैर ऋणात्मक पूर्णांकहरूको एउटा सरणी हो।अपरेटरको लम्बाई अपरेन्डको लम्बाईमा १ घटाएर बराबर हुन्छ।नोट: => परिणाम = 9 परिणाम = २ + ३ * ४ - ५ array = [२,३,४,५] अपरेटर ['+', '*', '-'] उदाहरण: एक्सपोनेंटिटेसन (**) फ्लोर डिभिजन ( // ) गुणन (*) घटाउने (- ) थप (+) आधारभूत बीजगणित परिचालनहरू: अभिव्यक्ति र यो अभिव्यक्ति को मूल्यांकन फर्काउनुहोस्।दोस्रो एरे पूर्णांकहरूको एरे हो। दुई दिइएको एरेहरू प्रयोग गर्नुहोस् बीजगणित निर्माण गर्नका लागि।पहिलो एरेमा आधारभूत बीजगणित परिचालनहरू छन्, र def do_algebra(operator, operand)
+","def do_algebra(operator, operand)
+  expression = operand[0].to_s
+  operator.each_with_index do |op, index|
+    if op == '//'
+      expression += ' / ' + operand[index + 1].to_s
+    else
+      expression += ' ' + op + ' ' + operand[index + 1].to_s
+    end
+  end
+  eval(expression)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_do_algebra
+    candidate = method(:do_algebra)
+    assert_equal(37, candidate.call([""**"", ""*"", ""+""], [2, 3, 4, 5]))
+    assert_equal(9, candidate.call([""+"", ""*"", ""-""], [2, 3, 4, 5]))
+    assert_equal(8, candidate.call([""//"", ""*""], [7, 3, 4]))
+  end
+end
+"
+HumanEval_161,npi_Deva,rb,"उदाहरणहरू फलनले नतिजाको स्ट्रिंग फर्काउनु पर्छ।यदि string मा कुनै अक्षर छैन भने string उल्टो गर्नुहोस्।अन्यथा जस्ताको तस्तै राख्नुस् ।यदि s[i] अक्षर हो भने, यसको केसलाई तलबाट माथि वा विसेरवापर गर्नुहोस्, तपाईँलाई एउटा string s दिइएको छ ।# >>> solve.call(""1234"")
+# ""4321""
+# >>> solve.call(""ab"")
+# ""AB""
+# >>> solve.call(""#a@C"")
+# ""#A@c""
+def solve(s)
+","def solve(s)
+  if s =~ /[a-zA-Z]/
+    s.chars.map { |char| char =~ /[a-zA-Z]/ ? char.swapcase : char }.join
+  else
+    s.reverse
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_solve
+    candidate = method(:solve)
+    assert_equal(""aSdF"", candidate.call(""AsDf""))
+    assert_equal(""4321"", candidate.call(""1234""))
+    assert_equal(""AB"", candidate.call(""ab""))
+    assert_equal(""#A@c"", candidate.call(""#a@C""))
+    assert_equal(""#aSDFw^45"", candidate.call(""#AsdfW^45""))
+    assert_equal(""2@6#"", candidate.call(""#6@2""))
+    assert_equal(""#$A^d"", candidate.call(""#$a^D""))
+    assert_equal(""#CCC"", candidate.call(""#ccc""))
+  end
+end
+"
+HumanEval_162,npi_Deva,rb,"यदि 'text' खाली स्ट्रिङ हो भने, nil फर्काउनुहोस्।एउटा स्ट्रिङ 'text' दिइएको छ, यसको md5 ह्यास बराबर स्ट्रिङ फर्काउनुहोस्।# >>> string_to_md5.call(""Hello world"")
+# ""3e25960a79dbc69b674cd4ec67a72c62""
+def string_to_md5(text)
+","require 'digest'
+
+def string_to_md5(text)
+  return nil if text.empty?
+  Digest::MD5.hexdigest(text)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_string_to_md5
+    candidate = method(:string_to_md5)
+    assert_equal(""3e25960a79dbc69b674cd4ec67a72c62"", candidate.call(""Hello world""))
+    assert_equal(nil, candidate.call(""""))
+    assert_equal(""0ef78513b0cb8cef12743f5aeb35f888"", candidate.call(""A B C""))
+    assert_equal(""5f4dcc3b5aa765d61d8327deb882cf99"", candidate.call(""password""))
+  end
+end
+"
+HumanEval_163,npi_Deva,rb,"उदाहरणका लागि: र b, बढ्दो क्रममा।दुई सकारात्मक पूर्णांक a र b दिइएको छ, a र b बीचको सम अंक फर्काउनुहोस् # >>> generate_integers.call(2, 8)
+# [2, 4, 6, 8]
+# >>> generate_integers.call(8, 2)
+# [2, 4, 6, 8]
+# >>> generate_integers.call(10, 14)
+# []
+def generate_integers(a, b)
+","def generate_integers(a, b)
+  (a..b).to_a.concat((b..a).to_a).select { |num| num.even? }.uniq.sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_generate_integers
+    candidate = method(:generate_integers)
+    assert_equal([2, 4, 6, 8], candidate.call(2, 10))
+    assert_equal([2, 4, 6, 8], candidate.call(10, 2))
+    assert_equal([2, 4, 6, 8], candidate.call(132, 2))
+    assert_equal([], candidate.call(17, 89))
+  end
+end
+"

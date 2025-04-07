@@ -1,0 +1,4634 @@
+task_id,nl,pl,prompt,canonical_solution,tests
+HumanEval_0,kat_Geor,rb,"მოცემული ზღვარის შეამოწმეთ, მოცემულ რიცხვთა მასივში, არის თუ არა რომელიმე ორი რიცხვი ერთმანეთთან უფრო ახლოს, ვიდრე # >>> has_close_elements.call([1.0, 2.0, 3.0], 0.5)
+# false
+# >>> has_close_elements.call([1.0, 2.8, 3.0, 4.0, 5.0, 2.0], 0.3)
+# true
+def has_close_elements(numbers, threshold)
+","def has_close_elements(numbers, threshold)
+  numbers.combination(2).any? { |a, b| (a - b).abs < threshold }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_has_close_elements
+    candidate = method(:has_close_elements)
+    assert_equal(true, candidate.call([1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.3))
+    assert_equal(false, candidate.call([1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.05))
+    assert_equal(true, candidate.call([1.0, 2.0, 5.9, 4.0, 5.0], 0.95))
+    assert_equal(false, candidate.call([1.0, 2.0, 5.9, 4.0, 5.0], 0.8))
+    assert_equal(true, candidate.call([1.0, 2.0, 3.0, 4.0, 5.0, 2.0], 0.1))
+    assert_equal(true, candidate.call([1.1, 2.2, 3.1, 4.1, 5.1], 1.0))
+    assert_equal(false, candidate.call([1.1, 2.2, 3.1, 4.1, 5.1], 0.5))
+  end
+end
+"
+HumanEval_1,kat_Geor,rb,"არ გაითვალისწინოთ ნებისმიერი სივრცე შეყვანის სტრიქონში.ცალკეული ჯგუფები დაბალანსებულია (თითოეული ღია ბრატკა სწორად არის დახურული) და ერთმანეთში არ არის ჩასახული.დაყოფა ამ ჯგუფში ცალკე სტრიქონებად და დაბრუნება მათში არსებული მასივის.ამ ფუნქციის შესავალი არის სტრიქონი, რომელიც შეიცავს მრავალ ჯგუფს ჩანართული კვეთაში. თქვენი მიზანია # >>> separate_paren_groups.call(""( ) (( )) (( )( ))"")
+# [""()"", ""(())"", ""(()())""]
+def separate_paren_groups(paren_string)
+","def separate_paren_groups(paren_string)
+  # Remove spaces from the string
+  paren_string = paren_string.gsub("" "", """")
+  
+  result = []
+  current_group = """"
+  balance = 0
+
+  paren_string.each_char do |char|
+    current_group += char
+    balance += 1 if char == '('
+    balance -= 1 if char == ')'
+
+    if balance == 0 && !current_group.empty?
+      result << current_group
+      current_group = """"
+    end
+  end
+
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_separate_paren_groups
+    candidate = method(:separate_paren_groups)
+    assert_equal([""(()())"", ""((()))"", ""()"", ""((())()())""], candidate.call(""(()()) ((())) () ((())()())""))
+    assert_equal([""()"", ""(())"", ""((()))"", ""(((())))""], candidate.call(""() (()) ((())) (((())))""))
+    assert_equal([""(()(())((())))""], candidate.call(""(()(())((())))""))
+    assert_equal([""()"", ""(())"", ""(()())""], candidate.call(""( ) (( )) (( )( ))""))
+  end
+end
+"
+HumanEval_2,kat_Geor,rb,"დააბრუნეთ რიცხვის ათეულობითი ნაწილი.(დანარჩენი ნაწილი ყოველთვის 1 -ზე ნაკლებია).და მთელი რიცხვის ნაწილი (დიდი მთელი რიცხვი მოცემულ რიცხვზე პატარა) და ათეულები დადებითი ცვალებადი წერტილის რიცხვის გათვალისწინებით, ის შეიძლება დაიშალოს # >>> truncate_number.call(3.5)
+# 0.5
+def truncate_number(number)
+","def truncate_number(number)
+  number - number.to_i
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_truncate_number
+    candidate = method(:truncate_number)
+    assert_equal(0.5, candidate.call(3.5))
+    assert_equal(0.25, candidate.call(1.25))
+    assert_equal(0.0, candidate.call(123.0))
+  end
+end
+"
+HumanEval_3,kat_Geor,rb,"ამ დროს ფუნქცია უნდა დააბრუნოს true. სხვა შემთხვევაში ის უნდა დააბრუნოს false.თქვენი ამოცანაა, რომ აღმოაჩინოთ თუ ანგარიშის ბალანსი ნებისმიერ მომენტში ნულზე დაბლა ვარდება და თქვენ გაქვთ მთელი რიგი დეპოზიტების და თანხის გამოტანის ოპერაციები ბანკის ანგარიშზე, რომელიც იწყება # >>> below_zero.call([1, 2, 3])
+# false
+# >>> below_zero.call([1, 2, -4, 5])
+# true
+def below_zero(operations)
+","def below_zero(operations)
+  balance = 0
+  operations.each do |operation|
+    balance += operation
+    return true if balance < 0
+  end
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_below_zero
+    candidate = method(:below_zero)
+    assert_equal(false, candidate.call([]))
+    assert_equal(false, candidate.call([1, 2, -3, 1, 2, -3]))
+    assert_equal(true, candidate.call([1, 2, -4, 5, 6]))
+    assert_equal(false, candidate.call([1, -1, 2, -2, 5, -5, 4, -4]))
+    assert_equal(true, candidate.call([1, -1, 2, -2, 5, -5, 4, -5]))
+    assert_equal(true, candidate.call([1, -2, 2, -2, 5, -5, 4, -4]))
+  end
+end
+"
+HumanEval_4,kat_Geor,rb,"MAD = საშუალო. x - x_მედიანი.ელემენტი და ცენტრალური წერტილი (ამ შემთხვევაში საშუალო):საშუალო აბსოლუტური გადახრა არის საშუალო აბსოლუტური განსხვავება თითოეულ ამ მონაცემთა ნაკრების საშუალო მაჩვენებლის გარშემო. მოცემული რიცხვების მასივისთვის გამოითვალეთ საშუალო აბსოლუტური გადახრა.# >>> mean_absolute_deviation.call([1.0, 2.0, 3.0, 4.0])
+# 1.0
+def mean_absolute_deviation(numbers)
+","def mean_absolute_deviation(numbers)
+  mean = numbers.sum.to_f / numbers.size
+  deviations = numbers.map { |num| (num - mean).abs }
+  deviations.sum / numbers.size
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_mean_absolute_deviation
+    candidate = method(:mean_absolute_deviation)
+    assert_equal(0.5, candidate.call([1.0, 2.0]))
+    assert_equal(1.0, candidate.call([1.0, 2.0, 3.0, 4.0]))
+    assert_equal(1.2, candidate.call([1.0, 2.0, 3.0, 4.0, 5.0]))
+  end
+end
+"
+HumanEval_5,kat_Geor,rb,"შეავსეთ ციფრი ""დილიმეტრი"" შეყვანის მასივის ყოველ ორ თანმიმდევრულ ელემენტს შორის `numbers' # >>> intersperse.call([], 4)
+# []
+# >>> intersperse.call([1, 2, 3], 4)
+# [1, 4, 2, 4, 3]
+def intersperse(numbers, delimeter)
+","def intersperse(numbers, delimeter)
+  return numbers if numbers.empty?
+  result = []
+  numbers.each_with_index do |num, index|
+    result << num
+    result << delimeter unless index == numbers.size - 1
+  end
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_intersperse
+    candidate = method(:intersperse)
+    assert_equal([], candidate.call([], 7))
+    assert_equal([5, 8, 6, 8, 3, 8, 2], candidate.call([5, 6, 3, 2], 8))
+    assert_equal([2, 2, 2, 2, 2], candidate.call([2, 2, 2], 2))
+  end
+end
+"
+HumanEval_6,kat_Geor,rb,"მაგალითად (() (()) აქვს მაქსიმუმ ორი დონეების ნესტი, ხოლო ((())) აქვს სამი. თითოეული ჯგუფისათვის, გამოტანილი იქნეს კვეთაში ჩანართების ყველაზე ღრმა დონე. ამ ფუნქციის შესავალია სტრიქონი, რომელიც წარმოადგენს მრავალ ჯგუფს, რომლებიც განლაგებულია პარანტეზებში, რომლებიც გამოყოფილია სივრცეებით.# >>> parse_nested_parens.call(""(()()) ((())) () ((())()())"")
+# [2, 3, 1, 3]
+def parse_nested_parens(paren_string)
+","def parse_nested_parens(paren_string)
+  paren_string.split.map do |group|
+    max_depth = current_depth = 0
+    group.chars.each do |char|
+      if char == '('
+        current_depth += 1
+        max_depth = [max_depth, current_depth].max
+      elsif char == ')'
+        current_depth -= 1
+      end
+    end
+    max_depth
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_parse_nested_parens
+    candidate = method(:parse_nested_parens)
+    assert_equal([2, 3, 1, 3], candidate.call(""(()()) ((())) () ((())()())""))
+    assert_equal([1, 2, 3, 4], candidate.call(""() (()) ((())) (((())))""))
+    assert_equal([4], candidate.call(""(()(())((())))""))
+  end
+end
+"
+HumanEval_7,kat_Geor,rb,"ფილტრაცია სტრიქონების შესვლის მასივში მხოლოდ იმ სტრიქონებისათვის, რომლებიც შეიცავს მოცემულ ქვესტრინგს.# >>> filter_by_substring.call([], ""a"")
+# []
+# >>> filter_by_substring.call([""abc"", ""bacd"", ""cde"", ""array""], ""a"")
+# [""abc"", ""bacd"", ""array""]
+def filter_by_substring(strings, substring)
+","def filter_by_substring(strings, substring)
+  strings.select { |string| string.include?(substring) }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_filter_by_substring
+    candidate = method(:filter_by_substring)
+    assert_equal([], candidate.call([], ""john""))
+    assert_equal([""xxx"", ""xxxAAA"", ""xxx""], candidate.call([""xxx"", ""asd"", ""xxy"", ""john doe"", ""xxxAAA"", ""xxx""], ""xxx""))
+    assert_equal([""xxx"", ""aaaxxy"", ""xxxAAA"", ""xxx""], candidate.call([""xxx"", ""asd"", ""aaaxxy"", ""john doe"", ""xxxAAA"", ""xxx""], ""xx""))
+    assert_equal([""grunt"", ""prune""], candidate.call([""grunt"", ""trumpet"", ""prune"", ""gruesome""], ""run""))
+  end
+end
+"
+HumanEval_8,kat_Geor,rb,"ცარიელი ჯამი უნდა იყოს 0 და ცარიელი ნაყოფი უნდა იყოს 1.მთელი რიცხვების მოცემული მასივისთვის, დააბრუნეთ მასივი, რომელიც შედგება მასივის ყველა მთელი რიცხვის ჯამისა და ნაყოფისგან.# >>> sum_product.call([])
+# [0, 1]
+# >>> sum_product.call([1, 2, 3, 4])
+# [10, 24]
+def sum_product(numbers)
+","def sum_product(numbers)
+  sum = numbers.reduce(0, :+)
+  product = numbers.reduce(1, :*)
+  [sum, product]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sum_product
+    candidate = method(:sum_product)
+    assert_equal([0, 1], candidate.call([]))
+    assert_equal([3, 1], candidate.call([1, 1, 1]))
+    assert_equal([100, 0], candidate.call([100, 0]))
+    assert_equal([15, 105], candidate.call([3, 5, 7]))
+    assert_equal([10, 10], candidate.call([10]))
+  end
+end
+"
+HumanEval_9,kat_Geor,rb,"რიგითობის მიხედვით.მთლიანი რიცხვების მოცემული მასივიდან, წარმოქმნის მაქსიმალური ელემენტის მასივს, რომელიც მოცემულ მომენტამდე იპოვეს.# >>> rolling_max.call([1, 2, 3, 2, 3, 4, 2])
+# [1, 2, 3, 3, 3, 4, 4]
+def rolling_max(numbers)
+","def rolling_max(numbers)
+  max_so_far = numbers.first
+  numbers.map do |num|
+    max_so_far = [max_so_far, num].max
+  end
+end
+
+# Example usage:
+# puts rolling_max([1, 2, 3, 2, 3, 4, 2]).inspect","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_rolling_max
+    candidate = method(:rolling_max)
+    assert_equal([], candidate.call([]))
+    assert_equal([1, 2, 3, 4], candidate.call([1, 2, 3, 4]))
+    assert_equal([4, 4, 4, 4], candidate.call([4, 3, 2, 1]))
+    assert_equal([3, 3, 3, 100, 100], candidate.call([3, 2, 3, 100, 3]))
+  end
+end
+"
+HumanEval_10,kat_Geor,rb,"- დაამატეთ სტრიქონის ბოლოში სტრიქონის პრეფიქსი, რომელიც პალინდრომული სუფიქსის წინ დგას.- იპოვეთ მიწოდებული სტრიქონის ყველაზე გრძელი პოსტფიქსი, რომელიც პალინდრომია. ალგორითმის იდეა მარტივია:იპოვეთ ყველაზე მოკლე პალინდრომი, რომელიც იწყება მოცემული სტრიქონით. # >>> make_palindrome.call("""")
+# """"
+# >>> make_palindrome.call(""cat"")
+# ""catac""
+# >>> make_palindrome.call(""cata"")
+# ""catac""
+def make_palindrome(string)
+","def make_palindrome(string)
+  return string if string.empty?
+
+  def is_palindrome?(s)
+    s == s.reverse
+  end
+
+  (0...string.length).reverse_each do |i|
+    if is_palindrome?(string[i..-1])
+      return string + string[0...i].reverse
+    end
+  end
+
+  string
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_make_palindrome
+    candidate = method(:make_palindrome)
+    assert_equal("""", candidate.call(""""))
+    assert_equal(""x"", candidate.call(""x""))
+    assert_equal(""xyzyx"", candidate.call(""xyz""))
+    assert_equal(""xyx"", candidate.call(""xyx""))
+    assert_equal(""jerryrrej"", candidate.call(""jerry""))
+  end
+end
+"
+HumanEval_11,kat_Geor,rb,"შეასრულეთ ბინარული XOR ამ შეყვანისას და დააბრუნეთ შედეგი, ასევე როგორც სტრიქონი.შეყვანა არის ორი სტრიქონი a და b, რომლებიც შედგება მხოლოდ 1 და 0-ისგან.# >>> string_xor.call(""010"", ""110"")
+# ""100""
+def string_xor(a, b)
+","def string_xor(a, b)
+  result = """"
+  a.length.times do |i|
+    result << (a[i] == b[i] ? ""0"" : ""1"")
+  end
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_string_xor
+    candidate = method(:string_xor)
+    assert_equal(""010010"", candidate.call(""111000"", ""101010""))
+    assert_equal(""0"", candidate.call(""1"", ""1""))
+    assert_equal(""0101"", candidate.call(""0101"", ""0000""))
+  end
+end
+"
+HumanEval_12,kat_Geor,rb,"დაბრუნება nil იმ შემთხვევაში, თუ შეყვანილი მასივი ცარიელია.სტრიქონების მასივიდან, დააბრუნეთ ყველაზე გრძელი სტრიქონი. დააბრუნეთ პირველი სტრიქონი მრავალჯერადი სტრიქონის შემთხვევაში.# >>> longest.call([])
+# nil
+# >>> longest.call([""a"", ""b"", ""c""])
+# ""a""
+# >>> longest.call([""a"", ""bb"", ""ccc""])
+# ""ccc""
+def longest(strings)
+","def longest(strings)
+  return nil if strings.empty?
+  strings.max_by(&:length)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_longest
+    candidate = method(:longest)
+    assert_equal(nil, candidate.call([]))
+    assert_equal(""x"", candidate.call([""x"", ""y"", ""z""]))
+    assert_equal(""zzzz"", candidate.call([""x"", ""yyy"", ""zzzz"", ""www"", ""kkkk"", ""abc""]))
+  end
+end
+"
+HumanEval_13,kat_Geor,rb,"დააბრუნეთ ორი მთელი რიცხვის a და b უდიდესი საერთო გამყოფი # >>> greatest_common_divisor.call(3, 5)
+# 1
+# >>> greatest_common_divisor.call(25, 15)
+# 5
+def greatest_common_divisor(a, b)
+","def greatest_common_divisor(a, b)
+  while b != 0
+    a, b = b, a % b
+  end
+  a
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_greatest_common_divisor
+    candidate = method(:greatest_common_divisor)
+    assert_equal(1, candidate.call(3, 7))
+    assert_equal(5, candidate.call(10, 15))
+    assert_equal(7, candidate.call(49, 14))
+    assert_equal(12, candidate.call(144, 60))
+  end
+end
+"
+HumanEval_14,kat_Geor,rb,"დაბრუნება ყველა პრეფიქსის მასივი, შეყვანის სტრიქონის ყველაზე მოკლედან ყველაზე გრძელამდე # >>> all_prefixes.call(""abc"")
+# [""a"", ""ab"", ""abc""]
+def all_prefixes(string)
+","def all_prefixes(string)
+  (1..string.length).map { |i| string[0, i] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_all_prefixes
+    candidate = method(:all_prefixes)
+    assert_equal([], candidate.call(""""))
+    assert_equal([""a"", ""as"", ""asd"", ""asdf"", ""asdfg"", ""asdfgh""], candidate.call(""asdfgh""))
+    assert_equal([""W"", ""WW"", ""WWW""], candidate.call(""WWW""))
+  end
+end
+"
+HumanEval_15,kat_Geor,rb,"დააბრუნეთ სტრიქონი, რომელიც შეიცავს სივრცით განსაზღვრულ რიცხვებს 0-დან n-მდე. # >>> string_sequence.call(0)
+# ""0""
+# >>> string_sequence.call(5)
+# ""0 1 2 3 4 5""
+def string_sequence(n)
+","def string_sequence(n)
+  (0..n).to_a.join(' ')
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_string_sequence
+    candidate = method(:string_sequence)
+    assert_equal(""0"", candidate.call(0))
+    assert_equal(""0 1 2 3"", candidate.call(3))
+    assert_equal(""0 1 2 3 4 5 6 7 8 9 10"", candidate.call(10))
+  end
+end
+"
+HumanEval_16,kat_Geor,rb,"მოცემული სტრიქონის მიხედვით, გაარკვიეთ რამდენი განსხვავებული სიმბოლოა (უდავოდ) # >>> count_distinct_characters.call(""xyzXYZ"")
+# 3
+# >>> count_distinct_characters.call(""Jerry"")
+# 4
+def count_distinct_characters(string)
+","def count_distinct_characters(string)
+  string.downcase.chars.uniq.count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_count_distinct_characters
+    candidate = method(:count_distinct_characters)
+    assert_equal(0, candidate.call(""""))
+    assert_equal(5, candidate.call(""abcde""))
+    assert_equal(5, candidate.call(""abcdecadeCADE""))
+    assert_equal(1, candidate.call(""aaaaAAAAaaaa""))
+    assert_equal(5, candidate.call(""Jerry jERRY JeRRRY""))
+  end
+end
+"
+HumanEval_17,kat_Geor,rb,"""ვჟვკ"" - კვვოთრნარა, ვ ვჟვკამ ვენა ბაეთ.""ჲქთჟ"" - ნახევარი ნოტია, გრძელდება ორი ტემპი.""ო"" - მთელი ნოტია, გრძელდება ოთხი ტემპი.აჱ ჟყმ ლეგენდა:ნვ ოჲჟლვე.თქვენი ამოცანაა გაანალიზოთ ეს სტრიქონი და დააბრუნოთ მთელი რიცხვების მასივი, რომელიც შეესაბამება რამდენ ბითსს აკეთებს თითოეული.ამ ფუნქციის შესავალი არის სიმები, რომლებიც წარმოადგენენ მუსიკალურ ნოტებს სპეციალურ ASCII ფორმატში.# >>> parse_music.call(""o o| .| o| o| .| .| .| .| o o"")
+# [4, 2, 1, 2, 2, 1, 1, 1, 1, 4, 4]
+def parse_music(music_string)
+","def parse_music(music_string)
+  # Split the input string into individual notes.
+  notes = music_string.split
+
+  # Map each note to its corresponding number of beats.
+  notes.map do |note|
+    case note
+    when 'o'
+      4
+    when 'o|'
+      2
+    when '.|'
+      1
+    else
+      0
+    end
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_parse_music
+    candidate = method(:parse_music)
+    assert_equal([], candidate.call(""""))
+    assert_equal([4, 4, 4, 4], candidate.call(""o o o o""))
+    assert_equal([1, 1, 1, 1], candidate.call("".| .| .| .|""))
+    assert_equal([2, 2, 1, 1, 4, 4, 4, 4], candidate.call(""o| o| .| .| o o o o""))
+    assert_equal([2, 1, 2, 1, 4, 2, 4, 2], candidate.call(""o| .| o| .| o o| o o|""))
+  end
+end
+"
+HumanEval_18,kat_Geor,rb,"იპოვეთ რამდენჯერ შეიძლება ნაპოვნი იყოს მოცემული ქვესტრიმი ორიგინალურ სტრიმში. დაითვალეთ ერთმანეთთან გადახურვის შემთხვევები. # >>> how_many_times.call("""", ""a"")
+# 0
+# >>> how_many_times.call(""aaa"", ""a"")
+# 3
+# >>> how_many_times.call(""aaaa"", ""aa"")
+# 3
+def how_many_times(string, substring)
+","def how_many_times(string, substring)
+  return 0 if substring.empty?
+  count = 0
+  i = 0
+  while i <= string.length - substring.length
+    if string[i, substring.length] == substring
+      count += 1
+    end
+    i += 1
+  end
+  count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_how_many_times
+    candidate = method(:how_many_times)
+    assert_equal(0, candidate.call("""", ""x""))
+    assert_equal(4, candidate.call(""xyxyxyx"", ""x""))
+    assert_equal(4, candidate.call(""cacacacac"", ""cac""))
+    assert_equal(1, candidate.call(""john doe"", ""john""))
+  end
+end
+"
+HumanEval_19,kat_Geor,rb,"დააბრუნეთ სტრიქონი რიცხვებით, დახარისხებული ყველაზე პატარადან ყველაზე დიდამდე.ვრცელია ნული, ერთი, ორი, სამი, ოთხი, ხუთი, ექვსი, შვიდი, რვა და ცხრა. შეყვანა არის სივრცით განსაზღვრული ციფრების სიმრავლე ""ნულიდან"" ""ცხრამდე"".# >>> sort_numbers.call(""three one five"")
+# ""one three five""
+def sort_numbers(numbers)
+","def sort_numbers(numbers)
+  numeral_map = {
+    'zero' => 0,
+    'one' => 1,
+    'two' => 2,
+    'three' => 3,
+    'four' => 4,
+    'five' => 5,
+    'six' => 6,
+    'seven' => 7,
+    'eight' => 8,
+    'nine' => 9
+  }
+
+  number_words = numbers.split
+  sorted_numbers = number_words.sort_by { |word| numeral_map[word] }
+  sorted_numbers.join(' ')
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sort_numbers
+    candidate = method(:sort_numbers)
+    assert_equal("""", candidate.call(""""))
+    assert_equal(""three"", candidate.call(""three""))
+    assert_equal(""three five nine"", candidate.call(""three five nine""))
+    assert_equal(""zero four five seven eight nine"", candidate.call(""five zero four seven nine eight""))
+    assert_equal(""zero one two three four five six"", candidate.call(""six five four three two one zero""))
+  end
+end
+"
+HumanEval_20,kat_Geor,rb,"სხვა და დააბრუნეთ ისინი თანმიმდევრობით (უფრო მცირე რაოდენობა, უფრო დიდი რაოდენობა).მოცემული რიცხვების მასივიდან (სიგრძე მინიმუმ ორი) აირჩიეთ და დააბრუნეთ ორი, რომელიც ყველაზე ახლოს არის თითოეულთან # >>> find_closest_elements.call([1.0, 2.0, 3.0, 4.0, 5.0, 2.2])
+# [2.0, 2.2]
+# >>> find_closest_elements.call([1.0, 2.0, 3.0, 4.0, 5.0, 2.0])
+# [2.0, 2.0]
+def find_closest_elements(numbers)
+","def find_closest_elements(numbers)
+  sorted_numbers = numbers.sort
+  closest_pair = [sorted_numbers[0], sorted_numbers[1]]
+  min_difference = (sorted_numbers[1] - sorted_numbers[0]).abs
+
+  (1...(sorted_numbers.length - 1)).each do |i|
+    current_difference = (sorted_numbers[i + 1] - sorted_numbers[i]).abs
+    if current_difference < min_difference
+      min_difference = current_difference
+      closest_pair = [sorted_numbers[i], sorted_numbers[i + 1]]
+    end
+  end
+
+  closest_pair
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_find_closest_elements
+    candidate = method(:find_closest_elements)
+    assert_equal([3.9, 4.0], candidate.call([1.0, 2.0, 3.9, 4.0, 5.0, 2.2]))
+    assert_equal([5.0, 5.9], candidate.call([1.0, 2.0, 5.9, 4.0, 5.0]))
+    assert_equal([2.0, 2.2], candidate.call([1.0, 2.0, 3.0, 4.0, 5.0, 2.2]))
+    assert_equal([2.0, 2.0], candidate.call([1.0, 2.0, 3.0, 4.0, 5.0, 2.0]))
+    assert_equal([2.2, 3.1], candidate.call([1.1, 2.2, 3.1, 4.1, 5.1]))
+  end
+end
+"
+HumanEval_21,kat_Geor,rb,"ისე რომ ყველაზე პატარა რიცხვი გახდება 0 და ყველაზე დიდი გახდება 1 მოცემული რიცხვების მასივი (მინიმუმ ორი ელემენტისგან), გამოიყენეთ ლინერიული ტრანსფორმაცია ამ მასივში,# >>> rescale_to_unit.call([1.0, 2.0, 3.0, 4.0, 5.0])
+# [0.0, 0.25, 0.5, 0.75, 1.0]
+def rescale_to_unit(numbers)
+","def rescale_to_unit(numbers)
+  min = numbers.min
+  max = numbers.max
+  range = max - min
+  return numbers.map { |num| (num - min) / range.to_f }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_rescale_to_unit
+    candidate = method(:rescale_to_unit)
+    assert_equal([0.0, 1.0], candidate.call([2.0, 49.9]))
+    assert_equal([1.0, 0.0], candidate.call([100.0, 49.9]))
+    assert_equal([0.0, 0.25, 0.5, 0.75, 1.0], candidate.call([1.0, 2.0, 3.0, 4.0, 5.0]))
+    assert_equal([0.25, 0.0, 1.0, 0.5, 0.75], candidate.call([2.0, 1.0, 5.0, 3.0, 4.0]))
+    assert_equal([0.25, 0.0, 1.0, 0.5, 0.75], candidate.call([12.0, 11.0, 15.0, 13.0, 14.0]))
+  end
+end
+"
+HumanEval_22,kat_Geor,rb,"ფილტრირება მოცემული მასივის ნებისმიერი rbthon მნიშვნელობის მხოლოდ მთელი რიცხვებისათვის # >>> filter_integers.call([""a"", 3.14, 5])
+# [5]
+# >>> filter_integers.call([1, 2, 3, ""abc"", {}, []])
+# [1, 2, 3]
+def filter_integers(values)
+","def filter_integers(values)
+  values.select { |value| value.is_a?(Integer) }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_filter_integers
+    candidate = method(:filter_integers)
+    assert_equal([], candidate.call([]))
+    assert_equal([4, 9], candidate.call([4, {}, [], 23.2, 9, ""adasd""]))
+    assert_equal([3, 3, 3], candidate.call([3, ""c"", 3, 3, ""a"", ""b""]))
+  end
+end
+"
+HumanEval_23,kat_Geor,rb,"მოცემული სტრიქონის დაბრუნების სიგრძე # >>> strlen.call("""")
+# 0
+# >>> strlen.call(""abc"")
+# 3
+def strlen(string)
+","strlen = lambda do |string|
+  string.length
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_strlen
+    candidate = method(:strlen)
+    assert_equal(0, candidate.call(""""))
+    assert_equal(1, candidate.call(""x""))
+    assert_equal(9, candidate.call(""asdasnakj""))
+  end
+end
+"
+HumanEval_24,kat_Geor,rb,"მოცემული რიცხვისთვის n, იპოვეთ ყველაზე დიდი რიცხვი, რომელიც n-ს ირიბად იყოფს, n-ზე პატარა # >>> largest_divisor.call(15)
+# 5
+def largest_divisor(n)
+","def largest_divisor(n)
+  (n - 1).downto(1) do |i|
+    return i if n % i == 0
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_largest_divisor
+    candidate = method(:largest_divisor)
+    assert_equal(1, candidate.call(3))
+    assert_equal(1, candidate.call(7))
+    assert_equal(5, candidate.call(10))
+    assert_equal(50, candidate.call(100))
+    assert_equal(7, candidate.call(49))
+  end
+end
+"
+HumanEval_25,kat_Geor,rb,"შეყვანის რიცხვი უნდა იყოს ყველა ფაქტორის ნაყოფის ტოლი.თითოეული ფაქტორი უნდა იყოს დალაგებული იმ რაოდენობით, რამდენჯერაც ის გამოჩნდება ფაქტორების დაყოფაში.დააბრუნებს მოცემული მთელი რიცხვის პირველადი ფაქტორების მასივს უმცირესიდან უდიდესამდე.# >>> factorize.call(8)
+# [2, 2, 2]
+# >>> factorize.call(25)
+# [5, 5]
+# >>> factorize.call(70)
+# [2, 5, 7]
+def factorize(n)
+","def factorize(n)
+  factors = []
+  divisor = 2
+  while n > 1
+    while n % divisor == 0
+      factors << divisor
+      n /= divisor
+    end
+    divisor += 1
+  end
+  factors
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_factorize
+    candidate = method(:factorize)
+    assert_equal([2], candidate.call(2))
+    assert_equal([2, 2], candidate.call(4))
+    assert_equal([2, 2, 2], candidate.call(8))
+    assert_equal([3, 19], candidate.call(57))
+    assert_equal([3, 3, 19, 19], candidate.call(3249))
+    assert_equal([3, 3, 3, 19, 19, 19], candidate.call(185193))
+    assert_equal([3, 19, 19, 19], candidate.call(20577))
+    assert_equal([2, 3, 3], candidate.call(18))
+  end
+end
+"
+HumanEval_26,kat_Geor,rb,"შეინახეთ ელემენტების თანმიმდევრობა იგივეა, როგორც შესავალში.მთელი რიცხვების მასივიდან ამოიღეთ ყველა ელემენტი, რომელიც ერთზე მეტჯერ გვხვდება.# >>> remove_duplicates.call([1, 2, 3, 2, 4])
+# [1, 3, 4]
+def remove_duplicates(numbers)
+","def remove_duplicates(numbers)
+  numbers.select { |num| numbers.count(num) == 1 }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_remove_duplicates
+    candidate = method(:remove_duplicates)
+    assert_equal([], candidate.call([]))
+    assert_equal([1, 2, 3, 4], candidate.call([1, 2, 3, 4]))
+    assert_equal([1, 4, 5], candidate.call([1, 2, 3, 2, 4, 3, 5]))
+  end
+end
+"
+HumanEval_27,kat_Geor,rb,"მოცემული სტრიქონისთვის, მცირე ასოების გადატანა დიდი ასოებით და დიდი ასოების გადატანა მცირე ასოებით. # >>> flip_case.call(""Hello"")
+# ""hELLO""
+def flip_case(string)
+","def flip_case(string)
+  string.swapcase
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_flip_case
+    candidate = method(:flip_case)
+    assert_equal("""", candidate.call(""""))
+    assert_equal(""hELLO!"", candidate.call(""Hello!""))
+    assert_equal(""tHESE VIOLENT DELIGHTS HAVE VIOLENT ENDS"", candidate.call(""These violent delights have violent ends""))
+  end
+end
+"
+HumanEval_28,kat_Geor,rb,"შეკრებული სტრიქონების მასივი ერთ სტრიქონად # >>> concatenate.call([])
+# """"
+# >>> concatenate.call([""a"", ""b"", ""c""])
+# ""abc""
+def concatenate(strings)
+","def concatenate(strings)
+  strings.join
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_concatenate
+    candidate = method(:concatenate)
+    assert_equal("""", candidate.call([]))
+    assert_equal(""xyz"", candidate.call([""x"", ""y"", ""z""]))
+    assert_equal(""xyzwk"", candidate.call([""x"", ""y"", ""z"", ""w"", ""k""]))
+  end
+end
+"
+HumanEval_29,kat_Geor,rb,"ფილტრირება სტრიქონების შესვლის მასივში მხოლოდ იმ სტრიქონებისათვის, რომლებიც იწყება მოცემული პრეფიქსით.# >>> filter_by_prefix.call([], ""a"")
+# []
+# >>> filter_by_prefix.call([""abc"", ""bcd"", ""cde"", ""array""], ""a"")
+# [""abc"", ""array""]
+def filter_by_prefix(strings, prefix)
+","def filter_by_prefix(strings, prefix)
+  strings.select { |string| string.start_with?(prefix) }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_filter_by_prefix
+    candidate = method(:filter_by_prefix)
+    assert_equal([], candidate.call([], ""john""))
+    assert_equal([""xxx"", ""xxxAAA"", ""xxx""], candidate.call([""xxx"", ""asd"", ""xxy"", ""john doe"", ""xxxAAA"", ""xxx""], ""xxx""))
+  end
+end
+"
+HumanEval_30,kat_Geor,rb,"ბრუნავს მხოლოდ დადებით რიცხვებს მასივში.# >>> get_positive.call([-1, 2, -4, 5, 6])
+# [2, 5, 6]
+# >>> get_positive.call([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])
+# [5, 3, 2, 3, 9, 123, 1]
+def get_positive(l)
+","get_positive = lambda do |l|
+  l.select { |num| num > 0 }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_get_positive
+    candidate = method(:get_positive)
+    assert_equal([4, 5, 6], candidate.call([-1, -2, 4, 5, 6]))
+    assert_equal([5, 3, 2, 3, 3, 9, 123, 1], candidate.call([5, 3, -5, 2, 3, 3, 9, 0, 123, 1, -10]))
+    assert_equal([], candidate.call([-1, -2]))
+    assert_equal([], candidate.call([]))
+  end
+end
+"
+HumanEval_31,kat_Geor,rb,"დააბრუნეთ true, თუ მოცემული რიცხვი არის პირველადი, და false სხვა შემთხვევაში. # >>> is_prime.call(6)
+# false
+# >>> is_prime.call(101)
+# true
+# >>> is_prime.call(11)
+# true
+# >>> is_prime.call(13441)
+# true
+# >>> is_prime.call(61)
+# true
+# >>> is_prime.call(4)
+# false
+# >>> is_prime.call(1)
+# false
+def is_prime(n)
+","is_prime = lambda do |n|
+  return false if n <= 1
+  return true if n == 2
+  return false if n.even?
+
+  max_divisor = Math.sqrt(n).to_i
+  (3..max_divisor).step(2).each do |i|
+    return false if n % i == 0
+  end
+
+  true
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_prime
+    candidate = method(:is_prime)
+    assert_equal(false, candidate.call(6))
+    assert_equal(true, candidate.call(101))
+    assert_equal(true, candidate.call(11))
+    assert_equal(true, candidate.call(13441))
+    assert_equal(true, candidate.call(61))
+    assert_equal(false, candidate.call(4))
+    assert_equal(false, candidate.call(1))
+    assert_equal(true, candidate.call(5))
+    assert_equal(true, candidate.call(11))
+    assert_equal(true, candidate.call(17))
+    assert_equal(false, candidate.call(85))
+    assert_equal(false, candidate.call(77))
+    assert_equal(false, candidate.call(255379))
+  end
+end
+"
+HumanEval_33,kat_Geor,rb,"l-ის შესაბამის ინდექსებს, მაგრამ დახარისხებული.l' იდენტურია l-სთან იმ ინდექსებში, რომლებიც სამზე არ იყოფა, ხოლო მისი მნიშვნელობები იმ ინდექსებში, რომლებიც სამზე იყოფა, თანაბარია ეს ფუნქცია იღებს მასივს l და იბრუნებს მასივს l' ისეთი, რომ # >>> sort_third.call([1, 2, 3])
+# [1, 2, 3]
+# >>> sort_third.call([5, 6, 3, 4, 8, 9, 2])
+# [2, 6, 3, 4, 8, 9, 5]
+def sort_third(l)
+","def sort_third(l)
+  divisible_by_three = l.each_with_index.select { |_, idx| idx % 3 == 0 }.map(&:first).sort
+  l.each_with_index.map { |val, idx| idx % 3 == 0 ? divisible_by_three.shift : val }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sort_third
+    candidate = method(:sort_third)
+    assert_equal([2, 6, 3, 4, 8, 9, 5], candidate.call([5, 6, 3, 4, 8, 9, 2]))
+    assert_equal([2, 8, 3, 4, 6, 9, 5], candidate.call([5, 8, 3, 4, 6, 9, 2]))
+    assert_equal([2, 6, 9, 4, 8, 3, 5], candidate.call([5, 6, 9, 4, 8, 3, 2]))
+    assert_equal([2, 6, 3, 4, 8, 9, 5, 1], candidate.call([5, 6, 3, 4, 8, 9, 2, 1]))
+  end
+end
+"
+HumanEval_34,kat_Geor,rb,"დალაგებული უნიკალური ელემენტების დაბრუნება მასალაში # >>> unique.call([5, 3, 5, 2, 3, 3, 9, 0, 123])
+# [0, 2, 3, 5, 9, 123]
+def unique(l)
+","def unique(l)
+  l.uniq.sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_unique
+    candidate = method(:unique)
+    assert_equal([0, 2, 3, 5, 9, 123], candidate.call([5, 3, 5, 2, 3, 3, 9, 0, 123]))
+  end
+end
+"
+HumanEval_35,kat_Geor,rb,"მაქსიმალური ელემენტის დაბრუნება მასივში.# >>> max_element.call([1, 2, 3])
+# 3
+# >>> max_element.call([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])
+# 123
+def max_element(l)
+","def max_element(l)
+  l.max
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_max_element
+    candidate = method(:max_element)
+    assert_equal(3, candidate.call([1, 2, 3]))
+    assert_equal(124, candidate.call([5, 3, -5, 2, -3, 3, 9, 0, 124, 1, -10]))
+  end
+end
+"
+HumanEval_36,kat_Geor,rb,"დააბრუნეთ ციფრი 7-ის იმ რაოდენობის რაოდენობა, რომელიც აღინიშნება n-ზე ნაკლები მთლიანი რიცხვის დროს, რომელიც იყოფა 11 ან 13-ით. # >>> fizz_buzz.call(50)
+# 0
+# >>> fizz_buzz.call(78)
+# 2
+# >>> fizz_buzz.call(79)
+# 3
+def fizz_buzz(n)
+","def fizz_buzz(n)
+  count = 0
+  (1...n).each do |i|
+    if i % 11 == 0 || i % 13 == 0
+      count += i.to_s.count('7')
+    end
+  end
+  count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fizz_buzz
+    candidate = method(:fizz_buzz)
+    assert_equal(0, candidate.call(50))
+    assert_equal(2, candidate.call(78))
+    assert_equal(3, candidate.call(79))
+    assert_equal(3, candidate.call(100))
+    assert_equal(6, candidate.call(200))
+    assert_equal(192, candidate.call(4000))
+    assert_equal(639, candidate.call(10000))
+    assert_equal(8026, candidate.call(100000))
+  end
+end
+"
+HumanEval_37,kat_Geor,rb,"l-ის პარალური ინდექსების მნიშვნელობებზე, მაგრამ დახარისხებული.l' იდენტურია l-სთან უცნაურ ინდექსებში, ხოლო მისი მნიშვნელობები თანაბარ ინდექსებში თანაბარია ეს ფუნქცია იღებს მასივს l და იბრუნებს მასივს l' ისეთი, რომ # >>> sort_even.call([1, 2, 3])
+# [1, 2, 3]
+# >>> sort_even.call([5, 6, 3, 4])
+# [3, 6, 5, 4]
+def sort_even(l)
+","def sort_even(l)
+  even_indices = l.each_index.select { |i| i.even? }
+  even_values = even_indices.map { |i| l[i] }.sort
+  
+  even_index = 0
+  l.each_with_index.map do |value, index|
+    if index.even?
+      even_values[even_index].tap { even_index += 1 }
+    else
+      value
+    end
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sort_even
+    candidate = method(:sort_even)
+    assert_equal([1, 2, 3], candidate.call([1, 2, 3]))
+    assert_equal([-10, 3, -5, 2, -3, 3, 5, 0, 9, 1, 123], candidate.call([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10]))
+    assert_equal([-12, 8, 3, 4, 5, 2, 12, 11, 23, -10], candidate.call([5, 8, -12, 4, 23, 2, 3, 11, 12, -10]))
+  end
+end
+"
+HumanEval_39,kat_Geor,rb,"prime_fib აბრუნებს ნ-ე რიცხვს, რომელიც არის ფიბონაჩის რიცხვი და ის ასევე არის ნომერი. # >>> prime_fib.call(1)
+# 2
+# >>> prime_fib.call(2)
+# 3
+# >>> prime_fib.call(3)
+# 5
+# >>> prime_fib.call(4)
+# 13
+# >>> prime_fib.call(5)
+# 89
+def prime_fib(n)
+","def prime_fib(n)
+  require 'prime'
+  
+  fibs = Enumerator.new do |y|
+    a, b = 0, 1
+    loop do
+      a, b = b, a + b
+      y << b
+    end
+  end
+  
+  prime_fibs = fibs.lazy.select { |fib| Prime.prime?(fib) }
+  prime_fibs.first(n).last
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_prime_fib
+    candidate = method(:prime_fib)
+    assert_equal(2, candidate.call(1))
+    assert_equal(3, candidate.call(2))
+    assert_equal(5, candidate.call(3))
+    assert_equal(13, candidate.call(4))
+    assert_equal(89, candidate.call(5))
+    assert_equal(233, candidate.call(6))
+    assert_equal(1597, candidate.call(7))
+    assert_equal(28657, candidate.call(8))
+    assert_equal(514229, candidate.call(9))
+    assert_equal(433494437, candidate.call(10))
+  end
+end
+"
+HumanEval_40,kat_Geor,rb,"ნულოვანი ჯამი და სხვა შემთხვევაში ცრუ.ის დააბრუნებს true-ს, თუ მასალაში არის სამი განსხვავებული ელემენტი, რომელიც triple_sum_to_zero იღებს მთელი რიცხვების მასივს, როგორც შეყვანას.# >>> triples_sum_to_zero.call([1, 3, 5, 0])
+# false
+# >>> triples_sum_to_zero.call([1, 3, -2, 1])
+# true
+# >>> triples_sum_to_zero.call([1, 2, 3, 7])
+# false
+# >>> triples_sum_to_zero.call([2, 4, -5, 3, 9, 7])
+# true
+# >>> triples_sum_to_zero.call([1])
+# false
+def triples_sum_to_zero(l)
+","def triples_sum_to_zero(l)
+  n = l.length
+  (0...n-2).each do |i|
+    ((i+1)...n-1).each do |j|
+      ((j+1)...n).each do |k|
+        return true if l[i] + l[j] + l[k] == 0
+      end
+    end
+  end
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_triples_sum_to_zero
+    candidate = method(:triples_sum_to_zero)
+    assert_equal(false, candidate.call([1, 3, 5, 0]))
+    assert_equal(false, candidate.call([1, 3, 5, -1]))
+    assert_equal(true, candidate.call([1, 3, -2, 1]))
+    assert_equal(false, candidate.call([1, 2, 3, 7]))
+    assert_equal(false, candidate.call([1, 2, 5, 7]))
+    assert_equal(true, candidate.call([2, 4, -5, 3, 9, 7]))
+    assert_equal(false, candidate.call([1]))
+    assert_equal(false, candidate.call([1, 3, 5, -100]))
+    assert_equal(false, candidate.call([100, 3, 5, -100]))
+  end
+end
+"
+HumanEval_41,kat_Geor,rb,"ეს ფუნქცია ამგვარი შეჯახებების რაოდენობას აჩვენებს.როგორც რომ არ შეჯახებულან.თუმცა, მანქანები უსასრულოდ მყარები და ძლიერები არიან. შედეგად, ისინი მოძრაობას განაგრძობენ.როცა მარცხნიდან მარჯვნივ მოძრავი მანქანა ურტყამს მარჯვნიდან მარცხნივ მოძრავ მანქანას.ყველა მანქანა მოძრაობს ერთი და იგივე სიჩქარით.ორი წყვილი მანქანა ძალიან შორს იწყებს.n მანქანა მარცხნიდან მარჯვნივ მოძრაობს. ამავე დროს, n მანქანის სხვადასხვა ნაკრები.წარმოიდგინეთ გზა, რომელიც არის სრულად სწორი უსასრულოდ გრძელი ხაზი.def car_race_collision(n)
+","def car_race_collision(n)
+  n
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_car_race_collision
+    candidate = method(:car_race_collision)
+    assert_equal(4, candidate.call(2))
+    assert_equal(9, candidate.call(3))
+    assert_equal(16, candidate.call(4))
+    assert_equal(64, candidate.call(8))
+    assert_equal(100, candidate.call(10))
+  end
+end
+"
+HumanEval_42,kat_Geor,rb,"დაბრუნება მასივი ელემენტებით, რომლებიც იზრდება 1 # >>> incr_list.call([1, 2, 3])
+# [2, 3, 4]
+# >>> incr_list.call([5, 3, 5, 2, 3, 3, 9, 0, 123])
+# [6, 4, 6, 3, 4, 4, 10, 1, 124]
+def incr_list(l)
+","def incr_list(l)
+  l.map { |x| x + 1 }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_incr_list
+    candidate = method(:incr_list)
+    assert_equal([], candidate.call([]))
+    assert_equal([4, 3, 2], candidate.call([3, 2, 1]))
+    assert_equal([6, 3, 6, 3, 4, 4, 10, 1, 124], candidate.call([5, 2, 5, 2, 3, 3, 9, 0, 123]))
+  end
+end
+"
+HumanEval_43,kat_Geor,rb,"ნულოვანი ჯამი და სხვა შემთხვევაში ცრუ.true-ს უბრუნებს, თუ მასივში ორი განსხვავებული ელემენტია, რომლებიც pairs_sum_to_zero იღებს მთელი რიცხვების მასივს, როგორც შეყვანას.# >>> pairs_sum_to_zero.call([1, 3, 5, 0])
+# false
+# >>> pairs_sum_to_zero.call([1, 3, -2, 1])
+# false
+# >>> pairs_sum_to_zero.call([1, 2, 3, 7])
+# false
+# >>> pairs_sum_to_zero.call([2, 4, -5, 3, 5, 7])
+# true
+# >>> pairs_sum_to_zero.call([1])
+# false
+def pairs_sum_to_zero(l)
+","def pairs_sum_to_zero(l)
+  num_set = l.to_set
+  l.each do |num|
+    return true if num != 0 && num_set.include?(-num)
+  end
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_pairs_sum_to_zero
+    candidate = method(:pairs_sum_to_zero)
+    assert_equal(false, candidate.call([1, 3, 5, 0]))
+    assert_equal(false, candidate.call([1, 3, -2, 1]))
+    assert_equal(false, candidate.call([1, 2, 3, 7]))
+    assert_equal(true, candidate.call([2, 4, -5, 3, 5, 7]))
+    assert_equal(false, candidate.call([1]))
+    assert_equal(true, candidate.call([-3, 9, -1, 3, 2, 30]))
+    assert_equal(true, candidate.call([-3, 9, -1, 3, 2, 31]))
+    assert_equal(false, candidate.call([-3, 9, -1, 4, 2, 30]))
+    assert_equal(false, candidate.call([-3, 9, -1, 4, 2, 31]))
+  end
+end
+"
+HumanEval_44,kat_Geor,rb,"ბაზის რიცხვები 10-ზე ნაკლებია.დაბრუნების სტრიქონის გამოსახულება კონვერტაციის შემდეგ.შეცვალეთ რიცხვითი ბაზა შესული რიცხვის x-ის ბაზაზე.# >>> change_base.call(8, 3)
+# ""22""
+# >>> change_base.call(8, 2)
+# ""1000""
+# >>> change_base.call(7, 2)
+# ""111""
+def change_base(x, base)
+","def change_base(x, base)
+  return '0' if x == 0
+  digits = []
+  while x > 0
+    digits << (x % base).to_s
+    x /= base
+  end
+  digits.reverse.join
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_change_base
+    candidate = method(:change_base)
+    assert_equal(""22"", candidate.call(8, 3))
+    assert_equal(""100"", candidate.call(9, 3))
+    assert_equal(""11101010"", candidate.call(234, 2))
+    assert_equal(""10000"", candidate.call(16, 2))
+    assert_equal(""1000"", candidate.call(8, 2))
+    assert_equal(""111"", candidate.call(7, 2))
+    assert_equal(""2"", candidate.call(2, 3))
+    assert_equal(""3"", candidate.call(3, 4))
+    assert_equal(""4"", candidate.call(4, 5))
+    assert_equal(""5"", candidate.call(5, 6))
+    assert_equal(""6"", candidate.call(6, 7))
+    assert_equal(""7"", candidate.call(7, 8))
+  end
+end
+"
+HumanEval_45,kat_Geor,rb,"ნიშანი: გვერდის სიგრძე და სამკუთხედის მაღალი დაბრუნების ფართობი.# >>> triangle_area.call(5, 3)
+# 7.5
+def triangle_area(a, h)
+","def triangle_area(a, h)
+  (a * h) / 2.0
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_triangle_area
+    candidate = method(:triangle_area)
+    assert_equal(7.5, candidate.call(5, 3))
+    assert_equal(2.0, candidate.call(2, 2))
+    assert_equal(40.0, candidate.call(10, 8))
+  end
+end
+"
+HumanEval_46,kat_Geor,rb,"გთხოვთ, დაწეროთ ფუნქცია, რომელიც ეფექტურად გამოითვლის fib4-ის რიცხვთა თანმიმდევრობის n-ე ელემენტს. არ გამოიყენოთ რეკურსია. fib4(n) -> fib4(n-1) + fib4(n-2) + fib4(n-3) + fib4(n-4).fib4(3) -> 0 fib4(2) -> 2 fib4(1) -> 0 fib4(0) -> 0 Fib4-ის ციფრული თანმიმდევრობა არის ფიბონაჩის თანმიმდევრობის მსგავსი, რომელიც ასეა განსაზღვრული:# >>> fib4.call(5)
+# 4
+# >>> fib4.call(6)
+# 8
+# >>> fib4.call(7)
+# 14
+def fib4(n)
+","def fib4(n)
+  return 0 if n == 0 || n == 1 || n == 3
+  return 2 if n == 2
+
+  fib4_seq = [0, 0, 2, 0]
+  (4..n).each do |i|
+    fib4_seq[i] = fib4_seq[i-1] + fib4_seq[i-2] + fib4_seq[i-3] + fib4_seq[i-4]
+  end
+  fib4_seq[n]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fib4
+    candidate = method(:fib4)
+    assert_equal(4, candidate.call(5))
+    assert_equal(28, candidate.call(8))
+    assert_equal(104, candidate.call(10))
+    assert_equal(386, candidate.call(12))
+  end
+end
+"
+HumanEval_47,kat_Geor,rb,"დაბრუნება ელემენტების მედიანი მასივში l. # >>> median.call([3, 1, 2, 4, 5])
+# 3
+# >>> median.call([-10, 4, 6, 1000, 10, 20])
+# 15.0
+def median(l)
+","def median(l)
+  sorted = l.sort
+  len = sorted.length
+  if len.odd?
+    sorted[len / 2]
+  else
+    (sorted[len / 2 - 1] + sorted[len / 2]) / 2.0
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_median
+    candidate = method(:median)
+    assert_equal(3, candidate.call([3, 1, 2, 4, 5]))
+    assert_equal(8.0, candidate.call([-10, 4, 6, 1000, 10, 20]))
+    assert_equal(5, candidate.call([5]))
+    assert_equal(5.5, candidate.call([6, 5]))
+    assert_equal(7, candidate.call([8, 1, 3, 9, 9, 2, 7]))
+  end
+end
+"
+HumanEval_48,kat_Geor,rb,"ამოწმებს არის თუ არა მოცემული სტრიქონი პალინდრომი.# >>> is_palindrome.call("""")
+# true
+# >>> is_palindrome.call(""aba"")
+# true
+# >>> is_palindrome.call(""aaaaa"")
+# true
+# >>> is_palindrome.call(""zbcd"")
+# false
+def is_palindrome(text)
+","is_palindrome = lambda do |text|
+  text == text.reverse
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_palindrome
+    candidate = method(:is_palindrome)
+    assert_equal(true, candidate.call(""""))
+    assert_equal(true, candidate.call(""aba""))
+    assert_equal(true, candidate.call(""aaaaa""))
+    assert_equal(false, candidate.call(""zbcd""))
+    assert_equal(true, candidate.call(""xywyx""))
+    assert_equal(false, candidate.call(""xywyz""))
+    assert_equal(false, candidate.call(""xywzx""))
+  end
+end
+"
+HumanEval_49,kat_Geor,rb,"დაბრუნება 2^n მოდულო p (გაითვალისწინეთ რიცხვები).# >>> modp.call(3, 5)
+# 3
+# >>> modp.call(1101, 101)
+# 2
+# >>> modp.call(0, 101)
+# 1
+# >>> modp.call(3, 11)
+# 8
+# >>> modp.call(100, 101)
+# 1
+def modp(n, p)
+","def modp(n, p)
+  return 1 if p == 1
+  2.pow(n, p)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_modp
+    candidate = method(:modp)
+    assert_equal(3, candidate.call(3, 5))
+    assert_equal(2, candidate.call(1101, 101))
+    assert_equal(1, candidate.call(0, 101))
+    assert_equal(8, candidate.call(3, 11))
+    assert_equal(1, candidate.call(100, 101))
+    assert_equal(4, candidate.call(30, 5))
+    assert_equal(3, candidate.call(31, 5))
+  end
+end
+"
+HumanEval_51,kat_Geor,rb,"remove_vowels არის ფუნქცია, რომელიც იღებს სტრიქონს და უბრუნებს სტრიქონს უვოკალოდ. # >>> remove_vowels.call("""")
+# """"
+# >>> remove_vowels.call(""abcdef"")
+# ""bcdf""
+# >>> remove_vowels.call(""aaaaa"")
+# """"
+# >>> remove_vowels.call(""aaBAA"")
+# ""B""
+# >>> remove_vowels.call(""zbcd"")
+# ""zbcd""
+def remove_vowels(text)
+","def remove_vowels(text)
+  text.delete('aeiouAEIOU')
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_remove_vowels
+    candidate = method(:remove_vowels)
+    assert_equal("""", candidate.call(""""))
+    assert_equal(""bcdf
+ghjklm"", candidate.call(""abcdef
+ghijklm""))
+    assert_equal(""fdcb"", candidate.call(""fedcba""))
+    assert_equal("""", candidate.call(""eeeee""))
+    assert_equal(""cB"", candidate.call(""acBAA""))
+    assert_equal(""cB"", candidate.call(""EcBOO""))
+    assert_equal(""ybcd"", candidate.call(""ybcd""))
+  end
+end
+"
+HumanEval_52,kat_Geor,rb,"დაბრუნება true, თუ ყველა რიცხვი მასივში l არის ქვემოთ threshold t. # >>> below_threshold.call([1, 2, 4, 10], 100)
+# true
+# >>> below_threshold.call([1, 20, 4, 10], 5)
+# false
+def below_threshold(l, t)
+","def below_threshold(l, t)
+  l.all? { |num| num < t }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_below_threshold
+    candidate = method(:below_threshold)
+    assert_equal(true, candidate.call([1, 2, 4, 10], 100))
+    assert_equal(false, candidate.call([1, 20, 4, 10], 5))
+    assert_equal(true, candidate.call([1, 20, 4, 10], 21))
+    assert_equal(true, candidate.call([1, 20, 4, 10], 22))
+    assert_equal(true, candidate.call([1, 8, 4, 10], 11))
+    assert_equal(false, candidate.call([1, 8, 4, 10], 10))
+  end
+end
+"
+HumanEval_53,kat_Geor,rb,"შევაგროვოთ ორი რიცხვი x და y.# >>> add.call(2, 3)
+# 5
+# >>> add.call(5, 7)
+# 12
+def add(x, y)
+","add = ->(x, y) { x + y }","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_add
+    candidate = method(:add)
+    assert_equal(1, candidate.call(0, 1))
+    assert_equal(1, candidate.call(1, 0))
+    assert_equal(5, candidate.call(2, 3))
+    assert_equal(12, candidate.call(5, 7))
+    assert_equal(12, candidate.call(7, 5))
+  end
+end
+"
+HumanEval_54,kat_Geor,rb,"შეამოწმეთ, აქვს თუ არა ორ სიტყვას ერთი და იგივე სიმბოლოები.# >>> same_chars.call(""eabcdzzzz"", ""dddzzzzzzzddeddabc"")
+# true
+# >>> same_chars.call(""abcd"", ""dddddddabc"")
+# true
+# >>> same_chars.call(""dddddddabc"", ""abcd"")
+# true
+# >>> same_chars.call(""eabcd"", ""dddddddabc"")
+# false
+# >>> same_chars.call(""abcd"", ""dddddddabce"")
+# false
+# >>> same_chars.call(""eabcdzzzz"", ""dddzzzzzzzddddabc"")
+# false
+def same_chars(s0, s1)
+","def same_chars(s0, s1)
+  s0.chars.uniq.all? { |char| s1.include?(char) } &&
+  s1.chars.uniq.all? { |char| s0.include?(char) }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_same_chars
+    candidate = method(:same_chars)
+    assert_equal(true, candidate.call(""eabcdzzzz"", ""dddzzzzzzzddeddabc""))
+    assert_equal(true, candidate.call(""abcd"", ""dddddddabc""))
+    assert_equal(true, candidate.call(""dddddddabc"", ""abcd""))
+    assert_equal(false, candidate.call(""eabcd"", ""dddddddabc""))
+    assert_equal(false, candidate.call(""abcd"", ""dddddddabcf""))
+    assert_equal(false, candidate.call(""eabcdzzzz"", ""dddzzzzzzzddddabc""))
+    assert_equal(false, candidate.call(""aabb"", ""aaccc""))
+  end
+end
+"
+HumanEval_55,kat_Geor,rb,"დააბრუნეთ n-ე ფიბონაჩის რიცხვი. # >>> fib.call(10)
+# 55
+# >>> fib.call(1)
+# 1
+# >>> fib.call(8)
+# 21
+def fib(n)
+","def fib(n)
+  return n if n <= 1
+  fib(n - 1) + fib(n - 2)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fib
+    candidate = method(:fib)
+    assert_equal(55, candidate.call(10))
+    assert_equal(1, candidate.call(1))
+    assert_equal(21, candidate.call(8))
+    assert_equal(89, candidate.call(11))
+    assert_equal(144, candidate.call(12))
+  end
+end
+"
+HumanEval_56,kat_Geor,rb,"return true თუ თითოეულ გახსნილ კოლოფს აქვს შესაბამისი დახურვის კოლოფი. კრევეტები არის სტრიქონი ""<"" და "">"". # >>> correct_bracketing.call(""<"")
+# false
+# >>> correct_bracketing.call(""<>"")
+# true
+# >>> correct_bracketing.call(""<<><>>"")
+# true
+# >>> correct_bracketing.call(""><<>"")
+# false
+def correct_bracketing(brackets)
+","def correct_bracketing(brackets)
+  balance = 0
+  brackets.chars.each do |char|
+    if char == '<'
+      balance += 1
+    elsif char == '>'
+      balance -= 1
+    end
+    return false if balance < 0
+  end
+  balance == 0
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_correct_bracketing
+    candidate = method(:correct_bracketing)
+    assert_equal(true, candidate.call(""<>""))
+    assert_equal(true, candidate.call(""<<><>>""))
+    assert_equal(true, candidate.call(""<><><<><>><>""))
+    assert_equal(true, candidate.call(""<><><<<><><>><>><<><><<>>>""))
+    assert_equal(false, candidate.call(""<<<><>>>>""))
+    assert_equal(false, candidate.call(""><<>""))
+    assert_equal(false, candidate.call(""<""))
+    assert_equal(false, candidate.call(""<<<<""))
+    assert_equal(false, candidate.call("">""))
+    assert_equal(false, candidate.call(""<<>""))
+    assert_equal(false, candidate.call(""<><><<><>><>><<>""))
+    assert_equal(false, candidate.call(""<><><<><>><>>><>""))
+  end
+end
+"
+HumanEval_57,kat_Geor,rb,"დაბრუნება true არის მასივის ელემენტები მონოტონურად იზრდება ან მცირდება.# >>> monotonic.call([1, 2, 4, 20])
+# true
+# >>> monotonic.call([1, 20, 4, 10])
+# false
+# >>> monotonic.call([4, 1, 0, -10])
+# true
+def monotonic(l)
+","def monotonic(l)
+  increasing = true
+  decreasing = true
+
+  (0...l.length - 1).each do |i|
+    if l[i] < l[i + 1]
+      decreasing = false
+    elsif l[i] > l[i + 1]
+      increasing = false
+    end
+  end
+
+  increasing || decreasing
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_monotonic
+    candidate = method(:monotonic)
+    assert_equal(true, candidate.call([1, 2, 4, 10]))
+    assert_equal(true, candidate.call([1, 2, 4, 20]))
+    assert_equal(false, candidate.call([1, 20, 4, 10]))
+    assert_equal(true, candidate.call([4, 1, 0, -10]))
+    assert_equal(true, candidate.call([4, 1, 1, 0]))
+    assert_equal(false, candidate.call([1, 2, 3, 2, 5, 60]))
+    assert_equal(true, candidate.call([1, 2, 3, 4, 5, 60]))
+    assert_equal(true, candidate.call([9, 9, 9, 9]))
+  end
+end
+"
+HumanEval_58,kat_Geor,rb,"ორი მასივისთვის დახარისხებული უნიკალური საერთო ელემენტების დაბრუნება. # >>> common.call([1, 4, 3, 34, 653, 2, 5], [5, 7, 1, 5, 9, 653, 121])
+# [1, 5, 653]
+# >>> common.call([5, 3, 2, 8], [3, 2])
+# [2, 3]
+def common(l1, l2)
+","def common(l1, l2)
+  (l1 & l2).uniq.sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_common
+    candidate = method(:common)
+    assert_equal([1, 5, 653], candidate.call([1, 4, 3, 34, 653, 2, 5], [5, 7, 1, 5, 9, 653, 121]))
+    assert_equal([2, 3], candidate.call([5, 3, 2, 8], [3, 2]))
+    assert_equal([2, 3, 4], candidate.call([4, 3, 2, 8], [3, 2, 4]))
+    assert_equal([], candidate.call([4, 3, 2, 8], []))
+  end
+end
+"
+HumanEval_59,kat_Geor,rb,"დააბრუნეთ n-ის უდიდესი პირველადი ფაქტორი. ვარაუდობთ, რომ n > 1 და არ არის პირველადი. # >>> largest_prime_factor.call(13195)
+# 29
+# >>> largest_prime_factor.call(2048)
+# 2
+def largest_prime_factor(n)
+","def largest_prime_factor(n)
+  factor = 2
+  while factor * factor <= n
+    if n % factor == 0
+      n /= factor
+    else
+      factor += 1
+    end
+  end
+  n
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_largest_prime_factor
+    candidate = method(:largest_prime_factor)
+    assert_equal(5, candidate.call(15))
+    assert_equal(3, candidate.call(27))
+    assert_equal(7, candidate.call(63))
+    assert_equal(11, candidate.call(330))
+    assert_equal(29, candidate.call(13195))
+  end
+end
+"
+HumanEval_60,kat_Geor,rb,"sum_to_n არის ფუნქცია, რომელიც აჯამებს რიცხვებს 1-დან n-მდე. # >>> sum_to_n.call(30)
+# 465
+# >>> sum_to_n.call(100)
+# 5050
+# >>> sum_to_n.call(5)
+# 15
+# >>> sum_to_n.call(10)
+# 55
+# >>> sum_to_n.call(1)
+# 1
+def sum_to_n(n)
+","def sum_to_n(n)
+  (1..n).sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sum_to_n
+    candidate = method(:sum_to_n)
+    assert_equal(1, candidate.call(1))
+    assert_equal(21, candidate.call(6))
+    assert_equal(66, candidate.call(11))
+    assert_equal(465, candidate.call(30))
+    assert_equal(5050, candidate.call(100))
+  end
+end
+"
+HumanEval_61,kat_Geor,rb,"return true თუ თითოეულ გახსნილ კოლოფს აქვს შესაბამისი დახურვის კოლოფი. brackets არის სტრიქონი ""("" და "")"".# >>> correct_bracketing.call(""("")
+# false
+# >>> correct_bracketing.call(""()"")
+# true
+# >>> correct_bracketing.call(""(()())"")
+# true
+# >>> correct_bracketing.call("")(()"")
+# false
+def correct_bracketing(brackets)
+","def correct_bracketing(brackets)
+  balance = 0
+  brackets.each_char do |char|
+    if char == '('
+      balance += 1
+    elsif char == ')'
+      balance -= 1
+    end
+    return false if balance < 0
+  end
+  balance == 0
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_correct_bracketing
+    candidate = method(:correct_bracketing)
+    assert_equal(true, candidate.call(""()""))
+    assert_equal(true, candidate.call(""(()())""))
+    assert_equal(true, candidate.call(""()()(()())()""))
+    assert_equal(true, candidate.call(""()()((()()())())(()()(()))""))
+    assert_equal(false, candidate.call(""((()())))""))
+    assert_equal(false, candidate.call("")(()""))
+    assert_equal(false, candidate.call(""(""))
+    assert_equal(false, candidate.call(""((((""))
+    assert_equal(false, candidate.call("")""))
+    assert_equal(false, candidate.call(""(()""))
+    assert_equal(false, candidate.call(""()()(()())())(()""))
+    assert_equal(false, candidate.call(""()()(()())()))()""))
+  end
+end
+"
+HumanEval_62,kat_Geor,rb,"დააბრუნეთ ამ პოლინომის წარმოებული იგივე ფორმით.xs[0] + xs[1] * x + xs[2] * x^2 + .... xs წარმოადგენს პოლინომის კოეფიციენტებს.# >>> derivative.call([3, 1, 2, 4, 5])
+# [1, 4, 12, 20]
+# >>> derivative.call([1, 2, 3])
+# [2, 6]
+def derivative(xs)
+","def derivative(xs)
+  return [] if xs.length < 2
+  xs.each_with_index.map { |coef, index| coef * index }[1..-1]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_derivative
+    candidate = method(:derivative)
+    assert_equal([1, 4, 12, 20], candidate.call([3, 1, 2, 4, 5]))
+    assert_equal([2, 6], candidate.call([1, 2, 3]))
+    assert_equal([2, 2], candidate.call([3, 2, 1]))
+    assert_equal([2, 2, 0, 16], candidate.call([3, 2, 1, 0, 4]))
+    assert_equal([], candidate.call([1]))
+  end
+end
+"
+HumanEval_63,kat_Geor,rb,"გთხოვთ, დაწეროთ ფუნქცია, რომ ეფექტურად გამოვიცნოთ რიცხვების თანმიმდევრობის n-ე ელემენტი.fibfib ((n) == fibfib ((n-1) + fibfib ((n-2) + fibfib ((n-3). ფიფიფიფ ((2) == 1 0 0 0FibFib რიცხვთა თანმიმდევრობა არის ფიბონაჩის თანმიმდევრობის მსგავსი თანმიმდევრობა, რომელიც განისაზღვრება შემდეგნაირად:# >>> fibfib.call(1)
+# 0
+# >>> fibfib.call(5)
+# 4
+# >>> fibfib.call(8)
+# 24
+def fibfib(n)
+","def fibfib(n)
+  return 0 if n == 0 || n == 1
+  return 1 if n == 2
+
+  a, b, c = 0, 0, 1
+  (3..n).each do
+    a, b, c = b, c, a + b + c
+  end
+  c
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fibfib
+    candidate = method(:fibfib)
+    assert_equal(1, candidate.call(2))
+    assert_equal(0, candidate.call(1))
+    assert_equal(4, candidate.call(5))
+    assert_equal(24, candidate.call(8))
+    assert_equal(81, candidate.call(10))
+    assert_equal(274, candidate.call(12))
+    assert_equal(927, candidate.call(14))
+  end
+end
+"
+HumanEval_64,kat_Geor,rb,"მაგალითი:მაგრამ მხოლოდ მაშინ, როცა მოცემული სიტყვის ბოლოს არის.ამ შემთხვევაში ხმოვანი არის ""ა"", ""ე"", ""ი"", ""ო"", ""უ"". აქ ""ი"" ასევე არის ""ა"".სიტყვა შეყვანილია და უბრუნებს ხმოვანების რაოდენობას სტრიქონში.დაწერეთ ფუნქცია vowels_count რომელიც იღებს სტრიქონს, რომელიც წარმოადგენს # >>> vowels_count.call(""abcde"")
+# 2
+# >>> vowels_count.call(""ACEDY"")
+# 3
+def vowels_count(s)
+","def vowels_count(s)
+  vowels = ['a', 'e', 'i', 'o', 'u']
+  count = 0
+  
+  s.chars.each_with_index do |char, index|
+    if vowels.include?(char.downcase)
+      count += 1
+    elsif char.downcase == 'y' && index == s.length - 1
+      count += 1
+    end
+  end
+  
+  count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_vowels_count
+    candidate = method(:vowels_count)
+    assert_equal(2, candidate.call(""abcde""))
+    assert_equal(3, candidate.call(""Alone""))
+    assert_equal(2, candidate.call(""key""))
+    assert_equal(1, candidate.call(""bye""))
+    assert_equal(2, candidate.call(""keY""))
+    assert_equal(1, candidate.call(""bYe""))
+    assert_equal(3, candidate.call(""ACEDY""))
+  end
+end
+"
+HumanEval_65,kat_Geor,rb,"თუ shift > ციფრების რაოდენობა, ციფრები უკან დააბრუნეთ.და შედეგს სტრიქნად დააბრუნებს.ციფრების წრიული გადაადგილება მთელი რიცხვის x-ის ციფრების მარჯვნივ გადაადგილების მიხედვით.# >>> circular_shift.call(12, 1)
+# ""21""
+# >>> circular_shift.call(12, 2)
+# ""12""
+def circular_shift(x, shift)
+","def circular_shift(x, shift)
+  digits = x.to_s.chars
+  num_digits = digits.length
+
+  if shift > num_digits
+    return digits.reverse.join
+  else
+    shift = shift % num_digits
+    shifted_digits = digits.rotate(-shift)
+    return shifted_digits.join
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_circular_shift
+    candidate = method(:circular_shift)
+    assert_equal(""001"", candidate.call(100, 2))
+    assert_equal(""12"", candidate.call(12, 2))
+    assert_equal(""79"", candidate.call(97, 8))
+    assert_equal(""21"", candidate.call(12, 1))
+    assert_equal(""11"", candidate.call(11, 101))
+  end
+end
+"
+HumanEval_66,kat_Geor,rb,"მაგალითები:ASCII კოდები.დაწერეთ ფუნქცია, რომელიც მიიღებს სტრიქონს შეყვანის სახით და დააბრუნებს მხოლოდ ზედა სიმბოლოების ჯამს"".დავალება # >>> digitSum.call("""")
+# 0
+# >>> digitSum.call(""abAB"")
+# 131
+# >>> digitSum.call(""abcCd"")
+# 67
+# >>> digitSum.call(""helloE"")
+# 69
+# >>> digitSum.call(""woArBld"")
+# 131
+# >>> digitSum.call(""aAaaaXa"")
+# 153
+def digitSum(s)
+","def digitSum(s)
+  s.chars.select { |char| char =~ /[A-Z]/ }.map(&:ord).sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_digitSum
+    candidate = method(:digitSum)
+    assert_equal(0, candidate.call(""""))
+    assert_equal(131, candidate.call(""abAB""))
+    assert_equal(67, candidate.call(""abcCd""))
+    assert_equal(69, candidate.call(""helloE""))
+    assert_equal(131, candidate.call(""woArBld""))
+    assert_equal(153, candidate.call(""aAaaaXa""))
+    assert_equal(151, candidate.call("" How are yOu?""))
+    assert_equal(327, candidate.call(""You arE Very Smart""))
+  end
+end
+"
+HumanEval_67,kat_Geor,rb,"რისთვის:კალათაში დაბრუნება კალათაში მანგოს ნაყოფების რაოდენობა. ფორთოხალი და ვაშლი და მთელი რიცხვი, რომელიც წარმოადგენს ნაყოფების მთლიან რაოდენობას.ვაშლი, ფორთოხალი და მანგო. თუ ვიღებთ სტრიქონს, რომელიც წარმოადგენს რომელიც ხილის კალათაშია გაყოფილი.ამ ამოცანაში, თქვენ მოგცემთ სტრიქონს, რომელიც წარმოადგენს ვაშლისა და ფორთოხლის რაოდენობას.# >>> fruit_distribution.call(""5 apples and 6 oranges"", 19)
+# 8
+# >>> fruit_distribution.call(""0 apples and 1 oranges"", 3)
+# 2
+# >>> fruit_distribution.call(""2 apples and 3 oranges"", 100)
+# 95
+# >>> fruit_distribution.call(""100 apples and 1 oranges"", 120)
+# 19
+def fruit_distribution(s, n)
+","def fruit_distribution(s, n)
+  numbers = s.scan(/\d+/).map(&:to_i)
+  apples = numbers[0]
+  oranges = numbers[1]
+  total_fruits = n
+  mangos = total_fruits - (apples + oranges)
+  mangos
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fruit_distribution
+    candidate = method(:fruit_distribution)
+    assert_equal(8, candidate.call(""5 apples and 6 oranges"", 19))
+    assert_equal(10, candidate.call(""5 apples and 6 oranges"", 21))
+    assert_equal(2, candidate.call(""0 apples and 1 oranges"", 3))
+    assert_equal(2, candidate.call(""1 apples and 0 oranges"", 3))
+    assert_equal(95, candidate.call(""2 apples and 3 oranges"", 100))
+    assert_equal(0, candidate.call(""2 apples and 3 oranges"", 5))
+    assert_equal(19, candidate.call(""1 apples and 100 oranges"", 120))
+  end
+end
+"
+HumanEval_68,kat_Geor,rb,"მაგალითი 1:თუ არ არსებობს პარალური მნიშვნელობები ან მოცემული მასივი ცარიელია, დააბრუნეთ [].ამოჭრილი კვანძი უნდა დააბრუნოს მასივში, [smallest_value, მისი ინდექსი] , თუ ნაპოვნია რამდენიმე კვანძი, რომელთა ყველაზე მცირე თანაბარი მნიშვნელობაა, დააბრუნეთ კვანძი, რომელსაც ყველაზე მცირე ინდექსი აქვს. ამოჭრილი კვანძი უნდა იყოს ყველაზე პატარა წყვილი მნიშვნელობის მქონე კვანძი.შენი ამოცანაა, რომ ერთ-ერთი კვანძი ამოიღო და უკან დააბრუნო.""მიცემული არის მასივი, რომელიც წარმოადგენს ხის ტოტს, რომელსაც აქვს ნეგატიური მთლიანი რიცხვების არმქონე კვანძები # >>> pluck.call([4, 2, 3])
+# [2, 1]
+# Explanation: 2 has the smallest even value, and 2 has the smallest index.
+# Example 2:
+# >>> pluck.call([1, 2, 3])
+# [2, 1]
+# Explanation: 2 has the smallest even value, and 2 has the smallest index.
+# Example 3:
+# >>> pluck.call([])
+# []
+# Example 4:
+# >>> pluck.call([5, 0, 3, 0, 4, 2])
+# [0, 1]
+# Explanation: 0 is the smallest value, but  there are two zeros,
+# so we will choose the first zero, which has the smallest index.
+# Constraints:
+# * 1 <= nodes.length <= 10000
+# * 0 <= node.value
+def pluck(arr)
+","def pluck(arr)
+  smallest_even = nil
+  smallest_index = nil
+  
+  arr.each_with_index do |value, index|
+    if value.even?
+      if smallest_even.nil? || value < smallest_even
+        smallest_even = value
+        smallest_index = index
+      end
+    end
+  end
+
+  smallest_even.nil? ? [] : [smallest_even, smallest_index]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_pluck
+    candidate = method(:pluck)
+    assert_equal([2, 1], candidate.call([4, 2, 3]))
+    assert_equal([2, 1], candidate.call([1, 2, 3]))
+    assert_equal([], candidate.call([]))
+    assert_equal([0, 1], candidate.call([5, 0, 3, 0, 4, 2]))
+    assert_equal([0, 3], candidate.call([1, 2, 3, 0, 5, 3]))
+    assert_equal([4, 1], candidate.call([5, 4, 8, 4, 8]))
+    assert_equal([6, 1], candidate.call([7, 6, 7, 1]))
+    assert_equal([], candidate.call([7, 9, 7, 1]))
+  end
+end
+"
+HumanEval_69,kat_Geor,rb,"მაგალითები:თუ ასეთი მნიშვნელობა არ არსებობს, დააბრუნეთ -1.მთელი რიცხვის სიხშირე არის ის რაოდენობა, რამდენჯერაც ის ჩნდება მასივში.ნული და სიხშირე, რომელიც უდიდესია ან თანაბარია მთელი რიცხვის მნიშვნელობას.თქვენ გაქვთ არა ცარიელი მთელი რიცხვების მასივი. დააბრუნეთ ყველაზე დიდი მთელი რიცხვი, რომელიც -ზე დიდია.# >>> search.call([4, 1, 2, 2, 3, 1])
+# 2
+# >>> search.call([1, 2, 2, 3, 3, 3, 4, 4, 4])
+# 3
+# >>> search.call([5, 5, 4, 4, 4])
+# -1
+def search(lst)
+","def search(lst)
+  freq_hash = lst.each_with_object(Hash.new(0)) { |num, hash| hash[num] += 1 }
+  valid_numbers = freq_hash.select { |num, freq| freq >= num }.keys
+  valid_numbers.empty? ? -1 : valid_numbers.max
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_search
+    candidate = method(:search)
+    assert_equal(1, candidate.call([5, 5, 5, 5, 1]))
+    assert_equal(4, candidate.call([4, 1, 4, 1, 4, 4]))
+    assert_equal(-1, candidate.call([3, 3]))
+    assert_equal(8, candidate.call([8, 8, 8, 8, 8, 8, 8, 8]))
+    assert_equal(2, candidate.call([2, 3, 3, 2, 2]))
+    assert_equal(1, candidate.call([2, 7, 8, 8, 4, 8, 7, 3, 9, 6, 5, 10, 4, 3, 6, 7, 1, 7, 4, 10, 8, 1]))
+    assert_equal(2, candidate.call([3, 2, 8, 2]))
+    assert_equal(1, candidate.call([6, 7, 1, 8, 8, 10, 5, 8, 5, 3, 10]))
+    assert_equal(-1, candidate.call([8, 8, 3, 6, 5, 6, 4]))
+    assert_equal(1, candidate.call([6, 9, 6, 7, 1, 4, 7, 1, 8, 8, 9, 8, 10, 10, 8, 4, 10, 4, 10, 1, 2, 9, 5, 7, 9]))
+    assert_equal(1, candidate.call([1, 9, 10, 1, 3]))
+    assert_equal(5, candidate.call([6, 9, 7, 5, 8, 7, 5, 3, 7, 5, 10, 10, 3, 6, 10, 2, 8, 6, 5, 4, 9, 5, 3, 10]))
+    assert_equal(1, candidate.call([1]))
+    assert_equal(4, candidate.call([8, 8, 10, 6, 4, 3, 5, 8, 2, 4, 2, 8, 4, 6, 10, 4, 2, 1, 10, 2, 1, 1, 5]))
+    assert_equal(2, candidate.call([2, 10, 4, 8, 2, 10, 5, 1, 2, 9, 5, 5, 6, 3, 8, 6, 4, 10]))
+    assert_equal(1, candidate.call([1, 6, 10, 1, 6, 9, 10, 8, 6, 8, 7, 3]))
+    assert_equal(4, candidate.call([9, 2, 4, 1, 5, 1, 5, 2, 5, 7, 7, 7, 3, 10, 1, 5, 4, 2, 8, 4, 1, 9, 10, 7, 10, 2, 8, 10, 9, 4]))
+    assert_equal(4, candidate.call([2, 6, 4, 2, 8, 7, 5, 6, 4, 10, 4, 6, 3, 7, 8, 8, 3, 1, 4, 2, 2, 10, 7]))
+    assert_equal(2, candidate.call([9, 8, 6, 10, 2, 6, 10, 2, 7, 8, 10, 3, 8, 2, 6, 2, 3, 1]))
+    assert_equal(-1, candidate.call([5, 5, 3, 9, 5, 6, 3, 2, 8, 5, 6, 10, 10, 6, 8, 4, 10, 7, 7, 10, 8]))
+    assert_equal(-1, candidate.call([10]))
+    assert_equal(2, candidate.call([9, 7, 7, 2, 4, 7, 2, 10, 9, 7, 5, 7, 2]))
+    assert_equal(1, candidate.call([5, 4, 10, 2, 1, 1, 10, 3, 6, 1, 8]))
+    assert_equal(1, candidate.call([7, 9, 9, 9, 3, 4, 1, 5, 9, 1, 2, 1, 1, 10, 7, 5, 6, 7, 6, 7, 7, 6]))
+    assert_equal(-1, candidate.call([3, 10, 10, 9, 2]))
+  end
+end
+"
+HumanEval_70,kat_Geor,rb,"მაგალითები:შემდეგ მაქსიმალური დანარჩენი მთელი რიცხვები, შემდეგ მინიმალური და ა.შ.უცნაური დახარისხება, არის, როდესაც იწყებთ მინიმალური ღირებულებით,მთელი რიცხვების მოცემული მასივი, დააბრუნეთ მასივი უცნაურ თანმიმდევრობით.# >>> strange_sort_list.call([1, 2, 3, 4])
+# [1, 4, 2, 3]
+# >>> strange_sort_list.call([5, 5, 5, 5])
+# [5, 5, 5, 5]
+# >>> strange_sort_list.call([])
+# []
+def strange_sort_list(lst)
+","def strange_sort_list(lst)
+  result = []
+  lst.sort!
+  until lst.empty?
+    result << lst.shift
+    result << lst.pop unless lst.empty?
+  end
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_strange_sort_list
+    candidate = method(:strange_sort_list)
+    assert_equal([1, 4, 2, 3], candidate.call([1, 2, 3, 4]))
+    assert_equal([5, 9, 6, 8, 7], candidate.call([5, 6, 7, 8, 9]))
+    assert_equal([1, 5, 2, 4, 3], candidate.call([1, 2, 3, 4, 5]))
+    assert_equal([1, 9, 5, 8, 6, 7], candidate.call([5, 6, 7, 8, 9, 1]))
+    assert_equal([5, 5, 5, 5], candidate.call([5, 5, 5, 5]))
+    assert_equal([], candidate.call([]))
+    assert_equal([1, 8, 2, 7, 3, 6, 4, 5], candidate.call([1, 2, 3, 4, 5, 6, 7, 8]))
+    assert_equal([-5, 5, -5, 5, 0, 2, 2, 2], candidate.call([0, 2, 2, 2, 5, 5, -5, -5]))
+    assert_equal([111111], candidate.call([111111]))
+  end
+end
+"
+HumanEval_71,kat_Geor,rb,"მაგალითი:ვიდრე მესამე მხარე.სამი მხარე ქმნის ტრიანგულს, როცა ნებისმიერი ორი მხარის ჯამი უფრო დიდია.სხვა შემთხვევაში დაბრუნება -1 სამკუთხედი დაბრმავებულია 2 ათეულობით წერტილამდე, თუ სამივე მხარე წარმოადგენს ვალიდურ სამკუთხედს. ნიშნის სიგრძეების მიხედვით, დავუბრუნოთ ნიშნის ფართობი.# >>> triangle_area.call(3, 4, 5)
+# 6.0
+# >>> triangle_area.call(1, 2, 10)
+# -1
+def triangle_area(a, b, c)
+","def triangle_area(a, b, c)
+  # Check for valid triangle
+  if a + b > c && a + c > b && b + c > a
+    # Calculate the semi-perimeter
+    s = (a + b + c) / 2.0
+    # Calculate the area using Heron's formula
+    area = Math.sqrt(s * (s - a) * (s - b) * (s - c))
+    # Round to 2 decimal points
+    return area.round(2)
+  else
+    return -1
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_triangle_area
+    candidate = method(:triangle_area)
+    assert_equal(6.0, candidate.call(3, 4, 5))
+    assert_equal(-1, candidate.call(1, 2, 10))
+    assert_equal(8.18, candidate.call(4, 8, 5))
+    assert_equal(1.73, candidate.call(2, 2, 2))
+    assert_equal(-1, candidate.call(1, 2, 3))
+    assert_equal(16.25, candidate.call(10, 5, 7))
+    assert_equal(-1, candidate.call(2, 6, 3))
+    assert_equal(0.43, candidate.call(1, 1, 1))
+    assert_equal(-1, candidate.call(2, 2, 10))
+  end
+end
+"
+HumanEval_72,kat_Geor,rb,"მაგალითი:ობიექტი q იფრენს, თუ ის დაბალანსებულია (ეს პალინდრომული მასივია) და მისი ელემენტების ჯამი ნაკლებია ან ტოლია მაქსიმალური შესაძლო წონის w-ს.დაწერეთ ფუნქცია, რომელიც დააბრუნებს მართლაც, თუ ობიექტი q გაფრინდება, და ცრუ წინააღმდეგ შემთხვევაში. # >>> will_it_fly.call([1, 2], 5)
+# false
+# # 1+2 is less than the maximum possible weight, but it's unbalanced.
+# >>> will_it_fly.call([3, 2, 3], 1)
+# false
+# # it's balanced, but 3+2+3 is more than the maximum possible weight.
+# >>> will_it_fly.call([3, 2, 3], 9)
+# true
+# # 3+2+3 is less than the maximum possible weight, and it's balanced.
+# >>> will_it_fly.call([3], 5)
+# true
+# # 3 is less than the maximum possible weight, and it's balanced.
+def will_it_fly(q, w)
+","def will_it_fly(q, w)
+  is_palindrome = q == q.reverse
+  total_weight = q.sum
+  is_balanced_and_under_weight = is_palindrome && total_weight <= w
+  is_balanced_and_under_weight
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_will_it_fly
+    candidate = method(:will_it_fly)
+    assert_equal(true, candidate.call([3, 2, 3], 9))
+    assert_equal(false, candidate.call([1, 2], 5))
+    assert_equal(true, candidate.call([3], 5))
+    assert_equal(false, candidate.call([3, 2, 3], 1))
+    assert_equal(false, candidate.call([1, 2, 3], 6))
+    assert_equal(true, candidate.call([5], 5))
+  end
+end
+"
+HumanEval_73,kat_Geor,rb,"მაგალითად:ერთი ცვლილებისას შეგიძლიათ შეცვალოთ ერთი ელემენტი ნებისმიერი სხვა ელემენტად.პალინდრომული მასივი არის მასივი, რომელიცმთელი რიცხვების არეალის მიხედვით, იპოვეთ ელემენტების მინიმალური რაოდენობა, რომელიც # >>> smallest_change.call([1, 2, 3, 5, 4, 7, 9, 6])
+# 4
+# >>> smallest_change.call([1, 2, 3, 4, 3, 2, 2])
+# 1
+# >>> smallest_change.call([1, 2, 3, 2, 1])
+# 0
+def smallest_change(arr)
+","def smallest_change(arr)
+  changes = 0
+  left = 0
+  right = arr.length - 1
+
+  while left < right
+    if arr[left] != arr[right]
+      changes += 1
+    end
+    left += 1
+    right -= 1
+  end
+
+  changes
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_smallest_change
+    candidate = method(:smallest_change)
+    assert_equal(4, candidate.call([1, 2, 3, 5, 4, 7, 9, 6]))
+    assert_equal(1, candidate.call([1, 2, 3, 4, 3, 2, 2]))
+    assert_equal(1, candidate.call([1, 4, 2]))
+    assert_equal(1, candidate.call([1, 4, 4, 2]))
+    assert_equal(0, candidate.call([1, 2, 3, 2, 1]))
+    assert_equal(0, candidate.call([3, 1, 1, 3]))
+    assert_equal(0, candidate.call([1]))
+    assert_equal(1, candidate.call([0, 1]))
+  end
+end
+"
+HumanEval_74,kat_Geor,rb,"მაგალითები თუ ორი მასივი აქვს იგივე სიმბოლოების რაოდენობა, დააბრუნეთ პირველი მასივი.ქარების საერთო რაოდენობა მასივის ყველა სტრიქონში ნაკლებია, ვიდრე სხვა მასივში.დაწერეთ ფუნქცია, რომელიც მიიღებს ორ სტრიქონს და დააბრუნებს მასივს, რომელსაც აქვს # >>> total_match.call([], [])
+# []
+# >>> total_match.call([""hi"", ""admin""], [""hI"", ""Hi""])
+# [""hI"", ""Hi""]
+# >>> total_match.call([""hi"", ""admin""], [""hi"", ""hi"", ""admin"", ""project""])
+# [""hi"", ""admin""]
+# >>> total_match.call([""hi"", ""admin""], [""hI"", ""hi"", ""hi""])
+# [""hI"", ""hi"", ""hi""]
+# >>> total_match.call([""4""], [""1"", ""2"", ""3"", ""4"", ""5""])
+# [""4""]
+def total_match(lst1, lst2)
+","def total_match(lst1, lst2)
+  total_chars1 = lst1.map(&:length).sum
+  total_chars2 = lst2.map(&:length).sum
+
+  if total_chars1 < total_chars2
+    lst1
+  elsif total_chars2 < total_chars1
+    lst2
+  else
+    lst1
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_total_match
+    candidate = method(:total_match)
+    assert_equal([], candidate.call([], []))
+    assert_equal([""hi"", ""hi""], candidate.call([""hi"", ""admin""], [""hi"", ""hi""]))
+    assert_equal([""hi"", ""admin""], candidate.call([""hi"", ""admin""], [""hi"", ""hi"", ""admin"", ""project""]))
+    assert_equal([""4""], candidate.call([""4""], [""1"", ""2"", ""3"", ""4"", ""5""]))
+    assert_equal([""hI"", ""Hi""], candidate.call([""hi"", ""admin""], [""hI"", ""Hi""]))
+    assert_equal([""hI"", ""hi"", ""hi""], candidate.call([""hi"", ""admin""], [""hI"", ""hi"", ""hi""]))
+    assert_equal([""hi"", ""admin""], candidate.call([""hi"", ""admin""], [""hI"", ""hi"", ""hii""]))
+    assert_equal([], candidate.call([], [""this""]))
+    assert_equal([], candidate.call([""this""], []))
+  end
+end
+"
+HumanEval_75,kat_Geor,rb,"მაგალითი:(a) ნაკლებია 100-ზე.და სხვაგვარად ცრუ.დაწერეთ ფუნქცია, რომელიც true-ს იძლევა, თუ მოცემული რიცხვი არის 3 მარტივი რიცხვის გამრავლება.# >>> is_multiply_prime.call(30)
+# true
+# 30 = 2 * 3 * 5
+def is_multiply_prime(a)
+","require 'prime'
+
+def is_multiply_prime(a)
+  return false if a >= 100
+  prime_factors = a.prime_division
+  return true if prime_factors.size == 3 && prime_factors.all? { |_, exponent| exponent == 1 }
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_multiply_prime
+    candidate = method(:is_multiply_prime)
+    assert_equal(false, candidate.call(5))
+    assert_equal(true, candidate.call(30))
+    assert_equal(true, candidate.call(8))
+    assert_equal(false, candidate.call(10))
+    assert_equal(true, candidate.call(125))
+    assert_equal(true, candidate.call(105))
+    assert_equal(false, candidate.call(126))
+    assert_equal(false, candidate.call(729))
+    assert_equal(false, candidate.call(891))
+    assert_equal(true, candidate.call(1001))
+  end
+end
+"
+HumanEval_76,kat_Geor,rb,"მაგალითად:x არის n-ის მარტივი ხარისხის მქონე, თუ n**int=x n-ის სიმძლავრე და სხვა შემთხვევებში ცრუ.თქვენი ამოცანაა დაწეროთ ფუნქცია, რომელიც დააბრუნებს true-ს, თუ რიცხვი x არის მარტივი # >>> is_simple_power.call(1, 4)
+# true
+# >>> is_simple_power.call(2, 2)
+# true
+# >>> is_simple_power.call(8, 2)
+# true
+# >>> is_simple_power.call(3, 2)
+# false
+# >>> is_simple_power.call(3, 1)
+# false
+# >>> is_simple_power.call(5, 3)
+# false
+def is_simple_power(x, n)
+","def is_simple_power(x, n)
+  return false if x <= 0 || n <= 1
+  return true if x == 1
+
+  power = n
+  while power <= x
+    return true if power == x
+    power *= n
+  end
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_simple_power
+    candidate = method(:is_simple_power)
+    assert_equal(true, candidate.call(16, 2))
+    assert_equal(false, candidate.call(143214, 16))
+    assert_equal(true, candidate.call(4, 2))
+    assert_equal(true, candidate.call(9, 3))
+    assert_equal(true, candidate.call(16, 4))
+    assert_equal(false, candidate.call(24, 2))
+    assert_equal(false, candidate.call(128, 4))
+    assert_equal(false, candidate.call(12, 6))
+    assert_equal(true, candidate.call(1, 1))
+    assert_equal(true, candidate.call(1, 12))
+  end
+end
+"
+HumanEval_77,kat_Geor,rb,"მაგალითები:შენიშვნა: თქვენ შეიძლება ვივარაუდოთ, რომ შეყვანა ყოველთვის ძალაშია.თუ ეს ინგერი არის მთელი რიცხვის კუბი.დაწერეთ ფუნქცია, რომელიც იღებს მთელ რიცხვს a და აბრუნებს true-ს.# >>> iscube.call(1)
+# true
+# >>> iscube.call(2)
+# false
+# >>> iscube.call(-1)
+# true
+# >>> iscube.call(64)
+# true
+# >>> iscube.call(0)
+# true
+# >>> iscube.call(180)
+# false
+def iscube(a)
+","def iscube(a)
+  cube_root = a.abs**(1.0/3)
+  cube_root.round**3 == a
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_iscube
+    candidate = method(:iscube)
+    assert_equal(true, candidate.call(1))
+    assert_equal(false, candidate.call(2))
+    assert_equal(true, candidate.call(-1))
+    assert_equal(true, candidate.call(64))
+    assert_equal(false, candidate.call(180))
+    assert_equal(true, candidate.call(1000))
+    assert_equal(true, candidate.call(0))
+    assert_equal(false, candidate.call(1729))
+  end
+end
+"
+HumanEval_78,kat_Geor,rb,"მაგალითები:სიმბოლოები A,B,C,D,E,F ყოველთვის დიდი ასოებითაა.შენიშვნა: თქვენ შეიძლება ვივარაუდოთ, რომ შეყვანა ყოველთვის სწორია ან ცარიელი სტრიქონი, B (= ათეულში 11), D (= ათეულში 13). თქვენ უნდა განსაზღვროთ შემდეგი ციფრების რიცხვი: 2, 3, 5, 7, პრიმული რიცხვებია 2, 3, 5, 7, 11, 13, 17,...ექვსეულში რიცხვებია 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F.1 ზე მეტი, რომელიც არ არის ორი უფრო მცირე ნატურალური რიცხვის ნაყოფი).ციფრები, რომლებიც პირველ რიცხვებად ითვლებიან (პირველი რიცხვი, ან პირველ რიცხვი, არის ნატურალური რიცხვი)ექვსეულობითი რიცხვი როგორც სტრიქონი და ითვლის ექვსეულობითი რიცხვების რაოდენობას თქვენ დავალებული ხართ დაწეროთ ფუნქცია, რომელიც იღებს # >>> hex_key.call(""AB"")
+# 1
+# >>> hex_key.call(""1077E"")
+# 2
+# >>> hex_key.call(""ABED1A33"")
+# 4
+# >>> hex_key.call(""123456789ABCDEF0"")
+# 6
+# >>> hex_key.call(""2020"")
+# 2
+def hex_key(num)
+","def hex_key(num)
+  prime_hex_digits = ['2', '3', '5', '7', 'B', 'D']
+  num.chars.count { |digit| prime_hex_digits.include?(digit) }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_hex_key
+    candidate = method(:hex_key)
+    assert_equal(1, candidate.call(""AB""))
+    assert_equal(2, candidate.call(""1077E""))
+    assert_equal(4, candidate.call(""ABED1A33""))
+    assert_equal(2, candidate.call(""2020""))
+    assert_equal(6, candidate.call(""123456789ABCDEF0""))
+    assert_equal(12, candidate.call(""112233445566778899AABBCCDDEEFF00""))
+  end
+end
+"
+HumanEval_79,kat_Geor,rb,"მაგალითები:დამატებითი სიმბოლოები ფორმატის გასაუმჯობესებლად არის.იქ იქნება დამატებითი ორი სიმბოლო ""db"" სტრიქონის დასაწყისში და ბოლოს.თითოეული სიმბოლო იქნება ""0"" ან ""1"".ფუნქცია უნდა დააბრუნოს სტრიქონი, სადაც თითოეული სიმბოლო წარმოადგენს თქვენ მოგცემთ ციფრს ათეულობით ფორმით და თქვენი ამოცანაა გადააკეთოთ იგი # >>> decimal_to_binary.call(15)
+# ""db1111db""
+# >>> decimal_to_binary.call(32)
+# ""db100000db""
+def decimal_to_binary(decimal)
+","def decimal_to_binary(decimal)
+  ""db"" + decimal.to_s(2) + ""db""
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_decimal_to_binary
+    candidate = method(:decimal_to_binary)
+    assert_equal(""db0db"", candidate.call(0))
+    assert_equal(""db100000db"", candidate.call(32))
+    assert_equal(""db1100111db"", candidate.call(103))
+    assert_equal(""db1111db"", candidate.call(15))
+  end
+end
+"
+HumanEval_80,kat_Geor,rb,"მაგალითად:სტრიქონი არის haprb თუ მისი სიგრძე არის მინიმუმ 3 და ყოველი 3 თანმიმდევრული ასო განსხვავებულია თქვენი ამოცანაა შეამოწმოთ არის თუ არა სტრიქონი haprb ან არა.თქვენ გაქვთ სტრიქონი s.# >>> is_happy.call(""a"")
+# false
+# >>> is_happy.call(""aa"")
+# false
+# >>> is_happy.call(""abcd"")
+# true
+# >>> is_happy.call(""aabb"")
+# false
+# >>> is_happy.call(""adb"")
+# true
+# >>> is_happy.call(""xyy"")
+# false
+def is_happy(s)
+","def is_happy(s)
+  return false if s.length < 3
+  
+  (0..s.length - 3).each do |i|
+    return false if s[i] == s[i + 1] || s[i] == s[i + 2] || s[i + 1] == s[i + 2]
+  end
+  
+  true
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_happy
+    candidate = method(:is_happy)
+    assert_equal(false, candidate.call(""a""))
+    assert_equal(false, candidate.call(""aa""))
+    assert_equal(true, candidate.call(""abcd""))
+    assert_equal(false, candidate.call(""aabb""))
+    assert_equal(true, candidate.call(""adb""))
+    assert_equal(false, candidate.call(""xyy""))
+    assert_equal(true, candidate.call(""iopaxpoi""))
+    assert_equal(false, candidate.call(""iopaxioi""))
+  end
+end
+"
+HumanEval_81,kat_Geor,rb,"მაგალითი:0.0 E > 0.0 D- > 0.7 D > 1.0 D+ > 1.3 C- > 1.7 C > 2.0 C+ > 2.3 B- > 2.7 B > 3.0 B+ > 3.3 A- > 3.7 A 4.0 A+ გპეა. ბწჟკთრვ.ფუნქცია, რომელიც შეიძლება გამოუშვას ასოების ხარისხის მასივი შემდეგი ცხრილის გამოყენებით: თ რთ ვ ეალ ნაჟკალთ ჟრანალ ნა ნვკჲთ ჟჲლდართ თ რპწბგა ეა ნაოპაგთქ.ოპჲბლვმ ვ, ფვ ვ თჱდსბთლა კოდთრვ, კჲთრჲ ვ თჱოჲლჱგალა ჱა ჟრანთ.მასწავლებელი ქმნის თავის ალგორითმს შეფასებისთვის.ჲჟრანთგა ჟრპაეა ჲრ სემესტპრ თ პვფთრარა რპწბგა ეა ეაევ ჲბწჟრთგ.# >>> grade_equation.call([4.0, 3, 1.7, 2, 3.5])
+# [""A+"", ""B"", ""C-"", ""C"", ""A-""]
+def numerical_letter_grade(grades)
+","def numerical_letter_grade(grades)
+  grades.map do |gpa|
+    case 
+    when gpa == 4.0
+      ""A+""
+    when gpa > 3.7
+      ""A""
+    when gpa > 3.3
+      ""A-""
+    when gpa > 3.0
+      ""B+""
+    when gpa > 2.7
+      ""B""
+    when gpa > 2.3
+      ""B-""
+    when gpa > 2.0
+      ""C+""
+    when gpa > 1.7
+      ""C""
+    when gpa > 1.3
+      ""C-""
+    when gpa > 1.0
+      ""D+""
+    when gpa > 0.7
+      ""D""
+    when gpa > 0.0
+      ""D-""
+    else
+      ""E""
+    end
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_numerical_letter_grade
+    candidate = method(:numerical_letter_grade)
+    assert_equal([""A+"", ""B"", ""C-"", ""C"", ""A-""], candidate.call([4.0, 3, 1.7, 2, 3.5]))
+    assert_equal([""D+""], candidate.call([1.2]))
+    assert_equal([""D-""], candidate.call([0.5]))
+    assert_equal([""E""], candidate.call([0.0]))
+    assert_equal([""D"", ""D-"", ""C-"", ""B"", ""B+""], candidate.call([1.0, 0.3, 1.5, 2.8, 3.3]))
+    assert_equal([""E"", ""D-""], candidate.call([0.0, 0.7]))
+  end
+end
+"
+HumanEval_82,kat_Geor,rb,"მაგალითები length არის მარტივი რიცხვი ან სხვა შემთხვევაში ცრუ დაწერეთ ფუნქცია, რომელიც იღებს სტრიქონს და დააბრუნებს true-ს, თუ სტრიქონს # >>> prime_length.call(""Hello"")
+# true
+# >>> prime_length.call(""abcdcba"")
+# true
+# >>> prime_length.call(""kittens"")
+# true
+# >>> prime_length.call(""orange"")
+# false
+def prime_length(string)
+","def prime_length(string)
+  length = string.length
+  return false if length < 2
+
+  (2..Math.sqrt(length)).each do |i|
+    return false if length % i == 0
+  end
+
+  true
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_prime_length
+    candidate = method(:prime_length)
+    assert_equal(true, candidate.call(""Hello""))
+    assert_equal(true, candidate.call(""abcdcba""))
+    assert_equal(true, candidate.call(""kittens""))
+    assert_equal(false, candidate.call(""orange""))
+    assert_equal(true, candidate.call(""wow""))
+    assert_equal(true, candidate.call(""world""))
+    assert_equal(true, candidate.call(""MadaM""))
+    assert_equal(true, candidate.call(""Wow""))
+    assert_equal(false, candidate.call(""""))
+    assert_equal(true, candidate.call(""HI""))
+    assert_equal(true, candidate.call(""go""))
+    assert_equal(false, candidate.call(""gogo""))
+    assert_equal(false, candidate.call(""aaaaaaaaaaaaaaa""))
+    assert_equal(true, candidate.call(""Madam""))
+    assert_equal(false, candidate.call(""M""))
+    assert_equal(false, candidate.call(""0""))
+  end
+end
+"
+HumanEval_83,kat_Geor,rb,"დადებითი მთელი რიცხვები, რომლებიც იწყება ან მთავრდება 1-ით.დადებითი მთელი რიცხვი n-ის მიხედვით, დააბრუნეთ n ციფრის რიცხვები def starts_one_ends(n)
+","def starts_one_ends(n)
+  return 0 if n <= 0
+
+  # Count numbers starting with 1
+  start_with_1 = 9 ** (n - 1)
+
+  # Count numbers ending with 1
+  end_with_1 = 9 ** (n - 1)
+
+  # Adjust for double counting the number that both starts and ends with 1
+  both_start_and_end_with_1 = 9 ** (n - 2) if n > 1
+  
+  start_with_1 + end_with_1 - (both_start_and_end_with_1 || 0)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_starts_one_ends
+    candidate = method(:starts_one_ends)
+    assert_equal(1, candidate.call(1))
+    assert_equal(18, candidate.call(2))
+    assert_equal(180, candidate.call(3))
+    assert_equal(1800, candidate.call(4))
+    assert_equal(18000, candidate.call(5))
+  end
+end
+"
+HumanEval_84,kat_Geor,rb,"მაგალითი დადებითი მთელი რიცხვი N-ის მიხედვით, დააბრუნეთ მისი ციფრების ჯამი ბინარულში. # >>> solve.call(1000)
+# ""1""
+# >>> solve.call(150)
+# ""110""
+# >>> solve.call(147)
+# ""1100""
+# Variables:
+# @N integer
+# Constraints: 0 ≤ N ≤ 10000.
+# Output:
+# a string of binary number
+def solve(n)
+","def solve(n)
+  sum_of_digits = n.to_s.chars.map(&:to_i).sum
+  sum_of_digits.to_s(2)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_solve
+    candidate = method(:solve)
+    assert_equal(""1"", candidate.call(1000))
+    assert_equal(""110"", candidate.call(150))
+    assert_equal(""1100"", candidate.call(147))
+    assert_equal(""1001"", candidate.call(333))
+    assert_equal(""10010"", candidate.call(963))
+  end
+end
+"
+HumanEval_85,kat_Geor,rb,"მაგალითები:მთლიანი რიცხვების არა ცარიელი მასივის გათვალისწინებით, ჯერ დავაკრიბოთ წყვილი ელემენტები, რომლებიც უცნაურ ინდექსებში არიან.# >>> add.call([4, 2, 6, 7])
+# 2
+def add(lst)
+","def add(lst)
+  lst.each_with_index.select { |num, index| index.odd? && num.even? }.map(&:first).sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_add
+    candidate = method(:add)
+    assert_equal(88, candidate.call([4, 88]))
+    assert_equal(122, candidate.call([4, 5, 6, 7, 2, 122]))
+    assert_equal(0, candidate.call([4, 0, 6, 7]))
+    assert_equal(12, candidate.call([4, 4, 6, 8]))
+  end
+end
+"
+HumanEval_86,kat_Geor,rb,"მაგალითად:შენიშვნა: თქვენ უნდა დაიცვათ სიტყვების თანმიმდევრობა და ცარიელი ადგილები წინადადებაში. ასკია-ს ღირებულების მიხედვით.შეიცვლება ახალი სიტყვით, სადაც ყველა ნიშანი სტრიქონის დალაგებული ვერსია, არის სტრიქონი, სადაც ყველა სიტყვა (შორდება სივრცით) დაწერეთ ფუნქცია, რომელიც იღებს სტრიქონს და უბრუნებს მის დალაგებულ ვერსიას.# >>> anti_shuffle.call(""Hi"")
+# ""Hi""
+# >>> anti_shuffle.call(""hello"")
+# ""ehllo""
+# >>> anti_shuffle.call(""Hello World!!!"")
+# ""Hello !!!Wdlor""
+def anti_shuffle(s)
+","def anti_shuffle(s)
+  s.split(/(\s+)/).map { |word| word.chars.sort.join }.join
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_anti_shuffle
+    candidate = method(:anti_shuffle)
+    assert_equal(""Hi"", candidate.call(""Hi""))
+    assert_equal(""ehllo"", candidate.call(""hello""))
+    assert_equal(""bemnru"", candidate.call(""number""))
+    assert_equal(""abcd"", candidate.call(""abcd""))
+    assert_equal(""Hello !!!Wdlor"", candidate.call(""Hello World!!!""))
+    assert_equal("""", candidate.call(""""))
+    assert_equal("".Hi My aemn is Meirst .Rboot How aer ?ouy"", candidate.call(""Hi. My name is Mister Robot. How are you?""))
+  end
+end
+"
+HumanEval_87,kat_Geor,rb,"მაგალითები:ასევე, რიგის კოორდინატები სვეტების მიხედვით დალაგება მდაბლად.თავდაპირველად დაალაგეთ კოორდინატები რიგების მიხედვით მზარდი წესით.თითოეული მასივი არის კოორდინატები - (რიგი, სვეტები), იწყება 0-ით.და დააბრუნეთ მასივების მასივი, [(x1, y1), (x2, y2) ...] ისე, რომ მოცემული არის lst და მთელი რიცხვი x, იპოვეთ მთელი რიცხვები x მასივში, თითოეულ რიგში შეიძლება იყოს სხვადასხვა რაოდენობის სვეტები.რომელიც მსგავსია მატრიცის, თუმცა, განსხვავებით მატრიცებისგან,თქვენ გაქვთ ორგანზომილებიანი მონაცემები, როგორც ჩანართი მასივები,# >>> get_row.call([[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 1, 6], [1, 2, 3, 4, 5, 1]], 1)
+# [[0, 0], [1, 4], [1, 0], [2, 5], [2, 0]]
+# >>> get_row.call([], 1)
+# []
+# >>> get_row.call([[], [1], [1, 2, 3]], 3)
+# [[2, 2]]
+def get_row(lst, x)
+","def get_row(lst, x)
+  result = []
+
+  lst.each_with_index do |row, i|
+    row.each_with_index do |value, j|
+      result << [i, j] if value == x
+    end
+  end
+
+  result.sort_by { |coord| [coord[0], -coord[1]] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_get_row
+    candidate = method(:get_row)
+    assert_equal([[0, 0], [1, 4], [1, 0], [2, 5], [2, 0]], candidate.call([[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 1, 6], [1, 2, 3, 4, 5, 1]], 1))
+    assert_equal([[0, 1], [1, 1], [2, 1], [3, 1], [4, 1], [5, 1]], candidate.call([[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6]], 2))
+    assert_equal([[0, 0], [1, 0], [2, 1], [2, 0], [3, 2], [3, 0], [4, 3], [4, 0], [5, 4], [5, 0], [6, 5], [6, 0]], candidate.call([[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 1, 3, 4, 5, 6], [1, 2, 1, 4, 5, 6], [1, 2, 3, 1, 5, 6], [1, 2, 3, 4, 1, 6], [1, 2, 3, 4, 5, 1]], 1))
+    assert_equal([], candidate.call([], 1))
+    assert_equal([], candidate.call([[1]], 2))
+    assert_equal([[2, 2]], candidate.call([[], [1], [1, 2, 3]], 3))
+  end
+end
+"
+HumanEval_88,kat_Geor,rb,"მაგალითები:* არ შეცვალოთ მოცემული მასივი. შენიშვნა:ან დახარისხება მზარდი თანმიმდევრობით, თუ ჯამი ((პირველი ინდექსის ღირებულება, ბოლო ინდექსის ღირებულება) არის წყვილი. თქვენ დაალაგებთ მოცემულ მასივს მზარდი თანმიმდევრობით, თუ ჯამი ((პირველი ინდექსის ღირებულება, ბოლო ინდექსის ღირებულება) უცნაურია, არანეგატიური მთელი რიცხვების მატრიდან, დახარისხების შემდეგ დააბრუნეთ მოცემული მატრის კურსი, # >>> sort_array.call([])
+# []
+# >>> sort_array.call([5])
+# [5]
+# >>> sort_array.call([2, 4, 3, 0, 1, 5])
+# [0, 1, 2, 3, 4, 5]
+# >>> sort_array.call([2, 4, 3, 0, 1, 5, 6])
+# [6, 5, 4, 3, 2, 1, 0]
+def sort_array(array)
+","def sort_array(array)
+  return array if array.empty? || array.size == 1
+
+  if (array.first + array.last).odd?
+    array.sort
+  else
+    array.sort.reverse
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sort_array
+    candidate = method(:sort_array)
+    assert_equal([], candidate.call([]))
+    assert_equal([5], candidate.call([5]))
+    assert_equal([0, 1, 2, 3, 4, 5], candidate.call([2, 4, 3, 0, 1, 5]))
+    assert_equal([6, 5, 4, 3, 2, 1, 0], candidate.call([2, 4, 3, 0, 1, 5, 6]))
+    assert_equal([1, 2], candidate.call([2, 1]))
+    assert_equal([0, 11, 15, 32, 42, 87], candidate.call([15, 42, 87, 32, 11, 0]))
+    assert_equal([23, 21, 14, 11], candidate.call([21, 14, 23, 11]))
+  end
+end
+"
+HumanEval_89,kat_Geor,rb,"მაგალითად:გადავიდეთ ქვემოთ ორით გამრავლებული ორ ადგილზე.ალფაბეტი ისე უნდა იყოს შემოტანილი, რომ ასოები ბრუნავს დაშიფრულ სტრიქონს, სადაც ალფაბეტი ბრუნავს.შექმენით ფუნქციაშიშიფრული ფუნქცია, რომელიც სტრიქონს იღებს არგუმენტად და # >>> encrypt.call(""hi"")
+# ""lm""
+# >>> encrypt.call(""asdfghjkl"")
+# ""ewhjklnop""
+# >>> encrypt.call(""gf"")
+# ""kj""
+# >>> encrypt.call(""et"")
+# ""ix""
+def encrypt(s)
+","def encrypt(s)
+  s.chars.map do |char|
+    if char =~ /[a-z]/
+      ((char.ord - 'a'.ord + 4) % 26 + 'a'.ord).chr
+    elsif char =~ /[A-Z]/
+      ((char.ord - 'A'.ord + 4) % 26 + 'A'.ord).chr
+    else
+      char
+    end
+  end.join
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_encrypt
+    candidate = method(:encrypt)
+    assert_equal(""lm"", candidate.call(""hi""))
+    assert_equal(""ewhjklnop"", candidate.call(""asdfghjkl""))
+    assert_equal(""kj"", candidate.call(""gf""))
+    assert_equal(""ix"", candidate.call(""et""))
+    assert_equal(""jeiajeaijeiak"", candidate.call(""faewfawefaewg""))
+    assert_equal(""lippsqcjvmirh"", candidate.call(""hellomyfriend""))
+    assert_equal(""hbdhpqrmpjylqmpyjlpmlyjrqpmqryjlpmqryjljygyjl"", candidate.call(""dxzdlmnilfuhmilufhlihufnmlimnufhlimnufhfucufh""))
+    assert_equal(""e"", candidate.call(""a""))
+  end
+end
+"
+HumanEval_90,kat_Geor,rb,"დაბრუნება nil, თუ ასეთი ელემენტი არ არსებობს. დაწერეთ ფუნქცია next_smallest ((), რომელიც აბრუნებს მასივის მე-2 ყველაზე პატარა ელემენტს. თქვენ გაქვთ მთელი რიცხვების მასივი.# >>> next_smallest.call([1, 2, 3, 4, 5])
+# 2
+# >>> next_smallest.call([5, 1, 4, 3, 2])
+# 2
+# >>> next_smallest.call([])
+# nil
+# >>> next_smallest.call([1, 1])
+# nil
+def next_smallest(lst)
+","def next_smallest(lst)
+  unique_sorted = lst.uniq.sort
+  unique_sorted.length >= 2 ? unique_sorted[1] : nil
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_next_smallest
+    candidate = method(:next_smallest)
+    assert_equal(2, candidate.call([1, 2, 3, 4, 5]))
+    assert_equal(2, candidate.call([5, 1, 4, 3, 2]))
+    assert_equal(nil, candidate.call([]))
+    assert_equal(nil, candidate.call([1, 1]))
+    assert_equal(1, candidate.call([1, 1, 1, 1, 0]))
+    assert_equal(nil, candidate.call([1, 1]))
+    assert_equal(-35, candidate.call([-35, 34, 12, -45]))
+  end
+end
+"
+HumanEval_91,kat_Geor,rb,"მაგალითად:წინადადებები იზღუდება """", ""?"" ან ""!""-ით.""ნერვიულობა"" არის წინადადება, რომელიც იწყება სიტყვით ""მე"".გეცოდინებათ სიტყვების სტრიქონი და თქვენი ამოცანაა დაითვალოთ რიცხვი.# >>> is_bored.call(""Hello world"")
+# 0
+# >>> is_bored.call(""The sky is blue. The sun is shining. I love this weather"")
+# 1
+def is_bored(s)
+","def is_bored(s)
+  sentences = s.split(/(?<=[.?!])/)
+  sentences.count { |sentence| sentence.strip.start_with?('I') }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_bored
+    candidate = method(:is_bored)
+    assert_equal(0, candidate.call(""Hello world""))
+    assert_equal(0, candidate.call(""Is the sky blue?""))
+    assert_equal(1, candidate.call(""I love It !""))
+    assert_equal(0, candidate.call(""bIt""))
+    assert_equal(2, candidate.call(""I feel good today. I will be productive. will kill It""))
+    assert_equal(0, candidate.call(""You and I are going for a walk""))
+  end
+end
+"
+HumanEval_92,kat_Geor,rb,"მაგალითები ყველა სხვა შემთხვევაში false-ს უბრუნებს. დააბრუნებს მართლაც თუ ერთ-ერთი რიცხვი უდრის დანარჩენი ორი რიცხვის ჯამს და ყველა რიცხვი არის მთელი რიცხვი.შექმენით ფუნქცია, რომელიც იღებს 3 რიცხვს.# >>> any_int.call(5, 2, 7)
+# true
+# >>> any_int.call(3, 2, 2)
+# false
+# >>> any_int.call(3, -2, 1)
+# true
+# >>> any_int.call(3.6, -2.2, 2)
+# false
+def any_int(x, y, z)
+","def any_int(x, y, z)
+  if [x, y, z].all? { |n| n.is_a?(Integer) }
+    x == y + z || y == x + z || z == x + y
+  else
+    false
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_any_int
+    candidate = method(:any_int)
+    assert_equal(true, candidate.call(2, 3, 1))
+    assert_equal(false, candidate.call(2.5, 2, 3))
+    assert_equal(false, candidate.call(1.5, 5, 3.5))
+    assert_equal(false, candidate.call(2, 6, 2))
+    assert_equal(true, candidate.call(4, 2, 2))
+    assert_equal(false, candidate.call(2.2, 2.2, 2.2))
+    assert_equal(true, candidate.call(-4, 6, 2))
+    assert_equal(true, candidate.call(2, 1, 1))
+    assert_equal(true, candidate.call(3, 4, 7))
+    assert_equal(false, candidate.call(3.0, 4, 7))
+  end
+end
+"
+HumanEval_93,kat_Geor,rb,"მაგალითები:ოჲჱვმა£თ ჟამჲ ლვჟრთ.ვოკალი ინგლისურ ანბანში.გზავნილი, რომელშიც წერილია ორი ადგილი წინ. ყველა ხმოვანი დავწეროთ ფუნქცია, რომელიც იღებს შეტყობინებას და კოდირებს მასში # >>> encode.call(""test"")
+# ""TGST""
+# >>> encode.call(""This is a message"")
+# ""tHKS KS C MGSSCGG""
+def encode(message)
+","def encode(message)
+  vowels = 'aeiou'
+  swap_vowels = {'a' => 'c', 'e' => 'g', 'i' => 'k', 'o' => 'q', 'u' => 'w'}
+  
+  encoded_message = message.chars.map do |char|
+    if vowels.include?(char.downcase)
+      new_char = swap_vowels[char.downcase]
+      char == char.upcase ? new_char.upcase : new_char.downcase
+    else
+      char == char.upcase ? char.downcase : char.upcase
+    end
+  end
+
+  encoded_message.join
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_encode
+    candidate = method(:encode)
+    assert_equal(""tgst"", candidate.call(""TEST""))
+    assert_equal(""mWDCSKR"", candidate.call(""Mudasir""))
+    assert_equal(""ygs"", candidate.call(""YES""))
+    assert_equal(""tHKS KS C MGSSCGG"", candidate.call(""This is a message""))
+    assert_equal(""k dQnT kNqW wHcT Tq wRkTg"", candidate.call(""I DoNt KnOw WhAt tO WrItE""))
+  end
+end
+"
+HumanEval_94,kat_Geor,rb,"მაგალითები:თქვენ უნდა იპოვოთ უდიდესი უპირველესი მნიშვნელობა და დააბრუნოთ მისი ციფრების ჯამი.თქვენ გაქვთ მთელი რიცხვების მასივი.# >>> skjkasdkd.call([0, 3, 2, 1, 3, 5, 7, 4, 5, 5, 5, 2, 181, 32, 4, 32, 3, 2, 32, 324, 4, 3])
+# 10
+# >>> skjkasdkd.call([1, 0, 1, 8, 2, 4597, 2, 1, 3, 40, 1, 2, 1, 2, 4, 2, 5, 1])
+# 25
+# >>> skjkasdkd.call([1, 3, 1, 32, 5107, 34, 83278, 109, 163, 23, 2323, 32, 30, 1, 9, 3])
+# 13
+# >>> skjkasdkd.call([0, 724, 32, 71, 99, 32, 6, 0, 5, 91, 83, 0, 5, 6])
+# 11
+# >>> skjkasdkd.call([0, 81, 12, 3, 1, 21])
+# 3
+# >>> skjkasdkd.call([0, 8, 1, 2, 1, 7])
+# 7
+def skjkasdkd(lst)
+","def skjkasdkd(lst)
+  require 'prime'
+
+  # Find the largest prime number in the array
+  largest_prime = lst.select { |num| Prime.prime?(num) }.max
+  
+  # Return 0 if no prime number is found
+  return 0 if largest_prime.nil?
+
+  # Calculate the sum of digits of the largest prime number
+  largest_prime.to_s.chars.map(&:to_i).sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_skjkasdkd
+    candidate = method(:skjkasdkd)
+    assert_equal(10, candidate.call([0, 3, 2, 1, 3, 5, 7, 4, 5, 5, 5, 2, 181, 32, 4, 32, 3, 2, 32, 324, 4, 3]))
+    assert_equal(25, candidate.call([1, 0, 1, 8, 2, 4597, 2, 1, 3, 40, 1, 2, 1, 2, 4, 2, 5, 1]))
+    assert_equal(13, candidate.call([1, 3, 1, 32, 5107, 34, 83278, 109, 163, 23, 2323, 32, 30, 1, 9, 3]))
+    assert_equal(11, candidate.call([0, 724, 32, 71, 99, 32, 6, 0, 5, 91, 83, 0, 5, 6]))
+    assert_equal(3, candidate.call([0, 81, 12, 3, 1, 21]))
+    assert_equal(7, candidate.call([0, 8, 1, 2, 1, 7]))
+    assert_equal(19, candidate.call([8191]))
+    assert_equal(19, candidate.call([8191, 123456, 127, 7]))
+    assert_equal(10, candidate.call([127, 97, 8192]))
+  end
+end
+"
+HumanEval_95,kat_Geor,rb,"მაგალითები:ფუნქცია უნდა დააბრუნოს false, თუ მოცემული ჰეში ცარიელია. case ან ყველა გასაღები არის სტრიქონები დიდი ასოებით, სხვა შემთხვევაში დაბრუნება false. ჰეშის მოცემულობის შემთხვევაში, დააბრუნეთ true, თუ ყველა გასაღები არის სტრიქონები lower # >>> check_dict_case.call({""a"" => ""apple"", ""b"" => ""banana""})
+# true
+# >>> check_dict_case.call({""a"" => ""apple"", ""A"" => ""banana"", ""B"" => ""banana""})
+# false
+# >>> check_dict_case.call({""a"" => ""apple"", 8 => ""banana"", ""a"" => ""apple""})
+# false
+# >>> check_dict_case.call({""Name"" => ""John"", ""Age"" => ""36"", ""City"" => ""Houston""})
+# false
+# >>> check_dict_case.call({""STATE"" => ""NC"", ""ZIP"" => ""12345""})
+# true
+def check_dict_case(dict)
+","def check_dict_case(dict)
+  return false if dict.empty?
+
+  lowercase_keys = dict.keys.all? { |key| key.is_a?(String) && key == key.downcase }
+  uppercase_keys = dict.keys.all? { |key| key.is_a?(String) && key == key.upcase }
+
+  lowercase_keys || uppercase_keys
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_check_dict_case
+    candidate = method(:check_dict_case)
+    assert_equal(true, candidate.call({""p"" => ""pineapple"", ""b"" => ""banana""}))
+    assert_equal(false, candidate.call({""p"" => ""pineapple"", ""A"" => ""banana"", ""B"" => ""banana""}))
+    assert_equal(false, candidate.call({""p"" => ""pineapple"", ""5"" => ""banana"", ""a"" => ""apple""}))
+    assert_equal(false, candidate.call({""Name"" => ""John"", ""Age"" => ""36"", ""City"" => ""Houston""}))
+    assert_equal(true, candidate.call({""STATE"" => ""NC"", ""ZIP"" => ""12345""}))
+    assert_equal(true, candidate.call({""fruit"" => ""Orange"", ""taste"" => ""Sweet""}))
+    assert_equal(false, candidate.call({}))
+  end
+end
+"
+HumanEval_96,kat_Geor,rb,"მაგალითად: მთელი რიცხვები, რომლებიც პირველადი რიცხვებია და n-ზე ნაკლებია.განვახორციელოთ ფუნქცია, რომელიც იღებს ნეგატიურ მთელ რიცხვს და აბრუნებს პირველ n-ის მასივს.# >>> count_up_to.call(5)
+# [2, 3]
+# >>> count_up_to.call(11)
+# [2, 3, 5, 7]
+# >>> count_up_to.call(0)
+# []
+# >>> count_up_to.call(20)
+# [2, 3, 5, 7, 11, 13, 17, 19]
+# >>> count_up_to.call(1)
+# []
+# >>> count_up_to.call(18)
+# [2, 3, 5, 7, 11, 13, 17]
+def count_up_to(n)
+","def count_up_to(n)
+  return [] if n <= 2
+  primes = []
+  (2...n).each do |num|
+    is_prime = true
+    (2..Math.sqrt(num)).each do |i|
+      if num % i == 0
+        is_prime = false
+        break
+      end
+    end
+    primes << num if is_prime
+  end
+  primes
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_count_up_to
+    candidate = method(:count_up_to)
+    assert_equal([2, 3], candidate.call(5))
+    assert_equal([2, 3, 5], candidate.call(6))
+    assert_equal([2, 3, 5], candidate.call(7))
+    assert_equal([2, 3, 5, 7], candidate.call(10))
+    assert_equal([], candidate.call(0))
+    assert_equal([2, 3, 5, 7, 11, 13, 17, 19], candidate.call(22))
+    assert_equal([], candidate.call(1))
+    assert_equal([2, 3, 5, 7, 11, 13, 17], candidate.call(18))
+    assert_equal([2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43], candidate.call(47))
+    assert_equal([2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97], candidate.call(101))
+  end
+end
+"
+HumanEval_97,kat_Geor,rb,"მაგალითები:ვარაუდობთ, რომ შეყვანა ყოველთვის ძალაშია.მათი ერთეულის ციფრების ნაყოფის შეავსეთ ფუნქცია, რომელიც იღებს ორ მთლიან რიცხვს და დააბრუნებს # >>> multiply.call(148, 412)
+# 16
+# >>> multiply.call(19, 28)
+# 72
+# >>> multiply.call(2020, 1851)
+# 0
+# >>> multiply.call(14, -15)
+# 20
+def multiply(a, b)
+","def multiply(a, b)
+  a_unit_digit = a.abs % 10
+  b_unit_digit = b.abs % 10
+  a_unit_digit * b_unit_digit
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_multiply
+    candidate = method(:multiply)
+    assert_equal(16, candidate.call(148, 412))
+    assert_equal(72, candidate.call(19, 28))
+    assert_equal(0, candidate.call(2020, 1851))
+    assert_equal(20, candidate.call(14, -15))
+    assert_equal(42, candidate.call(76, 67))
+    assert_equal(49, candidate.call(17, 27))
+    assert_equal(0, candidate.call(0, 1))
+    assert_equal(0, candidate.call(0, 0))
+  end
+end
+"
+HumanEval_98,kat_Geor,rb,"მაგალითად:მოცემული სიმები s, დაითვალეთ დიდი ხმოვანების რაოდენობა თანაბარ ინდექსებში.# >>> count_upper.call(""aBCdEf"")
+# 1
+# >>> count_upper.call(""abcdefg"")
+# 0
+# >>> count_upper.call(""dBBE"")
+# 0
+def count_upper(s)
+","def count_upper(s)
+  vowels = ['A', 'E', 'I', 'O', 'U']
+  count = 0
+
+  s.chars.each_with_index do |char, index|
+    if index.even? && vowels.include?(char)
+      count += 1
+    end
+  end
+
+  count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_count_upper
+    candidate = method(:count_upper)
+    assert_equal(1, candidate.call(""aBCdEf""))
+    assert_equal(0, candidate.call(""abcdefg""))
+    assert_equal(0, candidate.call(""dBBE""))
+    assert_equal(0, candidate.call(""B""))
+    assert_equal(1, candidate.call(""U""))
+    assert_equal(0, candidate.call(""""))
+    assert_equal(2, candidate.call(""EEEE""))
+  end
+end
+"
+HumanEval_99,kat_Geor,rb,"მაგალითები ორი მთელი რიცხვიდან, დააბრტყელეთ ნულიდან.და უბრუნებს უახლოეს მთელ რიცხვს. თუ რიცხვი თანაბრად შორს არის შექმენით ფუნქცია, რომელიც იღებს მნიშვნელობას (სტრინგს), რომელიც წარმოადგენს რიცხვს # >>> closest_integer.call(""10"")
+# 10
+# >>> closest_integer.call(""15.3"")
+# 15
+# Note:
+# Rounding away from zero means that if the given number is equidistant
+# from two integers, the one you should return is the one that is the
+# farthest from zero. For example closest_integer(""14.5"") should
+# return 15 and closest_integer(""-14.5"") should return -15.
+def closest_integer(value)
+","def closest_integer(value)
+  number = value.to_f
+  if number > 0
+    (number + 0.5).floor
+  else
+    (number - 0.5).ceil
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_closest_integer
+    candidate = method(:closest_integer)
+    assert_equal(10, candidate.call(""10""))
+    assert_equal(15, candidate.call(""14.5""))
+    assert_equal(-16, candidate.call(""-15.5""))
+    assert_equal(15, candidate.call(""15.3""))
+    assert_equal(0, candidate.call(""0""))
+  end
+end
+"
+HumanEval_100,kat_Geor,rb,"მაგალითები:i წარმოადგენს ქვების რაოდენობას დონეზე (i+1).დააბრუნებს ქვების რაოდენობას თითოეულ დონეზე მასივში, სადაც ელიმენტი ინდექსში - შემდეგი წყვილი რიცხვი, თუ n წყვილია.- შემდეგი უცნაური რიცხვი, თუ n უცნაურია.ქვების რაოდენობა შემდეგ დონეზე არის:პირველ დონეზე არის n ქვა.დადებითი მთელი რიცხვი n-ის შემთხვევაში, თქვენ უნდა გააკეთოთ ქვების n დონე.# >>> make_a_pile.call(3)
+# [3, 5, 7]
+def make_a_pile(n)
+","def make_a_pile(n)
+  result = []
+  current_stones = n
+  n.times do
+    result << current_stones
+    current_stones += 2
+  end
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_make_a_pile
+    candidate = method(:make_a_pile)
+    assert_equal([3, 5, 7], candidate.call(3))
+    assert_equal([4, 6, 8, 10], candidate.call(4))
+    assert_equal([5, 7, 9, 11, 13], candidate.call(5))
+    assert_equal([6, 8, 10, 12, 14, 16], candidate.call(6))
+    assert_equal([8, 10, 12, 14, 16, 18, 20, 22], candidate.call(8))
+  end
+end
+"
+HumanEval_101,kat_Geor,rb,"მაგალითად:რომ სტრიკი სიტყვებად დაყოს და სიტყვების მასივი დააბრუნოს.თქვენ მოგეცემათ სიტყვების სტრიქონი, რომლებიც გამოყოფილია კომებით ან ცარიელი ადგილებით. თქვენი ამოცანაა:# >>> words_string.call(""Hi, my name is John"")
+# [""Hi"", ""my"", ""name"", ""is"", ""John""]
+# >>> words_string.call(""One, two, three, four, five, six"")
+# [""One"", ""two"", ""three"", ""four"", ""five"", ""six""]
+def words_string(s)
+","def words_string(s)
+  s.split(/[\s,]+/)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_words_string
+    candidate = method(:words_string)
+    assert_equal([""Hi"", ""my"", ""name"", ""is"", ""John""], candidate.call(""Hi, my name is John""))
+    assert_equal([""One"", ""two"", ""three"", ""four"", ""five"", ""six""], candidate.call(""One, two, three, four, five, six""))
+    assert_equal([""Hi"", ""my"", ""name""], candidate.call(""Hi, my name""))
+    assert_equal([""One"", ""two"", ""three"", ""four"", ""five"", ""six""], candidate.call(""One,, two, three, four, five, six,""))
+    assert_equal([], candidate.call(""""))
+    assert_equal([""ahmed"", ""gamal""], candidate.call(""ahmed     , gamal""))
+  end
+end
+"
+HumanEval_102,kat_Geor,rb,"მაგალითად:ასეთი რიცხვი არ არსებობს, მაშინ ფუნქცია უნდა დააბრუნოს -1.ყველაზე დიდი მთელი ნომერი, რომელიც [x, y] -ის ფარგლებშია. თუ ეს ფუნქცია იღებს ორ პოზიტიურ რიცხვს x და y და აბრუნებს # >>> choose_num.call(12, 15)
+# 14
+# >>> choose_num.call(13, 12)
+# -1
+def choose_num(x, y)
+","def choose_num(x, y)
+  return -1 if x > y
+  # Start looking from the largest number
+  max_even = y.even? ? y : y - 1
+  # Iterate downwards to find the biggest even number
+  max_even.downto(x) do |n|
+    return n if n.even?
+  end
+  -1
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_choose_num
+    candidate = method(:choose_num)
+    assert_equal(14, candidate.call(12, 15))
+    assert_equal(-1, candidate.call(13, 12))
+    assert_equal(12354, candidate.call(33, 12354))
+    assert_equal(-1, candidate.call(5234, 5233))
+    assert_equal(28, candidate.call(6, 29))
+    assert_equal(-1, candidate.call(27, 10))
+    assert_equal(-1, candidate.call(7, 7))
+    assert_equal(546, candidate.call(546, 546))
+  end
+end
+"
+HumanEval_103,kat_Geor,rb,"მაგალითი:თუ n მეტია m-ზე, დააბრუნეთ -1.დააკრავეთ პასუხი უახლოეს მთელ რიცხვამდე და გადააკეთეთ ეს ბინარულში.მთლიანი რიცხვების საშუალო n-დან m-მდე (n და m-ის ჩათვლით).თქვენ გაქვთ ორი დადებითი მთელი რიცხვი n და m, და თქვენი ამოცანაა გამოითვალოთ # >>> rounded_avg.call(1, 5)
+# ""0b11""
+# >>> rounded_avg.call(7, 5)
+# -1
+# >>> rounded_avg.call(10, 20)
+# ""0b1111""
+# >>> rounded_avg.call(20, 33)
+# ""0b11010""
+def rounded_avg(n, m)
+","def rounded_avg(n, m)
+  return -1 if n > m
+
+  sum = (n..m).reduce(:+)
+  count = m - n + 1
+  average = (sum.to_f / count).round
+  ""0b"" + average.to_i.to_s(2)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_rounded_avg
+    candidate = method(:rounded_avg)
+    assert_equal(""0b11"", candidate.call(1, 5))
+    assert_equal(""0b1010"", candidate.call(7, 13))
+    assert_equal(""0b1111001010"", candidate.call(964, 977))
+    assert_equal(""0b1111100100"", candidate.call(996, 997))
+    assert_equal(""0b1011000010"", candidate.call(560, 851))
+    assert_equal(""0b101101110"", candidate.call(185, 546))
+    assert_equal(""0b110101101"", candidate.call(362, 496))
+    assert_equal(""0b1001110010"", candidate.call(350, 902))
+    assert_equal(""0b11010111"", candidate.call(197, 233))
+    assert_equal(-1, candidate.call(7, 5))
+    assert_equal(-1, candidate.call(5, 1))
+    assert_equal(""0b101"", candidate.call(5, 5))
+  end
+end
+"
+HumanEval_104,kat_Geor,rb,"მაგალითად:შენიშვნა: დაბრუნებული მასივი უნდა დალაგდეს მზარდი თანმიმდევრობით.ელემენტები, რომლებსაც არ აქვთ პარალური ციფრები.დადებითი მთლიანი რიცხვების არეალის x-ის მიხედვით, დააბრუნეთ ყველა -ის დახარისხებული არეალი.# >>> unique_digits.call([15, 33, 1422, 1])
+# [1, 15, 33]
+# >>> unique_digits.call([152, 323, 1422, 10])
+# []
+def unique_digits(x)
+","def unique_digits(x)
+  x.select { |num| num.to_s.chars.none? { |digit| digit.to_i.even? } }.sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_unique_digits
+    candidate = method(:unique_digits)
+    assert_equal([1, 15, 33], candidate.call([15, 33, 1422, 1]))
+    assert_equal([], candidate.call([152, 323, 1422, 10]))
+    assert_equal([111, 151], candidate.call([12345, 2033, 111, 151]))
+    assert_equal([31, 135], candidate.call([135, 103, 31]))
+  end
+end
+"
+HumanEval_105,kat_Geor,rb,"მაგალითად:""ერთი"", ""ორი"", ""სამი"", ""ოთხი"", ""ხუთი"", ""ექვსი"", ""შვიდი"", ""რვა"", ""ცხრა"".შედეგიანი მასივი შევაბრუნოთ და შემდეგ თითოეული ციფრი შევცვალოთ მის შესაბამისი სახელით მთლიანი რიცხვების მასივიდან, დაალაგეთ მთლიანი რიცხვები 1-დან 9-მდე, მათ შორის, # >>> by_length.call([2, 1, 1, 4, 5, 8, 2, 3])
+# [""Eight"", ""Five"", ""Four"", ""Three"", ""Two"", ""Two"", ""One"", ""One""]
+# If the array is empty, return an empty array:
+# >>> by_length.call([])
+# []
+# If the array has any strange number ignore it:
+# >>> by_length.call([1, -1, 55])
+# [""One""]
+def by_length(arr)
+","def by_length(arr)
+  number_names = {
+    1 => ""One"",
+    2 => ""Two"",
+    3 => ""Three"",
+    4 => ""Four"",
+    5 => ""Five"",
+    6 => ""Six"",
+    7 => ""Seven"",
+    8 => ""Eight"",
+    9 => ""Nine""
+  }
+
+  filtered_sorted_reversed = arr.select { |x| x.between?(1, 9) }.sort.reverse
+  filtered_sorted_reversed.map { |num| number_names[num] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_by_length
+    candidate = method(:by_length)
+    assert_equal([""Eight"", ""Five"", ""Four"", ""Three"", ""Two"", ""Two"", ""One"", ""One""], candidate.call([2, 1, 1, 4, 5, 8, 2, 3]))
+    assert_equal([], candidate.call([]))
+    assert_equal([""One""], candidate.call([1, -1, 55]))
+    assert_equal([""Three"", ""Two"", ""One""], candidate.call([1, -1, 3, 2]))
+    assert_equal([""Nine"", ""Eight"", ""Four""], candidate.call([9, 4, 8]))
+  end
+end
+"
+HumanEval_106,kat_Geor,rb,"მაგალითი:i-ის ფაქტორიელი არის რიცხვების გამრავლება 1-დან i-მდე (1 * 2 * ... * i).1 დან დავიწყებ.ან სხვა შემთხვევაში 1 დან i-მდე რიცხვების ჯამი.და ბრუნდება ზომა n-ის მასივი, ისე რომ i-ის ინდექსში არსებული ელემენტის მნიშვნელობა არის i-ის ფაქტორიელი, თუ i არის პარტიული განვახორციელოთ ფუნქცია f, რომელიც იღებს n-ს პარამეტრად, # >>> f.call(5)
+# [1, 2, 6, 24, 15]
+def f(n)
+","def f(n)
+  (1..n).map do |i|
+    if i.even?
+      (1..i).inject(:*) || 1
+    else
+      (1..i).inject(:+)
+    end
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_f
+    candidate = method(:f)
+    assert_equal([1, 2, 6, 24, 15], candidate.call(5))
+    assert_equal([1, 2, 6, 24, 15, 720, 28], candidate.call(7))
+    assert_equal([1], candidate.call(1))
+    assert_equal([1, 2, 6], candidate.call(3))
+  end
+end
+"
+HumanEval_107,kat_Geor,rb,"მაგალითი 1:მთელი რიცხვების პალინდრომები, რომლებიც შედიან დიაპაზონში ((1, n), მათ შორის. დადებითი მთელი რიცხვი n-ის მიხედვით, დააბრუნეთ მასივი, რომელსაც აქვს თანაბარი და უცნაური რიცხვები # >>> even_odd_palindrome.call(3)
+# [1, 2]
+# Explanation:
+# Integer palindrome are 1, 2, 3. one of them is even, and two of them are odd.
+# Example 2:
+# >>> even_odd_palindrome.call(12)
+# [4, 6]
+# Explanation:
+# Integer palindrome are 1, 2, 3, 4, 5, 6, 7, 8, 9, 11. four of them are even, and 6 of them are odd.
+# Note:
+# 1. 1 <= n <= 10^3
+# 2. returned array has the number of even and odd integer palindromes respectively.
+def even_odd_palindrome(n)
+","def even_odd_palindrome(n)
+  even_count = 0
+  odd_count = 0
+
+  (1..n).each do |num|
+    if num.to_s == num.to_s.reverse
+      if num.even?
+        even_count += 1
+      else
+        odd_count += 1
+      end
+    end
+  end
+
+  [even_count, odd_count]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_even_odd_palindrome
+    candidate = method(:even_odd_palindrome)
+    assert_equal([8, 13], candidate.call(123))
+    assert_equal([4, 6], candidate.call(12))
+    assert_equal([1, 2], candidate.call(3))
+    assert_equal([6, 8], candidate.call(63))
+    assert_equal([5, 6], candidate.call(25))
+    assert_equal([4, 6], candidate.call(19))
+    assert_equal([4, 5], candidate.call(9))
+    assert_equal([0, 1], candidate.call(1))
+  end
+end
+"
+HumanEval_108,kat_Geor,rb,"მაგალითად, -123 -ს აქვს -1, 2 და 3 ციფრები.თუ რიცხვი უარყოფითია, მაშინ მისი პირველი ხელმოწერილი ციფრი უარყოფითი იქნება:ელემენტების რაოდენობა, რომლის ციფრების ჯამი არის > 0. დაწერეთ ფუნქცია count_nums რომელიც იღებს მთლიანი რიცხვების მასივს და იბრუნებს # >>> count_nums.call([])
+# 0
+# >>> count_nums.call([-1, 11, -11])
+# 1
+# >>> count_nums.call([1, 1, 2])
+# 3
+def count_nums(arr)
+","def count_nums(arr)
+  arr.count do |num|
+    num.to_s.chars.map(&:to_i).sum > 0
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_count_nums
+    candidate = method(:count_nums)
+    assert_equal(0, candidate.call([]))
+    assert_equal(0, candidate.call([-1, -2, 0]))
+    assert_equal(6, candidate.call([1, 1, 2, -2, 3, 4, 5]))
+    assert_equal(5, candidate.call([1, 6, 9, -6, 0, 1, 5]))
+    assert_equal(4, candidate.call([1, 100, 98, -7, 1, -1]))
+    assert_equal(5, candidate.call([12, 23, 34, -45, -56, 0]))
+    assert_equal(1, candidate.call([0, 1]))
+    assert_equal(1, candidate.call([1]))
+  end
+end
+"
+HumanEval_109,kat_Geor,rb,"მაგალითად:შენიშვნა: მოცემულ მასალას გარანტირებული აქვს უნიკალური ელემენტები.თუ მოცემული მასივი ცარიელია, მაშინ დააბრუნეთ true. მაშინ დააბრუნე true ან დააბრუნე false.თუ შესაძლებელია დახარისხებული მასივის მიღება ზემოთ აღნიშნული ოპერაციის შესრულებით მატრიხის საწყისი პოზიცია ანუ 0-ე ინდექსი.პოზიცია სწორ მიმართულებაში. მასივის ბოლო ელემენტი გადაინაცვლებს მარჯვნივ გადაადგილების ოპერაცია ნიშნავს მასივის ყველა ელემენტის გადაადგილებას ერთი თქვენ უფლება გაქვთ შეასრულოთ მარჯვენა გადაადგილების ოპერაცია რამდენჯერაც გინდათ.მოცემულ მასალაზე შემდეგი ოპერაცია: შესაძლებელია მასივის დალაგება არადამცირებადი თანმიმდევრობით თქვენი ამოცანაა, დაადგინოთ, თუ ჩვენ გვაქვს 'arr' მასივი N მთელი რიცხვიდან arr[1], arr[2], ..., arr[N].# >>> move_one_ball.call([3, 4, 5, 1, 2])
+# true
+# Explanation: By performin 2 right shift operations, non-decreasing order can
+# be achieved for the given array.
+# >>> move_one_ball.call([3, 5, 4, 1, 2])
+# false
+# Explanation:It is not possible to get non-decreasing order for the given
+# array by performing any number of right shift operations.
+def move_one_ball(arr)
+","def move_one_ball(arr)
+  return true if arr.empty?
+
+  n = arr.size
+  count_rotation_point = 0
+  rotation_index = -1
+
+  (0...n).each do |i|
+    next_index = (i + 1) % n
+    if arr[i] > arr[next_index]
+      count_rotation_point += 1
+      rotation_index = next_index
+    end
+  end
+
+  count_rotation_point <= 1
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_move_one_ball
+    candidate = method(:move_one_ball)
+    assert_equal(true, candidate.call([3, 4, 5, 1, 2]))
+    assert_equal(true, candidate.call([3, 5, 10, 1, 2]))
+    assert_equal(false, candidate.call([4, 3, 1, 2]))
+    assert_equal(false, candidate.call([3, 5, 4, 1, 2]))
+    assert_equal(true, candidate.call([]))
+  end
+end
+"
+HumanEval_110,kat_Geor,rb,"მაგალითად:სხვა შემთხვევაში, დააბრუნეთ ""არა"".ყველა ელემენტი lst1 უნდა იყოს თანაბარი, დააბრუნეთ ""YES"".თუ შესაძლებელია ელემენტების გაცვლა LST1-სა და LST2-ს შორის,არ არსებობს ლიმიტი lst1-სა და lst2-ს შორის გაცვლილი ელემენტების რაოდენობაზე.მათ შორის, რომ lst1 მხოლოდ წყვილობითი რიცხვების მასივი გახდეს.და განსაზღვრავს , შესაძლებელია თუ არა ელემენტების გაცვლა .ამ ამოცანაში, თქვენ განახორციელებთ ფუნქციას, რომელიც იღებს რიცხვების ორ მასივს,# >>> exchange.call([1, 2, 3, 4], [1, 2, 3, 4])
+# ""YES""
+# >>> exchange.call([1, 2, 3, 4], [1, 5, 3, 4])
+# ""NO""
+# It is assumed that the input arrays will be non-empty.
+def exchange(lst1, lst2)
+","def exchange(lst1, lst2)
+  # Check if lst1 already consists solely of even numbers
+  return ""YES"" if lst1.all?(&:even?)
+
+  # Check if there are at least as many even numbers in lst2
+  # as there are odd numbers in lst1
+  odd_count_lst1 = lst1.count(&:odd?)
+  even_count_lst2 = lst2.count(&:even?)
+
+  odd_count_lst1 <= even_count_lst2 ? ""YES"" : ""NO""
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_exchange
+    candidate = method(:exchange)
+    assert_equal(""YES"", candidate.call([1, 2, 3, 4], [1, 2, 3, 4]))
+    assert_equal(""NO"", candidate.call([1, 2, 3, 4], [1, 5, 3, 4]))
+    assert_equal(""YES"", candidate.call([1, 2, 3, 4], [2, 1, 4, 3]))
+    assert_equal(""YES"", candidate.call([5, 7, 3], [2, 6, 4]))
+    assert_equal(""NO"", candidate.call([5, 7, 3], [2, 6, 3]))
+    assert_equal(""NO"", candidate.call([3, 2, 6, 1, 8, 9], [3, 5, 5, 1, 1, 1]))
+    assert_equal(""YES"", candidate.call([100, 200], [200, 200]))
+  end
+end
+"
+HumanEval_111,kat_Geor,rb,"მაგალითი:თუ რამდენიმე ასო ერთი და იგივე შემთხვევაა, ყველა მათგანი დააბრუნეთ.ყველაზე ხშირად გამეორებული და შესაბამისი რაოდენობის ასოების მოცემული სტრიქონი, რომელიც წარმოადგენს კარიშხლით დაშორებულ მცირე ასოებს, დააბრუნეთ ჰეში # >>> histogram.call(""a b c"")
+# {""a"" => 1, ""b"" => 1, ""c"" => 1}
+# >>> histogram.call(""a b b a"")
+# {""a"" => 2, ""b"" => 2}
+# >>> histogram.call(""a b c a b"")
+# {""a"" => 2, ""b"" => 2}
+# >>> histogram.call(""b b b b a"")
+# {""b"" => 4}
+# >>> histogram.call("""")
+# {}
+def histogram(test)
+","def histogram(test)
+  return {} if test.empty?
+
+  count = Hash.new(0)
+
+  test.split.each do |char|
+    count[char] += 1
+  end
+
+  max_count = count.values.max
+  count.select { |_, value| value == max_count }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_histogram
+    candidate = method(:histogram)
+    assert_equal({""a"" => 2, ""b"" => 2}, candidate.call(""a b b a""))
+    assert_equal({""a"" => 2, ""b"" => 2}, candidate.call(""a b c a b""))
+    assert_equal({""a"" => 1, ""b"" => 1, ""c"" => 1, ""d"" => 1, ""g"" => 1}, candidate.call(""a b c d g""))
+    assert_equal({""r"" => 1, ""t"" => 1, ""g"" => 1}, candidate.call(""r t g""))
+    assert_equal({""b"" => 4}, candidate.call(""b b b b a""))
+    assert_equal({""r"" => 1, ""t"" => 1, ""g"" => 1}, candidate.call(""r t g""))
+    assert_equal({}, candidate.call(""""))
+    assert_equal({""a"" => 1}, candidate.call(""a""))
+  end
+end
+"
+HumanEval_112,kat_Geor,rb,"მაგალითი თქვენ უნდა დააბრუნოთ მასივი, რომელიც შეიცავს შედეგის სტრიქონს და true/false შემოწმებისთვის.სტრიქონს პალინდრომს ეძახიან, თუ ის იგივეა, როგორც წინ და უკან.შემდეგ შეამოწმეთ, არის თუ არა შედეგის სტრიქონი პალინდრომი.ჩვენ გვაქვს ორი სტრიქონი s და c, თქვენ უნდა წაშალოთ ყველა სიმბოლო s-ში, რომელიც თანაბარია c-ში არსებულ ნებისმიერ სიმბოლოსთან.დავალება # >>> reverse_delete.call(""abcde"", ""ae"")
+# [""bcd"", false]
+# >>> reverse_delete.call(""abcdef"", ""b"")
+# [""acdef"", false]
+# >>> reverse_delete.call(""abcdedcba"", ""ab"")
+# [""cdedc"", true]
+def reverse_delete(s, c)
+","def reverse_delete(s, c)
+  # Remove all characters in c from s
+  filtered_string = s.delete(c)
+  
+  # Check if the filtered string is a palindrome
+  is_palindrome = filtered_string == filtered_string.reverse
+  
+  # Return the result array
+  [filtered_string, is_palindrome]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_reverse_delete
+    candidate = method(:reverse_delete)
+    assert_equal([""bcd"", false], candidate.call(""abcde"", ""ae""))
+    assert_equal([""acdef"", false], candidate.call(""abcdef"", ""b""))
+    assert_equal([""cdedc"", true], candidate.call(""abcdedcba"", ""ab""))
+    assert_equal([""dik"", false], candidate.call(""dwik"", ""w""))
+    assert_equal(["""", true], candidate.call(""a"", ""a""))
+    assert_equal([""abcdedcba"", true], candidate.call(""abcdedcba"", """"))
+    assert_equal([""abcdedcba"", true], candidate.call(""abcdedcba"", ""v""))
+    assert_equal([""abba"", true], candidate.call(""vabba"", ""v""))
+    assert_equal(["""", true], candidate.call(""mamma"", ""mia""))
+  end
+end
+"
+HumanEval_113,kat_Geor,rb,""" სადაც ყველა ""i"" უნდა შეიცვალოს რიცხვით თითოეული ელემენტი i უნდა იყოს ""უნაწილო ელემენტების რაოდენობა სტრიქონების მასივი, სადაც თითოეული სტრიქონი მხოლოდ ციფრებით შედგება, ბრუნავს მასივს.# >>> odd_count.call([""1234567""])
+# [""the number of odd elements 4n the str4ng 4 of the 4nput.""]
+# >>> odd_count.call([""3"", ""11111111""])
+# [""the number of odd elements 1n the str1ng 1 of the 1nput."", ""the number of odd elements 8n the str8ng 8 of the 8nput.""]
+def odd_count(lst)
+","def odd_count(lst)
+  lst.map do |num_str|
+    count = num_str.count('13579')
+    ""the number of odd elements #{count}n the str#{count}ng #{count} of the #{count}nput.""
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_odd_count
+    candidate = method(:odd_count)
+    assert_equal([""the number of odd elements 4n the str4ng 4 of the 4nput.""], candidate.call([""1234567""]))
+    assert_equal([""the number of odd elements 1n the str1ng 1 of the 1nput."", ""the number of odd elements 8n the str8ng 8 of the 8nput.""], candidate.call([""3"", ""11111111""]))
+    assert_equal([""the number of odd elements 2n the str2ng 2 of the 2nput."", ""the number of odd elements 3n the str3ng 3 of the 3nput."", ""the number of odd elements 2n the str2ng 2 of the 2nput.""], candidate.call([""271"", ""137"", ""314""]))
+  end
+end
+"
+HumanEval_114,kat_Geor,rb,"მაგალითი ნუმერების.მთელი რიცხვების არეალის მიხედვით, იპოვეთ ნებისმიერი არა ცარიელი ქვე-არეალის მინიმალური ჯამი # >>> minSubArraySum.call([2, 3, 4, 1, 2, 4])
+# 1
+# >>> minSubArraySum.call([-1, -2, -3])
+# -6
+def minSubArraySum(nums)
+","def minSubArraySum(nums)
+  min_sum = nums[0]
+  current_sum = 0
+  nums.each do |num|
+    if current_sum > 0
+      current_sum = num
+    else
+      current_sum += num
+    end
+    min_sum = [min_sum, current_sum].min
+  end
+  min_sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_minSubArraySum
+    candidate = method(:minSubArraySum)
+    assert_equal(1, candidate.call([2, 3, 4, 1, 2, 4]))
+    assert_equal(-6, candidate.call([-1, -2, -3]))
+    assert_equal(-14, candidate.call([-1, -2, -3, 2, -10]))
+    assert_equal(-9999999999999999, candidate.call([-9999999999999999]))
+    assert_equal(0, candidate.call([0, 10, 20, 1000000]))
+    assert_equal(-6, candidate.call([-1, -2, -3, 10, -5]))
+    assert_equal(-6, candidate.call([100, -1, -2, -3, 10, -5]))
+    assert_equal(3, candidate.call([10, 11, 13, 8, 3, 4]))
+    assert_equal(-33, candidate.call([100, -33, 32, -1, 0, -2]))
+    assert_equal(-10, candidate.call([-10]))
+    assert_equal(7, candidate.call([7]))
+    assert_equal(-1, candidate.call([1, -1]))
+  end
+end
+"
+HumanEval_115,kat_Geor,rb,"მაგალითი 1:გამოწერეთ რამდენჯერ უნდა დააგდოთ კალათები.რგჲ£ა ოპაგთლა ვ ეა თჱოჲლჱგაქ კვმვრვრვრარა ჱა ეა თჱმჲრთქ ვენთრვ.და ყველა ქოთანს აქვს იგივე ტევადობა.ყოველ ჭაოს აქვს შესაბამისი კალათა, რომლის მეშვეობითაც შესაძლებელია წყლის მოპოვება.და თითოეული 1 რიგში წარმოადგენს წყლის ერთ ერთეულს.გეცოდინებათ ჭაბურღილების მართკუთხა ქსელი. თითოეული რიგი წარმოადგენს ერთ ჭაბურღილს,# >>> max_fill.call([[0, 0, 1, 0], [0, 1, 0, 0], [1, 1, 1, 1]], 1)
+# 6
+# Example 2:
+# >>> max_fill.call([[0, 0, 1, 1], [0, 0, 0, 0], [1, 1, 1, 1], [0, 1, 1, 1]], 2)
+# 5
+# Example 3:
+# >>> max_fill.call([[0, 0, 0], [0, 0, 0]], 5)
+# 0
+# Constraints:
+# * all wells have the same length
+# * 1 <= grid.length <= 10^2
+# * 1 <= grid[:,1].length <= 10^2
+# * grid[i][j] -> 0 | 1
+# * 1 <= capacity <= 10
+def max_fill(grid, capacity)
+","def max_fill(grid, capacity)
+  total_water_units = grid.flatten.sum
+  (total_water_units.to_f / capacity).ceil
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_max_fill
+    candidate = method(:max_fill)
+    assert_equal(6, candidate.call([[0, 0, 1, 0], [0, 1, 0, 0], [1, 1, 1, 1]], 1))
+    assert_equal(5, candidate.call([[0, 0, 1, 1], [0, 0, 0, 0], [1, 1, 1, 1], [0, 1, 1, 1]], 2))
+    assert_equal(0, candidate.call([[0, 0, 0], [0, 0, 0]], 5))
+    assert_equal(4, candidate.call([[1, 1, 1, 1], [1, 1, 1, 1]], 2))
+    assert_equal(2, candidate.call([[1, 1, 1, 1], [1, 1, 1, 1]], 9))
+  end
+end
+"
+HumanEval_116,kat_Geor,rb,"ეს უნდა განხორციელდეს შემდეგნაირად:ერთეულების მსგავსი რაოდენობისთვის, დაალაგეთ ათეულობითი მნიშვნელობის მიხედვით.ერთეულების რაოდენობა მათი ორობითი წარმოდგენაში მზარდი წესით.ამ კატაში, თქვენ უნდა დაალაგოთ არა უარყოფითი მთელი რიცხვების მასივი # >>> sort_array.call([1, 5, 2, 3, 4])
+# [1, 2, 3, 4, 5]
+# >>> sort_array.call([-2, -3, -4, -5, -6])
+# [-6, -5, -4, -3, -2]
+# >>> sort_array.call([1, 0, 2, 3, 4])
+# [0, 1, 2, 3, 4]
+def sort_array(arr)
+","def sort_array(arr)
+  arr.sort_by { |n| [n.to_s(2).count('1'), n] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sort_array
+    candidate = method(:sort_array)
+    assert_equal([1, 2, 4, 3, 5], candidate.call([1, 5, 2, 3, 4]))
+    assert_equal([-4, -2, -6, -5, -3], candidate.call([-2, -3, -4, -5, -6]))
+    assert_equal([0, 1, 2, 4, 3], candidate.call([1, 0, 2, 3, 4]))
+    assert_equal([], candidate.call([]))
+    assert_equal([2, 2, 4, 4, 3, 3, 5, 5, 5, 7, 77], candidate.call([2, 5, 77, 4, 5, 3, 5, 7, 2, 3, 4]))
+    assert_equal([32, 3, 5, 6, 12, 44], candidate.call([3, 6, 44, 12, 32, 5]))
+    assert_equal([2, 4, 8, 16, 32], candidate.call([2, 4, 8, 16, 32]))
+    assert_equal([2, 4, 8, 16, 32], candidate.call([2, 4, 8, 16, 32]))
+  end
+end
+"
+HumanEval_117,kat_Geor,rb,"მაგალითები:შენიშვნა: თქვენ შეიძლება ვივარაუდოთ, რომ შეყვანის სტრიქონში მხოლოდ ასოები და სივრცეები.თუ სტრიგი s ცარიელია, მაშინ ფუნქცია უნდა დააბრუნოს ცარიელი მასივი.n თანხმოვანი, იმ რიგით, რომ ეს სიტყვები გამოჩნდეს სტრიქონში s.ფუნქცია, რომელიც აბრუნებს ყველა სიტყვის მასივს სტრიქონი s-დან, რომელიც შეიცავს ზუსტად თუ ვიღებთ სტრიქონს s და ნატურალურ რიცხვს n, თქვენ გაქვთ დავალება განახორციელოთ # >>> select_words.call(""Mary had a little lamb"", 4)
+# [""little""]
+# >>> select_words.call(""Mary had a little lamb"", 3)
+# [""Mary"", ""lamb""]
+# >>> select_words.call(""simple white space"", 2)
+# []
+# >>> select_words.call(""Hello world"", 4)
+# [""world""]
+# >>> select_words.call(""Uncle sam"", 3)
+# [""Uncle""]
+def select_words(s, n)
+","def select_words(s, n)
+  vowels = ""aeiouAEIOU""
+  words = s.split
+  words.select do |word|
+    consonant_count = word.chars.count { |char| !vowels.include?(char) }
+    consonant_count == n
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_select_words
+    candidate = method(:select_words)
+    assert_equal([""little""], candidate.call(""Mary had a little lamb"", 4))
+    assert_equal([""Mary"", ""lamb""], candidate.call(""Mary had a little lamb"", 3))
+    assert_equal([], candidate.call(""simple white space"", 2))
+    assert_equal([""world""], candidate.call(""Hello world"", 4))
+    assert_equal([""Uncle""], candidate.call(""Uncle sam"", 3))
+    assert_equal([], candidate.call("""", 4))
+    assert_equal([""b"", ""c"", ""d"", ""f""], candidate.call(""a b c d e f"", 1))
+  end
+end
+"
+HumanEval_118,kat_Geor,rb,"მაგალითი:თქვენ შეიძლება ვივარაუდოთ, რომ მოცემული სტრიქონი შეიცავს მხოლოდ ინგლისური ასო.იპოვეთ ნებისმიერი ხმოვანი, რომელიც აკმაყოფილებს ზემოთ მოცემულ პირობას.ხმოვანი დასაწყისში და დასასრულს არ ითვლება. დაბრუნება ცარიელი სტრიქონი თუ თქვენ არ ორი თანხმოვანი სიტყვის მარჯვენა მხრიდან (მნიშვნელოვანი ფორმის მიხედვით).რთ ვ ეაევნ გჟვკ, თ რგჲწრა ოპვრთგა ვ ეა ნა£ევრვ ნა£ლვენჲრჲ ჟჲჲჲჲჲ, კჲვრჲ ვ გპვმვ ნა ვენა.# >>> get_closest_vowel.call(""yogurt"")
+# ""u""
+# >>> get_closest_vowel.call(""FULL"")
+# ""U""
+# >>> get_closest_vowel.call(""quick"")
+# """"
+# >>> get_closest_vowel.call(""ab"")
+# """"
+def get_closest_vowel(word)
+","def get_closest_vowel(word)
+  vowels = ""aeiouAEIOU""
+  (1...word.length - 1).reverse_each do |i|
+    if vowels.include?(word[i]) && !vowels.include?(word[i - 1]) && !vowels.include?(word[i + 1])
+      return word[i]
+    end
+  end
+  return """"
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_get_closest_vowel
+    candidate = method(:get_closest_vowel)
+    assert_equal(""u"", candidate.call(""yogurt""))
+    assert_equal(""u"", candidate.call(""full""))
+    assert_equal("""", candidate.call(""easy""))
+    assert_equal("""", candidate.call(""eAsy""))
+    assert_equal("""", candidate.call(""ali""))
+    assert_equal(""a"", candidate.call(""bad""))
+    assert_equal(""o"", candidate.call(""most""))
+    assert_equal("""", candidate.call(""ab""))
+    assert_equal("""", candidate.call(""ba""))
+    assert_equal("""", candidate.call(""quick""))
+    assert_equal(""i"", candidate.call(""anime""))
+    assert_equal("""", candidate.call(""Asia""))
+    assert_equal(""o"", candidate.call(""Above""))
+  end
+end
+"
+HumanEval_119,kat_Geor,rb,"მაგალითები:დააბრუნეთ ""დიახ"" თუ არსებობს კარგი სტრიქონის შექმნის გზა, და დააბრუნეთ ""არა"" სხვა შემთხვევაში."" (()) "" არ არის.დაბალანსებულია. მაგალითად: სტრიქონი ""((((() "" კარგია, ხოლო სტრიქონი სტრიქონი S ითვლება კარგ სტრიქონად, თუ და მხოლოდ თუ ყველა კურსი S-ში რაღაც წესრიგი, რომ შედეგად სტრიქონი იქნება კარგი.თქვენი საქმეა შეამოწმოთ, თუ შესაძლებელია ორი სტრიქონის ერთმანეთთან შეკრება.მხოლოდ "" (("" ან "")) "" კოლოფები.თქვენ გაქვთ ორი სტრიქონის მასივი, ორივე სტრიქონი შედგება ღია # >>> match_parens.call([""()("", "")""])
+# ""Yes""
+# >>> match_parens.call(["")"", "")""])
+# ""No""
+def match_parens(lst)
+","def match_parens(lst)
+  a, b = lst
+
+  # Define a helper method to check if a string is balanced
+  def balanced?(s)
+    count = 0
+    s.each_char do |c|
+      count += 1 if c == '('
+      count -= 1 if c == ')'
+      return false if count < 0
+    end
+    count == 0
+  end
+
+  # Check if either concatenation forms a good string
+  if balanced?(a + b) || balanced?(b + a)
+    ""Yes""
+  else
+    ""No""
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_match_parens
+    candidate = method(:match_parens)
+    assert_equal(""Yes"", candidate.call([""()("", "")""]))
+    assert_equal(""No"", candidate.call(["")"", "")""]))
+    assert_equal(""No"", candidate.call([""(()(())"", ""())())""]))
+    assert_equal(""Yes"", candidate.call(["")())"", ""(()()(""]))
+    assert_equal(""Yes"", candidate.call([""(())))"", ""(()())((""]))
+    assert_equal(""No"", candidate.call([""()"", ""())""]))
+    assert_equal(""Yes"", candidate.call([""(()("", ""()))()""]))
+    assert_equal(""No"", candidate.call([""(((("", ""((())""]))
+    assert_equal(""No"", candidate.call(["")(()"", ""(()(""]))
+    assert_equal(""No"", candidate.call(["")("", "")(""]))
+    assert_equal(""Yes"", candidate.call([""("", "")""]))
+    assert_equal(""Yes"", candidate.call(["")"", ""(""]))
+  end
+end
+"
+HumanEval_120,kat_Geor,rb,"მაგალითი 1:სიგრძე k-ს მაქსიმუმ k რიცხვით arr-ში.მთლიანი რიცხვების დადებითი მთლიანი რიცხვის მქონე არე და k-ს მიცემით, დალაგებული არე დააბრუნეთ.# >>> maximum.call([-3, -4, 5], 3)
+# [-4, -3, 5]
+# Example 2:
+# >>> maximum.call([4, -4, 4], 2)
+# [4, 4]
+# Example 3:
+# >>> maximum.call([-3, 2, 1, 2, -1, -2, 1], 1)
+# [2]
+# Note:
+# 1. The length of the array will be in the range of [1, 1000].
+# 2. The elements in the array will be in the range of [-1000, 1000].
+# 3. 0 <= k <= len(arr)
+def maximum(arr, k)
+","def maximum(arr, k)
+  arr.sort.last(k).sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_maximum
+    candidate = method(:maximum)
+    assert_equal([-4, -3, 5], candidate.call([-3, -4, 5], 3))
+    assert_equal([4, 4], candidate.call([4, -4, 4], 2))
+    assert_equal([2], candidate.call([-3, 2, 1, 2, -1, -2, 1], 1))
+    assert_equal([2, 20, 123], candidate.call([123, -123, 20, 0, 1, 2, -3], 3))
+    assert_equal([0, 1, 2, 20], candidate.call([-123, 20, 0, 1, 2, -3], 4))
+    assert_equal([-13, -8, 0, 0, 3, 5, 15], candidate.call([5, 15, 0, 3, -13, -8, 0], 7))
+    assert_equal([3, 5], candidate.call([-1, 0, 2, 5, 3, -10], 2))
+    assert_equal([5], candidate.call([1, 0, 5, -7], 1))
+    assert_equal([-4, 4], candidate.call([4, -4], 2))
+    assert_equal([-10, 10], candidate.call([-10, 10], 2))
+    assert_equal([], candidate.call([1, 2, 3, -23, 243, -400, 0], 0))
+  end
+end
+"
+HumanEval_121,kat_Geor,rb,"მაგალითები მთელი რიცხვების არამცარიელი მასივის მიხედვით, დააბრუნეთ ყველა უცნაური ელემენტის ჯამი, რომლებიც თანაბარ პოზიციებში არიან. # >>> solution.call([5, 8, 7, 1])
+# 12
+# >>> solution.call([3, 3, 3, 3, 3])
+# 9
+# >>> solution.call([30, 13, 24, 321])
+# 0
+def solution(lst)
+","def solution(lst)
+  lst.each_with_index.reduce(0) do |sum, (val, idx)|
+    (idx.even? && val.odd?) ? sum + val : sum
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_solution
+    candidate = method(:solution)
+    assert_equal(12, candidate.call([5, 8, 7, 1]))
+    assert_equal(9, candidate.call([3, 3, 3, 3, 3]))
+    assert_equal(0, candidate.call([30, 13, 24, 321]))
+    assert_equal(5, candidate.call([5, 9]))
+    assert_equal(0, candidate.call([2, 4, 8]))
+    assert_equal(23, candidate.call([30, 13, 23, 32]))
+    assert_equal(3, candidate.call([3, 13, 2, 9]))
+  end
+end
+"
+HumanEval_122,kat_Geor,rb,"მაგალითი:არმეს პირველი k ელემენტის მაქსიმუმ ორი ციფრის მქონე ელემენტების ჯამი.მთლიანი რიცხვების არამცარიელი მასივის arr და მთლიანი რიცხვის k მოცემულობისას, დააბრუნეთ # >>> add_elements.call([111, 21, 3, 4000, 5, 6, 7, 8, 9], 4)
+# 24
+# Constraints:
+# 1. 1 <= len(arr) <= 100
+# 2. 1 <= k <= len(arr)
+def add_elements(arr, k)
+","def add_elements(arr, k)
+  arr.first(k).select { |num| num.abs.to_s.length <= 2 }.sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_add_elements
+    candidate = method(:add_elements)
+    assert_equal(-4, candidate.call([1, -2, -3, 41, 57, 76, 87, 88, 99], 3))
+    assert_equal(0, candidate.call([111, 121, 3, 4000, 5, 6], 2))
+    assert_equal(125, candidate.call([11, 21, 3, 90, 5, 6, 7, 8, 9], 4))
+    assert_equal(24, candidate.call([111, 21, 3, 4000, 5, 6, 7, 8, 9], 4))
+    assert_equal(1, candidate.call([1], 1))
+  end
+end
+"
+HumanEval_123,kat_Geor,rb,"get_odd_collatz(5) დააბრუნებს [1, 5] # 5 - ის კოლატცის თანმიმდევრობა არის [5, 16, 8, 4, 2, 1], ასე რომ, უცნაური რიცხვები მხოლოდ 1 და 5 არიან. მაგალითად:2. დაბრუნებული მასივი დალაგებულია მზარდი წესით.1. Collatz(1) არის [1]. შენიშვნა:ტერმინი + 1 ვარაუდია, რომ n-ის მნიშვნელობის მიუხედავად, თანმიმდევრობა ყოველთვის მიაღწევს 1 -ს.წინა ტერმინი. თუ წინა ტერმინი უცნაურია, შემდეგი ტერმინი წინა ტერმინის 3-ჯერ წინა ტერმინი შემდეგია: თუ წინა ტერმინი პარტია, შემდეგი ტერმინი არის -ის ნახევარი.შემდეგნაირად: დაიწყეთ ნებისმიერი პოზიტიური მთელი რიცხვით n. შემდეგ თითოეული ტერმინი მიიღება კოლატცის ვარაუდი არის ვარაუდი მათემატიკაში, რომელიც ეხება განსაზღვრულ თანმიმდევრობას.დადებითი მთელი რიცხვი n-ის მიხედვით, დააბრუნეთ დახარისხებული მასივი, რომელშიც არის უცნაური რიცხვები კოლატზის თანმიმდევრობით. # >>> get_odd_collatz.call(5)
+# [1, 5]
+def get_odd_collatz(n)
+","def get_odd_collatz(n)
+  collatz_sequence = []
+  while n != 1
+    collatz_sequence << n if n.odd?
+    if n.even?
+      n = n / 2
+    else
+      n = 3 * n + 1
+    end
+  end
+  collatz_sequence << 1 if n == 1
+
+  collatz_sequence.sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_get_odd_collatz
+    candidate = method(:get_odd_collatz)
+    assert_equal([1, 5, 7, 11, 13, 17], candidate.call(14))
+    assert_equal([1, 5], candidate.call(5))
+    assert_equal([1, 3, 5], candidate.call(12))
+    assert_equal([1], candidate.call(1))
+  end
+end
+"
+HumanEval_124,kat_Geor,rb,"4. თარიღი უნდა იყოს ფორმატში: მმ-დდ-იიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიიი3. თვეები არ უნდა იყოს 1 თვეზე ნაკლები და 12 თვეზე მეტი.2. დღეების რაოდენობა არ არის ნაკლები 1 ან მეტი 31 დღე თვეში 1,3,5,7,8,10,12. და დღეების რაოდენობა არ არის ნაკლები 1 ან მეტი 30 დღე თვეში 4,6,9,11. და, დღეების რაოდენობა არ არის ნაკლები 1 ან მეტი 29 თვეში 2.1. თარიღის სტრიქონი არ არის ცარიელი.თარიღი ძალაშია, თუ ყველა შემდეგი წესი დაცულია: დაბრუნება true თუ თარიღი არის სწორი სხვა შემთხვევაში false. თქვენ უნდა დაწეროთ ფუნქცია, რომელიც დადასტურებს მოცემულ თარიღის სტრიქონს და # >>> valid_date.call(""03-11-2000"")
+# true
+# >>> valid_date.call(""15-01-2012"")
+# false
+# >>> valid_date.call(""04-0-2040"")
+# false
+# >>> valid_date.call(""06-04-2020"")
+# true
+# >>> valid_date.call(""06/04/2020"")
+# false
+def valid_date(date)
+","def valid_date(date)
+  return false if date.nil? || date.empty?
+  
+  # Check if the date format is correct
+  match = date.match(/^(\d{2})-(\d{2})-(\d{4})$/)
+  return false unless match
+  
+  month, day, year = match.captures.map(&:to_i)
+  
+  # Check if month is valid
+  return false if month < 1 || month > 12
+  
+  # Check if day is valid according to the month
+  case month
+  when 1, 3, 5, 7, 8, 10, 12
+    return day >= 1 && day <= 31
+  when 4, 6, 9, 11
+    return day >= 1 && day <= 30
+  when 2
+    return day >= 1 && day <= 29
+  else
+    return false
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_valid_date
+    candidate = method(:valid_date)
+    assert_equal(true, candidate.call(""03-11-2000""))
+    assert_equal(false, candidate.call(""15-01-2012""))
+    assert_equal(false, candidate.call(""04-0-2040""))
+    assert_equal(true, candidate.call(""06-04-2020""))
+    assert_equal(true, candidate.call(""01-01-2007""))
+    assert_equal(false, candidate.call(""03-32-2011""))
+    assert_equal(false, candidate.call(""""))
+    assert_equal(false, candidate.call(""04-31-3000""))
+    assert_equal(true, candidate.call(""06-06-2005""))
+    assert_equal(false, candidate.call(""21-31-2000""))
+    assert_equal(true, candidate.call(""04-12-2003""))
+    assert_equal(false, candidate.call(""04122003""))
+    assert_equal(false, candidate.call(""20030412""))
+    assert_equal(false, candidate.call(""2003-04""))
+    assert_equal(false, candidate.call(""2003-04-12""))
+    assert_equal(false, candidate.call(""04-2003""))
+  end
+end
+"
+HumanEval_125,kat_Geor,rb,"მაგალითები ანბანი, ord ((('a') = 0, ord ((('b') = 1, ... ord ((('z') = 25 უნდა გაიყოს კომებით ',' თუ კომები არ არსებობს, თქვენ უნდა დააბრუნოთ მცირე ასოების რაოდენობა უცნაური თანმიმდევრობით სიტყვების სტრიქონის მიხედვით, დააბრუნეთ სიტყვების მასივი, რომელიც დაყოფილია ცარიელი ადგილების მიხედვით, თუ ტექსტში ცარიელი ადგილები არ არსებობს.# >>> split_words.call(""Hello world!"")
+# [""Hello"", ""world!""]
+# >>> split_words.call(""Hello,world!"")
+# [""Hello"", ""world!""]
+# >>> split_words.call(""abcdef"")
+# 3
+def split_words(txt)
+","def split_words(txt)
+  if txt.include?(' ')
+    return txt.split(' ')
+  elsif txt.include?(',')
+    return txt.split(',')
+  else
+    odd_count = txt.chars.count { |char| ('a'..'z').include?(char) && (char.ord - 'a'.ord).odd? }
+    return odd_count
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_split_words
+    candidate = method(:split_words)
+    assert_equal([""Hello"", ""world!""], candidate.call(""Hello world!""))
+    assert_equal([""Hello"", ""world!""], candidate.call(""Hello,world!""))
+    assert_equal([""Hello"", ""world,!""], candidate.call(""Hello world,!""))
+    assert_equal([""Hello,Hello,world"", ""!""], candidate.call(""Hello,Hello,world !""))
+    assert_equal(3, candidate.call(""abcdef""))
+    assert_equal(2, candidate.call(""aaabb""))
+    assert_equal(1, candidate.call(""aaaBb""))
+    assert_equal(0, candidate.call(""""))
+  end
+end
+"
+HumanEval_126,kat_Geor,rb,"მაგალითები ნომერი, დაბრუნება false. არ მიიღოს უარყოფითი რიცხვები და მხოლოდ მთელი რიცხვები.თუ მასივს აქვს ერთზე მეტი დუბლიკატი ციფრების მასივიდან, დააბრუნეთ დახარისხებული იქნება თუ არა.# >>> is_sorted.call([5])
+# true
+# >>> is_sorted.call([1, 2, 3, 4, 5])
+# true
+# >>> is_sorted.call([1, 3, 2, 4, 5])
+# false
+# >>> is_sorted.call([1, 2, 3, 4, 5, 6])
+# true
+# >>> is_sorted.call([1, 2, 3, 4, 5, 6, 7])
+# true
+# >>> is_sorted.call([1, 3, 2, 4, 5, 6, 7])
+# false
+# >>> is_sorted.call([1, 2, 2, 3, 3, 4])
+# true
+# >>> is_sorted.call([1, 2, 2, 2, 3, 4])
+# false
+def is_sorted(lst)
+","def is_sorted(lst)
+  lst.each_cons(2).with_index do |(a, b), index|
+    return false if a > b
+    return false if index < lst.length - 2 && a == b && lst[index + 2] == b
+  end
+  true
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_sorted
+    candidate = method(:is_sorted)
+    assert_equal(true, candidate.call([5]))
+    assert_equal(true, candidate.call([1, 2, 3, 4, 5]))
+    assert_equal(false, candidate.call([1, 3, 2, 4, 5]))
+    assert_equal(true, candidate.call([1, 2, 3, 4, 5, 6]))
+    assert_equal(true, candidate.call([1, 2, 3, 4, 5, 6, 7]))
+    assert_equal(false, candidate.call([1, 3, 2, 4, 5, 6, 7]))
+    assert_equal(true, candidate.call([]))
+    assert_equal(true, candidate.call([1]))
+    assert_equal(false, candidate.call([3, 2, 1]))
+    assert_equal(false, candidate.call([1, 2, 2, 2, 3, 4]))
+    assert_equal(false, candidate.call([1, 2, 3, 3, 3, 4]))
+    assert_equal(true, candidate.call([1, 2, 2, 3, 3, 4]))
+    assert_equal(true, candidate.call([1, 2, 3, 4]))
+  end
+end
+"
+HumanEval_127,kat_Geor,rb,"[შემოსავალი/გამოსავალი] ნიმუშები: თუ ორი ინტერვალი არ გადაკვეთს ერთმანეთს, დააბრუნეთ ""NO"".სხვა შემთხვევაში დააბრუნეთ ""NO"". თუ კვეთის სიგრძე არის მარტივი რიცხვი, დააბრუნეთ ""YES"", რომელიც მისი სიგრძე 1 არის, რომელიც არ არის უპირველესი რიცხვი.მაგალითი: ინტერვალების (1, 3), (2, 4) კვეთის წერტილი არის (2, 3) ინტერვალები არის უპირველესი რიცხვი.თქვენი ამოცანაა, რომ განსაზღვროთ, არის თუ არა ამ ორი ნიშნის გადაკვეთის სიგრძე ყოველი მოცემული ინტერვალისათვის, ვარაუდობენ, რომ მისი დასაწყისი ნაკლებია ან ტოლია მისი დასასრულისა.მოიცავს როგორც დასაწყისს, ასევე დასასრულს.მოცემული ინტერვალები დახურულია, რაც ნიშნავს, რომ ინტერვალი (დაწყება, დასასრული) სადაც თითოეული ინტერვალი არის მთელი რიცხვების წყვილი. მაგალითად, ინტერვალი = (დაწყება, დასასრული) = (1, 2).რთ ეამვ დთ ეპსდთ ჟრანთ,# >>> intersection.call([1, 2], [2, 3])
+# ""NO""
+# >>> intersection.call([-1, 1], [0, 4])
+# ""NO""
+# >>> intersection.call([-3, -1], [-5, 5])
+# ""YES""
+def intersection(interval1, interval2)
+","def intersection(interval1, interval2)
+  start1, end1 = interval1
+  start2, end2 = interval2
+
+  intersection_start = [start1, start2].max
+  intersection_end = [end1, end2].min
+
+  if intersection_start > intersection_end
+    return ""NO""
+  end
+
+  intersection_length = intersection_end - intersection_start + 1
+
+  return ""YES"" if prime?(intersection_length)
+
+  ""NO""
+end
+
+def prime?(n)
+  return false if n <= 1
+  return true if n == 2 || n == 3
+
+  (2..Math.sqrt(n).to_i).each do |i|
+    return false if n % i == 0
+  end
+
+  true
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_intersection
+    candidate = method(:intersection)
+    assert_equal(""NO"", candidate.call([1, 2], [2, 3]))
+    assert_equal(""NO"", candidate.call([-1, 1], [0, 4]))
+    assert_equal(""YES"", candidate.call([-3, -1], [-5, 5]))
+    assert_equal(""YES"", candidate.call([-2, 2], [-4, 0]))
+    assert_equal(""NO"", candidate.call([-11, 2], [-1, -1]))
+    assert_equal(""NO"", candidate.call([1, 2], [3, 5]))
+    assert_equal(""NO"", candidate.call([1, 2], [1, 2]))
+    assert_equal(""NO"", candidate.call([-2, -2], [-3, -2]))
+  end
+end
+"
+HumanEval_128,kat_Geor,rb,"მაგალითი:შენიშვნა: null-ის დაბრუნება ცარიელი არრებისთვის.თითოეული რიცხვის მატრიფი, რომელიც წარმოდგენილია 1, -1 ან 0-ით.მთელი რიცხვების სიდიდეების ჯამი გამრავლებული ყველა ნიშნის ნაყოფით თქვენ გაქვთ მთელი რიცხვების მასივი და თქვენ უნდა დააბრუნოთ # >>> prod_signs.call([1, 2, 2, -4])
+# 9
+# >>> prod_signs.call([0, 1])
+# 0
+# >>> prod_signs.call([])
+# nil
+def prod_signs(arr)
+","def prod_signs(arr)
+  return nil if arr.empty?
+  
+  product_signs = arr.reduce(1) { |prod, num| prod * num <=> 0 }
+  sum_magnitudes = arr.map(&:abs).sum
+  
+  product_signs * sum_magnitudes
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_prod_signs
+    candidate = method(:prod_signs)
+    assert_equal(-9, candidate.call([1, 2, 2, -4]))
+    assert_equal(0, candidate.call([0, 1]))
+    assert_equal(-10, candidate.call([1, 1, 1, 2, 3, -1, 1]))
+    assert_equal(nil, candidate.call([]))
+    assert_equal(20, candidate.call([2, 4, 1, 2, -1, -1, 9]))
+    assert_equal(4, candidate.call([-1, 1, -1, 1]))
+    assert_equal(-4, candidate.call([-1, 1, 1, 1]))
+    assert_equal(0, candidate.call([-1, 1, 1, 0]))
+  end
+end
+"
+HumanEval_129,kat_Geor,rb,"მაგალითები:დაბრუნება უჯრედების ღირებულებების დალაგებული მასივი, რომლითაც მინიმალური გზა გადის. გარანტირებულია, რომ პასუხი უნიკალურია.lst_A[j] = lst_B[j].ისეთი, რომ lst_A[i] < lst_B[i] და ნებისმიერი j (1 <= j < i) ჩვენ გვაქვს ვიდრე lst_B, სხვა სიტყვებით რომ ვთქვათ, არსებობს მთელი რიცხვის ინდექსი i (1 <= i <= k) (მოდით, დავარქვათ ისინი lst_A და lst_B), lst_A ლექსიკოგრაფიულად ნაკლებია.A და B უჯრედების ღირებულებების დალაგების შემდეგ A ბილიკი (k სიგრძის) ნაკლებია B ბილიკიდან (k სიგრძის) თუ ნვ მჲზვქ ეა ჲრთევქ ჲრ ჟრანალარა.აუცილებლად განსხვავებული).გთხოვთ გაითვალისწინოთ, რომ k სიგრძის ბილიკი ნიშნავს ზუსტად k უჯრედის მონახულებას (არა მობილური ტელეფონი.სხვა სიტყვებით რომ ვთქვათ, თქვენ შეგიძლიათ მიხვიდეთ უჯრედებს, რომლებიც თქვენს დენის წვერს იზიარებენ.ნებისმიერი უჯრიდან და თითოეულ ნაბიჯზე შეგიძლიათ გადახვიდეთ რომელიმე მეზობელ უჯრედში,თქვენ უნდა იპოვოთ მინიმალური გზა სიგრძე k ქსელში. თქვენ შეგიძლიათ დაიწყოთ inclusive ზუსტად ერთხელ ჩნდება ქსელის უჯრედებზე. ყველა უჯრედი შეიცავს მნიშვნელობას. ყველა მთელი რიცხვი დიაპაზონში [1, N * N] მოცემულია ქსელი N რიგით და N სვეტით (N >= 2) და დადებითი მთელი რიცხვი k, # >>> minPath.call([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 3)
+# [1, 2, 1]
+# >>> minPath.call([[5, 9, 3], [4, 1, 6], [7, 8, 2]], 1)
+# [1]
+def minPath(grid, k)
+","def minPath(grid, k)
+  n = grid.size
+  directions = [[-1, 0], [1, 0], [0, -1], [0, 1]]
+  min_path = nil
+
+  n.times do |i|
+    n.times do |j|
+      queue = [[[i, j], [grid[i][j]]]]
+      until queue.empty?
+        position, path = queue.shift
+        if path.size == k
+          min_path = path if min_path.nil? || path < min_path
+          next
+        end
+        directions.each do |dx, dy|
+          x, y = position[0] + dx, position[1] + dy
+          if x.between?(0, n-1) && y.between?(0, n-1)
+            queue.push([[x, y], path + [grid[x][y]]])
+          end
+        end
+      end
+    end
+  end
+  min_path
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_minPath
+    candidate = method(:minPath)
+    assert_equal([1, 2, 1], candidate.call([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 3))
+    assert_equal([1], candidate.call([[5, 9, 3], [4, 1, 6], [7, 8, 2]], 1))
+    assert_equal([1, 2, 1, 2], candidate.call([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]], 4))
+    assert_equal([1, 10, 1, 10, 1, 10, 1], candidate.call([[6, 4, 13, 10], [5, 7, 12, 1], [3, 16, 11, 15], [8, 14, 9, 2]], 7))
+    assert_equal([1, 7, 1, 7, 1], candidate.call([[8, 14, 9, 2], [6, 4, 13, 15], [5, 7, 1, 12], [3, 10, 11, 16]], 5))
+    assert_equal([1, 6, 1, 6, 1, 6, 1, 6, 1], candidate.call([[11, 8, 7, 2], [5, 16, 14, 4], [9, 3, 15, 6], [12, 13, 10, 1]], 9))
+    assert_equal([1, 6, 1, 6, 1, 6, 1, 6, 1, 6, 1, 6], candidate.call([[12, 13, 10, 1], [9, 3, 15, 6], [5, 16, 14, 4], [11, 8, 7, 2]], 12))
+    assert_equal([1, 3, 1, 3, 1, 3, 1, 3], candidate.call([[2, 7, 4], [3, 1, 5], [6, 8, 9]], 8))
+    assert_equal([1, 5, 1, 5, 1, 5, 1, 5], candidate.call([[6, 1, 5], [3, 8, 9], [2, 7, 4]], 8))
+    assert_equal([1, 2, 1, 2, 1, 2, 1, 2, 1, 2], candidate.call([[1, 2], [3, 4]], 10))
+    assert_equal([1, 3, 1, 3, 1, 3, 1, 3, 1, 3], candidate.call([[1, 3], [3, 2]], 10))
+  end
+end
+"
+HumanEval_130,kat_Geor,rb,"მაგალითები:ტრიბონაჩის თანმიმდევრობის პირველი n + 1 რიცხვი.თქვენ გაქვთ ნეგატიური მთელი რიცხვი n, თქვენ უნდა დააბრუნოთ მასივი = 2 + 3 + 3 = 8 tri(3) = tri(2) + tri(1) + tri(4) tri(4) = 3 tri(2) = 1 + (2 / 2) = 2 მაგალითად:tri(n) = tri(n - 1) + tri(n - 2) + tri(n + 1), თუ n უცნაურია. tri (n) = 1 + n / 2, თუ n პარტია.tri(1) = 3 ტრიბონაცის თანმიმდევრობა განისაზღვრება რეციდივაციით: თუმცა, ის, რაც ხალხს არ ესმის ტრიბონაჩის თანმიმდევრობაა.ფიბონაჩის თანმიმდევრობა ყველასთვის ცნობილია. მას მკაცრად სწავლობდნენ მათემატიკოსები # >>> tri.call(3)
+# [1, 3, 2, 8]
+def tri(n)
+","def tri(n)
+  sequence = [1, 3]
+  
+  (2..n).each do |i|
+    if i.even?
+      sequence[i] = 1 + i / 2
+    else
+      sequence[i] = sequence[i - 1] + sequence[i - 2] + sequence[i + 1] rescue 0
+    end
+  end
+  
+  sequence[0..n]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_tri
+    candidate = method(:tri)
+    assert_equal([1, 3, 2, 8], candidate.call(3))
+    assert_equal([1, 3, 2, 8, 3], candidate.call(4))
+    assert_equal([1, 3, 2, 8, 3, 15], candidate.call(5))
+    assert_equal([1, 3, 2, 8, 3, 15, 4], candidate.call(6))
+    assert_equal([1, 3, 2, 8, 3, 15, 4, 24], candidate.call(7))
+    assert_equal([1, 3, 2, 8, 3, 15, 4, 24, 5], candidate.call(8))
+    assert_equal([1, 3, 2, 8, 3, 15, 4, 24, 5, 35], candidate.call(9))
+    assert_equal([1, 3, 2, 8, 3, 15, 4, 24, 5, 35, 6, 48, 7, 63, 8, 80, 9, 99, 10, 120, 11], candidate.call(20))
+    assert_equal([1], candidate.call(0))
+    assert_equal([1, 3], candidate.call(1))
+  end
+end
+"
+HumanEval_131,kat_Geor,rb,"მაგალითად:დაბრუნება 0 თუ ყველა ციფრი არის პარტიული. დადებითი მთელი რიცხვი n-ის მიხედვით, დააბრუნეთ უცნაური ციფრების ნაყოფის მაჩვენებელი. # >>> digits.call(1)
+# 1
+# >>> digits.call(4)
+# 0
+# >>> digits.call(235)
+# 15
+def digits(n)
+","def digits(n)
+  odd_digits = n.to_s.chars.map(&:to_i).select { |digit| digit.odd? }
+  return 0 if odd_digits.empty?
+  odd_digits.reduce(:*)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_digits
+    candidate = method(:digits)
+    assert_equal(5, candidate.call(5))
+    assert_equal(5, candidate.call(54))
+    assert_equal(1, candidate.call(120))
+    assert_equal(5, candidate.call(5014))
+    assert_equal(315, candidate.call(98765))
+    assert_equal(2625, candidate.call(5576543))
+    assert_equal(0, candidate.call(2468))
+  end
+end
+"
+HumanEval_132,kat_Geor,rb,"სადაც ქვეშემადგენლობაში მინიმუმ ერთი კოლოფი არის ჩასახული.ფუნქცია უნდა დააბრუნოს true, თუ და მხოლოდ თუ არსებობს კრევეტების ვალიდური ქვეშემადგენლობა.შექმენით ფუნქცია, რომელიც მიიღებს სტრიქონს, რომელიც შეიცავს მხოლოდ კვადრატულ კრეტებს.# >>> is_nested.call(""[[]]"")
+# true
+# >>> is_nested.call(""[]]]]]]][[[[[]"")
+# false
+# >>> is_nested.call(""[][]"")
+# false
+# >>> is_nested.call(""[]"")
+# false
+# >>> is_nested.call(""[[][]]"")
+# true
+# >>> is_nested.call(""[[]][["")
+# true
+def is_nested(string)
+","def is_nested(string)
+  stack = []
+  has_nested = false
+
+  string.each_char do |char|
+    if char == '['
+      stack.push(char)
+    elsif char == ']'
+      if stack.empty?
+        return false
+      end
+      stack.pop
+      has_nested = true if stack.any?
+    end
+  end
+
+  has_nested
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_nested
+    candidate = method(:is_nested)
+    assert_equal(true, candidate.call(""[[]]""))
+    assert_equal(false, candidate.call(""[]]]]]]][[[[[]""))
+    assert_equal(false, candidate.call(""[][]""))
+    assert_equal(false, candidate.call(""[]""))
+    assert_equal(true, candidate.call(""[[[[]]]]""))
+    assert_equal(false, candidate.call(""[]]]]]]]]]]""))
+    assert_equal(true, candidate.call(""[][][[]]""))
+    assert_equal(false, candidate.call(""[[]""))
+    assert_equal(false, candidate.call(""[]]""))
+    assert_equal(true, candidate.call(""[[]][[""))
+    assert_equal(true, candidate.call(""[[][]]""))
+    assert_equal(false, candidate.call(""""))
+    assert_equal(false, candidate.call(""[[[[[[[[""))
+    assert_equal(false, candidate.call(""]]]]]]]]""))
+  end
+end
+"
+HumanEval_133,kat_Geor,rb,"მაგალითები:თავიდან დააბრუნეთ თითოეული ელემენტი მასივში ზედა int ((ceiling) -მდე.თქვენ უნდა დააბრუნოთ რიცხვების კვადრატის ჯამი მოცემულ მასივში, თქვენ გაქვთ ციფრების მასივი.# >>> lst.call([1.0, 2.0, 3.0])
+# 14
+# >>> lst.call([1.0, 4.0, 9.0])
+# 98
+# >>> lst.call([1.0, 3.0, 5.0, 7.0])
+# 84
+# >>> lst.call([1.4, 4.2, 0.0])
+# 29
+# >>> lst.call([-2.4, 1.0, 1.0])
+# 6
+def sum_squares(lst)
+","def sum_squares(lst)
+  lst.map { |num| (num.ceil)**2 }.sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sum_squares
+    candidate = method(:sum_squares)
+    assert_equal(14, candidate.call([1.0, 2.0, 3.0]))
+    assert_equal(14, candidate.call([1.0, 2.0, 3.0]))
+    assert_equal(84, candidate.call([1.0, 3.0, 5.0, 7.0]))
+    assert_equal(29, candidate.call([1.4, 4.2, 0.0]))
+    assert_equal(6, candidate.call([-2.4, 1.0, 1.0]))
+    assert_equal(10230, candidate.call([100.0, 1.0, 15.0, 2.0]))
+    assert_equal(200000000, candidate.call([10000.0, 10000.0]))
+    assert_equal(75, candidate.call([-1.4, 4.6, 6.3]))
+    assert_equal(1086, candidate.call([-1.4, 17.9, 18.9, 19.9]))
+    assert_equal(0, candidate.call([0.0]))
+    assert_equal(1, candidate.call([-1.0]))
+    assert_equal(2, candidate.call([-1.0, 1.0, 0.0]))
+  end
+end
+"
+HumanEval_134,kat_Geor,rb,"მაგალითები:შენიშვნა: ""სიტყვა"" არის სიმბოლოების ჯგუფი, რომლებიც განცალკევებულია სივრცით. სიტყვის ნაწილია და სხვა შემთხვევაში ცრუა.მოცემული სტრიქონის არის ანბანური სიმბოლო და არ არის შექმენით ფუნქცია, რომელიც დააბრუნებს true- ს, თუ ბოლო ნიშანი # >>> check_if_last_char_is_a_letter.call(""apple pie"")
+# false
+# >>> check_if_last_char_is_a_letter.call(""apple pi e"")
+# true
+# >>> check_if_last_char_is_a_letter.call(""apple pi e "")
+# false
+# >>> check_if_last_char_is_a_letter.call("""")
+# false
+def check_if_last_char_is_a_letter(txt)
+","check_if_last_char_is_a_letter = ->(txt) {
+  return false if txt.strip.empty?
+  words = txt.strip.split(' ')
+  last_word = words.last
+  return false if last_word.empty?
+  last_char = last_word[-1]
+
+  last_char =~ /[a-zA-Z]/ && (words.size == 1 || txt[txt.rindex(last_char) - 1] == ' ')
+}","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_check_if_last_char_is_a_letter
+    candidate = method(:check_if_last_char_is_a_letter)
+    assert_equal(false, candidate.call(""apple""))
+    assert_equal(true, candidate.call(""apple pi e""))
+    assert_equal(false, candidate.call(""eeeee""))
+    assert_equal(true, candidate.call(""A""))
+    assert_equal(false, candidate.call(""Pumpkin pie ""))
+    assert_equal(false, candidate.call(""Pumpkin pie 1""))
+    assert_equal(false, candidate.call(""""))
+    assert_equal(false, candidate.call(""eeeee e ""))
+    assert_equal(false, candidate.call(""apple pie""))
+    assert_equal(false, candidate.call(""apple pi e ""))
+  end
+end
+"
+HumanEval_135,kat_Geor,rb,"მაგალითები:დუბლირებული მნიშვნელობები.ასეთი ელემენტი არ არსებობს, მაშინ დააბრუნეთ -1. მოცემული მასივი არ შეიცავს არ არის უფრო დიდი ან თანაბარი უშუალოდ წინამორბედ ელემენტზე. თუ შექმენით ფუნქცია, რომელიც უბრუნებს  ელემენტის ყველაზე დიდ ინდექსს, რომელიც # >>> can_arrange.call([1, 2, 4, 3, 5])
+# 3
+# >>> can_arrange.call([1, 2, 3])
+# -1
+def can_arrange(arr)
+","def can_arrange(arr)
+  (1...arr.length).reverse_each do |i|
+    return i if arr[i] < arr[i - 1]
+  end
+  -1
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_can_arrange
+    candidate = method(:can_arrange)
+    assert_equal(3, candidate.call([1, 2, 4, 3, 5]))
+    assert_equal(-1, candidate.call([1, 2, 4, 5]))
+    assert_equal(2, candidate.call([1, 4, 2, 5, 6, 7, 8, 9, 10]))
+    assert_equal(4, candidate.call([4, 8, 5, 7, 3]))
+    assert_equal(-1, candidate.call([]))
+  end
+end
+"
+HumanEval_136,kat_Geor,rb,"მაგალითები:თუ არ არსებობს უარყოფითი ან დადებითი მთელი რიცხვები, დააბრუნეთ ისინი როგორც nil.პოზიტიური მთელი რიცხვების მასივში.ყველაზე დიდი ნეგატიური მთელი რიცხვი, ხოლო ""b"" ყველაზე პატარაა.შექმენით ფუნქცია, რომელიც აბრუნებს მასივს (a, b), სადაც 'a' არის # >>> largest_smallest_integers.call([2, 4, 1, 3, 5, 7])
+# [nil, 1]
+# >>> largest_smallest_integers.call([])
+# [nil, nil]
+# >>> largest_smallest_integers.call([0])
+# [nil, nil]
+def largest_smallest_integers(lst)
+","def largest_smallest_integers(lst)
+  largest_negative = nil
+  smallest_positive = nil
+  
+  lst.each do |num|
+    if num < 0
+      largest_negative = num if largest_negative.nil? || num > largest_negative
+    elsif num > 0
+      smallest_positive = num if smallest_positive.nil? || num < smallest_positive
+    end
+  end
+  
+  [largest_negative, smallest_positive]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_largest_smallest_integers
+    candidate = method(:largest_smallest_integers)
+    assert_equal([nil, 1], candidate.call([2, 4, 1, 3, 5, 7]))
+    assert_equal([nil, 1], candidate.call([2, 4, 1, 3, 5, 7, 0]))
+    assert_equal([-2, 1], candidate.call([1, 3, 2, 4, 5, 6, -2]))
+    assert_equal([-7, 2], candidate.call([4, 5, 3, 6, 2, 7, -7]))
+    assert_equal([-9, 2], candidate.call([7, 3, 8, 4, 9, 2, 5, -9]))
+    assert_equal([nil, nil], candidate.call([]))
+    assert_equal([nil, nil], candidate.call([0]))
+    assert_equal([-1, nil], candidate.call([-1, -3, -5, -6]))
+    assert_equal([-1, nil], candidate.call([-1, -3, -5, -6, 0]))
+    assert_equal([-3, 1], candidate.call([-6, -4, -4, -3, 1]))
+    assert_equal([-3, 1], candidate.call([-6, -4, -4, -3, -100, 1]))
+  end
+end
+"
+HumanEval_137,kat_Geor,rb,"შენიშვნა: თუ რეალური რიცხვი წარმოდგენილია როგორც სტრიქონი, ცოცავი წერტილი შეიძლება იყოს . ან , დაბრუნება nil, თუ მნიშვნელობები თანაბარია. რეალური რიცხვები და უბრუნებს უფრო დიდ ცვლადს მისთვის მოცემული ცვლადის ტიპში.შექმენით ფუნქცია, რომელიც იღებს მთელი რიცხვებს, floats-ს ან სტრიქონებს, რომლებიც წარმოადგენენ # >>> compare_one.call(1, 2.5)
+# 2.5
+# >>> compare_one.call(1, ""2,3"")
+# ""2,3""
+# >>> compare_one.call(""5,1"", ""6"")
+# ""6""
+# >>> compare_one.call(""1"", 1)
+# nil
+def compare_one(a, b)
+","def compare_one(a, b)
+  a = a.to_s.tr(',', '.').to_f if a.is_a?(String) && a.include?(',')
+  b = b.to_s.tr(',', '.').to_f if b.is_a?(String) && b.include?(',')
+
+  if a.is_a?(String) && b.is_a?(String)
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Float) && b.is_a?(Float)
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Integer) && b.is_a?(Integer)
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Integer) && b.is_a?(Float)
+    a = a.to_f
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Float) && b.is_a?(Integer)
+    b = b.to_f
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(String) && b.is_a?(Float)
+    b = b.to_s # Only supporting variable type comparison, retain original types
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Float) && b.is_a?(String)
+    a = a.to_s # Only supporting variable type comparison, retain original types
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(String) && b.is_a?(Integer)
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Integer) && b.is_a?(String)
+    return nil if a == b
+    return a > b ? a : b
+  else
+    return nil
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_compare_one
+    candidate = method(:compare_one)
+    assert_equal(2, candidate.call(1, 2))
+    assert_equal(2.5, candidate.call(1, 2.5))
+    assert_equal(3, candidate.call(2, 3))
+    assert_equal(6, candidate.call(5, 6))
+    assert_equal(""2,3"", candidate.call(1, ""2,3""))
+    assert_equal(""6"", candidate.call(""5,1"", ""6""))
+    assert_equal(""2"", candidate.call(""1"", ""2""))
+    assert_equal(nil, candidate.call(""1"", 1))
+  end
+end
+"
+HumanEval_138,kat_Geor,rb,"მაგალითი შეაფასეთ, შეიძლება თუ არა მოცემული რიცხვი n დაწერილი იყოს ზუსტად 4 პოზიტიური წყვილი რიცხვის ჯამად.# >>> is_equal_to_sum_even.call(4)
+# false
+# >>> is_equal_to_sum_even.call(6)
+# false
+# >>> is_equal_to_sum_even.call(8)
+# true
+def is_equal_to_sum_even(n)
+","def is_equal_to_sum_even(n)
+  return false if n < 8
+  n.even?
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_equal_to_sum_even
+    candidate = method(:is_equal_to_sum_even)
+    assert_equal(false, candidate.call(4))
+    assert_equal(false, candidate.call(6))
+    assert_equal(true, candidate.call(8))
+    assert_equal(true, candidate.call(10))
+    assert_equal(false, candidate.call(11))
+    assert_equal(true, candidate.call(12))
+    assert_equal(false, candidate.call(13))
+    assert_equal(true, candidate.call(16))
+  end
+end
+"
+HumanEval_139,kat_Geor,rb,"მაგალითად:სადაც n > 0 brazilian_factorial ((n) = n! * (n-1)! * (n-2)! * ... * 1! ბრაზილიური ფაქტორიალი განისაზღვრება შემდეგნაირად: # >>> special_factorial.call(4)
+# 288
+# The function will receive an integer as input and should return the special
+# factorial of this integer.
+def special_factorial(n)
+","def special_factorial(n)
+  return 1 if n <= 1
+  (1..n).inject(1) { |product, i| product * factorial(i) }
+end
+
+def factorial(num)
+  return 1 if num <= 1
+  (2..num).inject(1, :*)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_special_factorial
+    candidate = method(:special_factorial)
+    assert_equal(288, candidate.call(4))
+    assert_equal(34560, candidate.call(5))
+    assert_equal(125411328000, candidate.call(7))
+    assert_equal(1, candidate.call(1))
+  end
+end
+"
+HumanEval_140,kat_Geor,rb,"შემდეგ ყველა თანმიმდევრული ცარიელი ადგილი ჩაანაცვლეთ - და თუ სტრიქონს აქვს 2 ზე მეტი თანმიმდევრული სივრცე, მოცემული ტექსტის სტრიქონის მიხედვით, ყველა სივრცე ჩაანაცვლეთ ქვედა ხაზით, # >>> fix_spaces.call("" Example"")
+# ""Example""
+# >>> fix_spaces.call("" Example 1"")
+# ""Example_1""
+# >>> fix_spaces.call("" Example 2"")
+# ""_Example_2""
+# >>> fix_spaces.call("" Example 3"")
+# ""_Example-3""
+def fix_spaces(text)
+","def fix_spaces(text)
+  text.strip.gsub(/\s{3,}/, '-').gsub(' ', '_')
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fix_spaces
+    candidate = method(:fix_spaces)
+    assert_equal(""Example"", candidate.call(""Example""))
+    assert_equal(""Mudasir_Hanif_"", candidate.call(""Mudasir Hanif ""))
+    assert_equal(""Yellow_Yellow__Dirty__Fellow"", candidate.call(""Yellow Yellow  Dirty  Fellow""))
+    assert_equal(""Exa-mple"", candidate.call(""Exa   mple""))
+    assert_equal(""-Exa_1_2_2_mple"", candidate.call(""   Exa 1 2 2 mple""))
+  end
+end
+"
+HumanEval_141,kat_Geor,rb,"მაგალითები:- ქვემხრე წერტილის შემდეგ უნდა იყოს ერთ-ერთი ასეთი: ['txt', 'exe', 'dll'] ლათინური ანბანი ('a'-'z' და 'A'-'Z').- ქვემხრე წერტილის წინ არ უნდა იყოს ცარიელი და იწყება ასოთი - ფაილს ზუსტად ერთი წერტილი აქვს.- ფაილის სახელში არ უნდა იყოს სამ ციფრზე მეტი ('0'-'9'). ვენსესტერიფაილის სახელი ითვლება მოქმედად მხოლოდ იმ შემთხვევაში, თუ ყველა შემდეგი პირობა ""დიახ"" თუ ფაილის სახელი ძალაშია, წინააღმდეგ შემთხვევაში კი ""არა"".შექმენით ფუნქცია, რომელიც იღებს სტრიქონს, რომელიც წარმოადგენს ფაილის სახელს და უბრუნებს # >>> file_name_check.call(""example.txt"")
+# ""Yes""
+# >>> file_name_check.call(""1example.dll"")
+# ""No""
+def file_name_check(file_name)
+","def file_name_check(file_name)
+  # Check if there's exactly one dot in the filename
+  return 'No' unless file_name.count('.') == 1
+  
+  # Split the filename into the name and extension
+  name, extension = file_name.split('.')
+  
+  # Check if the name part starts with a letter
+  return 'No' if name.empty? || !name[0].match?(/[a-zA-Z]/)
+  
+  # Check if the extension is valid
+  return 'No' unless ['txt', 'exe', 'dll'].include?(extension)
+  
+  # Count digits in the file name
+  digit_count = file_name.count(""0-9"")
+  
+  # Check if digits are more than three
+  return 'No' if digit_count > 3
+  
+  'Yes'
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_file_name_check
+    candidate = method(:file_name_check)
+    assert_equal(""Yes"", candidate.call(""example.txt""))
+    assert_equal(""No"", candidate.call(""1example.dll""))
+    assert_equal(""No"", candidate.call(""s1sdf3.asd""))
+    assert_equal(""Yes"", candidate.call(""K.dll""))
+    assert_equal(""Yes"", candidate.call(""MY16FILE3.exe""))
+    assert_equal(""No"", candidate.call(""His12FILE94.exe""))
+    assert_equal(""No"", candidate.call(""_Y.txt""))
+    assert_equal(""No"", candidate.call(""?aREYA.exe""))
+    assert_equal(""No"", candidate.call(""/this_is_valid.dll""))
+    assert_equal(""No"", candidate.call(""this_is_valid.wow""))
+    assert_equal(""Yes"", candidate.call(""this_is_valid.txt""))
+    assert_equal(""No"", candidate.call(""this_is_valid.txtexe""))
+    assert_equal(""No"", candidate.call(""#this2_i4s_5valid.ten""))
+    assert_equal(""No"", candidate.call(""@this1_is6_valid.exe""))
+    assert_equal(""No"", candidate.call(""this_is_12valid.6exe4.txt""))
+    assert_equal(""No"", candidate.call(""all.exe.txt""))
+    assert_equal(""Yes"", candidate.call(""I563_No.exe""))
+    assert_equal(""Yes"", candidate.call(""Is3youfault.txt""))
+    assert_equal(""Yes"", candidate.call(""no_one#knows.dll""))
+    assert_equal(""No"", candidate.call(""1I563_Yes3.exe""))
+    assert_equal(""No"", candidate.call(""I563_Yes3.txtt""))
+    assert_equal(""No"", candidate.call(""final..txt""))
+    assert_equal(""No"", candidate.call(""final132""))
+    assert_equal(""No"", candidate.call(""_f4indsartal132.""))
+    assert_equal(""No"", candidate.call("".txt""))
+    assert_equal(""No"", candidate.call(""s.""))
+  end
+end
+"
+HumanEval_142,kat_Geor,rb,"მაგალითები:შეცვალოს ის ჩანაწერები მასივში, რომელთა ინდექსები არ არის 3-ის ან 4-ის მრავლობითი. ფუნქცია შემდეგ დააბრუნებს ყველა ჩანაწერის ჯამს.3 - ის მრავლობითი და კუბიკურად შეადგენს მთელ რიცხვს, თუ მისი ინდექსი 4-ის მრავლობითია და არა 3-ის მრავლობითი. ფუნქცია არ ეს ფუნქცია მიიღებს მთელი რიცხვების მასივს. მასივის ყველა ჩანაწერისთვის ფუნქცია აყენებს კვადრატში მთელი რიცხვის ჩანაწერს, თუ მისი ინდექსი არის "" # >>> lst
+# [1, 2, 3]
+# >>> lst
+# []
+# >>> lst
+# [-1, -5, 2, -1, -5]
+def sum_squares(lst)
+","def sum_squares(lst)
+  lst.map.with_index do |num, index|
+    if index % 3 == 0
+      num ** 2
+    elsif index % 4 == 0
+      num ** 3
+    else
+      num
+    end
+  end.sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sum_squares
+    candidate = method(:sum_squares)
+    assert_equal(6, candidate.call([1, 2, 3]))
+    assert_equal(14, candidate.call([1, 4, 9]))
+    assert_equal(0, candidate.call([]))
+    assert_equal(9, candidate.call([1, 1, 1, 1, 1, 1, 1, 1, 1]))
+    assert_equal(-3, candidate.call([-1, -1, -1, -1, -1, -1, -1, -1, -1]))
+    assert_equal(0, candidate.call([0]))
+    assert_equal(-126, candidate.call([-1, -5, 2, -1, -5]))
+    assert_equal(3030, candidate.call([-56, -99, 1, 0, -2]))
+    assert_equal(0, candidate.call([-1, 0, 0, 0, 0, 0, 0, 0, -1]))
+    assert_equal(-14196, candidate.call([-16, -9, -2, 36, 36, 26, -20, 25, -40, 20, -4, 12, -26, 35, 37]))
+    assert_equal(-1448, candidate.call([-1, -3, 17, -1, -15, 13, -1, 14, -14, -12, -5, 14, -14, 6, 13, 11, 16, 16, 4, 10]))
+  end
+end
+"
+HumanEval_143,kat_Geor,rb,"მაგალითი 1:სიტყვების თანმიმდევრობა ახალ სტრიქონში უნდა იყოს იგივე, რაც თავდაპირველში.რომლის სიგრძე არის უპირველესი რიცხვები,და თქვენ უნდა დააბრუნოთ სტრიქონი, რომელიც შეიცავს სიტყვებს ორიგინალური წინადადებით,წინადადება შეიცავს სიტყვებს, რომლებიც განცალკევებულია სივრცით,თქვენ გაქვთ სტრიქონი, რომელიც წარმოადგენს წინადადებას,# >>> words_in_sentence.call(""This is a test"")
+# ""is""
+# Example 2:
+# >>> words_in_sentence.call(""lets go for swimming"")
+# ""go for""
+# Constraints:
+# * 1 <= len(sentence) <= 100
+# * sentence contains only letters
+def words_in_sentence(sentence)
+","def words_in_sentence(sentence)
+  def is_prime?(num)
+    return false if num <= 1
+    (2..Math.sqrt(num)).none? { |i| num % i == 0 }
+  end
+  
+  words = sentence.split("" "")
+  prime_length_words = words.select { |word| is_prime?(word.length) }
+  prime_length_words.join("" "")
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_words_in_sentence
+    candidate = method(:words_in_sentence)
+    assert_equal(""is"", candidate.call(""This is a test""))
+    assert_equal(""go for"", candidate.call(""lets go for swimming""))
+    assert_equal(""there is no place"", candidate.call(""there is no place available here""))
+    assert_equal(""Hi am Hussein"", candidate.call(""Hi I am Hussein""))
+    assert_equal(""go for it"", candidate.call(""go for it""))
+    assert_equal("""", candidate.call(""here""))
+    assert_equal(""is"", candidate.call(""here is""))
+  end
+end
+"
+HumanEval_144,kat_Geor,rb,"თქვენ შეგიძლიათ ვივარაუდოთ, რომ x და n არის სწორი წილები და მათ არ აქვთ ნული მნიშვნელის სახით.<მომრიცხველი>/<მომრიცხველი> სადაც მრიცხველიც და მნიშვნელიც დადებითი მთელი რიცხვებია.x და n ორივე არის წილების სიმებიანი წარმოდგენა და აქვს შემდეგი ფორმატი:x * n. ფუნქცია true-ს აბრუნებს, თუ x * n მთელი რიცხვია და false თქვენი ამოცანაა, რომ განახორციელოთ ფუნქცია, რომელიც გამარტივებს გამოხატვას.# >>> simplify.call(""1/5"", ""5/1"")
+# true
+# >>> simplify.call(""1/6"", ""2/1"")
+# false
+# >>> simplify.call(""7/10"", ""10/2"")
+# false
+def simplify(x, n)
+","def simplify(x, n)
+  # Convert x and n to numerators and denominators
+  num_x, den_x = x.split('/').map(&:to_i)
+  num_n, den_n = n.split('/').map(&:to_i)
+
+  # Multiply fractions: (num_x * num_n) / (den_x * den_n)
+  numerator = num_x * num_n
+  denominator = den_x * den_n
+
+  # Check if the result is a whole number
+  numerator % denominator == 0
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_simplify
+    candidate = method(:simplify)
+    assert_equal(true, candidate.call(""1/5"", ""5/1""))
+    assert_equal(false, candidate.call(""1/6"", ""2/1""))
+    assert_equal(true, candidate.call(""5/1"", ""3/1""))
+    assert_equal(false, candidate.call(""7/10"", ""10/2""))
+    assert_equal(true, candidate.call(""2/10"", ""50/10""))
+    assert_equal(true, candidate.call(""7/2"", ""4/2""))
+    assert_equal(true, candidate.call(""11/6"", ""6/1""))
+    assert_equal(false, candidate.call(""2/3"", ""5/2""))
+    assert_equal(false, candidate.call(""5/2"", ""3/5""))
+    assert_equal(true, candidate.call(""2/4"", ""8/4""))
+    assert_equal(true, candidate.call(""2/4"", ""4/2""))
+    assert_equal(true, candidate.call(""1/5"", ""5/1""))
+    assert_equal(false, candidate.call(""1/5"", ""1/5""))
+  end
+end
+"
+HumanEval_145,kat_Geor,rb,"მაგალითად:დალაგება მათი ინდექსის მიხედვით ორიგინალურ მასივში.შენიშვნა: თუ არსებობს რამდენიმე პუნქტი, რომელთა ციფრების ერთნაირი ჯამი, აღმავალი წესით მათი ციფრების ჯამის მიხედვით.დაწერეთ ფუნქცია, რომელიც დახარისხებს მთლიანი რიცხვების მოცემულ მასივს.# >>> order_by_points.call([1, 11, -1, -11, -12])
+# [-1, -11, 1, -12, 11]
+# >>> order_by_points.call([])
+# []
+def order_by_points(nums)
+","def order_by_points(nums)
+  nums.sort_by.with_index do |num, index|
+    [num.to_s.chars.map(&:to_i).sum.abs, index]
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_order_by_points
+    candidate = method(:order_by_points)
+    assert_equal([-1, -11, 1, -12, 11], candidate.call([1, 11, -1, -11, -12]))
+    assert_equal([0, 2, 3, 6, 53, 423, 423, 423, 1234, 145, 37, 46, 56, 463, 3457], candidate.call([1234, 423, 463, 145, 2, 423, 423, 53, 6, 37, 3457, 3, 56, 0, 46]))
+    assert_equal([], candidate.call([]))
+    assert_equal([-3, -32, -98, -11, 1, 2, 43, 54], candidate.call([1, -11, -32, 43, 54, -98, 2, -3]))
+    assert_equal([1, 10, 2, 11, 3, 4, 5, 6, 7, 8, 9], candidate.call([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]))
+    assert_equal([-76, -21, 0, 4, 23, 6, 6], candidate.call([0, 6, 6, -76, -21, 23, 4]))
+  end
+end
+"
+HumanEval_146,kat_Geor,rb,"მაგალითად:რიცხვის პირველი და ბოლო ციფრები უცნაურია (1, 3, 5, 7, 9).მასივის იმ ელემენტების რაოდენობა, რომლებიც 10-ზე მეტია და ორივე დაწერეთ ფუნქცია, რომელიც მიიღებს რიცხვების მასივს და დააბრუნებს # >>> specialFilter.call([15, -73, 14, -15])
+# 1
+# >>> specialFilter.call([33, -2, -3, 45, 21, 109])
+# 2
+def specialFilter(nums)
+","def specialFilter(nums)
+  nums.count do |num|
+    num > 10 && num.to_s[0].to_i.odd? && num.to_s[-1].to_i.odd?
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_specialFilter
+    candidate = method(:specialFilter)
+    assert_equal(0, candidate.call([5, -2, 1, -5]))
+    assert_equal(1, candidate.call([15, -73, 14, -15]))
+    assert_equal(2, candidate.call([33, -2, -3, 45, 21, 109]))
+    assert_equal(4, candidate.call([43, -12, 93, 125, 121, 109]))
+    assert_equal(3, candidate.call([71, -2, -33, 75, 21, 19]))
+    assert_equal(0, candidate.call([1]))
+    assert_equal(0, candidate.call([]))
+  end
+end
+"
+HumanEval_147,kat_Geor,rb,"მაგალითი:და a[i] + a[j] + a[k] არის 3-ის მრავლობითი.დააბრუნეთ a-ს სამმაგი რიცხვი (a[i], a[j], a[k]) სადაც i < j < k, თითოეული i-სთვის (1 ≤ i ≤ n), a[i] = i * i - i + 1 თქვენ გაქვთ დადებითი მთელი რიცხვი n. თქვენ უნდა შექმნათ მთელი რიცხვების მასივი a სიგრძე n-ით. # >>> get_max_triples.call(5)
+# 1
+# Explanation: 
+# a = [1, 3, 7, 13, 21]
+# The only valid triple is (1, 7, 13).
+def get_max_triples(n)
+","def get_max_triples(n)
+  a = Array.new(n) { |i| (i + 1) * (i + 1) - (i + 1) + 1 }
+  count = 0
+  
+  (0...n).each do |i|
+    (i+1...n).each do |j|
+      (j+1...n).each do |k|
+        count += 1 if (a[i] + a[j] + a[k]) % 3 == 0
+      end
+    end
+  end
+  
+  count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_get_max_triples
+    candidate = method(:get_max_triples)
+    assert_equal(1, candidate.call(5))
+    assert_equal(4, candidate.call(6))
+    assert_equal(36, candidate.call(10))
+    assert_equal(53361, candidate.call(100))
+  end
+end
+"
+HumanEval_148,kat_Geor,rb,"მაგალითები ნვ ვ ოპაგთლნთ თმვ ნა პლანეტთრვ.ფუნქცია უნდა დააბრუნოს ცარიელი მასივი, თუ planet1 ან planet2 ჟჲ ჟჲლნთუარა.რომელიც მდებარეობს პლანეტა 1-ის ორბიტასა და პლანეტა 2-ის ორბიტას შორის, დახარისხებული ფუნქცია უნდა დააბრუნოს მასივი, რომელიც შეიცავს ყველა პლანეტას, რომელთა ორბიტები არის დაწერეთ ფუნქცია, რომელიც ორი პლანეტის სახელს იღებს სტრიქონებად planet1 და planet2.ურან, ნეპტუნ.ჟრპამ, ჟლვეა ვნუპა, ოჲჟლვეა ჟგვრ, მპჟ, ჟუპთპვრ, ჟაუტნპრ,ჩვენს მზის სისტემაში რვა პლანეტაა. ყველაზე ახლო მზეზე.# >>> bf.call(""Jupiter"", ""Neptune"")
+# [""Saturn"", ""Uranus""]
+# >>> bf.call(""Earth"", ""Mercury"")
+# ""Venus""
+# >>> bf.call(""Mercury"", ""Uranus"")
+# [""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn""]
+def bf(planet1, planet2)
+","def bf(planet1, planet2)
+  planets = [""Mercury"", ""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn"", ""Uranus"", ""Neptune""]
+  
+  idx1 = planets.index(planet1)
+  idx2 = planets.index(planet2)
+  
+  return [] if idx1.nil? || idx2.nil?
+
+  start_idx, end_idx = [idx1, idx2].sort
+  
+  planets[(start_idx + 1)...end_idx]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_bf
+    candidate = method(:bf)
+    assert_equal([""Saturn"", ""Uranus""], candidate.call(""Jupiter"", ""Neptune""))
+    assert_equal([""Venus""], candidate.call(""Earth"", ""Mercury""))
+    assert_equal([""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn""], candidate.call(""Mercury"", ""Uranus""))
+    assert_equal([""Earth"", ""Mars"", ""Jupiter"", ""Saturn"", ""Uranus""], candidate.call(""Neptune"", ""Venus""))
+    assert_equal([], candidate.call(""Earth"", ""Earth""))
+    assert_equal([], candidate.call(""Mars"", ""Earth""))
+    assert_equal([], candidate.call(""Jupiter"", ""Makemake""))
+  end
+end
+"
+HumanEval_149,kat_Geor,rb,"მაგალითად:შეიძლება ვივარაუდოთ, რომ ყველა სიტყვა ერთნაირი სიგრძის იქნება.ფუნქცია უნდა დააბრუნოს სტრიქონების მასივი დახარისხებული თანმიმდევრობით.თუ ორი სიტყვაა ერთნაირი სიგრძის, დაალაგეთ მასივი ანბანური წესით.უნდა დააბრუნოს ამ წესით დახარისხებული მასივი.რიგითობა უნდა იყოს აღმავალი თითოეული სიტყვის სიგრძის მიხედვით, და თქვენდა შეიძლება შეიცავდეს დუბლირებულ ასლებს.მასივი ყოველთვის სტრიქონების მასივია და არასოდეს რიცხვების მასივი,და ბრუნდება შედეგად მიღებული მასივი დახარისხებული წესით, წაშლის სტრიქონებს, რომლებსაც აქვთ უცნაური სიგრძე, დაწერეთ ფუნქცია, რომელიც იღებს სტრიქონების მასივს, როგორც პარამეტრს,# >>> list_sort.call([""aa"", ""a"", ""aaa""])
+# [""aa""]
+# >>> list_sort.call([""ab"", ""a"", ""aaa"", ""cd""])
+# [""ab"", ""cd""]
+def sorted_list_sum(lst)
+","def list_sort(arr)
+  arr.select { |s| s.length.even? }
+     .sort_by { |s| [s.length, s] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sorted_list_sum
+    candidate = method(:sorted_list_sum)
+    assert_equal([""aa""], candidate.call([""aa"", ""a"", ""aaa""]))
+    assert_equal([""AI"", ""asdf"", ""school""], candidate.call([""school"", ""AI"", ""asdf"", ""b""]))
+    assert_equal([], candidate.call([""d"", ""b"", ""c"", ""a""]))
+    assert_equal([""abcd"", ""dcba""], candidate.call([""d"", ""dcba"", ""abcd"", ""a""]))
+    assert_equal([""AI"", ""ai"", ""au""], candidate.call([""AI"", ""ai"", ""au""]))
+    assert_equal([], candidate.call([""a"", ""b"", ""b"", ""c"", ""c"", ""a""]))
+    assert_equal([""cc"", ""dd"", ""aaaa"", ""bbbb""], candidate.call([""aaaa"", ""bbbb"", ""dd"", ""cc""]))
+  end
+end
+"
+HumanEval_150,kat_Geor,rb,"მაგალითები:უპირველესი რიცხვი და უნდა დააბრუნოს y-ის მნიშვნელობა სხვა შემთხვევაში.მარტივი პროგრამა, რომელიც უნდა დააბრუნოს x-ის მნიშვნელობა, თუ n არის # >>> x_or_y.call(7, 34, 12)
+# 34
+# >>> x_or_y.call(15, 8, 5)
+# 5
+def x_or_y(n, x, y)
+","def x_or_y(n, x, y)
+  require 'prime'
+  n.prime? ? x : y
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_x_or_y
+    candidate = method(:x_or_y)
+    assert_equal(34, candidate.call(7, 34, 12))
+    assert_equal(5, candidate.call(15, 8, 5))
+    assert_equal(33, candidate.call(3, 33, 5212))
+    assert_equal(3, candidate.call(1259, 3, 52))
+    assert_equal(-1, candidate.call(7919, -1, 12))
+    assert_equal(583, candidate.call(3609, 1245, 583))
+    assert_equal(129, candidate.call(91, 56, 129))
+    assert_equal(1234, candidate.call(6, 34, 1234))
+    assert_equal(0, candidate.call(1, 2, 0))
+    assert_equal(2, candidate.call(2, 2, 0))
+  end
+end
+"
+HumanEval_151,kat_Geor,rb,"არ გაითვალისწინოთ ნეგატიური ან არამთელი რიცხვები.რიცხვების მატრიხის მიხედვით, დააბრუნეთ რიცხვების კვადრატების ჯამი # >>> double_the_difference.call([1, 3, 2, 0])
+# 10
+# >>> double_the_difference.call([-1, -2, 0])
+# 0
+# >>> double_the_difference.call([9, -2])
+# 81
+# >>> double_the_difference.call([0])
+# 0
+# If the input array is empty, return 0.
+def double_the_difference(lst)
+","def double_the_difference(lst)
+  lst.select { |n| n.is_a?(Integer) && n.odd? && n >= 0 }
+     .map { |n| n ** 2 }
+     .sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_double_the_difference
+    candidate = method(:double_the_difference)
+    assert_equal(0, candidate.call([]))
+    assert_equal(25, candidate.call([5.0, 4.0]))
+    assert_equal(0, candidate.call([0.1, 0.2, 0.3]))
+    assert_equal(0, candidate.call([-10.0, -20.0, -30.0]))
+    assert_equal(0, candidate.call([-1.0, -2.0, 8.0]))
+    assert_equal(34, candidate.call([0.2, 3.0, 5.0]))
+    assert_equal(165, candidate.call([-9.0, -7.0, -5.0, -3.0, -1.0, 1.0, 3.0, 5.0, 7.0, 9.0]))
+  end
+end
+"
+HumanEval_152,kat_Geor,rb,"მაგალითი:ნიშანი არის 0, ხოლო თუ არა, ნიშანი არის აბსოლუტური სხვაობა ვარაუდსა და ქულას შორის. დააბრუნეთ იგივე სიგრძის მასივი, რომელიც აღნიშნავს, თუ რამდენად შორს იყო თითოეული ვარაუდი. თუ ისინი სწორად ივარაუდებდნენ, თქვენ გაქვთ ორი მატჩი თანაბარი სიგრძის ქულებისა და ვარაუდებისგან, სადაც თითოეული ინდექსი აჩვენებს მატჩს.თქვენი ამოცანაა დაადგინოთ, სწორად გამოიცნო თუ არა ადამიანმა რამდენიმე მატჩის შედეგი.ნამდვილად ღირს აღნიშვნა და შედარება.ჟგვრვქ თ მთჟლარვქ, კჲთრჲ თმამვ გ რჲა ჟპვღარა,მთჟლწ, ფვ გჟთფკთ ჟვ ჟვჟსგამვ ნა რჲ£ ფსგჟრგჲ, კჲდარჲ ნაოპაგთრ ნა ნვკჲ£ რგჲთ-პვჟვჟვნ# >>> compare.call([1, 2, 3, 4, 5, 1], [1, 2, 3, 4, 2, -2])
+# [0, 0, 0, 0, 3, 3]
+# >>> compare.call([0, 5, 0, 0, 0, 4], [4, 1, 1, 0, 0, -2])
+# [4, 4, 1, 0, 0, 6]
+def compare(game, guess)
+","def compare(game, guess)
+  game.zip(guess).map { |score, prediction| (score - prediction).abs }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_compare
+    candidate = method(:compare)
+    assert_equal([0, 0, 0, 0, 3, 3], candidate.call([1, 2, 3, 4, 5, 1], [1, 2, 3, 4, 2, -2]))
+    assert_equal([0, 0, 0, 0, 0, 0], candidate.call([0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]))
+    assert_equal([2, 4, 6], candidate.call([1, 2, 3], [-1, -2, -3]))
+    assert_equal([2, 0, 0, 1], candidate.call([1, 2, 3, 5], [-1, 2, 3, 4]))
+  end
+end
+"
+HumanEval_153,kat_Geor,rb,"მაგალითი:(მისი სიმძლავრე არის -1).დაბრუნება ""Slices.SErviNGSliCes"", რადგან ""SErviNGSliCes"" არის ყველაზე ძლიერი გაფართოება ['SERVINGSliCes', 'Cheese', 'StuFfed'] მაშინ თქვენ უნდა მაგალითად, თუ თქვენ გაქვთ ""Slices"" როგორც კლასი და მასივი აირჩიეთ ის, რომელიც პირველ ადგილზეა მასალაში.თუ არსებობს ორი ან მეტი გაგრძელება იგივე სიმტკიცით, თქვენ უნდა ფორმატი: ClassName.StrongestExtensionName. თქვენ უნდა იპოვოთ ყველაზე ძლიერი გაფართოება და დააბრუნოთ სტრიქონი ამ გაფართოების სახელწოდებაში, სიმტკიცეს ანიჭებს CAP - SM ფრაქცია. ასოები გაფართოების სახელში და SM იყოს მცირე ასოების რაოდენობა გაფართოების სიმძლავრე შემდეგია: CAP იყოს დიდი ასოების რიცხვი გაფართოებები გამოიყენება კლასის დამატებითი კლასების ჩატვირთვისთვის.თქვენ მოგეცემათ კლასის სახელი (სტრინგი) და გაფართოების მასივი.# >>> Strongest_Extension.call(""my_class"", [""AA"", ""Be"", ""CC""])
+# ""my_class.AA""
+def Strongest_Extension(class_name, extensions)
+","def Strongest_Extension(class_name, extensions)
+  strongest_extension = extensions.max_by do |extension|
+    cap_count = extension.count('A-Z')
+    sm_count = extension.count('a-z')
+    cap_count - sm_count
+  end
+  ""#{class_name}.#{strongest_extension}""
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_Strongest_Extension
+    candidate = method(:Strongest_Extension)
+    assert_equal(""Watashi.eIGHt8OKe"", candidate.call(""Watashi"", [""tEN"", ""niNE"", ""eIGHt8OKe""]))
+    assert_equal(""Boku123.YEs.WeCaNe"", candidate.call(""Boku123"", [""nani"", ""NazeDa"", ""YEs.WeCaNe"", ""32145tggg""]))
+    assert_equal(""__YESIMHERE.NuLl__"", candidate.call(""__YESIMHERE"", [""t"", ""eMptY"", ""nothing"", ""zeR00"", ""NuLl__"", ""123NoooneB321""]))
+    assert_equal(""K.TAR"", candidate.call(""K"", [""Ta"", ""TAR"", ""t234An"", ""cosSo""]))
+    assert_equal(""__HAHA.123"", candidate.call(""__HAHA"", [""Tab"", ""123"", ""781345"", ""-_-""]))
+    assert_equal(""YameRore.okIWILL123"", candidate.call(""YameRore"", [""HhAas"", ""okIWILL123"", ""WorkOut"", ""Fails"", ""-_-""]))
+    assert_equal(""finNNalLLly.WoW"", candidate.call(""finNNalLLly"", [""Die"", ""NowW"", ""Wow"", ""WoW""]))
+    assert_equal(""_.Bb"", candidate.call(""_"", [""Bb"", ""91245""]))
+    assert_equal(""Sp.671235"", candidate.call(""Sp"", [""671235"", ""Bb""]))
+  end
+end
+"
+HumanEval_154,kat_Geor,rb,"თქვენ გაქვთ 2 სიტყვა. თქვენ უნდა დააბრუნოთ true თუ მეორე სიტყვა ან მისი რომელიმე როტაცია არის პირველი სიტყვის ქვესტრინგი.# >>> cycpattern_check.call(""abcd"", ""abd"")
+# false
+# >>> cycpattern_check.call(""hello"", ""ell"")
+# true
+# >>> cycpattern_check.call(""whassup"", ""psus"")
+# false
+# >>> cycpattern_check.call(""abab"", ""baa"")
+# true
+# >>> cycpattern_check.call(""efef"", ""eeff"")
+# false
+# >>> cycpattern_check.call(""himenss"", ""simen"")
+# true
+def cycpattern_check(a, b)
+","def cycpattern_check(a, b)
+  (0...b.length).each do |i|
+    rotated_b = b[i..-1] + b[0...i]
+    return true if a.include?(rotated_b)
+  end
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_cycpattern_check
+    candidate = method(:cycpattern_check)
+    assert_equal(false, candidate.call(""xyzw"", ""xyw""))
+    assert_equal(true, candidate.call(""yello"", ""ell""))
+    assert_equal(false, candidate.call(""whattup"", ""ptut""))
+    assert_equal(true, candidate.call(""efef"", ""fee""))
+    assert_equal(false, candidate.call(""abab"", ""aabb""))
+    assert_equal(true, candidate.call(""winemtt"", ""tinem""))
+  end
+end
+"
+HumanEval_155,kat_Geor,rb,"მაგალითი:მთელი რიცხვის მიხედვით. დააბრუნეთ მასივი, რომელიც შეიცავს თანაბარ და უცნაურ ციფრებს.# >>> even_odd_count.call(-12)
+# [1, 1]
+# >>> even_odd_count.call(123)
+# [1, 2]
+def even_odd_count(num)
+","def even_odd_count(num)
+  num.to_s.chars.map(&:to_i).select { |digit| digit != 0 }.partition(&:even?).map(&:count)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_even_odd_count
+    candidate = method(:even_odd_count)
+    assert_equal([0, 1], candidate.call(7))
+    assert_equal([1, 1], candidate.call(-78))
+    assert_equal([2, 2], candidate.call(3452))
+    assert_equal([3, 3], candidate.call(346211))
+    assert_equal([3, 3], candidate.call(-345821))
+    assert_equal([1, 0], candidate.call(-2))
+    assert_equal([2, 3], candidate.call(-45347))
+    assert_equal([1, 0], candidate.call(0))
+  end
+end
+"
+HumanEval_156,kat_Geor,rb,"მაგალითები:შეზღუდვები: 1 <= num <= 1000 და დააბრუნეთ მცირე ასოებით.დადებითი მთელი რიცხვის მიხედვით, მიიღეთ მისი რომაული რიცხვითი ექვივალენტი სტრიქონის სახით, # >>> int_to_mini_roman.call(19)
+# ""xix""
+# >>> int_to_mini_roman.call(152)
+# ""clii""
+# >>> int_to_mini_roman.call(426)
+# ""cdxxvi""
+def int_to_mini_roman(number)
+","def int_to_mini_roman(number)
+  values = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
+  numerals = ['m', 'cm', 'd', 'cd', 'c', 'xc', 'l', 'xl', 'x', 'ix', 'v', 'iv', 'i']
+
+  result = ''
+  values.each_with_index do |value, index|
+    while number >= value
+      number -= value
+      result += numerals[index]
+    end
+  end
+
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_int_to_mini_roman
+    candidate = method(:int_to_mini_roman)
+    assert_equal(""xix"", candidate.call(19))
+    assert_equal(""clii"", candidate.call(152))
+    assert_equal(""ccli"", candidate.call(251))
+    assert_equal(""cdxxvi"", candidate.call(426))
+    assert_equal(""d"", candidate.call(500))
+    assert_equal(""i"", candidate.call(1))
+    assert_equal(""iv"", candidate.call(4))
+    assert_equal(""xliii"", candidate.call(43))
+    assert_equal(""xc"", candidate.call(90))
+    assert_equal(""xciv"", candidate.call(94))
+    assert_equal(""dxxxii"", candidate.call(532))
+    assert_equal(""cm"", candidate.call(900))
+    assert_equal(""cmxciv"", candidate.call(994))
+    assert_equal(""m"", candidate.call(1000))
+  end
+end
+"
+HumanEval_157,kat_Geor,rb,"მაგალითი:90 გრადუსი.სწორკუთხა სამკუთხედი არის სამკუთხედი, რომელშიც ერთი კუთხე სწორკუთხეა ან გვერდები ქმნიან სწორკუთხა სამკუთხედს, სხვა შემთხვევაში ცრუა.სამი გვერდის სიგრძეების მიხედვით. დააბრუნეთ true თუ სამი # >>> right_angle_triangle.call(3, 4, 5)
+# true
+# >>> right_angle_triangle.call(1, 2, 3)
+# false
+def right_angle_triangle(a, b, c)
+","def right_angle_triangle(a, b, c)
+  sides = [a, b, c].sort
+  sides[0]**2 + sides[1]**2 == sides[2]**2
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_right_angle_triangle
+    candidate = method(:right_angle_triangle)
+    assert_equal(true, candidate.call(3, 4, 5))
+    assert_equal(false, candidate.call(1, 2, 3))
+    assert_equal(true, candidate.call(10, 6, 8))
+    assert_equal(false, candidate.call(2, 2, 2))
+    assert_equal(true, candidate.call(7, 24, 25))
+    assert_equal(false, candidate.call(10, 5, 7))
+    assert_equal(true, candidate.call(5, 12, 13))
+    assert_equal(true, candidate.call(15, 8, 17))
+    assert_equal(true, candidate.call(48, 55, 73))
+    assert_equal(false, candidate.call(1, 1, 1))
+    assert_equal(false, candidate.call(2, 2, 10))
+  end
+end
+"
+HumanEval_158,kat_Geor,rb,"ველში, დააბრუნეთ ის, რომელიც ლექსიკოგრაფიული თანმიმდევრობით პირველია. თუ მრავალჯერადი სტრიქონები აქვთ უნიკალური მასივი შეიცავს სხვადასხვა სიტყვას. დააბრუნეთ სიტყვა მაქსიმალური რაოდენობით დაწერეთ ფუნქცია, რომელიც იღებს სტრიქონების მასივს.# >>> find_max.call([""name"", ""of"", ""string""])
+# ""string""
+# >>> find_max.call([""name"", ""enam"", ""game""])
+# ""enam""
+# >>> find_max.call([""aaaaaaa"", ""bb"", ""cc""])
+# ""aaaaaaa""
+def find_max(words)
+","def find_max(words)
+  # Helper function to count unique characters
+  def unique_char_count(word)
+    word.chars.uniq.size
+  end
+
+  words.max_by { |word| [unique_char_count(word), -word] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_find_max
+    candidate = method(:find_max)
+    assert_equal(""string"", candidate.call([""name"", ""of"", ""string""]))
+    assert_equal(""enam"", candidate.call([""name"", ""enam"", ""game""]))
+    assert_equal(""aaaaaaa"", candidate.call([""aaaaaaa"", ""bb"", ""cc""]))
+    assert_equal(""abc"", candidate.call([""abc"", ""cba""]))
+    assert_equal(""footbott"", candidate.call([""play"", ""this"", ""game"", ""of"", ""footbott""]))
+    assert_equal(""gonna"", candidate.call([""we"", ""are"", ""gonna"", ""rock""]))
+    assert_equal(""nation"", candidate.call([""we"", ""are"", ""a"", ""mad"", ""nation""]))
+    assert_equal(""this"", candidate.call([""this"", ""is"", ""a"", ""prrk""]))
+    assert_equal(""b"", candidate.call([""b""]))
+    assert_equal(""play"", candidate.call([""play"", ""play"", ""play""]))
+  end
+end
+"
+HumanEval_159,kat_Geor,rb,"მაგალითი:თუ საკმარისი კენკრა არ დარჩა, თქვენ შეჭამთ ყველა კენკრა, მაგრამ მაინც გშივდებათ.[საკვების შემდეგ დარჩენილი მარწყვის რაოდენობა] თქვენ უნდა დააბრუნოთ [ ჭამილ მარწყვის საერთო რაოდენობა ჭამის შემდეგ, ნჲ ჟვდა რპწბგა ეა თჱვქ ოჲგვფვ კაპვპთ, ჱა ეა ოჲმთნაქ ჟჲ პვჟრთრვ.რთ ჟთ გპაგვნ კპზ, ა რთ ჟა თჱეჲლ ჟრპაჳა ჲრ კაპაპვპთ,# >>> eat.call(5, 6, 10)
+# [11, 4]
+# >>> eat.call(4, 8, 9)
+# [12, 1]
+# >>> eat.call(1, 10, 10)
+# [11, 0]
+# >>> eat.call(2, 11, 5)
+# [7, 0]
+# Variables:
+# @number : integer
+# the number of carrots that you have eaten.
+# @need : integer
+# the number of carrots that you need to eat.
+# @remaining : integer
+# the number of remaining carrots thet exist in stock
+# Constrain:
+# * 0 <= number <= 1000
+# * 0 <= need <= 1000
+# * 0 <= remaining <= 1000
+# Have fun :)
+def eat(number, need, remaining)
+","def eat(number, need, remaining)
+  total_eaten = number + [need, remaining].min
+  carrots_left = [remaining - need, 0].max
+  [total_eaten, carrots_left]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_eat
+    candidate = method(:eat)
+    assert_equal([11, 4], candidate.call(5, 6, 10))
+    assert_equal([12, 1], candidate.call(4, 8, 9))
+    assert_equal([11, 0], candidate.call(1, 10, 10))
+    assert_equal([7, 0], candidate.call(2, 11, 5))
+    assert_equal([9, 2], candidate.call(4, 5, 7))
+    assert_equal([5, 0], candidate.call(4, 5, 1))
+  end
+end
+"
+HumanEval_160,kat_Geor,rb,"ოპერატორების მასივს აქვს მინიმუმ ერთი ოპერატორი, ხოლო ოპერანდების მასივს აქვს მინიმუმ ორი ოპერანდი.ოპერანდი არის არაუარყოფითი მთელი რიცხვების მასივი.ოპერატორის მასივის სიგრძე ტოლია ოპერანდის მასივის სიგრძის მინუს ერთის.შენიშვნა:=> შედეგი = 9 შედეგი = 2 + 3 * 4 - 5 array = [2, 3, 4, 5] ოპერატორი['+', '*', '-'] მაგალითი:ექსპონენტაცია (**) სართული (//)გამრავლება (*) გამოყოფა ( - ) დამატება (+) ელემენტარული ალგებრული ოპერაციები:გამოხატვა და დააბრუნოს ამ გამოხატვის შეფასება.მეორე მასივი არის მთელი რიცხვების მასივი. გამოიყენეთ მოცემული ორი მასივი ალგებრიკის შესაქმნელად.მოცემულია ორი მასივის ოპერატორი და ოპერანდი. პირველ მასივს აქვს ელეგრეტიკური ოპერაციები და def do_algebra(operator, operand)
+","def do_algebra(operator, operand)
+  expression = operand[0].to_s
+  operator.each_with_index do |op, index|
+    if op == '//'
+      expression += ' / ' + operand[index + 1].to_s
+    else
+      expression += ' ' + op + ' ' + operand[index + 1].to_s
+    end
+  end
+  eval(expression)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_do_algebra
+    candidate = method(:do_algebra)
+    assert_equal(37, candidate.call([""**"", ""*"", ""+""], [2, 3, 4, 5]))
+    assert_equal(9, candidate.call([""+"", ""*"", ""-""], [2, 3, 4, 5]))
+    assert_equal(8, candidate.call([""//"", ""*""], [7, 3, 4]))
+  end
+end
+"
+HumanEval_161,kat_Geor,rb,"მაგალითები ფუნქცია უნდა დააბრუნოს შედეგად მიღებული სტრიქონი.თუ სტრიქონი არ შეიცავს ასოებს, გადააბრუნეთ სტრიქონი.თორემ ასე დარჩეს.თუ s[i] არის ასო, გადააქციეთ მისი შტრიხი ქვემოდან ზედა ან პირიქით, თქვენ გაქვთ სტრიქონი s.# >>> solve.call(""1234"")
+# ""4321""
+# >>> solve.call(""ab"")
+# ""AB""
+# >>> solve.call(""#a@C"")
+# ""#A@c""
+def solve(s)
+","def solve(s)
+  if s =~ /[a-zA-Z]/
+    s.chars.map { |char| char =~ /[a-zA-Z]/ ? char.swapcase : char }.join
+  else
+    s.reverse
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_solve
+    candidate = method(:solve)
+    assert_equal(""aSdF"", candidate.call(""AsDf""))
+    assert_equal(""4321"", candidate.call(""1234""))
+    assert_equal(""AB"", candidate.call(""ab""))
+    assert_equal(""#A@c"", candidate.call(""#a@C""))
+    assert_equal(""#aSDFw^45"", candidate.call(""#AsdfW^45""))
+    assert_equal(""2@6#"", candidate.call(""#6@2""))
+    assert_equal(""#$A^d"", candidate.call(""#$a^D""))
+    assert_equal(""#CCC"", candidate.call(""#ccc""))
+  end
+end
+"
+HumanEval_162,kat_Geor,rb,"თუ 'text' არის ცარიელი სტრიქონი, დააბრუნეთ nil. მოცემული სტრიქონის 'text', დაბრუნება მისი md5 hash ექვივალენტური სტრიქონის. # >>> string_to_md5.call(""Hello world"")
+# ""3e25960a79dbc69b674cd4ec67a72c62""
+def string_to_md5(text)
+","require 'digest'
+
+def string_to_md5(text)
+  return nil if text.empty?
+  Digest::MD5.hexdigest(text)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_string_to_md5
+    candidate = method(:string_to_md5)
+    assert_equal(""3e25960a79dbc69b674cd4ec67a72c62"", candidate.call(""Hello world""))
+    assert_equal(nil, candidate.call(""""))
+    assert_equal(""0ef78513b0cb8cef12743f5aeb35f888"", candidate.call(""A B C""))
+    assert_equal(""5f4dcc3b5aa765d61d8327deb882cf99"", candidate.call(""password""))
+  end
+end
+"
+HumanEval_163,kat_Geor,rb,"მაგალითად:და b, მზარდი თანმიმდევრობით.მოცემულია ორი დადებითი მთელი რიცხვი a და b, დააბრუნეთ თანაბარი ციფრები a # >>> generate_integers.call(2, 8)
+# [2, 4, 6, 8]
+# >>> generate_integers.call(8, 2)
+# [2, 4, 6, 8]
+# >>> generate_integers.call(10, 14)
+# []
+def generate_integers(a, b)
+","def generate_integers(a, b)
+  (a..b).to_a.concat((b..a).to_a).select { |num| num.even? }.uniq.sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_generate_integers
+    candidate = method(:generate_integers)
+    assert_equal([2, 4, 6, 8], candidate.call(2, 10))
+    assert_equal([2, 4, 6, 8], candidate.call(10, 2))
+    assert_equal([2, 4, 6, 8], candidate.call(132, 2))
+    assert_equal([], candidate.call(17, 89))
+  end
+end
+"

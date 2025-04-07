@@ -1,0 +1,4634 @@
+task_id,nl,pl,prompt,canonical_solution,tests
+HumanEval_0,yue_Hant,rb,"值得注意嘅一個點.檢查一下,在一個數字陣列中, 有冇兩個數字相近,而唔係相近呢?# >>> has_close_elements.call([1.0, 2.0, 3.0], 0.5)
+# false
+# >>> has_close_elements.call([1.0, 2.8, 3.0, 4.0, 5.0, 2.0], 0.3)
+# true
+def has_close_elements(numbers, threshold)
+","def has_close_elements(numbers, threshold)
+  numbers.combination(2).any? { |a, b| (a - b).abs < threshold }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_has_close_elements
+    candidate = method(:has_close_elements)
+    assert_equal(true, candidate.call([1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.3))
+    assert_equal(false, candidate.call([1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.05))
+    assert_equal(true, candidate.call([1.0, 2.0, 5.9, 4.0, 5.0], 0.95))
+    assert_equal(false, candidate.call([1.0, 2.0, 5.9, 4.0, 5.0], 0.8))
+    assert_equal(true, candidate.call([1.0, 2.0, 3.0, 4.0, 5.0, 2.0], 0.1))
+    assert_equal(true, candidate.call([1.1, 2.2, 3.1, 4.1, 5.1], 1.0))
+    assert_equal(false, candidate.call([1.1, 2.2, 3.1, 4.1, 5.1], 0.5))
+  end
+end
+"
+HumanEval_1,yue_Hant,rb,"忽略輸入字符串嘅空格.兩個唔同嘅組別都平衡 (每個開嘅都被正確地封閉),而唔係埋喺對方裡面.將呢啲組別分成唔同嘅字符串 然後返回個陣列函數嘅輸入數字串包含多個組嘅嵌套括號.你嘅目標係# >>> separate_paren_groups.call(""( ) (( )) (( )( ))"")
+# [""()"", ""(())"", ""(()())""]
+def separate_paren_groups(paren_string)
+","def separate_paren_groups(paren_string)
+  # Remove spaces from the string
+  paren_string = paren_string.gsub("" "", """")
+  
+  result = []
+  current_group = """"
+  balance = 0
+
+  paren_string.each_char do |char|
+    current_group += char
+    balance += 1 if char == '('
+    balance -= 1 if char == ')'
+
+    if balance == 0 && !current_group.empty?
+      result << current_group
+      current_group = """"
+    end
+  end
+
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_separate_paren_groups
+    candidate = method(:separate_paren_groups)
+    assert_equal([""(()())"", ""((()))"", ""()"", ""((())()())""], candidate.call(""(()()) ((())) () ((())()())""))
+    assert_equal([""()"", ""(())"", ""((()))"", ""(((())))""], candidate.call(""() (()) ((())) (((())))""))
+    assert_equal([""(()(())((())))""], candidate.call(""(()(())((())))""))
+    assert_equal([""()"", ""(())"", ""(()())""], candidate.call(""( ) (( )) (( )( ))""))
+  end
+end
+"
+HumanEval_2,yue_Hant,rb,"返回数字的小数部分.(剩餘部分總比1小).整數部分 (最大的整數小於數字) 及小數點數给定一个正的浮点数,它可以分解成# >>> truncate_number.call(3.5)
+# 0.5
+def truncate_number(number)
+","def truncate_number(number)
+  number - number.to_i
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_truncate_number
+    candidate = method(:truncate_number)
+    assert_equal(0.5, candidate.call(3.5))
+    assert_equal(0.25, candidate.call(1.25))
+    assert_equal(0.0, candidate.call(123.0))
+  end
+end
+"
+HumanEval_3,yue_Hant,rb,"函數應該返 true.否則,它應該返 false.你嘅任務就係搵出是否有任何一個時段 帳戶餘額跌到零您可以存取與取數據, 您可以從一個銀行帳戶開始,# >>> below_zero.call([1, 2, 3])
+# false
+# >>> below_zero.call([1, 2, -4, 5])
+# true
+def below_zero(operations)
+","def below_zero(operations)
+  balance = 0
+  operations.each do |operation|
+    balance += operation
+    return true if balance < 0
+  end
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_below_zero
+    candidate = method(:below_zero)
+    assert_equal(false, candidate.call([]))
+    assert_equal(false, candidate.call([1, 2, -3, 1, 2, -3]))
+    assert_equal(true, candidate.call([1, 2, -4, 5, 6]))
+    assert_equal(false, candidate.call([1, -1, 2, -2, 5, -5, 4, -4]))
+    assert_equal(true, candidate.call([1, -1, 2, -2, 5, -5, 4, -5]))
+    assert_equal(true, candidate.call([1, -2, 2, -2, 5, -5, 4, -4]))
+  end
+end
+"
+HumanEval_4,yue_Hant,rb,"MAD=平均值.x - x_mean.元素同中間點 (在這個例子中,平均值):平均絕對偏差係每個數值之間嘅平均絕對差異差唔多喺呢個數據集嘅平均值.計算一系列輸入數字嘅平均絕對偏差# >>> mean_absolute_deviation.call([1.0, 2.0, 3.0, 4.0])
+# 1.0
+def mean_absolute_deviation(numbers)
+","def mean_absolute_deviation(numbers)
+  mean = numbers.sum.to_f / numbers.size
+  deviations = numbers.map { |num| (num - mean).abs }
+  deviations.sum / numbers.size
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_mean_absolute_deviation
+    candidate = method(:mean_absolute_deviation)
+    assert_equal(0.5, candidate.call([1.0, 2.0]))
+    assert_equal(1.0, candidate.call([1.0, 2.0, 3.0, 4.0]))
+    assert_equal(1.2, candidate.call([1.0, 2.0, 3.0, 4.0, 5.0]))
+  end
+end
+"
+HumanEval_5,yue_Hant,rb,"輸入陣列每兩個連續元素之間,請輸入一個""分隔符""數字.# >>> intersperse.call([], 4)
+# []
+# >>> intersperse.call([1, 2, 3], 4)
+# [1, 4, 2, 4, 3]
+def intersperse(numbers, delimeter)
+","def intersperse(numbers, delimeter)
+  return numbers if numbers.empty?
+  result = []
+  numbers.each_with_index do |num, index|
+    result << num
+    result << delimeter unless index == numbers.size - 1
+  end
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_intersperse
+    candidate = method(:intersperse)
+    assert_equal([], candidate.call([], 7))
+    assert_equal([5, 8, 6, 8, 3, 8, 2], candidate.call([5, 6, 3, 2], 8))
+    assert_equal([2, 2, 2, 2, 2], candidate.call([2, 2, 2], 2))
+  end
+end
+"
+HumanEval_6,yue_Hant,rb,"例如, ()) 有最多兩層嘅巢,而 ()) 有三層.输出每个组的括号最深层次的嵌套.呢一個函數嘅輸入輸入輸入嘅方式,就係用空格分隔嘅括號, 代表一個字符串嘅多個組.# >>> parse_nested_parens.call(""(()()) ((())) () ((())()())"")
+# [2, 3, 1, 3]
+def parse_nested_parens(paren_string)
+","def parse_nested_parens(paren_string)
+  paren_string.split.map do |group|
+    max_depth = current_depth = 0
+    group.chars.each do |char|
+      if char == '('
+        current_depth += 1
+        max_depth = [max_depth, current_depth].max
+      elsif char == ')'
+        current_depth -= 1
+      end
+    end
+    max_depth
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_parse_nested_parens
+    candidate = method(:parse_nested_parens)
+    assert_equal([2, 3, 1, 3], candidate.call(""(()()) ((())) () ((())()())""))
+    assert_equal([1, 2, 3, 4], candidate.call(""() (()) ((())) (((())))""))
+    assert_equal([4], candidate.call(""(()(())((())))""))
+  end
+end
+"
+HumanEval_7,yue_Hant,rb,"單憑包含已知子字符串嘅字符串來選輸入字符串陣列# >>> filter_by_substring.call([], ""a"")
+# []
+# >>> filter_by_substring.call([""abc"", ""bacd"", ""cde"", ""array""], ""a"")
+# [""abc"", ""bacd"", ""array""]
+def filter_by_substring(strings, substring)
+","def filter_by_substring(strings, substring)
+  strings.select { |string| string.include?(substring) }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_filter_by_substring
+    candidate = method(:filter_by_substring)
+    assert_equal([], candidate.call([], ""john""))
+    assert_equal([""xxx"", ""xxxAAA"", ""xxx""], candidate.call([""xxx"", ""asd"", ""xxy"", ""john doe"", ""xxxAAA"", ""xxx""], ""xxx""))
+    assert_equal([""xxx"", ""aaaxxy"", ""xxxAAA"", ""xxx""], candidate.call([""xxx"", ""asd"", ""aaaxxy"", ""john doe"", ""xxxAAA"", ""xxx""], ""xx""))
+    assert_equal([""grunt"", ""prune""], candidate.call([""grunt"", ""trumpet"", ""prune"", ""gruesome""], ""run""))
+  end
+end
+"
+HumanEval_8,yue_Hant,rb,"空總和應該係 0 而空積則應該係 1对于给定的整数数组,返回一个由数组中所有整数的和和乘积组成的数组.# >>> sum_product.call([])
+# [0, 1]
+# >>> sum_product.call([1, 2, 3, 4])
+# [10, 24]
+def sum_product(numbers)
+","def sum_product(numbers)
+  sum = numbers.reduce(0, :+)
+  product = numbers.reduce(1, :*)
+  [sum, product]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sum_product
+    candidate = method(:sum_product)
+    assert_equal([0, 1], candidate.call([]))
+    assert_equal([3, 1], candidate.call([1, 1, 1]))
+    assert_equal([100, 0], candidate.call([100, 0]))
+    assert_equal([15, 105], candidate.call([3, 5, 7]))
+    assert_equal([10, 10], candidate.call([10]))
+  end
+end
+"
+HumanEval_9,yue_Hant,rb,"應該係個順序.從一個數列中,生成一個數列,# >>> rolling_max.call([1, 2, 3, 2, 3, 4, 2])
+# [1, 2, 3, 3, 3, 4, 4]
+def rolling_max(numbers)
+","def rolling_max(numbers)
+  max_so_far = numbers.first
+  numbers.map do |num|
+    max_so_far = [max_so_far, num].max
+  end
+end
+
+# Example usage:
+# puts rolling_max([1, 2, 3, 2, 3, 4, 2]).inspect","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_rolling_max
+    candidate = method(:rolling_max)
+    assert_equal([], candidate.call([]))
+    assert_equal([1, 2, 3, 4], candidate.call([1, 2, 3, 4]))
+    assert_equal([4, 4, 4, 4], candidate.call([4, 3, 2, 1]))
+    assert_equal([3, 3, 3, 100, 100], candidate.call([3, 2, 3, 100, 3]))
+  end
+end
+"
+HumanEval_10,yue_Hant,rb,"- 請將字符串前,以至於喺 palindromic 後之前, 加入到字符串尾.- 找到最长的后续函数 提供字符串的 palindrome.算法嘅概念簡單:求出最短嘅以已知字符串開始嘅對應式.# >>> make_palindrome.call("""")
+# """"
+# >>> make_palindrome.call(""cat"")
+# ""catac""
+# >>> make_palindrome.call(""cata"")
+# ""catac""
+def make_palindrome(string)
+","def make_palindrome(string)
+  return string if string.empty?
+
+  def is_palindrome?(s)
+    s == s.reverse
+  end
+
+  (0...string.length).reverse_each do |i|
+    if is_palindrome?(string[i..-1])
+      return string + string[0...i].reverse
+    end
+  end
+
+  string
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_make_palindrome
+    candidate = method(:make_palindrome)
+    assert_equal("""", candidate.call(""""))
+    assert_equal(""x"", candidate.call(""x""))
+    assert_equal(""xyzyx"", candidate.call(""xyz""))
+    assert_equal(""xyx"", candidate.call(""xyx""))
+    assert_equal(""jerryrrej"", candidate.call(""jerry""))
+  end
+end
+"
+HumanEval_11,yue_Hant,rb,"執行對二進制 XOR 對於這些輸入,並以字符串形式返回結果.輸入嘅兩個字串 a 同 b 只包含 1 同 0# >>> string_xor.call(""010"", ""110"")
+# ""100""
+def string_xor(a, b)
+","def string_xor(a, b)
+  result = """"
+  a.length.times do |i|
+    result << (a[i] == b[i] ? ""0"" : ""1"")
+  end
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_string_xor
+    candidate = method(:string_xor)
+    assert_equal(""010010"", candidate.call(""111000"", ""101010""))
+    assert_equal(""0"", candidate.call(""1"", ""1""))
+    assert_equal(""0101"", candidate.call(""0101"", ""0000""))
+  end
+end
+"
+HumanEval_12,yue_Hant,rb,"同一長度嘅字符串.如果輸入嘅數字係空嘅,返回null.喺數字串嘅數列中,返回最長嘅一個.如果有多個 string,返回第一個.# >>> longest.call([])
+# nil
+# >>> longest.call([""a"", ""b"", ""c""])
+# ""a""
+# >>> longest.call([""a"", ""bb"", ""ccc""])
+# ""ccc""
+def longest(strings)
+","def longest(strings)
+  return nil if strings.empty?
+  strings.max_by(&:length)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_longest
+    candidate = method(:longest)
+    assert_equal(nil, candidate.call([]))
+    assert_equal(""x"", candidate.call([""x"", ""y"", ""z""]))
+    assert_equal(""zzzz"", candidate.call([""x"", ""yyy"", ""zzzz"", ""www"", ""kkkk"", ""abc""]))
+  end
+end
+"
+HumanEval_13,yue_Hant,rb,"返回两个整数a和b的最大公分数# >>> greatest_common_divisor.call(3, 5)
+# 1
+# >>> greatest_common_divisor.call(25, 15)
+# 5
+def greatest_common_divisor(a, b)
+","def greatest_common_divisor(a, b)
+  while b != 0
+    a, b = b, a % b
+  end
+  a
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_greatest_common_divisor
+    candidate = method(:greatest_common_divisor)
+    assert_equal(1, candidate.call(3, 7))
+    assert_equal(5, candidate.call(10, 15))
+    assert_equal(7, candidate.call(49, 14))
+    assert_equal(12, candidate.call(144, 60))
+  end
+end
+"
+HumanEval_14,yue_Hant,rb,"返回所有序列序列从最短到最长的输入字符串# >>> all_prefixes.call(""abc"")
+# [""a"", ""ab"", ""abc""]
+def all_prefixes(string)
+","def all_prefixes(string)
+  (1..string.length).map { |i| string[0, i] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_all_prefixes
+    candidate = method(:all_prefixes)
+    assert_equal([], candidate.call(""""))
+    assert_equal([""a"", ""as"", ""asd"", ""asdf"", ""asdfg"", ""asdfgh""], candidate.call(""asdfgh""))
+    assert_equal([""W"", ""WW"", ""WWW""], candidate.call(""WWW""))
+  end
+end
+"
+HumanEval_15,yue_Hant,rb,"返回包含由0到n包含的空间划分的数列.# >>> string_sequence.call(0)
+# ""0""
+# >>> string_sequence.call(5)
+# ""0 1 2 3 4 5""
+def string_sequence(n)
+","def string_sequence(n)
+  (0..n).to_a.join(' ')
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_string_sequence
+    candidate = method(:string_sequence)
+    assert_equal(""0"", candidate.call(0))
+    assert_equal(""0 1 2 3"", candidate.call(3))
+    assert_equal(""0 1 2 3 4 5 6 7 8 9 10"", candidate.call(10))
+  end
+end
+"
+HumanEval_16,yue_Hant,rb,"给定一个字符串,找出它有多少个不同的字符 (不论大小写)# >>> count_distinct_characters.call(""xyzXYZ"")
+# 3
+# >>> count_distinct_characters.call(""Jerry"")
+# 4
+def count_distinct_characters(string)
+","def count_distinct_characters(string)
+  string.downcase.chars.uniq.count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_count_distinct_characters
+    candidate = method(:count_distinct_characters)
+    assert_equal(0, candidate.call(""""))
+    assert_equal(5, candidate.call(""abcde""))
+    assert_equal(5, candidate.call(""abcdecadeCADE""))
+    assert_equal(1, candidate.call(""aaaaAAAAaaaa""))
+    assert_equal(5, candidate.call(""Jerry jERRY JeRRRY""))
+  end
+end
+"
+HumanEval_17,yue_Hant,rb,"""""嘅四音,可以到一個節奏""o""字係半個音符,可以連續兩拍""O"" - - 音符,可以連續四次呢度有個傳說:最後一個唔係.你嘅任務就係解讀呢個字符串 然後返回一個整數字序列 根據每一個數字嘅節拍數音樂音符串以特殊嘅 ASCII 格式輸入到呢個函數.# >>> parse_music.call(""o o| .| o| o| .| .| .| .| o o"")
+# [4, 2, 1, 2, 2, 1, 1, 1, 1, 4, 4]
+def parse_music(music_string)
+","def parse_music(music_string)
+  # Split the input string into individual notes.
+  notes = music_string.split
+
+  # Map each note to its corresponding number of beats.
+  notes.map do |note|
+    case note
+    when 'o'
+      4
+    when 'o|'
+      2
+    when '.|'
+      1
+    else
+      0
+    end
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_parse_music
+    candidate = method(:parse_music)
+    assert_equal([], candidate.call(""""))
+    assert_equal([4, 4, 4, 4], candidate.call(""o o o o""))
+    assert_equal([1, 1, 1, 1], candidate.call("".| .| .| .|""))
+    assert_equal([2, 2, 1, 1, 4, 4, 4, 4], candidate.call(""o| o| .| .| o o o o""))
+    assert_equal([2, 1, 2, 1, 4, 2, 4, 2], candidate.call(""o| .| o| .| o o| o o|""))
+  end
+end
+"
+HumanEval_18,yue_Hant,rb,"求出某個字符串嘅字符串子串嘅重複數.# >>> how_many_times.call("""", ""a"")
+# 0
+# >>> how_many_times.call(""aaa"", ""a"")
+# 3
+# >>> how_many_times.call(""aaaa"", ""aa"")
+# 3
+def how_many_times(string, substring)
+","def how_many_times(string, substring)
+  return 0 if substring.empty?
+  count = 0
+  i = 0
+  while i <= string.length - substring.length
+    if string[i, substring.length] == substring
+      count += 1
+    end
+    i += 1
+  end
+  count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_how_many_times
+    candidate = method(:how_many_times)
+    assert_equal(0, candidate.call("""", ""x""))
+    assert_equal(4, candidate.call(""xyxyxyx"", ""x""))
+    assert_equal(4, candidate.call(""cacacacac"", ""cac""))
+    assert_equal(1, candidate.call(""john doe"", ""john""))
+  end
+end
+"
+HumanEval_19,yue_Hant,rb,"將從最小排序到最大排序嘅數字串返回有效選擇係""零"""",一"""",兩"""",三"""",四"""",五"""",六"""",七"""",八""同埋""九"".入力係由零到九嘅數字串連接起嚟# >>> sort_numbers.call(""three one five"")
+# ""one three five""
+def sort_numbers(numbers)
+","def sort_numbers(numbers)
+  numeral_map = {
+    'zero' => 0,
+    'one' => 1,
+    'two' => 2,
+    'three' => 3,
+    'four' => 4,
+    'five' => 5,
+    'six' => 6,
+    'seven' => 7,
+    'eight' => 8,
+    'nine' => 9
+  }
+
+  number_words = numbers.split
+  sorted_numbers = number_words.sort_by { |word| numeral_map[word] }
+  sorted_numbers.join(' ')
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sort_numbers
+    candidate = method(:sort_numbers)
+    assert_equal("""", candidate.call(""""))
+    assert_equal(""three"", candidate.call(""three""))
+    assert_equal(""three five nine"", candidate.call(""three five nine""))
+    assert_equal(""zero four five seven eight nine"", candidate.call(""five zero four seven nine eight""))
+    assert_equal(""zero one two three four five six"", candidate.call(""six five four three two one zero""))
+  end
+end
+"
+HumanEval_20,yue_Hant,rb,"按次序返回 (數量較少,數量較大).從數字 (至少長2個) 提供的數字陣列中,選擇並返回最接近每個數字的2個數字.# >>> find_closest_elements.call([1.0, 2.0, 3.0, 4.0, 5.0, 2.2])
+# [2.0, 2.2]
+# >>> find_closest_elements.call([1.0, 2.0, 3.0, 4.0, 5.0, 2.0])
+# [2.0, 2.0]
+def find_closest_elements(numbers)
+","def find_closest_elements(numbers)
+  sorted_numbers = numbers.sort
+  closest_pair = [sorted_numbers[0], sorted_numbers[1]]
+  min_difference = (sorted_numbers[1] - sorted_numbers[0]).abs
+
+  (1...(sorted_numbers.length - 1)).each do |i|
+    current_difference = (sorted_numbers[i + 1] - sorted_numbers[i]).abs
+    if current_difference < min_difference
+      min_difference = current_difference
+      closest_pair = [sorted_numbers[i], sorted_numbers[i + 1]]
+    end
+  end
+
+  closest_pair
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_find_closest_elements
+    candidate = method(:find_closest_elements)
+    assert_equal([3.9, 4.0], candidate.call([1.0, 2.0, 3.9, 4.0, 5.0, 2.2]))
+    assert_equal([5.0, 5.9], candidate.call([1.0, 2.0, 5.9, 4.0, 5.0]))
+    assert_equal([2.0, 2.2], candidate.call([1.0, 2.0, 3.0, 4.0, 5.0, 2.2]))
+    assert_equal([2.0, 2.0], candidate.call([1.0, 2.0, 3.0, 4.0, 5.0, 2.0]))
+    assert_equal([2.2, 3.1], candidate.call([1.1, 2.2, 3.1, 4.1, 5.1]))
+  end
+end
+"
+HumanEval_21,yue_Hant,rb,"所以最小嘅數字變成0 而最大嘅數字變成1.给定一系列数 (至少有两个元素),将线性变换应用到这个数组中,# >>> rescale_to_unit.call([1.0, 2.0, 3.0, 4.0, 5.0])
+# [0.0, 0.25, 0.5, 0.75, 1.0]
+def rescale_to_unit(numbers)
+","def rescale_to_unit(numbers)
+  min = numbers.min
+  max = numbers.max
+  range = max - min
+  return numbers.map { |num| (num - min) / range.to_f }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_rescale_to_unit
+    candidate = method(:rescale_to_unit)
+    assert_equal([0.0, 1.0], candidate.call([2.0, 49.9]))
+    assert_equal([1.0, 0.0], candidate.call([100.0, 49.9]))
+    assert_equal([0.0, 0.25, 0.5, 0.75, 1.0], candidate.call([1.0, 2.0, 3.0, 4.0, 5.0]))
+    assert_equal([0.25, 0.0, 1.0, 0.5, 0.75], candidate.call([2.0, 1.0, 5.0, 3.0, 4.0]))
+    assert_equal([0.25, 0.0, 1.0, 0.5, 0.75], candidate.call([12.0, 11.0, 15.0, 13.0, 14.0]))
+  end
+end
+"
+HumanEval_22,yue_Hant,rb,"除任何 rbthon 值的给定数组,只对整数进行选.# >>> filter_integers.call([""a"", 3.14, 5])
+# [5]
+# >>> filter_integers.call([1, 2, 3, ""abc"", {}, []])
+# [1, 2, 3]
+def filter_integers(values)
+","def filter_integers(values)
+  values.select { |value| value.is_a?(Integer) }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_filter_integers
+    candidate = method(:filter_integers)
+    assert_equal([], candidate.call([]))
+    assert_equal([4, 9], candidate.call([4, {}, [], 23.2, 9, ""adasd""]))
+    assert_equal([3, 3, 3], candidate.call([3, ""c"", 3, 3, ""a"", ""b""]))
+  end
+end
+"
+HumanEval_23,yue_Hant,rb,"返回给定的字符串的长度# >>> strlen.call("""")
+# 0
+# >>> strlen.call(""abc"")
+# 3
+def strlen(string)
+","strlen = lambda do |string|
+  string.length
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_strlen
+    candidate = method(:strlen)
+    assert_equal(0, candidate.call(""""))
+    assert_equal(1, candidate.call(""x""))
+    assert_equal(9, candidate.call(""asdasnakj""))
+  end
+end
+"
+HumanEval_24,yue_Hant,rb,"给定一个数 n,求最大的数 能平分 n,小于 n # >>> largest_divisor.call(15)
+# 5
+def largest_divisor(n)
+","def largest_divisor(n)
+  (n - 1).downto(1) do |i|
+    return i if n % i == 0
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_largest_divisor
+    candidate = method(:largest_divisor)
+    assert_equal(1, candidate.call(3))
+    assert_equal(1, candidate.call(7))
+    assert_equal(5, candidate.call(10))
+    assert_equal(50, candidate.call(100))
+    assert_equal(7, candidate.call(49))
+  end
+end
+"
+HumanEval_25,yue_Hant,rb,"輸入嘅數字應該等於所有因子嘅積分每一個因子,應由它在分解中出現的次數排列.返回一系列由最小到最大的整数的质因数.# >>> factorize.call(8)
+# [2, 2, 2]
+# >>> factorize.call(25)
+# [5, 5]
+# >>> factorize.call(70)
+# [2, 5, 7]
+def factorize(n)
+","def factorize(n)
+  factors = []
+  divisor = 2
+  while n > 1
+    while n % divisor == 0
+      factors << divisor
+      n /= divisor
+    end
+    divisor += 1
+  end
+  factors
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_factorize
+    candidate = method(:factorize)
+    assert_equal([2], candidate.call(2))
+    assert_equal([2, 2], candidate.call(4))
+    assert_equal([2, 2, 2], candidate.call(8))
+    assert_equal([3, 19], candidate.call(57))
+    assert_equal([3, 3, 19, 19], candidate.call(3249))
+    assert_equal([3, 3, 3, 19, 19, 19], candidate.call(185193))
+    assert_equal([3, 19, 19, 19], candidate.call(20577))
+    assert_equal([2, 3, 3], candidate.call(18))
+  end
+end
+"
+HumanEval_26,yue_Hant,rb,"保持元素嘅排序跟輸入嘅一樣.從一個整數數列中,將所有多次出現的元素除.# >>> remove_duplicates.call([1, 2, 3, 2, 4])
+# [1, 3, 4]
+def remove_duplicates(numbers)
+","def remove_duplicates(numbers)
+  numbers.select { |num| numbers.count(num) == 1 }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_remove_duplicates
+    candidate = method(:remove_duplicates)
+    assert_equal([], candidate.call([]))
+    assert_equal([1, 2, 3, 4], candidate.call([1, 2, 3, 4]))
+    assert_equal([1, 4, 5], candidate.call([1, 2, 3, 2, 4, 3, 5]))
+  end
+end
+"
+HumanEval_27,yue_Hant,rb,"轉換小寫字符串,# >>> flip_case.call(""Hello"")
+# ""hELLO""
+def flip_case(string)
+","def flip_case(string)
+  string.swapcase
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_flip_case
+    candidate = method(:flip_case)
+    assert_equal("""", candidate.call(""""))
+    assert_equal(""hELLO!"", candidate.call(""Hello!""))
+    assert_equal(""tHESE VIOLENT DELIGHTS HAVE VIOLENT ENDS"", candidate.call(""These violent delights have violent ends""))
+  end
+end
+"
+HumanEval_28,yue_Hant,rb,"將串串嘅數連接成一個單一嘅串.# >>> concatenate.call([])
+# """"
+# >>> concatenate.call([""a"", ""b"", ""c""])
+# ""abc""
+def concatenate(strings)
+","def concatenate(strings)
+  strings.join
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_concatenate
+    candidate = method(:concatenate)
+    assert_equal("""", candidate.call([]))
+    assert_equal(""xyz"", candidate.call([""x"", ""y"", ""z""]))
+    assert_equal(""xyzwk"", candidate.call([""x"", ""y"", ""z"", ""w"", ""k""]))
+  end
+end
+"
+HumanEval_29,yue_Hant,rb,"出一個輸入字符串陣列,只選用一個先頭開始嘅字符串.# >>> filter_by_prefix.call([], ""a"")
+# []
+# >>> filter_by_prefix.call([""abc"", ""bcd"", ""cde"", ""array""], ""a"")
+# [""abc"", ""array""]
+def filter_by_prefix(strings, prefix)
+","def filter_by_prefix(strings, prefix)
+  strings.select { |string| string.start_with?(prefix) }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_filter_by_prefix
+    candidate = method(:filter_by_prefix)
+    assert_equal([], candidate.call([], ""john""))
+    assert_equal([""xxx"", ""xxxAAA"", ""xxx""], candidate.call([""xxx"", ""asd"", ""xxy"", ""john doe"", ""xxxAAA"", ""xxx""], ""xxx""))
+  end
+end
+"
+HumanEval_30,yue_Hant,rb,"返回数组中只有正数.# >>> get_positive.call([-1, 2, -4, 5, 6])
+# [2, 5, 6]
+# >>> get_positive.call([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])
+# [5, 3, 2, 3, 9, 123, 1]
+def get_positive(l)
+","get_positive = lambda do |l|
+  l.select { |num| num > 0 }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_get_positive
+    candidate = method(:get_positive)
+    assert_equal([4, 5, 6], candidate.call([-1, -2, 4, 5, 6]))
+    assert_equal([5, 3, 2, 3, 3, 9, 123, 1], candidate.call([5, 3, -5, 2, 3, 3, 9, 0, 123, 1, -10]))
+    assert_equal([], candidate.call([-1, -2]))
+    assert_equal([], candidate.call([]))
+  end
+end
+"
+HumanEval_31,yue_Hant,rb,"如果一個數字係素數,返回 true,如果唔係就返回 false.# >>> is_prime.call(6)
+# false
+# >>> is_prime.call(101)
+# true
+# >>> is_prime.call(11)
+# true
+# >>> is_prime.call(13441)
+# true
+# >>> is_prime.call(61)
+# true
+# >>> is_prime.call(4)
+# false
+# >>> is_prime.call(1)
+# false
+def is_prime(n)
+","is_prime = lambda do |n|
+  return false if n <= 1
+  return true if n == 2
+  return false if n.even?
+
+  max_divisor = Math.sqrt(n).to_i
+  (3..max_divisor).step(2).each do |i|
+    return false if n % i == 0
+  end
+
+  true
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_prime
+    candidate = method(:is_prime)
+    assert_equal(false, candidate.call(6))
+    assert_equal(true, candidate.call(101))
+    assert_equal(true, candidate.call(11))
+    assert_equal(true, candidate.call(13441))
+    assert_equal(true, candidate.call(61))
+    assert_equal(false, candidate.call(4))
+    assert_equal(false, candidate.call(1))
+    assert_equal(true, candidate.call(5))
+    assert_equal(true, candidate.call(11))
+    assert_equal(true, candidate.call(17))
+    assert_equal(false, candidate.call(85))
+    assert_equal(false, candidate.call(77))
+    assert_equal(false, candidate.call(255379))
+  end
+end
+"
+HumanEval_33,yue_Hant,rb,"值,但並列.l' 同於未能除以三的數值,而其值在可以除以三的數值上是相同的.呢個函數取一個數列l,然後返回一個數列l,# >>> sort_third.call([1, 2, 3])
+# [1, 2, 3]
+# >>> sort_third.call([5, 6, 3, 4, 8, 9, 2])
+# [2, 6, 3, 4, 8, 9, 5]
+def sort_third(l)
+","def sort_third(l)
+  divisible_by_three = l.each_with_index.select { |_, idx| idx % 3 == 0 }.map(&:first).sort
+  l.each_with_index.map { |val, idx| idx % 3 == 0 ? divisible_by_three.shift : val }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sort_third
+    candidate = method(:sort_third)
+    assert_equal([2, 6, 3, 4, 8, 9, 5], candidate.call([5, 6, 3, 4, 8, 9, 2]))
+    assert_equal([2, 8, 3, 4, 6, 9, 5], candidate.call([5, 8, 3, 4, 6, 9, 2]))
+    assert_equal([2, 6, 9, 4, 8, 3, 5], candidate.call([5, 6, 9, 4, 8, 3, 2]))
+    assert_equal([2, 6, 3, 4, 8, 9, 5, 1], candidate.call([5, 6, 3, 4, 8, 9, 2, 1]))
+  end
+end
+"
+HumanEval_34,yue_Hant,rb,"返回一個陣列中排序的唯一元素# >>> unique.call([5, 3, 5, 2, 3, 3, 9, 0, 123])
+# [0, 2, 3, 5, 9, 123]
+def unique(l)
+","def unique(l)
+  l.uniq.sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_unique
+    candidate = method(:unique)
+    assert_equal([0, 2, 3, 5, 9, 123], candidate.call([5, 3, 5, 2, 3, 3, 9, 0, 123]))
+  end
+end
+"
+HumanEval_35,yue_Hant,rb,"返回数组中最大元素.# >>> max_element.call([1, 2, 3])
+# 3
+# >>> max_element.call([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])
+# 123
+def max_element(l)
+","def max_element(l)
+  l.max
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_max_element
+    candidate = method(:max_element)
+    assert_equal(3, candidate.call([1, 2, 3]))
+    assert_equal(124, candidate.call([5, 3, -5, 2, -3, 3, 9, 0, 124, 1, -10]))
+  end
+end
+"
+HumanEval_36,yue_Hant,rb,"返回数字7在小于n的整数中出现的次数,该整数可被11或13除以.# >>> fizz_buzz.call(50)
+# 0
+# >>> fizz_buzz.call(78)
+# 2
+# >>> fizz_buzz.call(79)
+# 3
+def fizz_buzz(n)
+","def fizz_buzz(n)
+  count = 0
+  (1...n).each do |i|
+    if i % 11 == 0 || i % 13 == 0
+      count += i.to_s.count('7')
+    end
+  end
+  count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fizz_buzz
+    candidate = method(:fizz_buzz)
+    assert_equal(0, candidate.call(50))
+    assert_equal(2, candidate.call(78))
+    assert_equal(3, candidate.call(79))
+    assert_equal(3, candidate.call(100))
+    assert_equal(6, candidate.call(200))
+    assert_equal(192, candidate.call(4000))
+    assert_equal(639, candidate.call(10000))
+    assert_equal(8026, candidate.call(100000))
+  end
+end
+"
+HumanEval_37,yue_Hant,rb,"值,但有序.l' 同奇數值嘅 l 同等,但偶數值嘅 l 同等呢個函數取一個數列l,然後返回一個數列l,# >>> sort_even.call([1, 2, 3])
+# [1, 2, 3]
+# >>> sort_even.call([5, 6, 3, 4])
+# [3, 6, 5, 4]
+def sort_even(l)
+","def sort_even(l)
+  even_indices = l.each_index.select { |i| i.even? }
+  even_values = even_indices.map { |i| l[i] }.sort
+  
+  even_index = 0
+  l.each_with_index.map do |value, index|
+    if index.even?
+      even_values[even_index].tap { even_index += 1 }
+    else
+      value
+    end
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sort_even
+    candidate = method(:sort_even)
+    assert_equal([1, 2, 3], candidate.call([1, 2, 3]))
+    assert_equal([-10, 3, -5, 2, -3, 3, 5, 0, 9, 1, 123], candidate.call([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10]))
+    assert_equal([-12, 8, 3, 4, 5, 2, 12, 11, 23, -10], candidate.call([5, 8, -12, 4, 23, 2, 3, 11, 12, -10]))
+  end
+end
+"
+HumanEval_39,yue_Hant,rb,"prime_fib 返回第 n 个是斐波那契数的数,同时也是个素数.# >>> prime_fib.call(1)
+# 2
+# >>> prime_fib.call(2)
+# 3
+# >>> prime_fib.call(3)
+# 5
+# >>> prime_fib.call(4)
+# 13
+# >>> prime_fib.call(5)
+# 89
+def prime_fib(n)
+","def prime_fib(n)
+  require 'prime'
+  
+  fibs = Enumerator.new do |y|
+    a, b = 0, 1
+    loop do
+      a, b = b, a + b
+      y << b
+    end
+  end
+  
+  prime_fibs = fibs.lazy.select { |fib| Prime.prime?(fib) }
+  prime_fibs.first(n).last
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_prime_fib
+    candidate = method(:prime_fib)
+    assert_equal(2, candidate.call(1))
+    assert_equal(3, candidate.call(2))
+    assert_equal(5, candidate.call(3))
+    assert_equal(13, candidate.call(4))
+    assert_equal(89, candidate.call(5))
+    assert_equal(233, candidate.call(6))
+    assert_equal(1597, candidate.call(7))
+    assert_equal(28657, candidate.call(8))
+    assert_equal(514229, candidate.call(9))
+    assert_equal(433494437, candidate.call(10))
+  end
+end
+"
+HumanEval_40,yue_Hant,rb,"其他情況下都係錯嘅如果有三個不同元素,它會返回 truetriples_sum_to_zero 需要一個整數來做輸入.# >>> triples_sum_to_zero.call([1, 3, 5, 0])
+# false
+# >>> triples_sum_to_zero.call([1, 3, -2, 1])
+# true
+# >>> triples_sum_to_zero.call([1, 2, 3, 7])
+# false
+# >>> triples_sum_to_zero.call([2, 4, -5, 3, 9, 7])
+# true
+# >>> triples_sum_to_zero.call([1])
+# false
+def triples_sum_to_zero(l)
+","def triples_sum_to_zero(l)
+  n = l.length
+  (0...n-2).each do |i|
+    ((i+1)...n-1).each do |j|
+      ((j+1)...n).each do |k|
+        return true if l[i] + l[j] + l[k] == 0
+      end
+    end
+  end
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_triples_sum_to_zero
+    candidate = method(:triples_sum_to_zero)
+    assert_equal(false, candidate.call([1, 3, 5, 0]))
+    assert_equal(false, candidate.call([1, 3, 5, -1]))
+    assert_equal(true, candidate.call([1, 3, -2, 1]))
+    assert_equal(false, candidate.call([1, 2, 3, 7]))
+    assert_equal(false, candidate.call([1, 2, 5, 7]))
+    assert_equal(true, candidate.call([2, 4, -5, 3, 9, 7]))
+    assert_equal(false, candidate.call([1]))
+    assert_equal(false, candidate.call([1, 3, 5, -100]))
+    assert_equal(false, candidate.call([100, 3, 5, -100]))
+  end
+end
+"
+HumanEval_41,yue_Hant,rb,"呢個函數會輸入呢啲碰撞嘅數量.佢哋好似未撞過咁直立但係呢啲車好強大 堅固無阻 所以佢哋會繼續行路當一輛車從左往右移動時 撞到一輛從右往左移動的車兩輛車嘅速度都一樣. 兩個車嘅相撞,就係佢地碰撞.兩組車開始時 距地好遠n 部車由左行到右行 同時,另外一組車想像一下一個完美直線 路徑無限長def car_race_collision(n)
+","def car_race_collision(n)
+  n
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_car_race_collision
+    candidate = method(:car_race_collision)
+    assert_equal(4, candidate.call(2))
+    assert_equal(9, candidate.call(3))
+    assert_equal(16, candidate.call(4))
+    assert_equal(64, candidate.call(8))
+    assert_equal(100, candidate.call(10))
+  end
+end
+"
+HumanEval_42,yue_Hant,rb,"返回元素增加1的数组.# >>> incr_list.call([1, 2, 3])
+# [2, 3, 4]
+# >>> incr_list.call([5, 3, 5, 2, 3, 3, 9, 0, 123])
+# [6, 4, 6, 3, 4, 4, 10, 1, 124]
+def incr_list(l)
+","def incr_list(l)
+  l.map { |x| x + 1 }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_incr_list
+    candidate = method(:incr_list)
+    assert_equal([], candidate.call([]))
+    assert_equal([4, 3, 2], candidate.call([3, 2, 1]))
+    assert_equal([6, 3, 6, 3, 4, 4, 10, 1, 124], candidate.call([5, 2, 5, 2, 3, 3, 9, 0, 123]))
+  end
+end
+"
+HumanEval_43,yue_Hant,rb,"其他情況下都係錯嘅如果有兩個不同元素,它會返回 truepairs_sum_to_zero 取整數組成一個輸入.# >>> pairs_sum_to_zero.call([1, 3, 5, 0])
+# false
+# >>> pairs_sum_to_zero.call([1, 3, -2, 1])
+# false
+# >>> pairs_sum_to_zero.call([1, 2, 3, 7])
+# false
+# >>> pairs_sum_to_zero.call([2, 4, -5, 3, 5, 7])
+# true
+# >>> pairs_sum_to_zero.call([1])
+# false
+def pairs_sum_to_zero(l)
+","def pairs_sum_to_zero(l)
+  num_set = l.to_set
+  l.each do |num|
+    return true if num != 0 && num_set.include?(-num)
+  end
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_pairs_sum_to_zero
+    candidate = method(:pairs_sum_to_zero)
+    assert_equal(false, candidate.call([1, 3, 5, 0]))
+    assert_equal(false, candidate.call([1, 3, -2, 1]))
+    assert_equal(false, candidate.call([1, 2, 3, 7]))
+    assert_equal(true, candidate.call([2, 4, -5, 3, 5, 7]))
+    assert_equal(false, candidate.call([1]))
+    assert_equal(true, candidate.call([-3, 9, -1, 3, 2, 30]))
+    assert_equal(true, candidate.call([-3, 9, -1, 3, 2, 31]))
+    assert_equal(false, candidate.call([-3, 9, -1, 4, 2, 30]))
+    assert_equal(false, candidate.call([-3, 9, -1, 4, 2, 31]))
+  end
+end
+"
+HumanEval_44,yue_Hant,rb,"基數小於10轉換之後會返回字符串表示.將輸入數字x的數值底數改為底數.# >>> change_base.call(8, 3)
+# ""22""
+# >>> change_base.call(8, 2)
+# ""1000""
+# >>> change_base.call(7, 2)
+# ""111""
+def change_base(x, base)
+","def change_base(x, base)
+  return '0' if x == 0
+  digits = []
+  while x > 0
+    digits << (x % base).to_s
+    x /= base
+  end
+  digits.reverse.join
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_change_base
+    candidate = method(:change_base)
+    assert_equal(""22"", candidate.call(8, 3))
+    assert_equal(""100"", candidate.call(9, 3))
+    assert_equal(""11101010"", candidate.call(234, 2))
+    assert_equal(""10000"", candidate.call(16, 2))
+    assert_equal(""1000"", candidate.call(8, 2))
+    assert_equal(""111"", candidate.call(7, 2))
+    assert_equal(""2"", candidate.call(2, 3))
+    assert_equal(""3"", candidate.call(3, 4))
+    assert_equal(""4"", candidate.call(4, 5))
+    assert_equal(""5"", candidate.call(5, 6))
+    assert_equal(""6"", candidate.call(6, 7))
+    assert_equal(""7"", candidate.call(7, 8))
+  end
+end
+"
+HumanEval_45,yue_Hant,rb,"给定边长和高回归面积的三角形.# >>> triangle_area.call(5, 3)
+# 7.5
+def triangle_area(a, h)
+","def triangle_area(a, h)
+  (a * h) / 2.0
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_triangle_area
+    candidate = method(:triangle_area)
+    assert_equal(7.5, candidate.call(5, 3))
+    assert_equal(2.0, candidate.call(2, 2))
+    assert_equal(40.0, candidate.call(10, 8))
+  end
+end
+"
+HumanEval_46,yue_Hant,rb,"請寫一個函數,有效計算 fib4數列的第 n 元素.不要使用復習.4n) -> 4n-1) + 4n-2) + 4n-3) + 4n-4).fib4(3) -> 0 fib4(2) -> 2 fib4(1) -> 0 fib4(0) -> 0 Fib4 序列嘅數字類似於 Fibbonacci 序列嘅數字序列,其定義係咁:# >>> fib4.call(5)
+# 4
+# >>> fib4.call(6)
+# 8
+# >>> fib4.call(7)
+# 14
+def fib4(n)
+","def fib4(n)
+  return 0 if n == 0 || n == 1 || n == 3
+  return 2 if n == 2
+
+  fib4_seq = [0, 0, 2, 0]
+  (4..n).each do |i|
+    fib4_seq[i] = fib4_seq[i-1] + fib4_seq[i-2] + fib4_seq[i-3] + fib4_seq[i-4]
+  end
+  fib4_seq[n]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fib4
+    candidate = method(:fib4)
+    assert_equal(4, candidate.call(5))
+    assert_equal(28, candidate.call(8))
+    assert_equal(104, candidate.call(10))
+    assert_equal(386, candidate.call(12))
+  end
+end
+"
+HumanEval_47,yue_Hant,rb,"返回数组中元素的中位数l.# >>> median.call([3, 1, 2, 4, 5])
+# 3
+# >>> median.call([-10, 4, 6, 1000, 10, 20])
+# 15.0
+def median(l)
+","def median(l)
+  sorted = l.sort
+  len = sorted.length
+  if len.odd?
+    sorted[len / 2]
+  else
+    (sorted[len / 2 - 1] + sorted[len / 2]) / 2.0
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_median
+    candidate = method(:median)
+    assert_equal(3, candidate.call([3, 1, 2, 4, 5]))
+    assert_equal(8.0, candidate.call([-10, 4, 6, 1000, 10, 20]))
+    assert_equal(5, candidate.call([5]))
+    assert_equal(5.5, candidate.call([6, 5]))
+    assert_equal(7, candidate.call([8, 1, 3, 9, 9, 2, 7]))
+  end
+end
+"
+HumanEval_48,yue_Hant,rb,"檢查一個字符串是否為平行符號# >>> is_palindrome.call("""")
+# true
+# >>> is_palindrome.call(""aba"")
+# true
+# >>> is_palindrome.call(""aaaaa"")
+# true
+# >>> is_palindrome.call(""zbcd"")
+# false
+def is_palindrome(text)
+","is_palindrome = lambda do |text|
+  text == text.reverse
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_palindrome
+    candidate = method(:is_palindrome)
+    assert_equal(true, candidate.call(""""))
+    assert_equal(true, candidate.call(""aba""))
+    assert_equal(true, candidate.call(""aaaaa""))
+    assert_equal(false, candidate.call(""zbcd""))
+    assert_equal(true, candidate.call(""xywyx""))
+    assert_equal(false, candidate.call(""xywyz""))
+    assert_equal(false, candidate.call(""xywzx""))
+  end
+end
+"
+HumanEval_49,yue_Hant,rb,"返回2^n模块p (请注意数字).# >>> modp.call(3, 5)
+# 3
+# >>> modp.call(1101, 101)
+# 2
+# >>> modp.call(0, 101)
+# 1
+# >>> modp.call(3, 11)
+# 8
+# >>> modp.call(100, 101)
+# 1
+def modp(n, p)
+","def modp(n, p)
+  return 1 if p == 1
+  2.pow(n, p)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_modp
+    candidate = method(:modp)
+    assert_equal(3, candidate.call(3, 5))
+    assert_equal(2, candidate.call(1101, 101))
+    assert_equal(1, candidate.call(0, 101))
+    assert_equal(8, candidate.call(3, 11))
+    assert_equal(1, candidate.call(100, 101))
+    assert_equal(4, candidate.call(30, 5))
+    assert_equal(3, candidate.call(31, 5))
+  end
+end
+"
+HumanEval_51,yue_Hant,rb,"remove_vowels係一個函數,佢取 string 然後返回無 vowels 嘅 string.# >>> remove_vowels.call("""")
+# """"
+# >>> remove_vowels.call(""abcdef"")
+# ""bcdf""
+# >>> remove_vowels.call(""aaaaa"")
+# """"
+# >>> remove_vowels.call(""aaBAA"")
+# ""B""
+# >>> remove_vowels.call(""zbcd"")
+# ""zbcd""
+def remove_vowels(text)
+","def remove_vowels(text)
+  text.delete('aeiouAEIOU')
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_remove_vowels
+    candidate = method(:remove_vowels)
+    assert_equal("""", candidate.call(""""))
+    assert_equal(""bcdf
+ghjklm"", candidate.call(""abcdef
+ghijklm""))
+    assert_equal(""fdcb"", candidate.call(""fedcba""))
+    assert_equal("""", candidate.call(""eeeee""))
+    assert_equal(""cB"", candidate.call(""acBAA""))
+    assert_equal(""cB"", candidate.call(""EcBOO""))
+    assert_equal(""ybcd"", candidate.call(""ybcd""))
+  end
+end
+"
+HumanEval_52,yue_Hant,rb,"如果数组 l 中所有数都低于值 t,则返回 true.# >>> below_threshold.call([1, 2, 4, 10], 100)
+# true
+# >>> below_threshold.call([1, 20, 4, 10], 5)
+# false
+def below_threshold(l, t)
+","def below_threshold(l, t)
+  l.all? { |num| num < t }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_below_threshold
+    candidate = method(:below_threshold)
+    assert_equal(true, candidate.call([1, 2, 4, 10], 100))
+    assert_equal(false, candidate.call([1, 20, 4, 10], 5))
+    assert_equal(true, candidate.call([1, 20, 4, 10], 21))
+    assert_equal(true, candidate.call([1, 20, 4, 10], 22))
+    assert_equal(true, candidate.call([1, 8, 4, 10], 11))
+    assert_equal(false, candidate.call([1, 8, 4, 10], 10))
+  end
+end
+"
+HumanEval_53,yue_Hant,rb,"總之,我們加上兩個數字,x和y# >>> add.call(2, 3)
+# 5
+# >>> add.call(5, 7)
+# 12
+def add(x, y)
+","add = ->(x, y) { x + y }","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_add
+    candidate = method(:add)
+    assert_equal(1, candidate.call(0, 1))
+    assert_equal(1, candidate.call(1, 0))
+    assert_equal(5, candidate.call(2, 3))
+    assert_equal(12, candidate.call(5, 7))
+    assert_equal(12, candidate.call(7, 5))
+  end
+end
+"
+HumanEval_54,yue_Hant,rb,"檢查一下兩個詞是否有相同嘅字符.# >>> same_chars.call(""eabcdzzzz"", ""dddzzzzzzzddeddabc"")
+# true
+# >>> same_chars.call(""abcd"", ""dddddddabc"")
+# true
+# >>> same_chars.call(""dddddddabc"", ""abcd"")
+# true
+# >>> same_chars.call(""eabcd"", ""dddddddabc"")
+# false
+# >>> same_chars.call(""abcd"", ""dddddddabce"")
+# false
+# >>> same_chars.call(""eabcdzzzz"", ""dddzzzzzzzddddabc"")
+# false
+def same_chars(s0, s1)
+","def same_chars(s0, s1)
+  s0.chars.uniq.all? { |char| s1.include?(char) } &&
+  s1.chars.uniq.all? { |char| s0.include?(char) }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_same_chars
+    candidate = method(:same_chars)
+    assert_equal(true, candidate.call(""eabcdzzzz"", ""dddzzzzzzzddeddabc""))
+    assert_equal(true, candidate.call(""abcd"", ""dddddddabc""))
+    assert_equal(true, candidate.call(""dddddddabc"", ""abcd""))
+    assert_equal(false, candidate.call(""eabcd"", ""dddddddabc""))
+    assert_equal(false, candidate.call(""abcd"", ""dddddddabcf""))
+    assert_equal(false, candidate.call(""eabcdzzzz"", ""dddzzzzzzzddddabc""))
+    assert_equal(false, candidate.call(""aabb"", ""aaccc""))
+  end
+end
+"
+HumanEval_55,yue_Hant,rb,"返回第 n 个斐波那契数.# >>> fib.call(10)
+# 55
+# >>> fib.call(1)
+# 1
+# >>> fib.call(8)
+# 21
+def fib(n)
+","def fib(n)
+  return n if n <= 1
+  fib(n - 1) + fib(n - 2)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fib
+    candidate = method(:fib)
+    assert_equal(55, candidate.call(10))
+    assert_equal(1, candidate.call(1))
+    assert_equal(21, candidate.call(8))
+    assert_equal(89, candidate.call(11))
+    assert_equal(144, candidate.call(12))
+  end
+end
+"
+HumanEval_56,yue_Hant,rb,"如果每個開關括號都有相應的閉關括號,則返回 true.括号是个字符串,它包含了""<""和"">"".# >>> correct_bracketing.call(""<"")
+# false
+# >>> correct_bracketing.call(""<>"")
+# true
+# >>> correct_bracketing.call(""<<><>>"")
+# true
+# >>> correct_bracketing.call(""><<>"")
+# false
+def correct_bracketing(brackets)
+","def correct_bracketing(brackets)
+  balance = 0
+  brackets.chars.each do |char|
+    if char == '<'
+      balance += 1
+    elsif char == '>'
+      balance -= 1
+    end
+    return false if balance < 0
+  end
+  balance == 0
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_correct_bracketing
+    candidate = method(:correct_bracketing)
+    assert_equal(true, candidate.call(""<>""))
+    assert_equal(true, candidate.call(""<<><>>""))
+    assert_equal(true, candidate.call(""<><><<><>><>""))
+    assert_equal(true, candidate.call(""<><><<<><><>><>><<><><<>>>""))
+    assert_equal(false, candidate.call(""<<<><>>>>""))
+    assert_equal(false, candidate.call(""><<>""))
+    assert_equal(false, candidate.call(""<""))
+    assert_equal(false, candidate.call(""<<<<""))
+    assert_equal(false, candidate.call("">""))
+    assert_equal(false, candidate.call(""<<>""))
+    assert_equal(false, candidate.call(""<><><<><>><>><<>""))
+    assert_equal(false, candidate.call(""<><><<><>><>>><>""))
+  end
+end
+"
+HumanEval_57,yue_Hant,rb,"返回true 字數组元素單調增加或減少# >>> monotonic.call([1, 2, 4, 20])
+# true
+# >>> monotonic.call([1, 20, 4, 10])
+# false
+# >>> monotonic.call([4, 1, 0, -10])
+# true
+def monotonic(l)
+","def monotonic(l)
+  increasing = true
+  decreasing = true
+
+  (0...l.length - 1).each do |i|
+    if l[i] < l[i + 1]
+      decreasing = false
+    elsif l[i] > l[i + 1]
+      increasing = false
+    end
+  end
+
+  increasing || decreasing
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_monotonic
+    candidate = method(:monotonic)
+    assert_equal(true, candidate.call([1, 2, 4, 10]))
+    assert_equal(true, candidate.call([1, 2, 4, 20]))
+    assert_equal(false, candidate.call([1, 20, 4, 10]))
+    assert_equal(true, candidate.call([4, 1, 0, -10]))
+    assert_equal(true, candidate.call([4, 1, 1, 0]))
+    assert_equal(false, candidate.call([1, 2, 3, 2, 5, 60]))
+    assert_equal(true, candidate.call([1, 2, 3, 4, 5, 60]))
+    assert_equal(true, candidate.call([9, 9, 9, 9]))
+  end
+end
+"
+HumanEval_58,yue_Hant,rb,"返回兩個陣列的排序獨特的共同元素.# >>> common.call([1, 4, 3, 34, 653, 2, 5], [5, 7, 1, 5, 9, 653, 121])
+# [1, 5, 653]
+# >>> common.call([5, 3, 2, 8], [3, 2])
+# [2, 3]
+def common(l1, l2)
+","def common(l1, l2)
+  (l1 & l2).uniq.sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_common
+    candidate = method(:common)
+    assert_equal([1, 5, 653], candidate.call([1, 4, 3, 34, 653, 2, 5], [5, 7, 1, 5, 9, 653, 121]))
+    assert_equal([2, 3], candidate.call([5, 3, 2, 8], [3, 2]))
+    assert_equal([2, 3, 4], candidate.call([4, 3, 2, 8], [3, 2, 4]))
+    assert_equal([], candidate.call([4, 3, 2, 8], []))
+  end
+end
+"
+HumanEval_59,yue_Hant,rb,"返回n的最大素因数.假设n > 1且不是素因数.# >>> largest_prime_factor.call(13195)
+# 29
+# >>> largest_prime_factor.call(2048)
+# 2
+def largest_prime_factor(n)
+","def largest_prime_factor(n)
+  factor = 2
+  while factor * factor <= n
+    if n % factor == 0
+      n /= factor
+    else
+      factor += 1
+    end
+  end
+  n
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_largest_prime_factor
+    candidate = method(:largest_prime_factor)
+    assert_equal(5, candidate.call(15))
+    assert_equal(3, candidate.call(27))
+    assert_equal(7, candidate.call(63))
+    assert_equal(11, candidate.call(330))
+    assert_equal(29, candidate.call(13195))
+  end
+end
+"
+HumanEval_60,yue_Hant,rb,"sum_to_n 係一個函數,可以從 1 到 n 總結數字.# >>> sum_to_n.call(30)
+# 465
+# >>> sum_to_n.call(100)
+# 5050
+# >>> sum_to_n.call(5)
+# 15
+# >>> sum_to_n.call(10)
+# 55
+# >>> sum_to_n.call(1)
+# 1
+def sum_to_n(n)
+","def sum_to_n(n)
+  (1..n).sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sum_to_n
+    candidate = method(:sum_to_n)
+    assert_equal(1, candidate.call(1))
+    assert_equal(21, candidate.call(6))
+    assert_equal(66, candidate.call(11))
+    assert_equal(465, candidate.call(30))
+    assert_equal(5050, candidate.call(100))
+  end
+end
+"
+HumanEval_61,yue_Hant,rb,"如果每個開關括號都有相應的閉關括號,則返回 true.括号是个字符串,它包含"" (),""和"" ().# >>> correct_bracketing.call(""("")
+# false
+# >>> correct_bracketing.call(""()"")
+# true
+# >>> correct_bracketing.call(""(()())"")
+# true
+# >>> correct_bracketing.call("")(()"")
+# false
+def correct_bracketing(brackets)
+","def correct_bracketing(brackets)
+  balance = 0
+  brackets.each_char do |char|
+    if char == '('
+      balance += 1
+    elsif char == ')'
+      balance -= 1
+    end
+    return false if balance < 0
+  end
+  balance == 0
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_correct_bracketing
+    candidate = method(:correct_bracketing)
+    assert_equal(true, candidate.call(""()""))
+    assert_equal(true, candidate.call(""(()())""))
+    assert_equal(true, candidate.call(""()()(()())()""))
+    assert_equal(true, candidate.call(""()()((()()())())(()()(()))""))
+    assert_equal(false, candidate.call(""((()())))""))
+    assert_equal(false, candidate.call("")(()""))
+    assert_equal(false, candidate.call(""(""))
+    assert_equal(false, candidate.call(""((((""))
+    assert_equal(false, candidate.call("")""))
+    assert_equal(false, candidate.call(""(()""))
+    assert_equal(false, candidate.call(""()()(()())())(()""))
+    assert_equal(false, candidate.call(""()()(()())()))()""))
+  end
+end
+"
+HumanEval_62,yue_Hant,rb,"返回这个多项式的同一个形式的导数.xs[0] + xs[1] * x + xs[2] * x^2 + .... xs 代表多項式的系數.# >>> derivative.call([3, 1, 2, 4, 5])
+# [1, 4, 12, 20]
+# >>> derivative.call([1, 2, 3])
+# [2, 6]
+def derivative(xs)
+","def derivative(xs)
+  return [] if xs.length < 2
+  xs.each_with_index.map { |coef, index| coef * index }[1..-1]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_derivative
+    candidate = method(:derivative)
+    assert_equal([1, 4, 12, 20], candidate.call([3, 1, 2, 4, 5]))
+    assert_equal([2, 6], candidate.call([1, 2, 3]))
+    assert_equal([2, 2], candidate.call([3, 2, 1]))
+    assert_equal([2, 2, 0, 16], candidate.call([3, 2, 1, 0, 4]))
+    assert_equal([], candidate.call([1]))
+  end
+end
+"
+HumanEval_63,yue_Hant,rb,"請寫一個函數,有效計算出 fibfib數列的第 n 元素.粉 (n) == 粉 (n-1) + 粉 (n-2) + 粉 (n-3). ()  ()  ()      FibFib數列係類似 Fibbonacci 序列嘅,被定義為:# >>> fibfib.call(1)
+# 0
+# >>> fibfib.call(5)
+# 4
+# >>> fibfib.call(8)
+# 24
+def fibfib(n)
+","def fibfib(n)
+  return 0 if n == 0 || n == 1
+  return 1 if n == 2
+
+  a, b, c = 0, 0, 1
+  (3..n).each do
+    a, b, c = b, c, a + b + c
+  end
+  c
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fibfib
+    candidate = method(:fibfib)
+    assert_equal(1, candidate.call(2))
+    assert_equal(0, candidate.call(1))
+    assert_equal(4, candidate.call(5))
+    assert_equal(24, candidate.call(8))
+    assert_equal(81, candidate.call(10))
+    assert_equal(274, candidate.call(12))
+    assert_equal(927, candidate.call(14))
+  end
+end
+"
+HumanEval_64,yue_Hant,rb,"譬如..只有當個詞嘅最後出現時,才會出現母音喺呢度嘅母音係""a"", ""e"", ""i"", ""o"", ""u"". ""y""都係""a""輸入一個字,並返回字串中母音嘅數量.寫一個函數,叫做 vowels_count,用一條代表# >>> vowels_count.call(""abcde"")
+# 2
+# >>> vowels_count.call(""ACEDY"")
+# 3
+def vowels_count(s)
+","def vowels_count(s)
+  vowels = ['a', 'e', 'i', 'o', 'u']
+  count = 0
+  
+  s.chars.each_with_index do |char, index|
+    if vowels.include?(char.downcase)
+      count += 1
+    elsif char.downcase == 'y' && index == s.length - 1
+      count += 1
+    end
+  end
+  
+  count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_vowels_count
+    candidate = method(:vowels_count)
+    assert_equal(2, candidate.call(""abcde""))
+    assert_equal(3, candidate.call(""Alone""))
+    assert_equal(2, candidate.call(""key""))
+    assert_equal(1, candidate.call(""bye""))
+    assert_equal(2, candidate.call(""keY""))
+    assert_equal(1, candidate.call(""bYe""))
+    assert_equal(3, candidate.call(""ACEDY""))
+  end
+end
+"
+HumanEval_65,yue_Hant,rb,"如果shift > 数字数,返回数字反转.返回嘅結果會係一個字符串.轉換整數 x 轉換成一個圓,# >>> circular_shift.call(12, 1)
+# ""21""
+# >>> circular_shift.call(12, 2)
+# ""12""
+def circular_shift(x, shift)
+","def circular_shift(x, shift)
+  digits = x.to_s.chars
+  num_digits = digits.length
+
+  if shift > num_digits
+    return digits.reverse.join
+  else
+    shift = shift % num_digits
+    shifted_digits = digits.rotate(-shift)
+    return shifted_digits.join
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_circular_shift
+    candidate = method(:circular_shift)
+    assert_equal(""001"", candidate.call(100, 2))
+    assert_equal(""12"", candidate.call(12, 2))
+    assert_equal(""79"", candidate.call(97, 8))
+    assert_equal(""21"", candidate.call(12, 1))
+    assert_equal(""11"", candidate.call(11, 101))
+  end
+end
+"
+HumanEval_66,yue_Hant,rb,"譬如:ASCII 代碼寫一個函數,當字符串係輸入嘅,只會返回最上面嘅字符""任務# >>> digitSum.call("""")
+# 0
+# >>> digitSum.call(""abAB"")
+# 131
+# >>> digitSum.call(""abcCd"")
+# 67
+# >>> digitSum.call(""helloE"")
+# 69
+# >>> digitSum.call(""woArBld"")
+# 131
+# >>> digitSum.call(""aAaaaXa"")
+# 153
+def digitSum(s)
+","def digitSum(s)
+  s.chars.select { |char| char =~ /[A-Z]/ }.map(&:ord).sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_digitSum
+    candidate = method(:digitSum)
+    assert_equal(0, candidate.call(""""))
+    assert_equal(131, candidate.call(""abAB""))
+    assert_equal(67, candidate.call(""abcCd""))
+    assert_equal(69, candidate.call(""helloE""))
+    assert_equal(131, candidate.call(""woArBld""))
+    assert_equal(153, candidate.call(""aAaaaXa""))
+    assert_equal(151, candidate.call("" How are yOu?""))
+    assert_equal(327, candidate.call(""You arE Very Smart""))
+  end
+end
+"
+HumanEval_67,yue_Hant,rb,"關於""examble""嘅:喺裡面,返回果果喺裡面嘅數字.子同果,同埋整數,代表果實嘅總數.果,子,果果. 如果给出代表 个数的字符串,果實可以放入一個果裡面喺呢個任務裏邊 你會得到一條代表果同子嘅字符串# >>> fruit_distribution.call(""5 apples and 6 oranges"", 19)
+# 8
+# >>> fruit_distribution.call(""0 apples and 1 oranges"", 3)
+# 2
+# >>> fruit_distribution.call(""2 apples and 3 oranges"", 100)
+# 95
+# >>> fruit_distribution.call(""100 apples and 1 oranges"", 120)
+# 19
+def fruit_distribution(s, n)
+","def fruit_distribution(s, n)
+  numbers = s.scan(/\d+/).map(&:to_i)
+  apples = numbers[0]
+  oranges = numbers[1]
+  total_fruits = n
+  mangos = total_fruits - (apples + oranges)
+  mangos
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fruit_distribution
+    candidate = method(:fruit_distribution)
+    assert_equal(8, candidate.call(""5 apples and 6 oranges"", 19))
+    assert_equal(10, candidate.call(""5 apples and 6 oranges"", 21))
+    assert_equal(2, candidate.call(""0 apples and 1 oranges"", 3))
+    assert_equal(2, candidate.call(""1 apples and 0 oranges"", 3))
+    assert_equal(95, candidate.call(""2 apples and 3 oranges"", 100))
+    assert_equal(0, candidate.call(""2 apples and 3 oranges"", 5))
+    assert_equal(19, candidate.call(""1 apples and 100 oranges"", 120))
+  end
+end
+"
+HumanEval_68,yue_Hant,rb,"舉例一:如果無偶數值或者數字係空嘅,返回 [].摘取的节点应该返回一个数组, [smallest_value,它的索引], 如果多個節點都有同一個最小偶數值, 返回最小索引的節點.摘取嘅节点应该是最小偶数值的节点.你嘅任務就係搵返其中一個節點,然後將佢送返畀你给定一个数组代表树的分支,它有非负数整数节点# >>> pluck.call([4, 2, 3])
+# [2, 1]
+# Explanation: 2 has the smallest even value, and 2 has the smallest index.
+# Example 2:
+# >>> pluck.call([1, 2, 3])
+# [2, 1]
+# Explanation: 2 has the smallest even value, and 2 has the smallest index.
+# Example 3:
+# >>> pluck.call([])
+# []
+# Example 4:
+# >>> pluck.call([5, 0, 3, 0, 4, 2])
+# [0, 1]
+# Explanation: 0 is the smallest value, but  there are two zeros,
+# so we will choose the first zero, which has the smallest index.
+# Constraints:
+# * 1 <= nodes.length <= 10000
+# * 0 <= node.value
+def pluck(arr)
+","def pluck(arr)
+  smallest_even = nil
+  smallest_index = nil
+  
+  arr.each_with_index do |value, index|
+    if value.even?
+      if smallest_even.nil? || value < smallest_even
+        smallest_even = value
+        smallest_index = index
+      end
+    end
+  end
+
+  smallest_even.nil? ? [] : [smallest_even, smallest_index]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_pluck
+    candidate = method(:pluck)
+    assert_equal([2, 1], candidate.call([4, 2, 3]))
+    assert_equal([2, 1], candidate.call([1, 2, 3]))
+    assert_equal([], candidate.call([]))
+    assert_equal([0, 1], candidate.call([5, 0, 3, 0, 4, 2]))
+    assert_equal([0, 3], candidate.call([1, 2, 3, 0, 5, 3]))
+    assert_equal([4, 1], candidate.call([5, 4, 8, 4, 8]))
+    assert_equal([6, 1], candidate.call([7, 6, 7, 1]))
+    assert_equal([], candidate.call([7, 9, 7, 1]))
+  end
+end
+"
+HumanEval_69,yue_Hant,rb,"譬如:如果無任何值,返回 -1.一個整數嘅頻率,就係佢喺數字表入面出現嘅次數.零,同埋佢嘅頻率大於,或者等於整數本身嘅值.给你一个非空数组的正整数.返回最大的整数大于# >>> search.call([4, 1, 2, 2, 3, 1])
+# 2
+# >>> search.call([1, 2, 2, 3, 3, 3, 4, 4, 4])
+# 3
+# >>> search.call([5, 5, 4, 4, 4])
+# -1
+def search(lst)
+","def search(lst)
+  freq_hash = lst.each_with_object(Hash.new(0)) { |num, hash| hash[num] += 1 }
+  valid_numbers = freq_hash.select { |num, freq| freq >= num }.keys
+  valid_numbers.empty? ? -1 : valid_numbers.max
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_search
+    candidate = method(:search)
+    assert_equal(1, candidate.call([5, 5, 5, 5, 1]))
+    assert_equal(4, candidate.call([4, 1, 4, 1, 4, 4]))
+    assert_equal(-1, candidate.call([3, 3]))
+    assert_equal(8, candidate.call([8, 8, 8, 8, 8, 8, 8, 8]))
+    assert_equal(2, candidate.call([2, 3, 3, 2, 2]))
+    assert_equal(1, candidate.call([2, 7, 8, 8, 4, 8, 7, 3, 9, 6, 5, 10, 4, 3, 6, 7, 1, 7, 4, 10, 8, 1]))
+    assert_equal(2, candidate.call([3, 2, 8, 2]))
+    assert_equal(1, candidate.call([6, 7, 1, 8, 8, 10, 5, 8, 5, 3, 10]))
+    assert_equal(-1, candidate.call([8, 8, 3, 6, 5, 6, 4]))
+    assert_equal(1, candidate.call([6, 9, 6, 7, 1, 4, 7, 1, 8, 8, 9, 8, 10, 10, 8, 4, 10, 4, 10, 1, 2, 9, 5, 7, 9]))
+    assert_equal(1, candidate.call([1, 9, 10, 1, 3]))
+    assert_equal(5, candidate.call([6, 9, 7, 5, 8, 7, 5, 3, 7, 5, 10, 10, 3, 6, 10, 2, 8, 6, 5, 4, 9, 5, 3, 10]))
+    assert_equal(1, candidate.call([1]))
+    assert_equal(4, candidate.call([8, 8, 10, 6, 4, 3, 5, 8, 2, 4, 2, 8, 4, 6, 10, 4, 2, 1, 10, 2, 1, 1, 5]))
+    assert_equal(2, candidate.call([2, 10, 4, 8, 2, 10, 5, 1, 2, 9, 5, 5, 6, 3, 8, 6, 4, 10]))
+    assert_equal(1, candidate.call([1, 6, 10, 1, 6, 9, 10, 8, 6, 8, 7, 3]))
+    assert_equal(4, candidate.call([9, 2, 4, 1, 5, 1, 5, 2, 5, 7, 7, 7, 3, 10, 1, 5, 4, 2, 8, 4, 1, 9, 10, 7, 10, 2, 8, 10, 9, 4]))
+    assert_equal(4, candidate.call([2, 6, 4, 2, 8, 7, 5, 6, 4, 10, 4, 6, 3, 7, 8, 8, 3, 1, 4, 2, 2, 10, 7]))
+    assert_equal(2, candidate.call([9, 8, 6, 10, 2, 6, 10, 2, 7, 8, 10, 3, 8, 2, 6, 2, 3, 1]))
+    assert_equal(-1, candidate.call([5, 5, 3, 9, 5, 6, 3, 2, 8, 5, 6, 10, 10, 6, 8, 4, 10, 7, 7, 10, 8]))
+    assert_equal(-1, candidate.call([10]))
+    assert_equal(2, candidate.call([9, 7, 7, 2, 4, 7, 2, 10, 9, 7, 5, 7, 2]))
+    assert_equal(1, candidate.call([5, 4, 10, 2, 1, 1, 10, 3, 6, 1, 8]))
+    assert_equal(1, candidate.call([7, 9, 9, 9, 3, 4, 1, 5, 9, 1, 2, 1, 1, 10, 7, 5, 6, 7, 6, 7, 7, 6]))
+    assert_equal(-1, candidate.call([3, 10, 10, 9, 2]))
+  end
+end
+"
+HumanEval_70,yue_Hant,rb,"譬如:剩下的整数中最大的数,然后是最小的数,等等.奇怪的排序,是从最小值开始的,给定一组整数,返回一个奇怪的顺序.# >>> strange_sort_list.call([1, 2, 3, 4])
+# [1, 4, 2, 3]
+# >>> strange_sort_list.call([5, 5, 5, 5])
+# [5, 5, 5, 5]
+# >>> strange_sort_list.call([])
+# []
+def strange_sort_list(lst)
+","def strange_sort_list(lst)
+  result = []
+  lst.sort!
+  until lst.empty?
+    result << lst.shift
+    result << lst.pop unless lst.empty?
+  end
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_strange_sort_list
+    candidate = method(:strange_sort_list)
+    assert_equal([1, 4, 2, 3], candidate.call([1, 2, 3, 4]))
+    assert_equal([5, 9, 6, 8, 7], candidate.call([5, 6, 7, 8, 9]))
+    assert_equal([1, 5, 2, 4, 3], candidate.call([1, 2, 3, 4, 5]))
+    assert_equal([1, 9, 5, 8, 6, 7], candidate.call([5, 6, 7, 8, 9, 1]))
+    assert_equal([5, 5, 5, 5], candidate.call([5, 5, 5, 5]))
+    assert_equal([], candidate.call([]))
+    assert_equal([1, 8, 2, 7, 3, 6, 4, 5], candidate.call([1, 2, 3, 4, 5, 6, 7, 8]))
+    assert_equal([-5, 5, -5, 5, 0, 2, 2, 2], candidate.call([0, 2, 2, 2, 5, 5, -5, -5]))
+    assert_equal([111111], candidate.call([111111]))
+  end
+end
+"
+HumanEval_71,yue_Hant,rb,"譬如..而唔係第三個面當任何兩邊的總和都大過三邊,否則返回-1如果三邊係合法的三角形,那就將三角形成 2 十進位给出三角形的三边长.返回 面积的# >>> triangle_area.call(3, 4, 5)
+# 6.0
+# >>> triangle_area.call(1, 2, 10)
+# -1
+def triangle_area(a, b, c)
+","def triangle_area(a, b, c)
+  # Check for valid triangle
+  if a + b > c && a + c > b && b + c > a
+    # Calculate the semi-perimeter
+    s = (a + b + c) / 2.0
+    # Calculate the area using Heron's formula
+    area = Math.sqrt(s * (s - a) * (s - b) * (s - c))
+    # Round to 2 decimal points
+    return area.round(2)
+  else
+    return -1
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_triangle_area
+    candidate = method(:triangle_area)
+    assert_equal(6.0, candidate.call(3, 4, 5))
+    assert_equal(-1, candidate.call(1, 2, 10))
+    assert_equal(8.18, candidate.call(4, 8, 5))
+    assert_equal(1.73, candidate.call(2, 2, 2))
+    assert_equal(-1, candidate.call(1, 2, 3))
+    assert_equal(16.25, candidate.call(10, 5, 7))
+    assert_equal(-1, candidate.call(2, 6, 3))
+    assert_equal(0.43, candidate.call(1, 1, 1))
+    assert_equal(-1, candidate.call(2, 2, 10))
+  end
+end
+"
+HumanEval_72,yue_Hant,rb,"譬如..如果物體q平衡 (即係一組對應式數列) 而物體總和小於或等於最大可能的重量w,物體q就會飛寫一個函數,如果物體q會飛,則返回真,否則返回錯.# >>> will_it_fly.call([1, 2], 5)
+# false
+# # 1+2 is less than the maximum possible weight, but it's unbalanced.
+# >>> will_it_fly.call([3, 2, 3], 1)
+# false
+# # it's balanced, but 3+2+3 is more than the maximum possible weight.
+# >>> will_it_fly.call([3, 2, 3], 9)
+# true
+# # 3+2+3 is less than the maximum possible weight, and it's balanced.
+# >>> will_it_fly.call([3], 5)
+# true
+# # 3 is less than the maximum possible weight, and it's balanced.
+def will_it_fly(q, w)
+","def will_it_fly(q, w)
+  is_palindrome = q == q.reverse
+  total_weight = q.sum
+  is_balanced_and_under_weight = is_palindrome && total_weight <= w
+  is_balanced_and_under_weight
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_will_it_fly
+    candidate = method(:will_it_fly)
+    assert_equal(true, candidate.call([3, 2, 3], 9))
+    assert_equal(false, candidate.call([1, 2], 5))
+    assert_equal(true, candidate.call([3], 5))
+    assert_equal(false, candidate.call([3, 2, 3], 1))
+    assert_equal(false, candidate.call([1, 2, 3], 6))
+    assert_equal(true, candidate.call([5], 5))
+  end
+end
+"
+HumanEval_73,yue_Hant,rb,"例如:兩者都可以用同一方式閱讀.你可以從一個元素轉換成另一種元素.要令数组变为平行体,需要更改.平行体数组是这样一个数组:给定一组整数,求出最小元素数# >>> smallest_change.call([1, 2, 3, 5, 4, 7, 9, 6])
+# 4
+# >>> smallest_change.call([1, 2, 3, 4, 3, 2, 2])
+# 1
+# >>> smallest_change.call([1, 2, 3, 2, 1])
+# 0
+def smallest_change(arr)
+","def smallest_change(arr)
+  changes = 0
+  left = 0
+  right = arr.length - 1
+
+  while left < right
+    if arr[left] != arr[right]
+      changes += 1
+    end
+    left += 1
+    right -= 1
+  end
+
+  changes
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_smallest_change
+    candidate = method(:smallest_change)
+    assert_equal(4, candidate.call([1, 2, 3, 5, 4, 7, 9, 6]))
+    assert_equal(1, candidate.call([1, 2, 3, 4, 3, 2, 2]))
+    assert_equal(1, candidate.call([1, 4, 2]))
+    assert_equal(1, candidate.call([1, 4, 4, 2]))
+    assert_equal(0, candidate.call([1, 2, 3, 2, 1]))
+    assert_equal(0, candidate.call([3, 1, 1, 3]))
+    assert_equal(0, candidate.call([1]))
+    assert_equal(1, candidate.call([0, 1]))
+  end
+end
+"
+HumanEval_74,yue_Hant,rb,"譬如話..如果兩個陣列嘅字符數量相同,返回第一個陣列.數字串嘅總數要少於其他數字串嘅總數.寫一個函數,它可以接受兩個字符串的數列,並返回一個有# >>> total_match.call([], [])
+# []
+# >>> total_match.call([""hi"", ""admin""], [""hI"", ""Hi""])
+# [""hI"", ""Hi""]
+# >>> total_match.call([""hi"", ""admin""], [""hi"", ""hi"", ""admin"", ""project""])
+# [""hi"", ""admin""]
+# >>> total_match.call([""hi"", ""admin""], [""hI"", ""hi"", ""hi""])
+# [""hI"", ""hi"", ""hi""]
+# >>> total_match.call([""4""], [""1"", ""2"", ""3"", ""4"", ""5""])
+# [""4""]
+def total_match(lst1, lst2)
+","def total_match(lst1, lst2)
+  total_chars1 = lst1.map(&:length).sum
+  total_chars2 = lst2.map(&:length).sum
+
+  if total_chars1 < total_chars2
+    lst1
+  elsif total_chars2 < total_chars1
+    lst2
+  else
+    lst1
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_total_match
+    candidate = method(:total_match)
+    assert_equal([], candidate.call([], []))
+    assert_equal([""hi"", ""hi""], candidate.call([""hi"", ""admin""], [""hi"", ""hi""]))
+    assert_equal([""hi"", ""admin""], candidate.call([""hi"", ""admin""], [""hi"", ""hi"", ""admin"", ""project""]))
+    assert_equal([""4""], candidate.call([""4""], [""1"", ""2"", ""3"", ""4"", ""5""]))
+    assert_equal([""hI"", ""Hi""], candidate.call([""hi"", ""admin""], [""hI"", ""Hi""]))
+    assert_equal([""hI"", ""hi"", ""hi""], candidate.call([""hi"", ""admin""], [""hI"", ""hi"", ""hi""]))
+    assert_equal([""hi"", ""admin""], candidate.call([""hi"", ""admin""], [""hI"", ""hi"", ""hii""]))
+    assert_equal([], candidate.call([], [""this""]))
+    assert_equal([], candidate.call([""this""], []))
+  end
+end
+"
+HumanEval_75,yue_Hant,rb,"譬如..知道 (a) 小於 100其他話,都係錯嘅寫一個函數,如果數字係 3 個素數嘅乘法,則函數會返回 true# >>> is_multiply_prime.call(30)
+# true
+# 30 = 2 * 3 * 5
+def is_multiply_prime(a)
+","require 'prime'
+
+def is_multiply_prime(a)
+  return false if a >= 100
+  prime_factors = a.prime_division
+  return true if prime_factors.size == 3 && prime_factors.all? { |_, exponent| exponent == 1 }
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_multiply_prime
+    candidate = method(:is_multiply_prime)
+    assert_equal(false, candidate.call(5))
+    assert_equal(true, candidate.call(30))
+    assert_equal(true, candidate.call(8))
+    assert_equal(false, candidate.call(10))
+    assert_equal(true, candidate.call(125))
+    assert_equal(true, candidate.call(105))
+    assert_equal(false, candidate.call(126))
+    assert_equal(false, candidate.call(729))
+    assert_equal(false, candidate.call(891))
+    assert_equal(true, candidate.call(1001))
+  end
+end
+"
+HumanEval_76,yue_Hant,rb,"例如:如果n**int=x,则x是n的简数乘法而其他情況下,則為 false.你需要寫一個函數,如果一個數字x是個簡單的函數,它就會返回 true# >>> is_simple_power.call(1, 4)
+# true
+# >>> is_simple_power.call(2, 2)
+# true
+# >>> is_simple_power.call(8, 2)
+# true
+# >>> is_simple_power.call(3, 2)
+# false
+# >>> is_simple_power.call(3, 1)
+# false
+# >>> is_simple_power.call(5, 3)
+# false
+def is_simple_power(x, n)
+","def is_simple_power(x, n)
+  return false if x <= 0 || n <= 1
+  return true if x == 1
+
+  power = n
+  while power <= x
+    return true if power == x
+    power *= n
+  end
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_simple_power
+    candidate = method(:is_simple_power)
+    assert_equal(true, candidate.call(16, 2))
+    assert_equal(false, candidate.call(143214, 16))
+    assert_equal(true, candidate.call(4, 2))
+    assert_equal(true, candidate.call(9, 3))
+    assert_equal(true, candidate.call(16, 4))
+    assert_equal(false, candidate.call(24, 2))
+    assert_equal(false, candidate.call(128, 4))
+    assert_equal(false, candidate.call(12, 6))
+    assert_equal(true, candidate.call(1, 1))
+    assert_equal(true, candidate.call(1, 12))
+  end
+end
+"
+HumanEval_77,yue_Hant,rb,"譬如:注意:你可以假設輸入嘅訊息永遠都係正確嘅.如果这个数是某个整数的立方体.寫一個函數,它取一個整數 a,返回 true# >>> iscube.call(1)
+# true
+# >>> iscube.call(2)
+# false
+# >>> iscube.call(-1)
+# true
+# >>> iscube.call(64)
+# true
+# >>> iscube.call(0)
+# true
+# >>> iscube.call(180)
+# false
+def iscube(a)
+","def iscube(a)
+  cube_root = a.abs**(1.0/3)
+  cube_root.round**3 == a
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_iscube
+    candidate = method(:iscube)
+    assert_equal(true, candidate.call(1))
+    assert_equal(false, candidate.call(2))
+    assert_equal(true, candidate.call(-1))
+    assert_equal(true, candidate.call(64))
+    assert_equal(false, candidate.call(180))
+    assert_equal(true, candidate.call(1000))
+    assert_equal(true, candidate.call(0))
+    assert_equal(false, candidate.call(1729))
+  end
+end
+"
+HumanEval_78,yue_Hant,rb,"譬如:而符號A,B,C,D,E,F 都係大寫注意:你可以假設輸入嘅訊息係正確嘅 或者係空嘅字符串,B (=十進制11),D (=十進制13).所以你要找出以下数字中的一个: 2,3,5,7,素數係 2,3,5,7,11,13,17,...十六進制數字係 0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F大於1而唔係兩個較小嘅自然數嘅乘法).數字係素數 (素數,或者素數,係自然數)一個十六進制數字嘅字符串,並計數十六進制數字嘅數字.你被要求寫一個可以接收函數# >>> hex_key.call(""AB"")
+# 1
+# >>> hex_key.call(""1077E"")
+# 2
+# >>> hex_key.call(""ABED1A33"")
+# 4
+# >>> hex_key.call(""123456789ABCDEF0"")
+# 6
+# >>> hex_key.call(""2020"")
+# 2
+def hex_key(num)
+","def hex_key(num)
+  prime_hex_digits = ['2', '3', '5', '7', 'B', 'D']
+  num.chars.count { |digit| prime_hex_digits.include?(digit) }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_hex_key
+    candidate = method(:hex_key)
+    assert_equal(1, candidate.call(""AB""))
+    assert_equal(2, candidate.call(""1077E""))
+    assert_equal(4, candidate.call(""ABED1A33""))
+    assert_equal(2, candidate.call(""2020""))
+    assert_equal(6, candidate.call(""123456789ABCDEF0""))
+    assert_equal(12, candidate.call(""112233445566778899AABBCCDDEEFF00""))
+  end
+end
+"
+HumanEval_79,yue_Hant,rb,"譬如:哩啲文字組合起嚟係爲咗 幫助編輯喺字符串嘅開始同結尾,會多出一對""db""字符.每一個字符串嘅數字都係 ""0""或者""1"".函數應該返回一個字符串,每一個字符代表一個二進制字符你會得到一個數字,用小數點的形式, 你的任務是將它轉換成# >>> decimal_to_binary.call(15)
+# ""db1111db""
+# >>> decimal_to_binary.call(32)
+# ""db100000db""
+def decimal_to_binary(decimal)
+","def decimal_to_binary(decimal)
+  ""db"" + decimal.to_s(2) + ""db""
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_decimal_to_binary
+    candidate = method(:decimal_to_binary)
+    assert_equal(""db0db"", candidate.call(0))
+    assert_equal(""db100000db"", candidate.call(32))
+    assert_equal(""db1100111db"", candidate.call(103))
+    assert_equal(""db1111db"", candidate.call(15))
+  end
+end
+"
+HumanEval_80,yue_Hant,rb,"例如:字符串嘅长度至少要係3個 而每3個字母係不同的話,就叫做 haprb你嘅任務就係要檢查個字串是否正確你得到一個字符串 s.# >>> is_happy.call(""a"")
+# false
+# >>> is_happy.call(""aa"")
+# false
+# >>> is_happy.call(""abcd"")
+# true
+# >>> is_happy.call(""aabb"")
+# false
+# >>> is_happy.call(""adb"")
+# true
+# >>> is_happy.call(""xyy"")
+# false
+def is_happy(s)
+","def is_happy(s)
+  return false if s.length < 3
+  
+  (0..s.length - 3).each do |i|
+    return false if s[i] == s[i + 1] || s[i] == s[i + 2] || s[i + 1] == s[i + 2]
+  end
+  
+  true
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_happy
+    candidate = method(:is_happy)
+    assert_equal(false, candidate.call(""a""))
+    assert_equal(false, candidate.call(""aa""))
+    assert_equal(true, candidate.call(""abcd""))
+    assert_equal(false, candidate.call(""aabb""))
+    assert_equal(true, candidate.call(""adb""))
+    assert_equal(false, candidate.call(""xyy""))
+    assert_equal(true, candidate.call(""iopaxpoi""))
+    assert_equal(false, candidate.call(""iopaxioi""))
+  end
+end
+"
+HumanEval_81,yue_Hant,rb,"譬如..0.0 E D- > 0.7 D > 1.0 D+ > 1.3 C- > 1.7°C> 2.0 C+ > 2.3 B- > 2.7 B > 3.0 B+ > 3.3 A- > 3.7 A 4.0 A+ 平均成績,學分一個可以用下表輸出一字母等級嘅函數:佢畀咗你學生嘅平均分數 你就要寫落嚟唯一唧問題喺,佢唔記得有咩代號先系度寫分數嘅.老師一直喺度創造佢自己嘅評分編碼呢學期嘅最後一個禮拜,老師要評分# >>> grade_equation.call([4.0, 3, 1.7, 2, 3.5])
+# [""A+"", ""B"", ""C-"", ""C"", ""A-""]
+def numerical_letter_grade(grades)
+","def numerical_letter_grade(grades)
+  grades.map do |gpa|
+    case 
+    when gpa == 4.0
+      ""A+""
+    when gpa > 3.7
+      ""A""
+    when gpa > 3.3
+      ""A-""
+    when gpa > 3.0
+      ""B+""
+    when gpa > 2.7
+      ""B""
+    when gpa > 2.3
+      ""B-""
+    when gpa > 2.0
+      ""C+""
+    when gpa > 1.7
+      ""C""
+    when gpa > 1.3
+      ""C-""
+    when gpa > 1.0
+      ""D+""
+    when gpa > 0.7
+      ""D""
+    when gpa > 0.0
+      ""D-""
+    else
+      ""E""
+    end
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_numerical_letter_grade
+    candidate = method(:numerical_letter_grade)
+    assert_equal([""A+"", ""B"", ""C-"", ""C"", ""A-""], candidate.call([4.0, 3, 1.7, 2, 3.5]))
+    assert_equal([""D+""], candidate.call([1.2]))
+    assert_equal([""D-""], candidate.call([0.5]))
+    assert_equal([""E""], candidate.call([0.0]))
+    assert_equal([""D"", ""D-"", ""C-"", ""B"", ""B+""], candidate.call([1.0, 0.3, 1.5, 2.8, 3.3]))
+    assert_equal([""E"", ""D-""], candidate.call([0.0, 0.7]))
+  end
+end
+"
+HumanEval_82,yue_Hant,rb,"譬如話..length 是一個素數,或者是 false 否則寫一個函數,如果 string 值為 true,則返回 true# >>> prime_length.call(""Hello"")
+# true
+# >>> prime_length.call(""abcdcba"")
+# true
+# >>> prime_length.call(""kittens"")
+# true
+# >>> prime_length.call(""orange"")
+# false
+def prime_length(string)
+","def prime_length(string)
+  length = string.length
+  return false if length < 2
+
+  (2..Math.sqrt(length)).each do |i|
+    return false if length % i == 0
+  end
+
+  true
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_prime_length
+    candidate = method(:prime_length)
+    assert_equal(true, candidate.call(""Hello""))
+    assert_equal(true, candidate.call(""abcdcba""))
+    assert_equal(true, candidate.call(""kittens""))
+    assert_equal(false, candidate.call(""orange""))
+    assert_equal(true, candidate.call(""wow""))
+    assert_equal(true, candidate.call(""world""))
+    assert_equal(true, candidate.call(""MadaM""))
+    assert_equal(true, candidate.call(""Wow""))
+    assert_equal(false, candidate.call(""""))
+    assert_equal(true, candidate.call(""HI""))
+    assert_equal(true, candidate.call(""go""))
+    assert_equal(false, candidate.call(""gogo""))
+    assert_equal(false, candidate.call(""aaaaaaaaaaaaaaa""))
+    assert_equal(true, candidate.call(""Madam""))
+    assert_equal(false, candidate.call(""M""))
+    assert_equal(false, candidate.call(""0""))
+  end
+end
+"
+HumanEval_83,yue_Hant,rb,"整數嘅前數係由 1 開始, 整數嘅後數係由 1 結束给定一个正整数 n,返回 n 位数的数值def starts_one_ends(n)
+","def starts_one_ends(n)
+  return 0 if n <= 0
+
+  # Count numbers starting with 1
+  start_with_1 = 9 ** (n - 1)
+
+  # Count numbers ending with 1
+  end_with_1 = 9 ** (n - 1)
+
+  # Adjust for double counting the number that both starts and ends with 1
+  both_start_and_end_with_1 = 9 ** (n - 2) if n > 1
+  
+  start_with_1 + end_with_1 - (both_start_and_end_with_1 || 0)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_starts_one_ends
+    candidate = method(:starts_one_ends)
+    assert_equal(1, candidate.call(1))
+    assert_equal(18, candidate.call(2))
+    assert_equal(180, candidate.call(3))
+    assert_equal(1800, candidate.call(4))
+    assert_equal(18000, candidate.call(5))
+  end
+end
+"
+HumanEval_84,yue_Hant,rb,"舉例给定一个正整数 N,返回它的数字的二进制总和.# >>> solve.call(1000)
+# ""1""
+# >>> solve.call(150)
+# ""110""
+# >>> solve.call(147)
+# ""1100""
+# Variables:
+# @N integer
+# Constraints: 0 ≤ N ≤ 10000.
+# Output:
+# a string of binary number
+def solve(n)
+","def solve(n)
+  sum_of_digits = n.to_s.chars.map(&:to_i).sum
+  sum_of_digits.to_s(2)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_solve
+    candidate = method(:solve)
+    assert_equal(""1"", candidate.call(1000))
+    assert_equal(""110"", candidate.call(150))
+    assert_equal(""1100"", candidate.call(147))
+    assert_equal(""1001"", candidate.call(333))
+    assert_equal(""10010"", candidate.call(963))
+  end
+end
+"
+HumanEval_85,yue_Hant,rb,"譬如:给定一个非空的整数数组,先加上偶数元素,# >>> add.call([4, 2, 6, 7])
+# 2
+def add(lst)
+","def add(lst)
+  lst.each_with_index.select { |num, index| index.odd? && num.even? }.map(&:first).sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_add
+    candidate = method(:add)
+    assert_equal(88, candidate.call([4, 88]))
+    assert_equal(122, candidate.call([4, 5, 6, 7, 2, 122]))
+    assert_equal(0, candidate.call([4, 0, 6, 7]))
+    assert_equal(12, candidate.call([4, 4, 6, 8]))
+  end
+end
+"
+HumanEval_86,yue_Hant,rb,"例如:注意:你應該保持句子裡嘅單詞順序同空白空間.根據 ASCII 值嘅上升順序.用一個新詞代替,其中所有字符都排列在字符串嘅排序式,就係所有單詞 (用空格分隔) 包含嘅字符串.寫一個函數,取一個字符串,然後返回它有序的版本.# >>> anti_shuffle.call(""Hi"")
+# ""Hi""
+# >>> anti_shuffle.call(""hello"")
+# ""ehllo""
+# >>> anti_shuffle.call(""Hello World!!!"")
+# ""Hello !!!Wdlor""
+def anti_shuffle(s)
+","def anti_shuffle(s)
+  s.split(/(\s+)/).map { |word| word.chars.sort.join }.join
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_anti_shuffle
+    candidate = method(:anti_shuffle)
+    assert_equal(""Hi"", candidate.call(""Hi""))
+    assert_equal(""ehllo"", candidate.call(""hello""))
+    assert_equal(""bemnru"", candidate.call(""number""))
+    assert_equal(""abcd"", candidate.call(""abcd""))
+    assert_equal(""Hello !!!Wdlor"", candidate.call(""Hello World!!!""))
+    assert_equal("""", candidate.call(""""))
+    assert_equal("".Hi My aemn is Meirst .Rboot How aer ?ouy"", candidate.call(""Hi. My name is Mister Robot. How are you?""))
+  end
+end
+"
+HumanEval_87,yue_Hant,rb,"譬如:同樣,將行嘅坐標按列嘅順序排序.開始從行到行,坐標就會由上升順序排列.每一個數列都係一個坐標 - - (行,列),以0開始.然後返回一個陣列嘅陣列, [(x1,y1), (x2,y2) ...] 譬如给出 lst, 和整数 x, 在数组中找到整数 x,每一行可能有唔同嘅列數.類似於矩陣,但唔同於矩陣,你就得到一個二維資料, 一個嵌套的數列,# >>> get_row.call([[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 1, 6], [1, 2, 3, 4, 5, 1]], 1)
+# [[0, 0], [1, 4], [1, 0], [2, 5], [2, 0]]
+# >>> get_row.call([], 1)
+# []
+# >>> get_row.call([[], [1], [1, 2, 3]], 3)
+# [[2, 2]]
+def get_row(lst, x)
+","def get_row(lst, x)
+  result = []
+
+  lst.each_with_index do |row, i|
+    row.each_with_index do |value, j|
+      result << [i, j] if value == x
+    end
+  end
+
+  result.sort_by { |coord| [coord[0], -coord[1]] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_get_row
+    candidate = method(:get_row)
+    assert_equal([[0, 0], [1, 4], [1, 0], [2, 5], [2, 0]], candidate.call([[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 1, 6], [1, 2, 3, 4, 5, 1]], 1))
+    assert_equal([[0, 1], [1, 1], [2, 1], [3, 1], [4, 1], [5, 1]], candidate.call([[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6]], 2))
+    assert_equal([[0, 0], [1, 0], [2, 1], [2, 0], [3, 2], [3, 0], [4, 3], [4, 0], [5, 4], [5, 0], [6, 5], [6, 0]], candidate.call([[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 1, 3, 4, 5, 6], [1, 2, 1, 4, 5, 6], [1, 2, 3, 1, 5, 6], [1, 2, 3, 4, 1, 6], [1, 2, 3, 4, 5, 1]], 1))
+    assert_equal([], candidate.call([], 1))
+    assert_equal([], candidate.call([[1]], 2))
+    assert_equal([[2, 2]], candidate.call([[], [1], [1, 2, 3]], 3))
+  end
+end
+"
+HumanEval_88,yue_Hant,rb,"譬如:*唔好改變 array.注意:或者如果總和 (第一個指數值,最後一個指數值) 是偶數的話,就以下降順序排序.如果數字串嘅總和 (第一個索引值,最後一個索引值) 係奇數,你會以上升順序排序,给定一个数组的非负数整数, 排序后返回给定数组的,# >>> sort_array.call([])
+# []
+# >>> sort_array.call([5])
+# [5]
+# >>> sort_array.call([2, 4, 3, 0, 1, 5])
+# [0, 1, 2, 3, 4, 5]
+# >>> sort_array.call([2, 4, 3, 0, 1, 5, 6])
+# [6, 5, 4, 3, 2, 1, 0]
+def sort_array(array)
+","def sort_array(array)
+  return array if array.empty? || array.size == 1
+
+  if (array.first + array.last).odd?
+    array.sort
+  else
+    array.sort.reverse
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sort_array
+    candidate = method(:sort_array)
+    assert_equal([], candidate.call([]))
+    assert_equal([5], candidate.call([5]))
+    assert_equal([0, 1, 2, 3, 4, 5], candidate.call([2, 4, 3, 0, 1, 5]))
+    assert_equal([6, 5, 4, 3, 2, 1, 0], candidate.call([2, 4, 3, 0, 1, 5, 6]))
+    assert_equal([1, 2], candidate.call([2, 1]))
+    assert_equal([0, 11, 15, 32, 42, 87], candidate.call([15, 42, 87, 32, 11, 0]))
+    assert_equal([23, 21, 14, 11], candidate.call([21, 14, 23, 11]))
+  end
+end
+"
+HumanEval_89,yue_Hant,rb,"例如:兩位數的兩倍變數字母嘅順序應該係咁嘅:返回一個字符串,加密字母轉換.建立一個函數加密,以字符串作為引數,並# >>> encrypt.call(""hi"")
+# ""lm""
+# >>> encrypt.call(""asdfghjkl"")
+# ""ewhjklnop""
+# >>> encrypt.call(""gf"")
+# ""kj""
+# >>> encrypt.call(""et"")
+# ""ix""
+def encrypt(s)
+","def encrypt(s)
+  s.chars.map do |char|
+    if char =~ /[a-z]/
+      ((char.ord - 'a'.ord + 4) % 26 + 'a'.ord).chr
+    elsif char =~ /[A-Z]/
+      ((char.ord - 'A'.ord + 4) % 26 + 'A'.ord).chr
+    else
+      char
+    end
+  end.join
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_encrypt
+    candidate = method(:encrypt)
+    assert_equal(""lm"", candidate.call(""hi""))
+    assert_equal(""ewhjklnop"", candidate.call(""asdfghjkl""))
+    assert_equal(""kj"", candidate.call(""gf""))
+    assert_equal(""ix"", candidate.call(""et""))
+    assert_equal(""jeiajeaijeiak"", candidate.call(""faewfawefaewg""))
+    assert_equal(""lippsqcjvmirh"", candidate.call(""hellomyfriend""))
+    assert_equal(""hbdhpqrmpjylqmpyjlpmlyjrqpmqryjlpmqryjljygyjl"", candidate.call(""dxzdlmnilfuhmilufhlihufnmlimnufhlimnufhfucufh""))
+    assert_equal(""e"", candidate.call(""a""))
+  end
+end
+"
+HumanEval_90,yue_Hant,rb,"如果沒有這樣的元素,返回null.寫一個函數 next_smallest (下_最小) 返回數列中第2個最小元素你得到一個整數嘅數列.# >>> next_smallest.call([1, 2, 3, 4, 5])
+# 2
+# >>> next_smallest.call([5, 1, 4, 3, 2])
+# 2
+# >>> next_smallest.call([])
+# nil
+# >>> next_smallest.call([1, 1])
+# nil
+def next_smallest(lst)
+","def next_smallest(lst)
+  unique_sorted = lst.uniq.sort
+  unique_sorted.length >= 2 ? unique_sorted[1] : nil
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_next_smallest
+    candidate = method(:next_smallest)
+    assert_equal(2, candidate.call([1, 2, 3, 4, 5]))
+    assert_equal(2, candidate.call([5, 1, 4, 3, 2]))
+    assert_equal(nil, candidate.call([]))
+    assert_equal(nil, candidate.call([1, 1]))
+    assert_equal(1, candidate.call([1, 1, 1, 1, 0]))
+    assert_equal(nil, candidate.call([1, 1]))
+    assert_equal(-35, candidate.call([-35, 34, 12, -45]))
+  end
+end
+"
+HumanEval_91,yue_Hant,rb,"例如:句子嘅界限用"""", ""?""或者""!""枯燥嘅句子喺由""我""開始你只需要一行文字,然後計算個數字# >>> is_bored.call(""Hello world"")
+# 0
+# >>> is_bored.call(""The sky is blue. The sun is shining. I love this weather"")
+# 1
+def is_bored(s)
+","def is_bored(s)
+  sentences = s.split(/(?<=[.?!])/)
+  sentences.count { |sentence| sentence.strip.start_with?('I') }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_bored
+    candidate = method(:is_bored)
+    assert_equal(0, candidate.call(""Hello world""))
+    assert_equal(0, candidate.call(""Is the sky blue?""))
+    assert_equal(1, candidate.call(""I love It !""))
+    assert_equal(0, candidate.call(""bIt""))
+    assert_equal(2, candidate.call(""I feel good today. I will be productive. will kill It""))
+    assert_equal(0, candidate.call(""You and I are going for a walk""))
+  end
+end
+"
+HumanEval_92,yue_Hant,rb,"譬如話..返回 false 其他任何一個例子.如果其中一個數字等於其他兩個數字嘅總和 而所有數字都係整數的話,則返回真建立一個函數,需要3個數字.# >>> any_int.call(5, 2, 7)
+# true
+# >>> any_int.call(3, 2, 2)
+# false
+# >>> any_int.call(3, -2, 1)
+# true
+# >>> any_int.call(3.6, -2.2, 2)
+# false
+def any_int(x, y, z)
+","def any_int(x, y, z)
+  if [x, y, z].all? { |n| n.is_a?(Integer) }
+    x == y + z || y == x + z || z == x + y
+  else
+    false
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_any_int
+    candidate = method(:any_int)
+    assert_equal(true, candidate.call(2, 3, 1))
+    assert_equal(false, candidate.call(2.5, 2, 3))
+    assert_equal(false, candidate.call(1.5, 5, 3.5))
+    assert_equal(false, candidate.call(2, 6, 2))
+    assert_equal(true, candidate.call(4, 2, 2))
+    assert_equal(false, candidate.call(2.2, 2.2, 2.2))
+    assert_equal(true, candidate.call(-4, 6, 2))
+    assert_equal(true, candidate.call(2, 1, 1))
+    assert_equal(true, candidate.call(3, 4, 7))
+    assert_equal(false, candidate.call(3.0, 4, 7))
+  end
+end
+"
+HumanEval_93,yue_Hant,rb,"譬如:假設只寫字母單音係英文母音嘅文字喺呢張相前兩排佢會更換所有字母嘅大小寫作方式 代替所有母音嘅寫一個函數,收到訊息,然後編碼成一個函數# >>> encode.call(""test"")
+# ""TGST""
+# >>> encode.call(""This is a message"")
+# ""tHKS KS C MGSSCGG""
+def encode(message)
+","def encode(message)
+  vowels = 'aeiou'
+  swap_vowels = {'a' => 'c', 'e' => 'g', 'i' => 'k', 'o' => 'q', 'u' => 'w'}
+  
+  encoded_message = message.chars.map do |char|
+    if vowels.include?(char.downcase)
+      new_char = swap_vowels[char.downcase]
+      char == char.upcase ? new_char.upcase : new_char.downcase
+    else
+      char == char.upcase ? char.downcase : char.upcase
+    end
+  end
+
+  encoded_message.join
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_encode
+    candidate = method(:encode)
+    assert_equal(""tgst"", candidate.call(""TEST""))
+    assert_equal(""mWDCSKR"", candidate.call(""Mudasir""))
+    assert_equal(""ygs"", candidate.call(""YES""))
+    assert_equal(""tHKS KS C MGSSCGG"", candidate.call(""This is a message""))
+    assert_equal(""k dQnT kNqW wHcT Tq wRkTg"", candidate.call(""I DoNt KnOw WhAt tO WrItE""))
+  end
+end
+"
+HumanEval_94,yue_Hant,rb,"譬如:您需要找到最大的素数,并返回其数字的和.你得到一個整數嘅數列.# >>> skjkasdkd.call([0, 3, 2, 1, 3, 5, 7, 4, 5, 5, 5, 2, 181, 32, 4, 32, 3, 2, 32, 324, 4, 3])
+# 10
+# >>> skjkasdkd.call([1, 0, 1, 8, 2, 4597, 2, 1, 3, 40, 1, 2, 1, 2, 4, 2, 5, 1])
+# 25
+# >>> skjkasdkd.call([1, 3, 1, 32, 5107, 34, 83278, 109, 163, 23, 2323, 32, 30, 1, 9, 3])
+# 13
+# >>> skjkasdkd.call([0, 724, 32, 71, 99, 32, 6, 0, 5, 91, 83, 0, 5, 6])
+# 11
+# >>> skjkasdkd.call([0, 81, 12, 3, 1, 21])
+# 3
+# >>> skjkasdkd.call([0, 8, 1, 2, 1, 7])
+# 7
+def skjkasdkd(lst)
+","def skjkasdkd(lst)
+  require 'prime'
+
+  # Find the largest prime number in the array
+  largest_prime = lst.select { |num| Prime.prime?(num) }.max
+  
+  # Return 0 if no prime number is found
+  return 0 if largest_prime.nil?
+
+  # Calculate the sum of digits of the largest prime number
+  largest_prime.to_s.chars.map(&:to_i).sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_skjkasdkd
+    candidate = method(:skjkasdkd)
+    assert_equal(10, candidate.call([0, 3, 2, 1, 3, 5, 7, 4, 5, 5, 5, 2, 181, 32, 4, 32, 3, 2, 32, 324, 4, 3]))
+    assert_equal(25, candidate.call([1, 0, 1, 8, 2, 4597, 2, 1, 3, 40, 1, 2, 1, 2, 4, 2, 5, 1]))
+    assert_equal(13, candidate.call([1, 3, 1, 32, 5107, 34, 83278, 109, 163, 23, 2323, 32, 30, 1, 9, 3]))
+    assert_equal(11, candidate.call([0, 724, 32, 71, 99, 32, 6, 0, 5, 91, 83, 0, 5, 6]))
+    assert_equal(3, candidate.call([0, 81, 12, 3, 1, 21]))
+    assert_equal(7, candidate.call([0, 8, 1, 2, 1, 7]))
+    assert_equal(19, candidate.call([8191]))
+    assert_equal(19, candidate.call([8191, 123456, 127, 7]))
+    assert_equal(10, candidate.call([127, 97, 8192]))
+  end
+end
+"
+HumanEval_95,yue_Hant,rb,"譬如:函數應該返回false,如果已知哈希值是空的.字母大小写或者所有键都是大小写的字符串,否则返回false.如果所有鍵都係 lower 字符串嘅,咁返 true# >>> check_dict_case.call({""a"" => ""apple"", ""b"" => ""banana""})
+# true
+# >>> check_dict_case.call({""a"" => ""apple"", ""A"" => ""banana"", ""B"" => ""banana""})
+# false
+# >>> check_dict_case.call({""a"" => ""apple"", 8 => ""banana"", ""a"" => ""apple""})
+# false
+# >>> check_dict_case.call({""Name"" => ""John"", ""Age"" => ""36"", ""City"" => ""Houston""})
+# false
+# >>> check_dict_case.call({""STATE"" => ""NC"", ""ZIP"" => ""12345""})
+# true
+def check_dict_case(dict)
+","def check_dict_case(dict)
+  return false if dict.empty?
+
+  lowercase_keys = dict.keys.all? { |key| key.is_a?(String) && key == key.downcase }
+  uppercase_keys = dict.keys.all? { |key| key.is_a?(String) && key == key.upcase }
+
+  lowercase_keys || uppercase_keys
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_check_dict_case
+    candidate = method(:check_dict_case)
+    assert_equal(true, candidate.call({""p"" => ""pineapple"", ""b"" => ""banana""}))
+    assert_equal(false, candidate.call({""p"" => ""pineapple"", ""A"" => ""banana"", ""B"" => ""banana""}))
+    assert_equal(false, candidate.call({""p"" => ""pineapple"", ""5"" => ""banana"", ""a"" => ""apple""}))
+    assert_equal(false, candidate.call({""Name"" => ""John"", ""Age"" => ""36"", ""City"" => ""Houston""}))
+    assert_equal(true, candidate.call({""STATE"" => ""NC"", ""ZIP"" => ""12345""}))
+    assert_equal(true, candidate.call({""fruit"" => ""Orange"", ""taste"" => ""Sweet""}))
+    assert_equal(false, candidate.call({}))
+  end
+end
+"
+HumanEval_96,yue_Hant,rb,"例如:整數係素數,小於n.實現一個函數,它取一個非負整數,並返回第一個 n 數的陣列.# >>> count_up_to.call(5)
+# [2, 3]
+# >>> count_up_to.call(11)
+# [2, 3, 5, 7]
+# >>> count_up_to.call(0)
+# []
+# >>> count_up_to.call(20)
+# [2, 3, 5, 7, 11, 13, 17, 19]
+# >>> count_up_to.call(1)
+# []
+# >>> count_up_to.call(18)
+# [2, 3, 5, 7, 11, 13, 17]
+def count_up_to(n)
+","def count_up_to(n)
+  return [] if n <= 2
+  primes = []
+  (2...n).each do |num|
+    is_prime = true
+    (2..Math.sqrt(num)).each do |i|
+      if num % i == 0
+        is_prime = false
+        break
+      end
+    end
+    primes << num if is_prime
+  end
+  primes
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_count_up_to
+    candidate = method(:count_up_to)
+    assert_equal([2, 3], candidate.call(5))
+    assert_equal([2, 3, 5], candidate.call(6))
+    assert_equal([2, 3, 5], candidate.call(7))
+    assert_equal([2, 3, 5, 7], candidate.call(10))
+    assert_equal([], candidate.call(0))
+    assert_equal([2, 3, 5, 7, 11, 13, 17, 19], candidate.call(22))
+    assert_equal([], candidate.call(1))
+    assert_equal([2, 3, 5, 7, 11, 13, 17], candidate.call(18))
+    assert_equal([2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43], candidate.call(47))
+    assert_equal([2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97], candidate.call(101))
+  end
+end
+"
+HumanEval_97,yue_Hant,rb,"譬如:假設輸入嘅訊息始終係有效嘅.單位數字嘅積分完成函数,取两个整数,返回# >>> multiply.call(148, 412)
+# 16
+# >>> multiply.call(19, 28)
+# 72
+# >>> multiply.call(2020, 1851)
+# 0
+# >>> multiply.call(14, -15)
+# 20
+def multiply(a, b)
+","def multiply(a, b)
+  a_unit_digit = a.abs % 10
+  b_unit_digit = b.abs % 10
+  a_unit_digit * b_unit_digit
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_multiply
+    candidate = method(:multiply)
+    assert_equal(16, candidate.call(148, 412))
+    assert_equal(72, candidate.call(19, 28))
+    assert_equal(0, candidate.call(2020, 1851))
+    assert_equal(20, candidate.call(14, -15))
+    assert_equal(42, candidate.call(76, 67))
+    assert_equal(49, candidate.call(17, 27))
+    assert_equal(0, candidate.call(0, 1))
+    assert_equal(0, candidate.call(0, 0))
+  end
+end
+"
+HumanEval_98,yue_Hant,rb,"例如:给定一个字符串 s, 计算大母音的偶数.# >>> count_upper.call(""aBCdEf"")
+# 1
+# >>> count_upper.call(""abcdefg"")
+# 0
+# >>> count_upper.call(""dBBE"")
+# 0
+def count_upper(s)
+","def count_upper(s)
+  vowels = ['A', 'E', 'I', 'O', 'U']
+  count = 0
+
+  s.chars.each_with_index do |char, index|
+    if index.even? && vowels.include?(char)
+      count += 1
+    end
+  end
+
+  count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_count_upper
+    candidate = method(:count_upper)
+    assert_equal(1, candidate.call(""aBCdEf""))
+    assert_equal(0, candidate.call(""abcdefg""))
+    assert_equal(0, candidate.call(""dBBE""))
+    assert_equal(0, candidate.call(""B""))
+    assert_equal(1, candidate.call(""U""))
+    assert_equal(0, candidate.call(""""))
+    assert_equal(2, candidate.call(""EEEE""))
+  end
+end
+"
+HumanEval_99,yue_Hant,rb,"譬如話..由兩個整數去除零,如果個數係等距離嘅建立一個函數,它會取一個數值 (字串),表示一個數字.# >>> closest_integer.call(""10"")
+# 10
+# >>> closest_integer.call(""15.3"")
+# 15
+# Note:
+# Rounding away from zero means that if the given number is equidistant
+# from two integers, the one you should return is the one that is the
+# farthest from zero. For example closest_integer(""14.5"") should
+# return 15 and closest_integer(""-14.5"") should return -15.
+def closest_integer(value)
+","def closest_integer(value)
+  number = value.to_f
+  if number > 0
+    (number + 0.5).floor
+  else
+    (number - 0.5).ceil
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_closest_integer
+    candidate = method(:closest_integer)
+    assert_equal(10, candidate.call(""10""))
+    assert_equal(15, candidate.call(""14.5""))
+    assert_equal(-16, candidate.call(""-15.5""))
+    assert_equal(15, candidate.call(""15.3""))
+    assert_equal(0, candidate.call(""0""))
+  end
+end
+"
+HumanEval_100,yue_Hant,rb,"譬如:i代表一层 (i+1) 中的石头数.返回数组中每一层的石头数,其中元素在索引上- 如果 n 是偶数,则是下一个偶数.- 如果 n 是奇数,则是下一个奇数.下一個層嘅石頭數量係:第一個層面有n塊石頭给定一个正整数n,你必须做一堆 n个层的石头.# >>> make_a_pile.call(3)
+# [3, 5, 7]
+def make_a_pile(n)
+","def make_a_pile(n)
+  result = []
+  current_stones = n
+  n.times do
+    result << current_stones
+    current_stones += 2
+  end
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_make_a_pile
+    candidate = method(:make_a_pile)
+    assert_equal([3, 5, 7], candidate.call(3))
+    assert_equal([4, 6, 8, 10], candidate.call(4))
+    assert_equal([5, 7, 9, 11, 13], candidate.call(5))
+    assert_equal([6, 8, 10, 12, 14, 16], candidate.call(6))
+    assert_equal([8, 10, 12, 14, 16, 18, 20, 22], candidate.call(8))
+  end
+end
+"
+HumanEval_101,yue_Hant,rb,"例如:用來將字符串分成幾個單詞,並返回一組單詞的數列.你會得到一串字符串,用逗號或者空格去分開. 你嘅任務就係# >>> words_string.call(""Hi, my name is John"")
+# [""Hi"", ""my"", ""name"", ""is"", ""John""]
+# >>> words_string.call(""One, two, three, four, five, six"")
+# [""One"", ""two"", ""three"", ""four"", ""five"", ""six""]
+def words_string(s)
+","def words_string(s)
+  s.split(/[\s,]+/)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_words_string
+    candidate = method(:words_string)
+    assert_equal([""Hi"", ""my"", ""name"", ""is"", ""John""], candidate.call(""Hi, my name is John""))
+    assert_equal([""One"", ""two"", ""three"", ""four"", ""five"", ""six""], candidate.call(""One, two, three, four, five, six""))
+    assert_equal([""Hi"", ""my"", ""name""], candidate.call(""Hi, my name""))
+    assert_equal([""One"", ""two"", ""three"", ""four"", ""five"", ""six""], candidate.call(""One,, two, three, four, five, six,""))
+    assert_equal([], candidate.call(""""))
+    assert_equal([""ahmed"", ""gamal""], candidate.call(""ahmed     , gamal""))
+  end
+end
+"
+HumanEval_102,yue_Hant,rb,"例如:如果没有这样的数, 函数应该返回-1最大的偶数是包含在 [x,y] 范围内.如果函數取兩個正數 x 和 y 返回# >>> choose_num.call(12, 15)
+# 14
+# >>> choose_num.call(13, 12)
+# -1
+def choose_num(x, y)
+","def choose_num(x, y)
+  return -1 if x > y
+  # Start looking from the largest number
+  max_even = y.even? ? y : y - 1
+  # Iterate downwards to find the biggest even number
+  max_even.downto(x) do |n|
+    return n if n.even?
+  end
+  -1
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_choose_num
+    candidate = method(:choose_num)
+    assert_equal(14, candidate.call(12, 15))
+    assert_equal(-1, candidate.call(13, 12))
+    assert_equal(12354, candidate.call(33, 12354))
+    assert_equal(-1, candidate.call(5234, 5233))
+    assert_equal(28, candidate.call(6, 29))
+    assert_equal(-1, candidate.call(27, 10))
+    assert_equal(-1, candidate.call(7, 7))
+    assert_equal(546, candidate.call(546, 546))
+  end
+end
+"
+HumanEval_103,yue_Hant,rb,"譬如..如果 n 大于m,返回-1將答案圓到最近嘅整數,然後將其轉換成二進制數字.由 n 到 m (包括 n 和 m) 的整數的平均值.你有兩個正嘅整數 n 同 m, 你需要計算出# >>> rounded_avg.call(1, 5)
+# ""0b11""
+# >>> rounded_avg.call(7, 5)
+# -1
+# >>> rounded_avg.call(10, 20)
+# ""0b1111""
+# >>> rounded_avg.call(20, 33)
+# ""0b11010""
+def rounded_avg(n, m)
+","def rounded_avg(n, m)
+  return -1 if n > m
+
+  sum = (n..m).reduce(:+)
+  count = m - n + 1
+  average = (sum.to_f / count).round
+  ""0b"" + average.to_i.to_s(2)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_rounded_avg
+    candidate = method(:rounded_avg)
+    assert_equal(""0b11"", candidate.call(1, 5))
+    assert_equal(""0b1010"", candidate.call(7, 13))
+    assert_equal(""0b1111001010"", candidate.call(964, 977))
+    assert_equal(""0b1111100100"", candidate.call(996, 997))
+    assert_equal(""0b1011000010"", candidate.call(560, 851))
+    assert_equal(""0b101101110"", candidate.call(185, 546))
+    assert_equal(""0b110101101"", candidate.call(362, 496))
+    assert_equal(""0b1001110010"", candidate.call(350, 902))
+    assert_equal(""0b11010111"", candidate.call(197, 233))
+    assert_equal(-1, candidate.call(7, 5))
+    assert_equal(-1, candidate.call(5, 1))
+    assert_equal(""0b101"", candidate.call(5, 5))
+  end
+end
+"
+HumanEval_104,yue_Hant,rb,"例如:注意:返回的数组应该以增加顺序排序.任何元素都未有偶數给定一个正整数x的数组,返回所有数组的排序数组.# >>> unique_digits.call([15, 33, 1422, 1])
+# [1, 15, 33]
+# >>> unique_digits.call([152, 323, 1422, 10])
+# []
+def unique_digits(x)
+","def unique_digits(x)
+  x.select { |num| num.to_s.chars.none? { |digit| digit.to_i.even? } }.sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_unique_digits
+    candidate = method(:unique_digits)
+    assert_equal([1, 15, 33], candidate.call([15, 33, 1422, 1]))
+    assert_equal([], candidate.call([152, 323, 1422, 10]))
+    assert_equal([111, 151], candidate.call([12345, 2033, 111, 151]))
+    assert_equal([31, 135], candidate.call([135, 103, 31]))
+  end
+end
+"
+HumanEval_105,yue_Hant,rb,"例如:一,二,三,四,五,六,七,八,九倒數數字序列,然後以每一個數字取代相應的名字给出一组整数, 排序1到9的整数,# >>> by_length.call([2, 1, 1, 4, 5, 8, 2, 3])
+# [""Eight"", ""Five"", ""Four"", ""Three"", ""Two"", ""Two"", ""One"", ""One""]
+# If the array is empty, return an empty array:
+# >>> by_length.call([])
+# []
+# If the array has any strange number ignore it:
+# >>> by_length.call([1, -1, 55])
+# [""One""]
+def by_length(arr)
+","def by_length(arr)
+  number_names = {
+    1 => ""One"",
+    2 => ""Two"",
+    3 => ""Three"",
+    4 => ""Four"",
+    5 => ""Five"",
+    6 => ""Six"",
+    7 => ""Seven"",
+    8 => ""Eight"",
+    9 => ""Nine""
+  }
+
+  filtered_sorted_reversed = arr.select { |x| x.between?(1, 9) }.sort.reverse
+  filtered_sorted_reversed.map { |num| number_names[num] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_by_length
+    candidate = method(:by_length)
+    assert_equal([""Eight"", ""Five"", ""Four"", ""Three"", ""Two"", ""Two"", ""One"", ""One""], candidate.call([2, 1, 1, 4, 5, 8, 2, 3]))
+    assert_equal([], candidate.call([]))
+    assert_equal([""One""], candidate.call([1, -1, 55]))
+    assert_equal([""Three"", ""Two"", ""One""], candidate.call([1, -1, 3, 2]))
+    assert_equal([""Nine"", ""Eight"", ""Four""], candidate.call([9, 4, 8]))
+  end
+end
+"
+HumanEval_106,yue_Hant,rb,"譬如..i 的因数系是从 1 到 i 的乘法 (1 * 2 * ... * i).我從1開始.或者1到i嘅數字之和.如果 i 是偶数,则返回一个大小为 n 的数组,这样元素的值在索引 i 处是 i 的因数.實現一個函數 f 取 n 為參數,# >>> f.call(5)
+# [1, 2, 6, 24, 15]
+def f(n)
+","def f(n)
+  (1..n).map do |i|
+    if i.even?
+      (1..i).inject(:*) || 1
+    else
+      (1..i).inject(:+)
+    end
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_f
+    candidate = method(:f)
+    assert_equal([1, 2, 6, 24, 15], candidate.call(5))
+    assert_equal([1, 2, 6, 24, 15, 720, 28], candidate.call(7))
+    assert_equal([1], candidate.call(1))
+    assert_equal([1, 2, 6], candidate.call(3))
+  end
+end
+"
+HumanEval_107,yue_Hant,rb,"舉例一:整數體,包括在內的{1,n}範圍內.给定一个正整数 n,返回一个数组,其中有偶数和奇数的数量.# >>> even_odd_palindrome.call(3)
+# [1, 2]
+# Explanation:
+# Integer palindrome are 1, 2, 3. one of them is even, and two of them are odd.
+# Example 2:
+# >>> even_odd_palindrome.call(12)
+# [4, 6]
+# Explanation:
+# Integer palindrome are 1, 2, 3, 4, 5, 6, 7, 8, 9, 11. four of them are even, and 6 of them are odd.
+# Note:
+# 1. 1 <= n <= 10^3
+# 2. returned array has the number of even and odd integer palindromes respectively.
+def even_odd_palindrome(n)
+","def even_odd_palindrome(n)
+  even_count = 0
+  odd_count = 0
+
+  (1..n).each do |num|
+    if num.to_s == num.to_s.reverse
+      if num.even?
+        even_count += 1
+      else
+        odd_count += 1
+      end
+    end
+  end
+
+  [even_count, odd_count]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_even_odd_palindrome
+    candidate = method(:even_odd_palindrome)
+    assert_equal([8, 13], candidate.call(123))
+    assert_equal([4, 6], candidate.call(12))
+    assert_equal([1, 2], candidate.call(3))
+    assert_equal([6, 8], candidate.call(63))
+    assert_equal([5, 6], candidate.call(25))
+    assert_equal([4, 6], candidate.call(19))
+    assert_equal([4, 5], candidate.call(9))
+    assert_equal([0, 1], candidate.call(1))
+  end
+end
+"
+HumanEval_108,yue_Hant,rb,"譬如 -123 代表 -1,2,3如果一個數字係負數, 咁它的第一個已加符號嘅數字就會是負數:元素嘅數目,其中嘅數字總和大於 0.寫一個函數 count_nums,它取整數數列,並返回# >>> count_nums.call([])
+# 0
+# >>> count_nums.call([-1, 11, -11])
+# 1
+# >>> count_nums.call([1, 1, 2])
+# 3
+def count_nums(arr)
+","def count_nums(arr)
+  arr.count do |num|
+    num.to_s.chars.map(&:to_i).sum > 0
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_count_nums
+    candidate = method(:count_nums)
+    assert_equal(0, candidate.call([]))
+    assert_equal(0, candidate.call([-1, -2, 0]))
+    assert_equal(6, candidate.call([1, 1, 2, -2, 3, 4, 5]))
+    assert_equal(5, candidate.call([1, 6, 9, -6, 0, 1, 5]))
+    assert_equal(4, candidate.call([1, 100, 98, -7, 1, -1]))
+    assert_equal(5, candidate.call([12, 23, 34, -45, -56, 0]))
+    assert_equal(1, candidate.call([0, 1]))
+    assert_equal(1, candidate.call([1]))
+  end
+end
+"
+HumanEval_109,yue_Hant,rb,"例如:注意: 已知数组有保证有唯一元素.如果给定的数组是空的,则返回true.如果返回 true,则返回 false.如果可以通过执行上述操作来得到排序的数组開始位置係係數列嘅第0個索引數字陣列嘅最後一個元素會移到一次右移操作意味着将数组的所有元素都移到一位你可以任意數次進行右轉操作.给定数组的下列操作:通过执行 可以将数组按不减序排序.數字係隨機排序嘅 你嘅任務就係搵出我們有一個數列 'arr' 由 N 整數 arr[1],arr[2], ...,arr[N].# >>> move_one_ball.call([3, 4, 5, 1, 2])
+# true
+# Explanation: By performin 2 right shift operations, non-decreasing order can
+# be achieved for the given array.
+# >>> move_one_ball.call([3, 5, 4, 1, 2])
+# false
+# Explanation:It is not possible to get non-decreasing order for the given
+# array by performing any number of right shift operations.
+def move_one_ball(arr)
+","def move_one_ball(arr)
+  return true if arr.empty?
+
+  n = arr.size
+  count_rotation_point = 0
+  rotation_index = -1
+
+  (0...n).each do |i|
+    next_index = (i + 1) % n
+    if arr[i] > arr[next_index]
+      count_rotation_point += 1
+      rotation_index = next_index
+    end
+  end
+
+  count_rotation_point <= 1
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_move_one_ball
+    candidate = method(:move_one_ball)
+    assert_equal(true, candidate.call([3, 4, 5, 1, 2]))
+    assert_equal(true, candidate.call([3, 5, 10, 1, 2]))
+    assert_equal(false, candidate.call([4, 3, 1, 2]))
+    assert_equal(false, candidate.call([3, 5, 4, 1, 2]))
+    assert_equal(true, candidate.call([]))
+  end
+end
+"
+HumanEval_110,yue_Hant,rb,"例如:否則,返回""NO"".如果 lst1 中嘅元素都係偶數,返回""YES"".如果可以將元素從 lst1 交換到 lst2兩者之間嘅交換元素無限整個數字,就變成一個單數字決定是否可以進行元素交換喺呢個問題裡面,你會執行一個函數 函數會取兩個數字陣列,# >>> exchange.call([1, 2, 3, 4], [1, 2, 3, 4])
+# ""YES""
+# >>> exchange.call([1, 2, 3, 4], [1, 5, 3, 4])
+# ""NO""
+# It is assumed that the input arrays will be non-empty.
+def exchange(lst1, lst2)
+","def exchange(lst1, lst2)
+  # Check if lst1 already consists solely of even numbers
+  return ""YES"" if lst1.all?(&:even?)
+
+  # Check if there are at least as many even numbers in lst2
+  # as there are odd numbers in lst1
+  odd_count_lst1 = lst1.count(&:odd?)
+  even_count_lst2 = lst2.count(&:even?)
+
+  odd_count_lst1 <= even_count_lst2 ? ""YES"" : ""NO""
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_exchange
+    candidate = method(:exchange)
+    assert_equal(""YES"", candidate.call([1, 2, 3, 4], [1, 2, 3, 4]))
+    assert_equal(""NO"", candidate.call([1, 2, 3, 4], [1, 5, 3, 4]))
+    assert_equal(""YES"", candidate.call([1, 2, 3, 4], [2, 1, 4, 3]))
+    assert_equal(""YES"", candidate.call([5, 7, 3], [2, 6, 4]))
+    assert_equal(""NO"", candidate.call([5, 7, 3], [2, 6, 3]))
+    assert_equal(""NO"", candidate.call([3, 2, 6, 1, 8, 9], [3, 5, 5, 1, 1, 1]))
+    assert_equal(""YES"", candidate.call([100, 200], [200, 200]))
+  end
+end
+"
+HumanEval_111,yue_Hant,rb,"譬如..如果有幾個字母出現同一個字母,請將全部字母輸入.字母嘅重複數目係最多嘅,所以佢包含嘅字母數目都係最多嘅给定一条代表小写字母的字符串,返回一个哈希值.# >>> histogram.call(""a b c"")
+# {""a"" => 1, ""b"" => 1, ""c"" => 1}
+# >>> histogram.call(""a b b a"")
+# {""a"" => 2, ""b"" => 2}
+# >>> histogram.call(""a b c a b"")
+# {""a"" => 2, ""b"" => 2}
+# >>> histogram.call(""b b b b a"")
+# {""b"" => 4}
+# >>> histogram.call("""")
+# {}
+def histogram(test)
+","def histogram(test)
+  return {} if test.empty?
+
+  count = Hash.new(0)
+
+  test.split.each do |char|
+    count[char] += 1
+  end
+
+  max_count = count.values.max
+  count.select { |_, value| value == max_count }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_histogram
+    candidate = method(:histogram)
+    assert_equal({""a"" => 2, ""b"" => 2}, candidate.call(""a b b a""))
+    assert_equal({""a"" => 2, ""b"" => 2}, candidate.call(""a b c a b""))
+    assert_equal({""a"" => 1, ""b"" => 1, ""c"" => 1, ""d"" => 1, ""g"" => 1}, candidate.call(""a b c d g""))
+    assert_equal({""r"" => 1, ""t"" => 1, ""g"" => 1}, candidate.call(""r t g""))
+    assert_equal({""b"" => 4}, candidate.call(""b b b b a""))
+    assert_equal({""r"" => 1, ""t"" => 1, ""g"" => 1}, candidate.call(""r t g""))
+    assert_equal({}, candidate.call(""""))
+    assert_equal({""a"" => 1}, candidate.call(""a""))
+  end
+end
+"
+HumanEval_112,yue_Hant,rb,"舉例您應該返回一個包含結果字符串和 true/false 的數列來進行檢查.一個字符串嘅前後讀法相同,叫做 palindrome.然後檢查結果字符串係咪係平行列.我們有兩個字符串 s 和 c,我們要除 s 中所有等於 c 中任何一個字符的字符.任務# >>> reverse_delete.call(""abcde"", ""ae"")
+# [""bcd"", false]
+# >>> reverse_delete.call(""abcdef"", ""b"")
+# [""acdef"", false]
+# >>> reverse_delete.call(""abcdedcba"", ""ab"")
+# [""cdedc"", true]
+def reverse_delete(s, c)
+","def reverse_delete(s, c)
+  # Remove all characters in c from s
+  filtered_string = s.delete(c)
+  
+  # Check if the filtered string is a palindrome
+  is_palindrome = filtered_string == filtered_string.reverse
+  
+  # Return the result array
+  [filtered_string, is_palindrome]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_reverse_delete
+    candidate = method(:reverse_delete)
+    assert_equal([""bcd"", false], candidate.call(""abcde"", ""ae""))
+    assert_equal([""acdef"", false], candidate.call(""abcdef"", ""b""))
+    assert_equal([""cdedc"", true], candidate.call(""abcdedcba"", ""ab""))
+    assert_equal([""dik"", false], candidate.call(""dwik"", ""w""))
+    assert_equal(["""", true], candidate.call(""a"", ""a""))
+    assert_equal([""abcdedcba"", true], candidate.call(""abcdedcba"", """"))
+    assert_equal([""abcdedcba"", true], candidate.call(""abcdedcba"", ""v""))
+    assert_equal([""abba"", true], candidate.call(""vabba"", ""v""))
+    assert_equal(["""", true], candidate.call(""mamma"", ""mia""))
+  end
+end
+"
+HumanEval_113,yue_Hant,rb,"输入字符串的第 i 个数字符串中輸入嘅字符串"" 所有嘅""i"" 應該被數字""i"" 取代每一個i的元素應該是""在""的奇數元素的數量给定一个字符串数组,每一个字符串只包含数字,返回一个数组.# >>> odd_count.call([""1234567""])
+# [""the number of odd elements 4n the str4ng 4 of the 4nput.""]
+# >>> odd_count.call([""3"", ""11111111""])
+# [""the number of odd elements 1n the str1ng 1 of the 1nput."", ""the number of odd elements 8n the str8ng 8 of the 8nput.""]
+def odd_count(lst)
+","def odd_count(lst)
+  lst.map do |num_str|
+    count = num_str.count('13579')
+    ""the number of odd elements #{count}n the str#{count}ng #{count} of the #{count}nput.""
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_odd_count
+    candidate = method(:odd_count)
+    assert_equal([""the number of odd elements 4n the str4ng 4 of the 4nput.""], candidate.call([""1234567""]))
+    assert_equal([""the number of odd elements 1n the str1ng 1 of the 1nput."", ""the number of odd elements 8n the str8ng 8 of the 8nput.""], candidate.call([""3"", ""11111111""]))
+    assert_equal([""the number of odd elements 2n the str2ng 2 of the 2nput."", ""the number of odd elements 3n the str3ng 3 of the 3nput."", ""the number of odd elements 2n the str2ng 2 of the 2nput.""], candidate.call([""271"", ""137"", ""314""]))
+  end
+end
+"
+HumanEval_114,yue_Hant,rb,"舉例數字嘅數字.给定一组整数,求出任何非空子数组的最小和# >>> minSubArraySum.call([2, 3, 4, 1, 2, 4])
+# 1
+# >>> minSubArraySum.call([-1, -2, -3])
+# -6
+def minSubArraySum(nums)
+","def minSubArraySum(nums)
+  min_sum = nums[0]
+  current_sum = 0
+  nums.each do |num|
+    if current_sum > 0
+      current_sum = num
+    else
+      current_sum += num
+    end
+    min_sum = [min_sum, current_sum].min
+  end
+  min_sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_minSubArraySum
+    candidate = method(:minSubArraySum)
+    assert_equal(1, candidate.call([2, 3, 4, 1, 2, 4]))
+    assert_equal(-6, candidate.call([-1, -2, -3]))
+    assert_equal(-14, candidate.call([-1, -2, -3, 2, -10]))
+    assert_equal(-9999999999999999, candidate.call([-9999999999999999]))
+    assert_equal(0, candidate.call([0, 10, 20, 1000000]))
+    assert_equal(-6, candidate.call([-1, -2, -3, 10, -5]))
+    assert_equal(-6, candidate.call([100, -1, -2, -3, 10, -5]))
+    assert_equal(3, candidate.call([10, 11, 13, 8, 3, 4]))
+    assert_equal(-33, candidate.call([100, -33, 32, -1, 0, -2]))
+    assert_equal(-10, candidate.call([-10]))
+    assert_equal(7, candidate.call([7]))
+    assert_equal(-1, candidate.call([1, -1]))
+  end
+end
+"
+HumanEval_115,yue_Hant,rb,"舉例一:输出你需要放下桶的次数.你嘅任務就係用水桶去清理井嘅水所有嘅桶都同一個容量.每個井都有一個應用嘅桶,用嚟抽水嘅,而每一行嘅 1 代表一個單位嘅水你會見到一個長方形嘅,每一行代表住一個# >>> max_fill.call([[0, 0, 1, 0], [0, 1, 0, 0], [1, 1, 1, 1]], 1)
+# 6
+# Example 2:
+# >>> max_fill.call([[0, 0, 1, 1], [0, 0, 0, 0], [1, 1, 1, 1], [0, 1, 1, 1]], 2)
+# 5
+# Example 3:
+# >>> max_fill.call([[0, 0, 0], [0, 0, 0]], 5)
+# 0
+# Constraints:
+# * all wells have the same length
+# * 1 <= grid.length <= 10^2
+# * 1 <= grid[:,1].length <= 10^2
+# * grid[i][j] -> 0 | 1
+# * 1 <= capacity <= 10
+def max_fill(grid, capacity)
+","def max_fill(grid, capacity)
+  total_water_units = grid.flatten.sum
+  (total_water_units.to_f / capacity).ceil
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_max_fill
+    candidate = method(:max_fill)
+    assert_equal(6, candidate.call([[0, 0, 1, 0], [0, 1, 0, 0], [1, 1, 1, 1]], 1))
+    assert_equal(5, candidate.call([[0, 0, 1, 1], [0, 0, 0, 0], [1, 1, 1, 1], [0, 1, 1, 1]], 2))
+    assert_equal(0, candidate.call([[0, 0, 0], [0, 0, 0]], 5))
+    assert_equal(4, candidate.call([[1, 1, 1, 1], [1, 1, 1, 1]], 2))
+    assert_equal(2, candidate.call([[1, 1, 1, 1], [1, 1, 1, 1]], 9))
+  end
+end
+"
+HumanEval_116,yue_Hant,rb,"實施方法係咁:同樣嘅數字,以小數值來排序.一,二進制嘅數字,從上升順序.喺呢個 Kata 函數裡面,你需要根據# >>> sort_array.call([1, 5, 2, 3, 4])
+# [1, 2, 3, 4, 5]
+# >>> sort_array.call([-2, -3, -4, -5, -6])
+# [-6, -5, -4, -3, -2]
+# >>> sort_array.call([1, 0, 2, 3, 4])
+# [0, 1, 2, 3, 4]
+def sort_array(arr)
+","def sort_array(arr)
+  arr.sort_by { |n| [n.to_s(2).count('1'), n] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sort_array
+    candidate = method(:sort_array)
+    assert_equal([1, 2, 4, 3, 5], candidate.call([1, 5, 2, 3, 4]))
+    assert_equal([-4, -2, -6, -5, -3], candidate.call([-2, -3, -4, -5, -6]))
+    assert_equal([0, 1, 2, 4, 3], candidate.call([1, 0, 2, 3, 4]))
+    assert_equal([], candidate.call([]))
+    assert_equal([2, 2, 4, 4, 3, 3, 5, 5, 5, 7, 77], candidate.call([2, 5, 77, 4, 5, 3, 5, 7, 2, 3, 4]))
+    assert_equal([32, 3, 5, 6, 12, 44], candidate.call([3, 6, 44, 12, 32, 5]))
+    assert_equal([2, 4, 8, 16, 32], candidate.call([2, 4, 8, 16, 32]))
+    assert_equal([2, 4, 8, 16, 32], candidate.call([2, 4, 8, 16, 32]))
+  end
+end
+"
+HumanEval_117,yue_Hant,rb,"譬如:注意:你可以假設輸入字符串只包含字母同空格.如果字符串 s 已空,函数应该返回一个空数组.n 個輔音,依序寫喺字串 s 裡面一個函數,它返回一個字符串 s 中所有包含正確的單詞的數列给定一个字符串 s 和一个自然数 n,你被赋予执行任务# >>> select_words.call(""Mary had a little lamb"", 4)
+# [""little""]
+# >>> select_words.call(""Mary had a little lamb"", 3)
+# [""Mary"", ""lamb""]
+# >>> select_words.call(""simple white space"", 2)
+# []
+# >>> select_words.call(""Hello world"", 4)
+# [""world""]
+# >>> select_words.call(""Uncle sam"", 3)
+# [""Uncle""]
+def select_words(s, n)
+","def select_words(s, n)
+  vowels = ""aeiouAEIOU""
+  words = s.split
+  words.select do |word|
+    consonant_count = word.chars.count { |char| !vowels.include?(char) }
+    consonant_count == n
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_select_words
+    candidate = method(:select_words)
+    assert_equal([""little""], candidate.call(""Mary had a little lamb"", 4))
+    assert_equal([""Mary"", ""lamb""], candidate.call(""Mary had a little lamb"", 3))
+    assert_equal([], candidate.call(""simple white space"", 2))
+    assert_equal([""world""], candidate.call(""Hello world"", 4))
+    assert_equal([""Uncle""], candidate.call(""Uncle sam"", 3))
+    assert_equal([], candidate.call("""", 4))
+    assert_equal([""b"", ""c"", ""d"", ""f""], candidate.call(""a b c d e f"", 1))
+  end
+end
+"
+HumanEval_118,yue_Hant,rb,"譬如..你可以假设给定的字符串只包含英文字母.搵出符合以上條件嘅母音開始同結束嘅母音唔計.如果冇,返回空嘅字串.兩個從詞嘅右邊開始嘅輔音 (大小寫字體敏感).你需要一個詞,一個詞之間最接近嘅單元# >>> get_closest_vowel.call(""yogurt"")
+# ""u""
+# >>> get_closest_vowel.call(""FULL"")
+# ""U""
+# >>> get_closest_vowel.call(""quick"")
+# """"
+# >>> get_closest_vowel.call(""ab"")
+# """"
+def get_closest_vowel(word)
+","def get_closest_vowel(word)
+  vowels = ""aeiouAEIOU""
+  (1...word.length - 1).reverse_each do |i|
+    if vowels.include?(word[i]) && !vowels.include?(word[i - 1]) && !vowels.include?(word[i + 1])
+      return word[i]
+    end
+  end
+  return """"
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_get_closest_vowel
+    candidate = method(:get_closest_vowel)
+    assert_equal(""u"", candidate.call(""yogurt""))
+    assert_equal(""u"", candidate.call(""full""))
+    assert_equal("""", candidate.call(""easy""))
+    assert_equal("""", candidate.call(""eAsy""))
+    assert_equal("""", candidate.call(""ali""))
+    assert_equal(""a"", candidate.call(""bad""))
+    assert_equal(""o"", candidate.call(""most""))
+    assert_equal("""", candidate.call(""ab""))
+    assert_equal("""", candidate.call(""ba""))
+    assert_equal("""", candidate.call(""quick""))
+    assert_equal(""i"", candidate.call(""anime""))
+    assert_equal("""", candidate.call(""Asia""))
+    assert_equal(""o"", candidate.call(""Above""))
+  end
+end
+"
+HumanEval_119,yue_Hant,rb,"譬如:如果有辦法建立一個好嘅字符串,請返回""yes"",如果冇辦法,請返回""no""."" (()) ""唔係.例如:字符串""(((() ""是好的,而字符串""一個字符串 S 只有當所有 S 中的括號都被認為是好的,得到嘅字符串一定係好好嘅你的工作是检查是否可以将两个字符串连接到一起.只有括號"" (() ""或者括號"" ()) ""你有兩個字符串嘅數列,兩個字符串都係由開頭組成嘅# >>> match_parens.call([""()("", "")""])
+# ""Yes""
+# >>> match_parens.call(["")"", "")""])
+# ""No""
+def match_parens(lst)
+","def match_parens(lst)
+  a, b = lst
+
+  # Define a helper method to check if a string is balanced
+  def balanced?(s)
+    count = 0
+    s.each_char do |c|
+      count += 1 if c == '('
+      count -= 1 if c == ')'
+      return false if count < 0
+    end
+    count == 0
+  end
+
+  # Check if either concatenation forms a good string
+  if balanced?(a + b) || balanced?(b + a)
+    ""Yes""
+  else
+    ""No""
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_match_parens
+    candidate = method(:match_parens)
+    assert_equal(""Yes"", candidate.call([""()("", "")""]))
+    assert_equal(""No"", candidate.call(["")"", "")""]))
+    assert_equal(""No"", candidate.call([""(()(())"", ""())())""]))
+    assert_equal(""Yes"", candidate.call(["")())"", ""(()()(""]))
+    assert_equal(""Yes"", candidate.call([""(())))"", ""(()())((""]))
+    assert_equal(""No"", candidate.call([""()"", ""())""]))
+    assert_equal(""Yes"", candidate.call([""(()("", ""()))()""]))
+    assert_equal(""No"", candidate.call([""(((("", ""((())""]))
+    assert_equal(""No"", candidate.call(["")(()"", ""(()(""]))
+    assert_equal(""No"", candidate.call(["")("", "")(""]))
+    assert_equal(""Yes"", candidate.call([""("", "")""]))
+    assert_equal(""Yes"", candidate.call(["")"", ""(""]))
+  end
+end
+"
+HumanEval_120,yue_Hant,rb,"舉例一:代表最多數字 k 代表最多數字 k 代表最多數字 k给定一个整数数组 arr 和一个正整数 k,返回一个排序的数组 # >>> maximum.call([-3, -4, 5], 3)
+# [-4, -3, 5]
+# Example 2:
+# >>> maximum.call([4, -4, 4], 2)
+# [4, 4]
+# Example 3:
+# >>> maximum.call([-3, 2, 1, 2, -1, -2, 1], 1)
+# [2]
+# Note:
+# 1. The length of the array will be in the range of [1, 1000].
+# 2. The elements in the array will be in the range of [-1000, 1000].
+# 3. 0 <= k <= len(arr)
+def maximum(arr, k)
+","def maximum(arr, k)
+  arr.sort.last(k).sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_maximum
+    candidate = method(:maximum)
+    assert_equal([-4, -3, 5], candidate.call([-3, -4, 5], 3))
+    assert_equal([4, 4], candidate.call([4, -4, 4], 2))
+    assert_equal([2], candidate.call([-3, 2, 1, 2, -1, -2, 1], 1))
+    assert_equal([2, 20, 123], candidate.call([123, -123, 20, 0, 1, 2, -3], 3))
+    assert_equal([0, 1, 2, 20], candidate.call([-123, 20, 0, 1, 2, -3], 4))
+    assert_equal([-13, -8, 0, 0, 3, 5, 15], candidate.call([5, 15, 0, 3, -13, -8, 0], 7))
+    assert_equal([3, 5], candidate.call([-1, 0, 2, 5, 3, -10], 2))
+    assert_equal([5], candidate.call([1, 0, 5, -7], 1))
+    assert_equal([-4, 4], candidate.call([4, -4], 2))
+    assert_equal([-10, 10], candidate.call([-10, 10], 2))
+    assert_equal([], candidate.call([1, 2, 3, -23, 243, -400, 0], 0))
+  end
+end
+"
+HumanEval_121,yue_Hant,rb,"譬如話..给出一个非空的整数数组,返回所有偶数元素的和.# >>> solution.call([5, 8, 7, 1])
+# 12
+# >>> solution.call([3, 3, 3, 3, 3])
+# 9
+# >>> solution.call([30, 13, 24, 321])
+# 0
+def solution(lst)
+","def solution(lst)
+  lst.each_with_index.reduce(0) do |sum, (val, idx)|
+    (idx.even? && val.odd?) ? sum + val : sum
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_solution
+    candidate = method(:solution)
+    assert_equal(12, candidate.call([5, 8, 7, 1]))
+    assert_equal(9, candidate.call([3, 3, 3, 3, 3]))
+    assert_equal(0, candidate.call([30, 13, 24, 321]))
+    assert_equal(5, candidate.call([5, 9]))
+    assert_equal(0, candidate.call([2, 4, 8]))
+    assert_equal(23, candidate.call([30, 13, 23, 32]))
+    assert_equal(3, candidate.call([3, 13, 2, 9]))
+  end
+end
+"
+HumanEval_122,yue_Hant,rb,"譬如..元素的和,最多可以是从 arr 中第 k 个元素中取出两个数字.给定一个非空数组的整数 arr 和一个整数 k,返回 # >>> add_elements.call([111, 21, 3, 4000, 5, 6, 7, 8, 9], 4)
+# 24
+# Constraints:
+# 1. 1 <= len(arr) <= 100
+# 2. 1 <= k <= len(arr)
+def add_elements(arr, k)
+","def add_elements(arr, k)
+  arr.first(k).select { |num| num.abs.to_s.length <= 2 }.sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_add_elements
+    candidate = method(:add_elements)
+    assert_equal(-4, candidate.call([1, -2, -3, 41, 57, 76, 87, 88, 99], 3))
+    assert_equal(0, candidate.call([111, 121, 3, 4000, 5, 6], 2))
+    assert_equal(125, candidate.call([11, 21, 3, 90, 5, 6, 7, 8, 9], 4))
+    assert_equal(24, candidate.call([111, 21, 3, 4000, 5, 6, 7, 8, 9], 4))
+    assert_equal(1, candidate.call([1], 1))
+  end
+end
+"
+HumanEval_123,yue_Hant,rb,"get_odd_collatz(5) 返回[1, 5] # 对于5的collatz序列是[5, 16, 8, 4, 2, 1],所以奇数只有1和5.例如:2.返回的数组按增长顺序排序.1. Collatz(1) 係 [1].注意:項加 1 根據推論,無論 n 有幾多值,序列總會達到 1如果前面的数为奇数,下一个数是前面的3倍.上一個項,如下:如果上一個項是偶數,下一個項是開始係任意一個正嘅整數n. 然後每一個項都取自於科拉茨推理係數學入面嘅一個推理 涉及到一個已定義嘅序列给定一个正整数 n,返回一个有奇数序列的排序数组.# >>> get_odd_collatz.call(5)
+# [1, 5]
+def get_odd_collatz(n)
+","def get_odd_collatz(n)
+  collatz_sequence = []
+  while n != 1
+    collatz_sequence << n if n.odd?
+    if n.even?
+      n = n / 2
+    else
+      n = 3 * n + 1
+    end
+  end
+  collatz_sequence << 1 if n == 1
+
+  collatz_sequence.sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_get_odd_collatz
+    candidate = method(:get_odd_collatz)
+    assert_equal([1, 5, 7, 11, 13, 17], candidate.call(14))
+    assert_equal([1, 5], candidate.call(5))
+    assert_equal([1, 3, 5], candidate.call(12))
+    assert_equal([1], candidate.call(1))
+  end
+end
+"
+HumanEval_124,yue_Hant,rb,"4.日期應該係以MM-DD-YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY3. 個月唔可以少過1個月,唔可以大過12個月.2,每月的日数不少于1或大于31天. 1,3,5,7,8,10,12. 每月的日数不少于1或大于30天. 4,6,9,11. 每月的日数不少于1或大于29天.1.日期字符串不是空的.假如符合下列所有规则,该日期是有效的:如果日期係真嘅,則返回 true 如果日期係錯,則返回 false你需要寫一個函數嚟驗證一個已知日期字符串,然後# >>> valid_date.call(""03-11-2000"")
+# true
+# >>> valid_date.call(""15-01-2012"")
+# false
+# >>> valid_date.call(""04-0-2040"")
+# false
+# >>> valid_date.call(""06-04-2020"")
+# true
+# >>> valid_date.call(""06/04/2020"")
+# false
+def valid_date(date)
+","def valid_date(date)
+  return false if date.nil? || date.empty?
+  
+  # Check if the date format is correct
+  match = date.match(/^(\d{2})-(\d{2})-(\d{4})$/)
+  return false unless match
+  
+  month, day, year = match.captures.map(&:to_i)
+  
+  # Check if month is valid
+  return false if month < 1 || month > 12
+  
+  # Check if day is valid according to the month
+  case month
+  when 1, 3, 5, 7, 8, 10, 12
+    return day >= 1 && day <= 31
+  when 4, 6, 9, 11
+    return day >= 1 && day <= 30
+  when 2
+    return day >= 1 && day <= 29
+  else
+    return false
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_valid_date
+    candidate = method(:valid_date)
+    assert_equal(true, candidate.call(""03-11-2000""))
+    assert_equal(false, candidate.call(""15-01-2012""))
+    assert_equal(false, candidate.call(""04-0-2040""))
+    assert_equal(true, candidate.call(""06-04-2020""))
+    assert_equal(true, candidate.call(""01-01-2007""))
+    assert_equal(false, candidate.call(""03-32-2011""))
+    assert_equal(false, candidate.call(""""))
+    assert_equal(false, candidate.call(""04-31-3000""))
+    assert_equal(true, candidate.call(""06-06-2005""))
+    assert_equal(false, candidate.call(""21-31-2000""))
+    assert_equal(true, candidate.call(""04-12-2003""))
+    assert_equal(false, candidate.call(""04122003""))
+    assert_equal(false, candidate.call(""20030412""))
+    assert_equal(false, candidate.call(""2003-04""))
+    assert_equal(false, candidate.call(""2003-04-12""))
+    assert_equal(false, candidate.call(""04-2003""))
+  end
+end
+"
+HumanEval_125,yue_Hant,rb,"譬如話..字母表, 字母表""a""=0, 字母表""b""=1, ... 字母表""z""=25如果沒有逗號,你應該返回小寫字母數以奇數序列的數字.给定一串单词,返回一个字数组用空白分割,如果您想要的文本中没有空白,# >>> split_words.call(""Hello world!"")
+# [""Hello"", ""world!""]
+# >>> split_words.call(""Hello,world!"")
+# [""Hello"", ""world!""]
+# >>> split_words.call(""abcdef"")
+# 3
+def split_words(txt)
+","def split_words(txt)
+  if txt.include?(' ')
+    return txt.split(' ')
+  elsif txt.include?(',')
+    return txt.split(',')
+  else
+    odd_count = txt.chars.count { |char| ('a'..'z').include?(char) && (char.ord - 'a'.ord).odd? }
+    return odd_count
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_split_words
+    candidate = method(:split_words)
+    assert_equal([""Hello"", ""world!""], candidate.call(""Hello world!""))
+    assert_equal([""Hello"", ""world!""], candidate.call(""Hello,world!""))
+    assert_equal([""Hello"", ""world,!""], candidate.call(""Hello world,!""))
+    assert_equal([""Hello,Hello,world"", ""!""], candidate.call(""Hello,Hello,world !""))
+    assert_equal(3, candidate.call(""abcdef""))
+    assert_equal(2, candidate.call(""aaabb""))
+    assert_equal(1, candidate.call(""aaaBb""))
+    assert_equal(0, candidate.call(""""))
+  end
+end
+"
+HumanEval_126,yue_Hant,rb,"譬如話..假設無負數,只有整數.如果一個數列有多於一個重複數列,根據一個數字陣列,返回無論它們是否已被排序.# >>> is_sorted.call([5])
+# true
+# >>> is_sorted.call([1, 2, 3, 4, 5])
+# true
+# >>> is_sorted.call([1, 3, 2, 4, 5])
+# false
+# >>> is_sorted.call([1, 2, 3, 4, 5, 6])
+# true
+# >>> is_sorted.call([1, 2, 3, 4, 5, 6, 7])
+# true
+# >>> is_sorted.call([1, 3, 2, 4, 5, 6, 7])
+# false
+# >>> is_sorted.call([1, 2, 2, 3, 3, 4])
+# true
+# >>> is_sorted.call([1, 2, 2, 2, 3, 4])
+# false
+def is_sorted(lst)
+","def is_sorted(lst)
+  lst.each_cons(2).with_index do |(a, b), index|
+    return false if a > b
+    return false if index < lst.length - 2 && a == b && lst[index + 2] == b
+  end
+  true
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_sorted
+    candidate = method(:is_sorted)
+    assert_equal(true, candidate.call([5]))
+    assert_equal(true, candidate.call([1, 2, 3, 4, 5]))
+    assert_equal(false, candidate.call([1, 3, 2, 4, 5]))
+    assert_equal(true, candidate.call([1, 2, 3, 4, 5, 6]))
+    assert_equal(true, candidate.call([1, 2, 3, 4, 5, 6, 7]))
+    assert_equal(false, candidate.call([1, 3, 2, 4, 5, 6, 7]))
+    assert_equal(true, candidate.call([]))
+    assert_equal(true, candidate.call([1]))
+    assert_equal(false, candidate.call([3, 2, 1]))
+    assert_equal(false, candidate.call([1, 2, 2, 2, 3, 4]))
+    assert_equal(false, candidate.call([1, 2, 3, 3, 3, 4]))
+    assert_equal(true, candidate.call([1, 2, 2, 3, 3, 4]))
+    assert_equal(true, candidate.call([1, 2, 3, 4]))
+  end
+end
+"
+HumanEval_127,yue_Hant,rb,"[輸入/輸出] 樣本:如果兩個區間沒有交叉,返回""NO"".否則返回""NO"".如果交叉點嘅長度係一個素數,返回""YES"",长度为1的数,不算是素数.譬如, (1,3) (2,4) 嘅交點係 (2,3)个数的区间是个素数.你嘅任務就係搵出 呢兩點之間嘅交叉點嘅長短假設每一個特定嘅時間段, 開始嘅時間段大於,或者等於結束嘅時間段.包含開始同結束嘅時間.既定嘅時間段係閉嘅,意思係話,時間段 (開始,結束) 已被加上每一個區間都係一對整數,例如,區間= (開始,結束) = (1,2).你有兩個時間,# >>> intersection.call([1, 2], [2, 3])
+# ""NO""
+# >>> intersection.call([-1, 1], [0, 4])
+# ""NO""
+# >>> intersection.call([-3, -1], [-5, 5])
+# ""YES""
+def intersection(interval1, interval2)
+","def intersection(interval1, interval2)
+  start1, end1 = interval1
+  start2, end2 = interval2
+
+  intersection_start = [start1, start2].max
+  intersection_end = [end1, end2].min
+
+  if intersection_start > intersection_end
+    return ""NO""
+  end
+
+  intersection_length = intersection_end - intersection_start + 1
+
+  return ""YES"" if prime?(intersection_length)
+
+  ""NO""
+end
+
+def prime?(n)
+  return false if n <= 1
+  return true if n == 2 || n == 3
+
+  (2..Math.sqrt(n).to_i).each do |i|
+    return false if n % i == 0
+  end
+
+  true
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_intersection
+    candidate = method(:intersection)
+    assert_equal(""NO"", candidate.call([1, 2], [2, 3]))
+    assert_equal(""NO"", candidate.call([-1, 1], [0, 4]))
+    assert_equal(""YES"", candidate.call([-3, -1], [-5, 5]))
+    assert_equal(""YES"", candidate.call([-2, 2], [-4, 0]))
+    assert_equal(""NO"", candidate.call([-11, 2], [-1, -1]))
+    assert_equal(""NO"", candidate.call([1, 2], [3, 5]))
+    assert_equal(""NO"", candidate.call([1, 2], [1, 2]))
+    assert_equal(""NO"", candidate.call([-2, -2], [-3, -2]))
+  end
+end
+"
+HumanEval_128,yue_Hant,rb,"譬如..注意: return nil for empty arr. 返回空的arr. 返回空的arr.每個數字嘅數字代表一個數字,即係 1 , -1 或者 0.整數嘅倍數加所有符號嘅積你得到一個整數,你需要返回# >>> prod_signs.call([1, 2, 2, -4])
+# 9
+# >>> prod_signs.call([0, 1])
+# 0
+# >>> prod_signs.call([])
+# nil
+def prod_signs(arr)
+","def prod_signs(arr)
+  return nil if arr.empty?
+  
+  product_signs = arr.reduce(1) { |prod, num| prod * num <=> 0 }
+  sum_magnitudes = arr.map(&:abs).sum
+  
+  product_signs * sum_magnitudes
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_prod_signs
+    candidate = method(:prod_signs)
+    assert_equal(-9, candidate.call([1, 2, 2, -4]))
+    assert_equal(0, candidate.call([0, 1]))
+    assert_equal(-10, candidate.call([1, 1, 1, 2, 3, -1, 1]))
+    assert_equal(nil, candidate.call([]))
+    assert_equal(20, candidate.call([2, 4, 1, 2, -1, -1, 9]))
+    assert_equal(4, candidate.call([-1, 1, -1, 1]))
+    assert_equal(-4, candidate.call([-1, 1, 1, 1]))
+    assert_equal(0, candidate.call([-1, 1, 1, 0]))
+  end
+end
+"
+HumanEval_129,yue_Hant,rb,"譬如:返回最小路径经过的单元格的有序数组值.答案肯定係唯一嘅lst_A[j] = lst_B[j].所以 lst_A[i] < lst_B[i] 對於任意一個 j (1 <= j < i) 我們有換句話講,有個整數指數 i (1 <= i <= k)通過 (讓我們稱為 lst_A 和 lst_B), lst_A 在詞典上比較少完成A,B 两种单元格的数组后,如果路径A (长度为k) 较路径B (长度为k) 短,则你唔可以喺網頁度消失.兩者都未必係同一種).請留意,一個長度為 k 的路徑意味著參觀的細胞數量確實是 k (而不是 細胞.換句話講,你可以去到 同你有同樣嘅電流邊緣嘅細胞從任何一個細胞,每一步你都可以移到任何一個鄰近嘅細胞,你需要喺網格度搵一個最短 k 條長嘅路徑inclusive 喺網格嘅單元格上面出現一次每個格子嘅單元格都包含一個值.每個係 [1,N * N] 範圍嘅整數给定一个有N行和N列 (N >=2) 的网格,以及一个正整数k,# >>> minPath.call([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 3)
+# [1, 2, 1]
+# >>> minPath.call([[5, 9, 3], [4, 1, 6], [7, 8, 2]], 1)
+# [1]
+def minPath(grid, k)
+","def minPath(grid, k)
+  n = grid.size
+  directions = [[-1, 0], [1, 0], [0, -1], [0, 1]]
+  min_path = nil
+
+  n.times do |i|
+    n.times do |j|
+      queue = [[[i, j], [grid[i][j]]]]
+      until queue.empty?
+        position, path = queue.shift
+        if path.size == k
+          min_path = path if min_path.nil? || path < min_path
+          next
+        end
+        directions.each do |dx, dy|
+          x, y = position[0] + dx, position[1] + dy
+          if x.between?(0, n-1) && y.between?(0, n-1)
+            queue.push([[x, y], path + [grid[x][y]]])
+          end
+        end
+      end
+    end
+  end
+  min_path
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_minPath
+    candidate = method(:minPath)
+    assert_equal([1, 2, 1], candidate.call([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 3))
+    assert_equal([1], candidate.call([[5, 9, 3], [4, 1, 6], [7, 8, 2]], 1))
+    assert_equal([1, 2, 1, 2], candidate.call([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]], 4))
+    assert_equal([1, 10, 1, 10, 1, 10, 1], candidate.call([[6, 4, 13, 10], [5, 7, 12, 1], [3, 16, 11, 15], [8, 14, 9, 2]], 7))
+    assert_equal([1, 7, 1, 7, 1], candidate.call([[8, 14, 9, 2], [6, 4, 13, 15], [5, 7, 1, 12], [3, 10, 11, 16]], 5))
+    assert_equal([1, 6, 1, 6, 1, 6, 1, 6, 1], candidate.call([[11, 8, 7, 2], [5, 16, 14, 4], [9, 3, 15, 6], [12, 13, 10, 1]], 9))
+    assert_equal([1, 6, 1, 6, 1, 6, 1, 6, 1, 6, 1, 6], candidate.call([[12, 13, 10, 1], [9, 3, 15, 6], [5, 16, 14, 4], [11, 8, 7, 2]], 12))
+    assert_equal([1, 3, 1, 3, 1, 3, 1, 3], candidate.call([[2, 7, 4], [3, 1, 5], [6, 8, 9]], 8))
+    assert_equal([1, 5, 1, 5, 1, 5, 1, 5], candidate.call([[6, 1, 5], [3, 8, 9], [2, 7, 4]], 8))
+    assert_equal([1, 2, 1, 2, 1, 2, 1, 2, 1, 2], candidate.call([[1, 2], [3, 4]], 10))
+    assert_equal([1, 3, 1, 3, 1, 3, 1, 3, 1, 3], candidate.call([[1, 3], [3, 2]], 10))
+  end
+end
+"
+HumanEval_130,yue_Hant,rb,"譬如:第一個n+1個Tribonacci序列數字.给你一个非负数整数 n,你必须返回一个数组的兩個加三個加三個等於八個三三 = 三二 + 三一 + 三四tri(4) = 3 tri(2) = 1 + (2 / 2) = 2 例如:如果 n 係奇數, tri (n-1) = tri (n-1) + tri (n-2) + tri (n-1)如果 n 是偶数, tri (n) = 1 + n / 2tri(1) = 3 黎波納奇序列嘅定義係:但係啲人唔知,究竟係咩係""特里波納契序列""每個人都知道斐波那契序列, 它是由数学家们在1950年深入研究的.# >>> tri.call(3)
+# [1, 3, 2, 8]
+def tri(n)
+","def tri(n)
+  sequence = [1, 3]
+  
+  (2..n).each do |i|
+    if i.even?
+      sequence[i] = 1 + i / 2
+    else
+      sequence[i] = sequence[i - 1] + sequence[i - 2] + sequence[i + 1] rescue 0
+    end
+  end
+  
+  sequence[0..n]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_tri
+    candidate = method(:tri)
+    assert_equal([1, 3, 2, 8], candidate.call(3))
+    assert_equal([1, 3, 2, 8, 3], candidate.call(4))
+    assert_equal([1, 3, 2, 8, 3, 15], candidate.call(5))
+    assert_equal([1, 3, 2, 8, 3, 15, 4], candidate.call(6))
+    assert_equal([1, 3, 2, 8, 3, 15, 4, 24], candidate.call(7))
+    assert_equal([1, 3, 2, 8, 3, 15, 4, 24, 5], candidate.call(8))
+    assert_equal([1, 3, 2, 8, 3, 15, 4, 24, 5, 35], candidate.call(9))
+    assert_equal([1, 3, 2, 8, 3, 15, 4, 24, 5, 35, 6, 48, 7, 63, 8, 80, 9, 99, 10, 120, 11], candidate.call(20))
+    assert_equal([1], candidate.call(0))
+    assert_equal([1, 3], candidate.call(1))
+  end
+end
+"
+HumanEval_131,yue_Hant,rb,"例如:如果所有數字都係偶數,返回0给定一个正整数 n,返回奇数的乘积.# >>> digits.call(1)
+# 1
+# >>> digits.call(4)
+# 0
+# >>> digits.call(235)
+# 15
+def digits(n)
+","def digits(n)
+  odd_digits = n.to_s.chars.map(&:to_i).select { |digit| digit.odd? }
+  return 0 if odd_digits.empty?
+  odd_digits.reduce(:*)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_digits
+    candidate = method(:digits)
+    assert_equal(5, candidate.call(5))
+    assert_equal(5, candidate.call(54))
+    assert_equal(1, candidate.call(120))
+    assert_equal(5, candidate.call(5014))
+    assert_equal(315, candidate.call(98765))
+    assert_equal(2625, candidate.call(5576543))
+    assert_equal(0, candidate.call(2468))
+  end
+end
+"
+HumanEval_132,yue_Hant,rb,"字母串嘅至少一個括號係嵌套嘅.函數只要有一個有效的括號子序列,則應該返回 true建立一個函數,以字符串為輸入,而字符串只包含方括號.# >>> is_nested.call(""[[]]"")
+# true
+# >>> is_nested.call(""[]]]]]]][[[[[]"")
+# false
+# >>> is_nested.call(""[][]"")
+# false
+# >>> is_nested.call(""[]"")
+# false
+# >>> is_nested.call(""[[][]]"")
+# true
+# >>> is_nested.call(""[[]][["")
+# true
+def is_nested(string)
+","def is_nested(string)
+  stack = []
+  has_nested = false
+
+  string.each_char do |char|
+    if char == '['
+      stack.push(char)
+    elsif char == ']'
+      if stack.empty?
+        return false
+      end
+      stack.pop
+      has_nested = true if stack.any?
+    end
+  end
+
+  has_nested
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_nested
+    candidate = method(:is_nested)
+    assert_equal(true, candidate.call(""[[]]""))
+    assert_equal(false, candidate.call(""[]]]]]]][[[[[]""))
+    assert_equal(false, candidate.call(""[][]""))
+    assert_equal(false, candidate.call(""[]""))
+    assert_equal(true, candidate.call(""[[[[]]]]""))
+    assert_equal(false, candidate.call(""[]]]]]]]]]]""))
+    assert_equal(true, candidate.call(""[][][[]]""))
+    assert_equal(false, candidate.call(""[[]""))
+    assert_equal(false, candidate.call(""[]]""))
+    assert_equal(true, candidate.call(""[[]][[""))
+    assert_equal(true, candidate.call(""[[][]]""))
+    assert_equal(false, candidate.call(""""))
+    assert_equal(false, candidate.call(""[[[[[[[[""))
+    assert_equal(false, candidate.call(""]]]]]]]]""))
+  end
+end
+"
+HumanEval_133,yue_Hant,rb,"譬如:首先,我们将数组中的每个元素圆到最上面的int{}你需要返回给定的数组中二次数的和,你就得到一個數列.# >>> lst.call([1.0, 2.0, 3.0])
+# 14
+# >>> lst.call([1.0, 4.0, 9.0])
+# 98
+# >>> lst.call([1.0, 3.0, 5.0, 7.0])
+# 84
+# >>> lst.call([1.4, 4.2, 0.0])
+# 29
+# >>> lst.call([-2.4, 1.0, 1.0])
+# 6
+def sum_squares(lst)
+","def sum_squares(lst)
+  lst.map { |num| (num.ceil)**2 }.sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sum_squares
+    candidate = method(:sum_squares)
+    assert_equal(14, candidate.call([1.0, 2.0, 3.0]))
+    assert_equal(14, candidate.call([1.0, 2.0, 3.0]))
+    assert_equal(84, candidate.call([1.0, 3.0, 5.0, 7.0]))
+    assert_equal(29, candidate.call([1.4, 4.2, 0.0]))
+    assert_equal(6, candidate.call([-2.4, 1.0, 1.0]))
+    assert_equal(10230, candidate.call([100.0, 1.0, 15.0, 2.0]))
+    assert_equal(200000000, candidate.call([10000.0, 10000.0]))
+    assert_equal(75, candidate.call([-1.4, 4.6, 6.3]))
+    assert_equal(1086, candidate.call([-1.4, 17.9, 18.9, 19.9]))
+    assert_equal(0, candidate.call([0.0]))
+    assert_equal(1, candidate.call([-1.0]))
+    assert_equal(2, candidate.call([-1.0, 1.0, 0.0]))
+  end
+end
+"
+HumanEval_134,yue_Hant,rb,"譬如:注意:""word""係由空格隔開嘅字符組.錯誤嘅字,或者係某個詞嘅一部分某個字符串嘅一個字母係個字母符 而唔係個字母如果最後一個字符是 的話 ,建立一個函數,返回 true# >>> check_if_last_char_is_a_letter.call(""apple pie"")
+# false
+# >>> check_if_last_char_is_a_letter.call(""apple pi e"")
+# true
+# >>> check_if_last_char_is_a_letter.call(""apple pi e "")
+# false
+# >>> check_if_last_char_is_a_letter.call("""")
+# false
+def check_if_last_char_is_a_letter(txt)
+","check_if_last_char_is_a_letter = ->(txt) {
+  return false if txt.strip.empty?
+  words = txt.strip.split(' ')
+  last_word = words.last
+  return false if last_word.empty?
+  last_char = last_word[-1]
+
+  last_char =~ /[a-zA-Z]/ && (words.size == 1 || txt[txt.rindex(last_char) - 1] == ' ')
+}","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_check_if_last_char_is_a_letter
+    candidate = method(:check_if_last_char_is_a_letter)
+    assert_equal(false, candidate.call(""apple""))
+    assert_equal(true, candidate.call(""apple pi e""))
+    assert_equal(false, candidate.call(""eeeee""))
+    assert_equal(true, candidate.call(""A""))
+    assert_equal(false, candidate.call(""Pumpkin pie ""))
+    assert_equal(false, candidate.call(""Pumpkin pie 1""))
+    assert_equal(false, candidate.call(""""))
+    assert_equal(false, candidate.call(""eeeee e ""))
+    assert_equal(false, candidate.call(""apple pie""))
+    assert_equal(false, candidate.call(""apple pi e ""))
+  end
+end
+"
+HumanEval_135,yue_Hant,rb,"譬如:值重複.如果無任何元素,則返回 -1. 資料中將冇包含唔係大過,亦唔係等於即時先前嘅元素.如果建立一個函數,返回一個元素的最大索引,# >>> can_arrange.call([1, 2, 4, 3, 5])
+# 3
+# >>> can_arrange.call([1, 2, 3])
+# -1
+def can_arrange(arr)
+","def can_arrange(arr)
+  (1...arr.length).reverse_each do |i|
+    return i if arr[i] < arr[i - 1]
+  end
+  -1
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_can_arrange
+    candidate = method(:can_arrange)
+    assert_equal(3, candidate.call([1, 2, 4, 3, 5]))
+    assert_equal(-1, candidate.call([1, 2, 4, 5]))
+    assert_equal(2, candidate.call([1, 4, 2, 5, 6, 7, 8, 9, 10]))
+    assert_equal(4, candidate.call([4, 8, 5, 7, 3]))
+    assert_equal(-1, candidate.call([]))
+  end
+end
+"
+HumanEval_136,yue_Hant,rb,"譬如:如果無負數或正數,則返回null.整數係指一個數列嘅正數負數中最大嘅數字,b是最小嘅數字建立一個函數,返回一個數列 (a,b),其中'a'是# >>> largest_smallest_integers.call([2, 4, 1, 3, 5, 7])
+# [nil, 1]
+# >>> largest_smallest_integers.call([])
+# [nil, nil]
+# >>> largest_smallest_integers.call([0])
+# [nil, nil]
+def largest_smallest_integers(lst)
+","def largest_smallest_integers(lst)
+  largest_negative = nil
+  smallest_positive = nil
+  
+  lst.each do |num|
+    if num < 0
+      largest_negative = num if largest_negative.nil? || num > largest_negative
+    elsif num > 0
+      smallest_positive = num if smallest_positive.nil? || num < smallest_positive
+    end
+  end
+  
+  [largest_negative, smallest_positive]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_largest_smallest_integers
+    candidate = method(:largest_smallest_integers)
+    assert_equal([nil, 1], candidate.call([2, 4, 1, 3, 5, 7]))
+    assert_equal([nil, 1], candidate.call([2, 4, 1, 3, 5, 7, 0]))
+    assert_equal([-2, 1], candidate.call([1, 3, 2, 4, 5, 6, -2]))
+    assert_equal([-7, 2], candidate.call([4, 5, 3, 6, 2, 7, -7]))
+    assert_equal([-9, 2], candidate.call([7, 3, 8, 4, 9, 2, 5, -9]))
+    assert_equal([nil, nil], candidate.call([]))
+    assert_equal([nil, nil], candidate.call([0]))
+    assert_equal([-1, nil], candidate.call([-1, -3, -5, -6]))
+    assert_equal([-1, nil], candidate.call([-1, -3, -5, -6, 0]))
+    assert_equal([-3, 1], candidate.call([-6, -4, -4, -3, 1]))
+    assert_equal([-3, 1], candidate.call([-6, -4, -4, -3, -100, 1]))
+  end
+end
+"
+HumanEval_137,yue_Hant,rb,"注意:如果一個實數被表示成一個字符串,浮點可能是 . 或者 , 如果值相等,返回null.返回最大嘅變量,以它所屬變量類型.建立一個函數,以整數,浮數,或串表示# >>> compare_one.call(1, 2.5)
+# 2.5
+# >>> compare_one.call(1, ""2,3"")
+# ""2,3""
+# >>> compare_one.call(""5,1"", ""6"")
+# ""6""
+# >>> compare_one.call(""1"", 1)
+# nil
+def compare_one(a, b)
+","def compare_one(a, b)
+  a = a.to_s.tr(',', '.').to_f if a.is_a?(String) && a.include?(',')
+  b = b.to_s.tr(',', '.').to_f if b.is_a?(String) && b.include?(',')
+
+  if a.is_a?(String) && b.is_a?(String)
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Float) && b.is_a?(Float)
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Integer) && b.is_a?(Integer)
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Integer) && b.is_a?(Float)
+    a = a.to_f
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Float) && b.is_a?(Integer)
+    b = b.to_f
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(String) && b.is_a?(Float)
+    b = b.to_s # Only supporting variable type comparison, retain original types
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Float) && b.is_a?(String)
+    a = a.to_s # Only supporting variable type comparison, retain original types
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(String) && b.is_a?(Integer)
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Integer) && b.is_a?(String)
+    return nil if a == b
+    return a > b ? a : b
+  else
+    return nil
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_compare_one
+    candidate = method(:compare_one)
+    assert_equal(2, candidate.call(1, 2))
+    assert_equal(2.5, candidate.call(1, 2.5))
+    assert_equal(3, candidate.call(2, 3))
+    assert_equal(6, candidate.call(5, 6))
+    assert_equal(""2,3"", candidate.call(1, ""2,3""))
+    assert_equal(""6"", candidate.call(""5,1"", ""6""))
+    assert_equal(""2"", candidate.call(""1"", ""2""))
+    assert_equal(nil, candidate.call(""1"", 1))
+  end
+end
+"
+HumanEval_138,yue_Hant,rb,"舉例試想下,有沒有 n 可以寫成正 4 個正偶數的總和?# >>> is_equal_to_sum_even.call(4)
+# false
+# >>> is_equal_to_sum_even.call(6)
+# false
+# >>> is_equal_to_sum_even.call(8)
+# true
+def is_equal_to_sum_even(n)
+","def is_equal_to_sum_even(n)
+  return false if n < 8
+  n.even?
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_equal_to_sum_even
+    candidate = method(:is_equal_to_sum_even)
+    assert_equal(false, candidate.call(4))
+    assert_equal(false, candidate.call(6))
+    assert_equal(true, candidate.call(8))
+    assert_equal(true, candidate.call(10))
+    assert_equal(false, candidate.call(11))
+    assert_equal(true, candidate.call(12))
+    assert_equal(false, candidate.call(13))
+    assert_equal(true, candidate.call(16))
+  end
+end
+"
+HumanEval_139,yue_Hant,rb,"例如:喺呢度,n > 0brazilian_factorial (n) = n! (n-1)! (n-2)! (n-1)! (n-1)! (n-1)! (n-2)! (n-1)! (n-1)! (n-1)! (n-1)! (n-1)! (n-1)! (n-1)! (n-1)! (n-1)! (n-1)!)巴西因數系式的定義為:# >>> special_factorial.call(4)
+# 288
+# The function will receive an integer as input and should return the special
+# factorial of this integer.
+def special_factorial(n)
+","def special_factorial(n)
+  return 1 if n <= 1
+  (1..n).inject(1) { |product, i| product * factorial(i) }
+end
+
+def factorial(num)
+  return 1 if num <= 1
+  (2..num).inject(1, :*)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_special_factorial
+    candidate = method(:special_factorial)
+    assert_equal(288, candidate.call(4))
+    assert_equal(34560, candidate.call(5))
+    assert_equal(125411328000, candidate.call(7))
+    assert_equal(1, candidate.call(1))
+  end
+end
+"
+HumanEval_140,yue_Hant,rb,"然後將所有連續嘅空格替換成 - 如果一個字符串有超過兩個連續的空格,给定一条文字串,用字符串的底线来代替所有的空格,# >>> fix_spaces.call("" Example"")
+# ""Example""
+# >>> fix_spaces.call("" Example 1"")
+# ""Example_1""
+# >>> fix_spaces.call("" Example 2"")
+# ""_Example_2""
+# >>> fix_spaces.call("" Example 3"")
+# ""_Example-3""
+def fix_spaces(text)
+","def fix_spaces(text)
+  text.strip.gsub(/\s{3,}/, '-').gsub(' ', '_')
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fix_spaces
+    candidate = method(:fix_spaces)
+    assert_equal(""Example"", candidate.call(""Example""))
+    assert_equal(""Mudasir_Hanif_"", candidate.call(""Mudasir Hanif ""))
+    assert_equal(""Yellow_Yellow__Dirty__Fellow"", candidate.call(""Yellow Yellow  Dirty  Fellow""))
+    assert_equal(""Exa-mple"", candidate.call(""Exa   mple""))
+    assert_equal(""-Exa_1_2_2_mple"", candidate.call(""   Exa 1 2 2 mple""))
+  end
+end
+"
+HumanEval_141,yue_Hant,rb,"譬如:- - 點之後嘅字符串應該係其中一個: ['txt', 'exe', 'dll']拉丁字母 (a-z,A-Z) - - 之前的子字符串不应该是空的,它以字母从 开始- 文件名包含一個點 ""'- 文件名不應該超過三個數字 (0 - 9)符合:文件名稱如果符合下列所有條件,且只有在此情況下才會被認為為有效:如果文件名稱係有效,則返回""是"" 否則返回""否"".建立一個函數,它會取一個字符串來表示一個檔案的名稱,並返回# >>> file_name_check.call(""example.txt"")
+# ""Yes""
+# >>> file_name_check.call(""1example.dll"")
+# ""No""
+def file_name_check(file_name)
+","def file_name_check(file_name)
+  # Check if there's exactly one dot in the filename
+  return 'No' unless file_name.count('.') == 1
+  
+  # Split the filename into the name and extension
+  name, extension = file_name.split('.')
+  
+  # Check if the name part starts with a letter
+  return 'No' if name.empty? || !name[0].match?(/[a-zA-Z]/)
+  
+  # Check if the extension is valid
+  return 'No' unless ['txt', 'exe', 'dll'].include?(extension)
+  
+  # Count digits in the file name
+  digit_count = file_name.count(""0-9"")
+  
+  # Check if digits are more than three
+  return 'No' if digit_count > 3
+  
+  'Yes'
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_file_name_check
+    candidate = method(:file_name_check)
+    assert_equal(""Yes"", candidate.call(""example.txt""))
+    assert_equal(""No"", candidate.call(""1example.dll""))
+    assert_equal(""No"", candidate.call(""s1sdf3.asd""))
+    assert_equal(""Yes"", candidate.call(""K.dll""))
+    assert_equal(""Yes"", candidate.call(""MY16FILE3.exe""))
+    assert_equal(""No"", candidate.call(""His12FILE94.exe""))
+    assert_equal(""No"", candidate.call(""_Y.txt""))
+    assert_equal(""No"", candidate.call(""?aREYA.exe""))
+    assert_equal(""No"", candidate.call(""/this_is_valid.dll""))
+    assert_equal(""No"", candidate.call(""this_is_valid.wow""))
+    assert_equal(""Yes"", candidate.call(""this_is_valid.txt""))
+    assert_equal(""No"", candidate.call(""this_is_valid.txtexe""))
+    assert_equal(""No"", candidate.call(""#this2_i4s_5valid.ten""))
+    assert_equal(""No"", candidate.call(""@this1_is6_valid.exe""))
+    assert_equal(""No"", candidate.call(""this_is_12valid.6exe4.txt""))
+    assert_equal(""No"", candidate.call(""all.exe.txt""))
+    assert_equal(""Yes"", candidate.call(""I563_No.exe""))
+    assert_equal(""Yes"", candidate.call(""Is3youfault.txt""))
+    assert_equal(""Yes"", candidate.call(""no_one#knows.dll""))
+    assert_equal(""No"", candidate.call(""1I563_Yes3.exe""))
+    assert_equal(""No"", candidate.call(""I563_Yes3.txtt""))
+    assert_equal(""No"", candidate.call(""final..txt""))
+    assert_equal(""No"", candidate.call(""final132""))
+    assert_equal(""No"", candidate.call(""_f4indsartal132.""))
+    assert_equal(""No"", candidate.call("".txt""))
+    assert_equal(""No"", candidate.call(""s.""))
+  end
+end
+"
+HumanEval_142,yue_Hant,rb,"譬如:函數會變更數列中所有未為3或4的項的項. 函數會返回所有項的總和.如果佢係 3 嘅倍數 而唔係 4 嘅倍數,佢就會立方化整數呢個函數會取一個整數嘅數列.如果佢嘅索引係 a,佢就需要將數列嘅所有輸入數列嘅平方."" 哩個就係# >>> lst
+# [1, 2, 3]
+# >>> lst
+# []
+# >>> lst
+# [-1, -5, 2, -1, -5]
+def sum_squares(lst)
+","def sum_squares(lst)
+  lst.map.with_index do |num, index|
+    if index % 3 == 0
+      num ** 2
+    elsif index % 4 == 0
+      num ** 3
+    else
+      num
+    end
+  end.sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sum_squares
+    candidate = method(:sum_squares)
+    assert_equal(6, candidate.call([1, 2, 3]))
+    assert_equal(14, candidate.call([1, 4, 9]))
+    assert_equal(0, candidate.call([]))
+    assert_equal(9, candidate.call([1, 1, 1, 1, 1, 1, 1, 1, 1]))
+    assert_equal(-3, candidate.call([-1, -1, -1, -1, -1, -1, -1, -1, -1]))
+    assert_equal(0, candidate.call([0]))
+    assert_equal(-126, candidate.call([-1, -5, 2, -1, -5]))
+    assert_equal(3030, candidate.call([-56, -99, 1, 0, -2]))
+    assert_equal(0, candidate.call([-1, 0, 0, 0, 0, 0, 0, 0, -1]))
+    assert_equal(-14196, candidate.call([-16, -9, -2, 36, 36, 26, -20, 25, -40, 20, -4, 12, -26, 35, 37]))
+    assert_equal(-1448, candidate.call([-1, -3, 17, -1, -15, 13, -1, 14, -14, -12, -5, 14, -14, 6, 13, 11, 16, 16, 4, 10]))
+  end
+end
+"
+HumanEval_143,yue_Hant,rb,"舉例一:字串嘅排序應該與原始字串一樣.它们的长度是素数,你需要返回一個包含 句子嘅字符串,句子包含有字母,用空格隔開,你得到一個詞串,代表一個句子,# >>> words_in_sentence.call(""This is a test"")
+# ""is""
+# Example 2:
+# >>> words_in_sentence.call(""lets go for swimming"")
+# ""go for""
+# Constraints:
+# * 1 <= len(sentence) <= 100
+# * sentence contains only letters
+def words_in_sentence(sentence)
+","def words_in_sentence(sentence)
+  def is_prime?(num)
+    return false if num <= 1
+    (2..Math.sqrt(num)).none? { |i| num % i == 0 }
+  end
+  
+  words = sentence.split("" "")
+  prime_length_words = words.select { |word| is_prime?(word.length) }
+  prime_length_words.join("" "")
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_words_in_sentence
+    candidate = method(:words_in_sentence)
+    assert_equal(""is"", candidate.call(""This is a test""))
+    assert_equal(""go for"", candidate.call(""lets go for swimming""))
+    assert_equal(""there is no place"", candidate.call(""there is no place available here""))
+    assert_equal(""Hi am Hussein"", candidate.call(""Hi I am Hussein""))
+    assert_equal(""go for it"", candidate.call(""go for it""))
+    assert_equal("""", candidate.call(""here""))
+    assert_equal(""is"", candidate.call(""here is""))
+  end
+end
+"
+HumanEval_144,yue_Hant,rb,"你可以假设 x,n 都是有效的分数,并且没有0作为分母.數字和分母都是正整數所以 x 同 n 都係一個數字串嘅分數,同埋有以下形式,x * n 如果 x * n 值为整数且 false 值,函数返回 true你嘅任務就係要實現一個函數, 來簡化表達式.# >>> simplify.call(""1/5"", ""5/1"")
+# true
+# >>> simplify.call(""1/6"", ""2/1"")
+# false
+# >>> simplify.call(""7/10"", ""10/2"")
+# false
+def simplify(x, n)
+","def simplify(x, n)
+  # Convert x and n to numerators and denominators
+  num_x, den_x = x.split('/').map(&:to_i)
+  num_n, den_n = n.split('/').map(&:to_i)
+
+  # Multiply fractions: (num_x * num_n) / (den_x * den_n)
+  numerator = num_x * num_n
+  denominator = den_x * den_n
+
+  # Check if the result is a whole number
+  numerator % denominator == 0
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_simplify
+    candidate = method(:simplify)
+    assert_equal(true, candidate.call(""1/5"", ""5/1""))
+    assert_equal(false, candidate.call(""1/6"", ""2/1""))
+    assert_equal(true, candidate.call(""5/1"", ""3/1""))
+    assert_equal(false, candidate.call(""7/10"", ""10/2""))
+    assert_equal(true, candidate.call(""2/10"", ""50/10""))
+    assert_equal(true, candidate.call(""7/2"", ""4/2""))
+    assert_equal(true, candidate.call(""11/6"", ""6/1""))
+    assert_equal(false, candidate.call(""2/3"", ""5/2""))
+    assert_equal(false, candidate.call(""5/2"", ""3/5""))
+    assert_equal(true, candidate.call(""2/4"", ""8/4""))
+    assert_equal(true, candidate.call(""2/4"", ""4/2""))
+    assert_equal(true, candidate.call(""1/5"", ""5/1""))
+    assert_equal(false, candidate.call(""1/5"", ""1/5""))
+  end
+end
+"
+HumanEval_145,yue_Hant,rb,"例如:根據佢哋喺原始數字表入面嘅索引來排列佢哋注意:如果有幾個項目嘅數字和相似,根據數字嘅總和排列.寫一個函數來排序數列中的整數# >>> order_by_points.call([1, 11, -1, -11, -12])
+# [-1, -11, 1, -12, 11]
+# >>> order_by_points.call([])
+# []
+def order_by_points(nums)
+","def order_by_points(nums)
+  nums.sort_by.with_index do |num, index|
+    [num.to_s.chars.map(&:to_i).sum.abs, index]
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_order_by_points
+    candidate = method(:order_by_points)
+    assert_equal([-1, -11, 1, -12, 11], candidate.call([1, 11, -1, -11, -12]))
+    assert_equal([0, 2, 3, 6, 53, 423, 423, 423, 1234, 145, 37, 46, 56, 463, 3457], candidate.call([1234, 423, 463, 145, 2, 423, 423, 53, 6, 37, 3457, 3, 56, 0, 46]))
+    assert_equal([], candidate.call([]))
+    assert_equal([-3, -32, -98, -11, 1, 2, 43, 54], candidate.call([1, -11, -32, 43, 54, -98, 2, -3]))
+    assert_equal([1, 10, 2, 11, 3, 4, 5, 6, 7, 8, 9], candidate.call([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]))
+    assert_equal([-76, -21, 0, 4, 23, 6, 6], candidate.call([0, 6, 6, -76, -21, 23, 4]))
+  end
+end
+"
+HumanEval_146,yue_Hant,rb,"例如:一個數字嘅第一個和最後一個數字是奇數 (1, 3, 5, 7, 9).數量大於 10 且兩個元素都一樣寫一個函數,它會把數字組成一個輸入,並返回一個函數.# >>> specialFilter.call([15, -73, 14, -15])
+# 1
+# >>> specialFilter.call([33, -2, -3, 45, 21, 109])
+# 2
+def specialFilter(nums)
+","def specialFilter(nums)
+  nums.count do |num|
+    num > 10 && num.to_s[0].to_i.odd? && num.to_s[-1].to_i.odd?
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_specialFilter
+    candidate = method(:specialFilter)
+    assert_equal(0, candidate.call([5, -2, 1, -5]))
+    assert_equal(1, candidate.call([15, -73, 14, -15]))
+    assert_equal(2, candidate.call([33, -2, -3, 45, 21, 109]))
+    assert_equal(4, candidate.call([43, -12, 93, 125, 121, 109]))
+    assert_equal(3, candidate.call([71, -2, -33, 75, 21, 19]))
+    assert_equal(0, candidate.call([1]))
+    assert_equal(0, candidate.call([]))
+  end
+end
+"
+HumanEval_147,yue_Hant,rb,"譬如:a[i] + a[j] + a[k] 係 3 嘅倍數返回i < j < k, 值的三倍数 (a[i], a[j], a[k])對於每個i (1 ≤ i ≤ n) 來說,a[i]=i * i - i + 1的值.你得到一個正整數n.你必須建立一個長度n的整數.# >>> get_max_triples.call(5)
+# 1
+# Explanation: 
+# a = [1, 3, 7, 13, 21]
+# The only valid triple is (1, 7, 13).
+def get_max_triples(n)
+","def get_max_triples(n)
+  a = Array.new(n) { |i| (i + 1) * (i + 1) - (i + 1) + 1 }
+  count = 0
+  
+  (0...n).each do |i|
+    (i+1...n).each do |j|
+      (j+1...n).each do |k|
+        count += 1 if (a[i] + a[j] + a[k]) % 3 == 0
+      end
+    end
+  end
+  
+  count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_get_max_triples
+    candidate = method(:get_max_triples)
+    assert_equal(1, candidate.call(5))
+    assert_equal(4, candidate.call(6))
+    assert_equal(36, candidate.call(10))
+    assert_equal(53361, candidate.call(100))
+  end
+end
+"
+HumanEval_148,yue_Hant,rb,"譬如話..唔係正確嘅星球名如果是 planet1 或者 planet2 函数应该返回一个空数组靠近太陽.位於行星1同行星2之間,按函數應該返回一個包含所有行星嘅數列,寫一個函數,以兩個行星的名稱為行列, planet1 和 planet2.太空人王星,海王星下一個係金星,然後係地球,火星,木星,土星我哋太陽系有八個行星, 而其中嗰啲係最接近太陽嘅.# >>> bf.call(""Jupiter"", ""Neptune"")
+# [""Saturn"", ""Uranus""]
+# >>> bf.call(""Earth"", ""Mercury"")
+# ""Venus""
+# >>> bf.call(""Mercury"", ""Uranus"")
+# [""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn""]
+def bf(planet1, planet2)
+","def bf(planet1, planet2)
+  planets = [""Mercury"", ""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn"", ""Uranus"", ""Neptune""]
+  
+  idx1 = planets.index(planet1)
+  idx2 = planets.index(planet2)
+  
+  return [] if idx1.nil? || idx2.nil?
+
+  start_idx, end_idx = [idx1, idx2].sort
+  
+  planets[(start_idx + 1)...end_idx]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_bf
+    candidate = method(:bf)
+    assert_equal([""Saturn"", ""Uranus""], candidate.call(""Jupiter"", ""Neptune""))
+    assert_equal([""Venus""], candidate.call(""Earth"", ""Mercury""))
+    assert_equal([""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn""], candidate.call(""Mercury"", ""Uranus""))
+    assert_equal([""Earth"", ""Mars"", ""Jupiter"", ""Saturn"", ""Uranus""], candidate.call(""Neptune"", ""Venus""))
+    assert_equal([], candidate.call(""Earth"", ""Earth""))
+    assert_equal([], candidate.call(""Mars"", ""Earth""))
+    assert_equal([], candidate.call(""Jupiter"", ""Makemake""))
+  end
+end
+"
+HumanEval_149,yue_Hant,rb,"例如:你可能會假設所有詞語都係一樣長函數應該返回一個排序嘅字符串數目.如果兩個詞長度相同,請按字母順序排序.應該返回依據這個規則排序的數組.字數排序應該係按每個單詞長度而上升,所以你可能會包含重複嘅資料.數字總係串嘅數字 而唔系數字返回一個排序序列,删除所有与它异常长的字符串,寫一個函數, 接受一個字符串的數列為參數,# >>> list_sort.call([""aa"", ""a"", ""aaa""])
+# [""aa""]
+# >>> list_sort.call([""ab"", ""a"", ""aaa"", ""cd""])
+# [""ab"", ""cd""]
+def sorted_list_sum(lst)
+","def list_sort(arr)
+  arr.select { |s| s.length.even? }
+     .sort_by { |s| [s.length, s] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sorted_list_sum
+    candidate = method(:sorted_list_sum)
+    assert_equal([""aa""], candidate.call([""aa"", ""a"", ""aaa""]))
+    assert_equal([""AI"", ""asdf"", ""school""], candidate.call([""school"", ""AI"", ""asdf"", ""b""]))
+    assert_equal([], candidate.call([""d"", ""b"", ""c"", ""a""]))
+    assert_equal([""abcd"", ""dcba""], candidate.call([""d"", ""dcba"", ""abcd"", ""a""]))
+    assert_equal([""AI"", ""ai"", ""au""], candidate.call([""AI"", ""ai"", ""au""]))
+    assert_equal([], candidate.call([""a"", ""b"", ""b"", ""c"", ""c"", ""a""]))
+    assert_equal([""cc"", ""dd"", ""aaaa"", ""bbbb""], candidate.call([""aaaa"", ""bbbb"", ""dd"", ""cc""]))
+  end
+end
+"
+HumanEval_150,yue_Hant,rb,"譬如:值为 y,或者 y 值为 y.一個簡單嘅程序,如果n是,它應該返回x的值.# >>> x_or_y.call(7, 34, 12)
+# 34
+# >>> x_or_y.call(15, 8, 5)
+# 5
+def x_or_y(n, x, y)
+","def x_or_y(n, x, y)
+  require 'prime'
+  n.prime? ? x : y
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_x_or_y
+    candidate = method(:x_or_y)
+    assert_equal(34, candidate.call(7, 34, 12))
+    assert_equal(5, candidate.call(15, 8, 5))
+    assert_equal(33, candidate.call(3, 33, 5212))
+    assert_equal(3, candidate.call(1259, 3, 52))
+    assert_equal(-1, candidate.call(7919, -1, 12))
+    assert_equal(583, candidate.call(3609, 1245, 583))
+    assert_equal(129, candidate.call(91, 56, 129))
+    assert_equal(1234, candidate.call(6, 34, 1234))
+    assert_equal(0, candidate.call(1, 2, 0))
+    assert_equal(2, candidate.call(2, 2, 0))
+  end
+end
+"
+HumanEval_151,yue_Hant,rb,"忽略那些是負數或非整數的數字.给出一组数,返回数字的平方和# >>> double_the_difference.call([1, 3, 2, 0])
+# 10
+# >>> double_the_difference.call([-1, -2, 0])
+# 0
+# >>> double_the_difference.call([9, -2])
+# 81
+# >>> double_the_difference.call([0])
+# 0
+# If the input array is empty, return 0.
+def double_the_difference(lst)
+","def double_the_difference(lst)
+  lst.select { |n| n.is_a?(Integer) && n.odd? && n >= 0 }
+     .map { |n| n ** 2 }
+     .sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_double_the_difference
+    candidate = method(:double_the_difference)
+    assert_equal(0, candidate.call([]))
+    assert_equal(25, candidate.call([5.0, 4.0]))
+    assert_equal(0, candidate.call([0.1, 0.2, 0.3]))
+    assert_equal(0, candidate.call([-10.0, -20.0, -30.0]))
+    assert_equal(0, candidate.call([-1.0, -2.0, 8.0]))
+    assert_equal(34, candidate.call([0.2, 3.0, 5.0]))
+    assert_equal(165, candidate.call([-9.0, -7.0, -5.0, -3.0, -1.0, 1.0, 3.0, 5.0, 7.0, 9.0]))
+  end
+end
+"
+HumanEval_152,yue_Hant,rb,"譬如..值為0 如果沒有,則值為猜測與得分之間的絕對差異.返回一相同長度嘅數字, 表示每一個猜測嘅距離.如果佢哋猜得啱,你有兩個等長度嘅分數和預測資料, 而每個資料都顯示佐一個匹配數.你嘅任務就係搵出一個人 係咪正確咁預測咗一系列嘅結果值得大家去記錄同比較.果一刻,你對果件事嘅感覺同想法 都系你最想知道嘅.我諗我哋都記得當時嘅感覺# >>> compare.call([1, 2, 3, 4, 5, 1], [1, 2, 3, 4, 2, -2])
+# [0, 0, 0, 0, 3, 3]
+# >>> compare.call([0, 5, 0, 0, 0, 4], [4, 1, 1, 0, 0, -2])
+# [4, 4, 1, 0, 0, 6]
+def compare(game, guess)
+","def compare(game, guess)
+  game.zip(guess).map { |score, prediction| (score - prediction).abs }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_compare
+    candidate = method(:compare)
+    assert_equal([0, 0, 0, 0, 3, 3], candidate.call([1, 2, 3, 4, 5, 1], [1, 2, 3, 4, 2, -2]))
+    assert_equal([0, 0, 0, 0, 0, 0], candidate.call([0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]))
+    assert_equal([2, 4, 6], candidate.call([1, 2, 3], [-1, -2, -3]))
+    assert_equal([2, 0, 0, 1], candidate.call([1, 2, 3, 5], [-1, 2, 3, 4]))
+  end
+end
+"
+HumanEval_153,yue_Hant,rb,"譬如..(它的強度係-1).返回""Slices.SErviNGSliCes"" 既然""SErviNGSliCes""是最強的擴展延伸: ['SERVINGSliCes', 'Cheese', 'StuFfed'] 你應該係譬如,如果我哋用""slices"" 嚟做課程 同埋一個陣列,選擇第一個出現系數列中的一個.如果有兩個或更多嘅延伸具有相同嘅強度,你應該格式: ClassName.StrongestExtensionName. 你應該搵出最強嘅擴展,然後返回一個字符串.喺擴展名稱中,強度係用CAP-SM分數來表示.請將 SM 代表小寫字母嘅數量扩展的强度如下:让CAP是大写的数字扩展可以用来加载到类中的其他类.你會得到一個類別的名稱 (一個字符串) 以及一個擴展的陣列.# >>> Strongest_Extension.call(""my_class"", [""AA"", ""Be"", ""CC""])
+# ""my_class.AA""
+def Strongest_Extension(class_name, extensions)
+","def Strongest_Extension(class_name, extensions)
+  strongest_extension = extensions.max_by do |extension|
+    cap_count = extension.count('A-Z')
+    sm_count = extension.count('a-z')
+    cap_count - sm_count
+  end
+  ""#{class_name}.#{strongest_extension}""
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_Strongest_Extension
+    candidate = method(:Strongest_Extension)
+    assert_equal(""Watashi.eIGHt8OKe"", candidate.call(""Watashi"", [""tEN"", ""niNE"", ""eIGHt8OKe""]))
+    assert_equal(""Boku123.YEs.WeCaNe"", candidate.call(""Boku123"", [""nani"", ""NazeDa"", ""YEs.WeCaNe"", ""32145tggg""]))
+    assert_equal(""__YESIMHERE.NuLl__"", candidate.call(""__YESIMHERE"", [""t"", ""eMptY"", ""nothing"", ""zeR00"", ""NuLl__"", ""123NoooneB321""]))
+    assert_equal(""K.TAR"", candidate.call(""K"", [""Ta"", ""TAR"", ""t234An"", ""cosSo""]))
+    assert_equal(""__HAHA.123"", candidate.call(""__HAHA"", [""Tab"", ""123"", ""781345"", ""-_-""]))
+    assert_equal(""YameRore.okIWILL123"", candidate.call(""YameRore"", [""HhAas"", ""okIWILL123"", ""WorkOut"", ""Fails"", ""-_-""]))
+    assert_equal(""finNNalLLly.WoW"", candidate.call(""finNNalLLly"", [""Die"", ""NowW"", ""Wow"", ""WoW""]))
+    assert_equal(""_.Bb"", candidate.call(""_"", [""Bb"", ""91245""]))
+    assert_equal(""Sp.671235"", candidate.call(""Sp"", [""671235"", ""Bb""]))
+  end
+end
+"
+HumanEval_154,yue_Hant,rb,"兩個詞要返 true 如果第二個詞或者其中任何一個轉換,係第一個詞嘅子字串# >>> cycpattern_check.call(""abcd"", ""abd"")
+# false
+# >>> cycpattern_check.call(""hello"", ""ell"")
+# true
+# >>> cycpattern_check.call(""whassup"", ""psus"")
+# false
+# >>> cycpattern_check.call(""abab"", ""baa"")
+# true
+# >>> cycpattern_check.call(""efef"", ""eeff"")
+# false
+# >>> cycpattern_check.call(""himenss"", ""simen"")
+# true
+def cycpattern_check(a, b)
+","def cycpattern_check(a, b)
+  (0...b.length).each do |i|
+    rotated_b = b[i..-1] + b[0...i]
+    return true if a.include?(rotated_b)
+  end
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_cycpattern_check
+    candidate = method(:cycpattern_check)
+    assert_equal(false, candidate.call(""xyzw"", ""xyw""))
+    assert_equal(true, candidate.call(""yello"", ""ell""))
+    assert_equal(false, candidate.call(""whattup"", ""ptut""))
+    assert_equal(true, candidate.call(""efef"", ""fee""))
+    assert_equal(false, candidate.call(""abab"", ""aabb""))
+    assert_equal(true, candidate.call(""winemtt"", ""tinem""))
+  end
+end
+"
+HumanEval_155,yue_Hant,rb,"譬如..给定一个整数,返回一个数组,分别有偶数和奇数的数字.# >>> even_odd_count.call(-12)
+# [1, 1]
+# >>> even_odd_count.call(123)
+# [1, 2]
+def even_odd_count(num)
+","def even_odd_count(num)
+  num.to_s.chars.map(&:to_i).select { |digit| digit != 0 }.partition(&:even?).map(&:count)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_even_odd_count
+    candidate = method(:even_odd_count)
+    assert_equal([0, 1], candidate.call(7))
+    assert_equal([1, 1], candidate.call(-78))
+    assert_equal([2, 2], candidate.call(3452))
+    assert_equal([3, 3], candidate.call(346211))
+    assert_equal([3, 3], candidate.call(-345821))
+    assert_equal([1, 0], candidate.call(-2))
+    assert_equal([2, 3], candidate.call(-45347))
+    assert_equal([1, 0], candidate.call(0))
+  end
+end
+"
+HumanEval_156,yue_Hant,rb,"譬如:限制: 1 <= num <= 1000 用小写返来.给定一个正整数, 得到它的罗马数字等价值, 作为一个字符串,# >>> int_to_mini_roman.call(19)
+# ""xix""
+# >>> int_to_mini_roman.call(152)
+# ""clii""
+# >>> int_to_mini_roman.call(426)
+# ""cdxxvi""
+def int_to_mini_roman(number)
+","def int_to_mini_roman(number)
+  values = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
+  numerals = ['m', 'cm', 'd', 'cd', 'c', 'xc', 'l', 'xl', 'x', 'ix', 'v', 'iv', 'i']
+
+  result = ''
+  values.each_with_index do |value, index|
+    while number >= value
+      number -= value
+      result += numerals[index]
+    end
+  end
+
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_int_to_mini_roman
+    candidate = method(:int_to_mini_roman)
+    assert_equal(""xix"", candidate.call(19))
+    assert_equal(""clii"", candidate.call(152))
+    assert_equal(""ccli"", candidate.call(251))
+    assert_equal(""cdxxvi"", candidate.call(426))
+    assert_equal(""d"", candidate.call(500))
+    assert_equal(""i"", candidate.call(1))
+    assert_equal(""iv"", candidate.call(4))
+    assert_equal(""xliii"", candidate.call(43))
+    assert_equal(""xc"", candidate.call(90))
+    assert_equal(""xciv"", candidate.call(94))
+    assert_equal(""dxxxii"", candidate.call(532))
+    assert_equal(""cm"", candidate.call(900))
+    assert_equal(""cmxciv"", candidate.call(994))
+    assert_equal(""m"", candidate.call(1000))
+  end
+end
+"
+HumanEval_157,yue_Hant,rb,"譬如..90度.一個直角三角形,其中一個角是直角或兩邊係一個直角三角形,但如果唔係,就錯咗给出三角形的三边长.如果三边长是# >>> right_angle_triangle.call(3, 4, 5)
+# true
+# >>> right_angle_triangle.call(1, 2, 3)
+# false
+def right_angle_triangle(a, b, c)
+","def right_angle_triangle(a, b, c)
+  sides = [a, b, c].sort
+  sides[0]**2 + sides[1]**2 == sides[2]**2
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_right_angle_triangle
+    candidate = method(:right_angle_triangle)
+    assert_equal(true, candidate.call(3, 4, 5))
+    assert_equal(false, candidate.call(1, 2, 3))
+    assert_equal(true, candidate.call(10, 6, 8))
+    assert_equal(false, candidate.call(2, 2, 2))
+    assert_equal(true, candidate.call(7, 24, 25))
+    assert_equal(false, candidate.call(10, 5, 7))
+    assert_equal(true, candidate.call(5, 12, 13))
+    assert_equal(true, candidate.call(15, 8, 17))
+    assert_equal(true, candidate.call(48, 55, 73))
+    assert_equal(false, candidate.call(1, 1, 1))
+    assert_equal(false, candidate.call(2, 2, 10))
+  end
+end
+"
+HumanEval_158,yue_Hant,rb,"字母,返回第一個出現喺詞典順序嘅字母.如果多個字符串有最大數量嘅獨特字符數字陣列包含唔同嘅單詞.返回最多數字嘅單詞寫一個函數,可以接受一系列字符串.# >>> find_max.call([""name"", ""of"", ""string""])
+# ""string""
+# >>> find_max.call([""name"", ""enam"", ""game""])
+# ""enam""
+# >>> find_max.call([""aaaaaaa"", ""bb"", ""cc""])
+# ""aaaaaaa""
+def find_max(words)
+","def find_max(words)
+  # Helper function to count unique characters
+  def unique_char_count(word)
+    word.chars.uniq.size
+  end
+
+  words.max_by { |word| [unique_char_count(word), -word] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_find_max
+    candidate = method(:find_max)
+    assert_equal(""string"", candidate.call([""name"", ""of"", ""string""]))
+    assert_equal(""enam"", candidate.call([""name"", ""enam"", ""game""]))
+    assert_equal(""aaaaaaa"", candidate.call([""aaaaaaa"", ""bb"", ""cc""]))
+    assert_equal(""abc"", candidate.call([""abc"", ""cba""]))
+    assert_equal(""footbott"", candidate.call([""play"", ""this"", ""game"", ""of"", ""footbott""]))
+    assert_equal(""gonna"", candidate.call([""we"", ""are"", ""gonna"", ""rock""]))
+    assert_equal(""nation"", candidate.call([""we"", ""are"", ""a"", ""mad"", ""nation""]))
+    assert_equal(""this"", candidate.call([""this"", ""is"", ""a"", ""prrk""]))
+    assert_equal(""b"", candidate.call([""b""]))
+    assert_equal(""play"", candidate.call([""play"", ""play"", ""play""]))
+  end
+end
+"
+HumanEval_159,yue_Hant,rb,"譬如..如果剩返嘅胡卜唔夠,你就可以食曬全部胡卜,但你仍然好餓.剩下的胡卜数量你應該喺每餐之後 攞返一組 [ 總數嘅食過嘅胡卜,但係你宜家需要多啲胡卜去完成一日嘅食物你係一個好餓嘅,而且已經食咗好多胡卜,# >>> eat.call(5, 6, 10)
+# [11, 4]
+# >>> eat.call(4, 8, 9)
+# [12, 1]
+# >>> eat.call(1, 10, 10)
+# [11, 0]
+# >>> eat.call(2, 11, 5)
+# [7, 0]
+# Variables:
+# @number : integer
+# the number of carrots that you have eaten.
+# @need : integer
+# the number of carrots that you need to eat.
+# @remaining : integer
+# the number of remaining carrots thet exist in stock
+# Constrain:
+# * 0 <= number <= 1000
+# * 0 <= need <= 1000
+# * 0 <= remaining <= 1000
+# Have fun :)
+def eat(number, need, remaining)
+","def eat(number, need, remaining)
+  total_eaten = number + [need, remaining].min
+  carrots_left = [remaining - need, 0].max
+  [total_eaten, carrots_left]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_eat
+    candidate = method(:eat)
+    assert_equal([11, 4], candidate.call(5, 6, 10))
+    assert_equal([12, 1], candidate.call(4, 8, 9))
+    assert_equal([11, 0], candidate.call(1, 10, 10))
+    assert_equal([7, 0], candidate.call(2, 11, 5))
+    assert_equal([9, 2], candidate.call(4, 5, 7))
+    assert_equal([5, 0], candidate.call(4, 5, 1))
+  end
+end
+"
+HumanEval_160,yue_Hant,rb,"運算子陣列至少有一個運算子 而運算子陣列至少有兩個運算子运算数是一个数组的非负数整数.运算数组的长度等于运算数组的长度减去1.注意:=> 结果=9结果是2+3*4-5數字 = [2,3,4,5] 運營者['+', '*', '-'] 譬如..乘法 (**) 樓層分佈 (//) 乘法 (*) 减去 ( - ) 增加 (+) 基本嘅代數運算:返回這個表達式的評估.第二個陣列係整數嘅陣列 用兩個已知陣列去建立代數學函數给出两个数组运算符,一个运算符.第一个数组有基本的代数运算,和def do_algebra(operator, operand)
+","def do_algebra(operator, operand)
+  expression = operand[0].to_s
+  operator.each_with_index do |op, index|
+    if op == '//'
+      expression += ' / ' + operand[index + 1].to_s
+    else
+      expression += ' ' + op + ' ' + operand[index + 1].to_s
+    end
+  end
+  eval(expression)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_do_algebra
+    candidate = method(:do_algebra)
+    assert_equal(37, candidate.call([""**"", ""*"", ""+""], [2, 3, 4, 5]))
+    assert_equal(9, candidate.call([""+"", ""*"", ""-""], [2, 3, 4, 5]))
+    assert_equal(8, candidate.call([""//"", ""*""], [7, 3, 4]))
+  end
+end
+"
+HumanEval_161,yue_Hant,rb,"譬如話..函數應該返回得到嘅字符串.如果字符串中没有字母,请反转字符串.否則,請繼續閱讀.如果 s[i] 係一個字母,請將字母嘅大小寫成 逆轉,由下到上,或者反過來,你得到一個字符串 s.# >>> solve.call(""1234"")
+# ""4321""
+# >>> solve.call(""ab"")
+# ""AB""
+# >>> solve.call(""#a@C"")
+# ""#A@c""
+def solve(s)
+","def solve(s)
+  if s =~ /[a-zA-Z]/
+    s.chars.map { |char| char =~ /[a-zA-Z]/ ? char.swapcase : char }.join
+  else
+    s.reverse
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_solve
+    candidate = method(:solve)
+    assert_equal(""aSdF"", candidate.call(""AsDf""))
+    assert_equal(""4321"", candidate.call(""1234""))
+    assert_equal(""AB"", candidate.call(""ab""))
+    assert_equal(""#A@c"", candidate.call(""#a@C""))
+    assert_equal(""#aSDFw^45"", candidate.call(""#AsdfW^45""))
+    assert_equal(""2@6#"", candidate.call(""#6@2""))
+    assert_equal(""#$A^d"", candidate.call(""#$a^D""))
+    assert_equal(""#CCC"", candidate.call(""#ccc""))
+  end
+end
+"
+HumanEval_162,yue_Hant,rb,"如果'text'係空字符串,返回null.给定一个字符串'text',返回它的md5散列等价字符串.# >>> string_to_md5.call(""Hello world"")
+# ""3e25960a79dbc69b674cd4ec67a72c62""
+def string_to_md5(text)
+","require 'digest'
+
+def string_to_md5(text)
+  return nil if text.empty?
+  Digest::MD5.hexdigest(text)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_string_to_md5
+    candidate = method(:string_to_md5)
+    assert_equal(""3e25960a79dbc69b674cd4ec67a72c62"", candidate.call(""Hello world""))
+    assert_equal(nil, candidate.call(""""))
+    assert_equal(""0ef78513b0cb8cef12743f5aeb35f888"", candidate.call(""A B C""))
+    assert_equal(""5f4dcc3b5aa765d61d8327deb882cf99"", candidate.call(""password""))
+  end
+end
+"
+HumanEval_163,yue_Hant,rb,"例如:b, 按上升的顺序.给出两个正整数 a 和 b,返回 a 之间的偶数# >>> generate_integers.call(2, 8)
+# [2, 4, 6, 8]
+# >>> generate_integers.call(8, 2)
+# [2, 4, 6, 8]
+# >>> generate_integers.call(10, 14)
+# []
+def generate_integers(a, b)
+","def generate_integers(a, b)
+  (a..b).to_a.concat((b..a).to_a).select { |num| num.even? }.uniq.sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_generate_integers
+    candidate = method(:generate_integers)
+    assert_equal([2, 4, 6, 8], candidate.call(2, 10))
+    assert_equal([2, 4, 6, 8], candidate.call(10, 2))
+    assert_equal([2, 4, 6, 8], candidate.call(132, 2))
+    assert_equal([], candidate.call(17, 89))
+  end
+end
+"

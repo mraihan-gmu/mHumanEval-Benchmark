@@ -1,0 +1,4634 @@
+task_id,nl,pl,prompt,canonical_solution,tests
+HumanEval_0,mya_Mymr,rb,"း း း း း း း း းပေးထားတဲ့ ကိန်းတန်းထဲမှာ ထက် ပိုနီးတဲ့ ကိန်းနှစ်လုံး ရှိလား စစ်ကြည့်ပါ။# >>> has_close_elements.call([1.0, 2.0, 3.0], 0.5)
+# false
+# >>> has_close_elements.call([1.0, 2.8, 3.0, 4.0, 5.0, 2.0], 0.3)
+# true
+def has_close_elements(numbers, threshold)
+","def has_close_elements(numbers, threshold)
+  numbers.combination(2).any? { |a, b| (a - b).abs < threshold }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_has_close_elements
+    candidate = method(:has_close_elements)
+    assert_equal(true, candidate.call([1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.3))
+    assert_equal(false, candidate.call([1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.05))
+    assert_equal(true, candidate.call([1.0, 2.0, 5.9, 4.0, 5.0], 0.95))
+    assert_equal(false, candidate.call([1.0, 2.0, 5.9, 4.0, 5.0], 0.8))
+    assert_equal(true, candidate.call([1.0, 2.0, 3.0, 4.0, 5.0, 2.0], 0.1))
+    assert_equal(true, candidate.call([1.1, 2.2, 3.1, 4.1, 5.1], 1.0))
+    assert_equal(false, candidate.call([1.1, 2.2, 3.1, 4.1, 5.1], 0.5))
+  end
+end
+"
+HumanEval_1,mya_Mymr,rb,"input string ထဲမှာရှိတဲ့ နေရာလွတ်တွေကို လျစ်လျူရှုလိုက်ပါ။သီးခြားအုပ်စုတွေက ဟန်ချက်ညီ (ဖွင့်ထားတဲ့ brace တစ်ခုစီကို မှန်ကန်စွာ ပိတ်ထားတယ်) ပြီးတော့ တစ်ခုနဲ့တစ်ခု မချိတ်ထားဘူးအဲဒီ အုပ်စုတွေကို သီးခြား String တွေအဖြစ် ခွဲခြားပြီး အဲဒီထဲက Array ကို ပြန်ပို့ပေးပါတယ်။ဒီ function ရဲ့ input က nested parentheses တွေရဲ့ အုပ်စုပေါင်းစုံပါတဲ့ string ပါ။ သင့်ရဲ့ ရည်ရွယ်ချက်က # >>> separate_paren_groups.call(""( ) (( )) (( )( ))"")
+# [""()"", ""(())"", ""(()())""]
+def separate_paren_groups(paren_string)
+","def separate_paren_groups(paren_string)
+  # Remove spaces from the string
+  paren_string = paren_string.gsub("" "", """")
+  
+  result = []
+  current_group = """"
+  balance = 0
+
+  paren_string.each_char do |char|
+    current_group += char
+    balance += 1 if char == '('
+    balance -= 1 if char == ')'
+
+    if balance == 0 && !current_group.empty?
+      result << current_group
+      current_group = """"
+    end
+  end
+
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_separate_paren_groups
+    candidate = method(:separate_paren_groups)
+    assert_equal([""(()())"", ""((()))"", ""()"", ""((())()())""], candidate.call(""(()()) ((())) () ((())()())""))
+    assert_equal([""()"", ""(())"", ""((()))"", ""(((())))""], candidate.call(""() (()) ((())) (((())))""))
+    assert_equal([""(()(())((())))""], candidate.call(""(()(())((())))""))
+    assert_equal([""()"", ""(())"", ""(()())""], candidate.call(""( ) (( )) (( )( ))""))
+  end
+end
+"
+HumanEval_2,mya_Mymr,rb,"ကိန်းဂဏန်းရဲ့ ဆယ်လီကိန်း အပိုင်းကို ပြန်ပေးပါ(ကျန်တဲ့ အစိတ်အပိုင်းက ၁ ထက် အမြဲသေးပါတယ်။)ပြီးပြည့်စုံသော အပိုင်း (ပေးထားသော နံပါတ်ထက် ပိုငယ်သော အကြီးဆုံးပြည့်စုံသော ကိန်း) နှင့် ဒသမကိန်းများ အပေါင်းကိန်းတစ်ခုရဲ့ အပြောင်းအလဲဖြစ်တဲ့အခါ ဒါကို  လို့ခွဲခြားနိုင်ပါတယ်။# >>> truncate_number.call(3.5)
+# 0.5
+def truncate_number(number)
+","def truncate_number(number)
+  number - number.to_i
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_truncate_number
+    candidate = method(:truncate_number)
+    assert_equal(0.5, candidate.call(3.5))
+    assert_equal(0.25, candidate.call(1.25))
+    assert_equal(0.0, candidate.call(123.0))
+  end
+end
+"
+HumanEval_3,mya_Mymr,rb,"အဲဒီအချိန်မှာ function က true ပြန်ပေးရမယ်။ မဟုတ်ရင် false ပြန်ပေးရမယ်။သင့်အလုပ်က ငွေကြေးကဒ်တွေ အားလုံး သုညအောက် ကျသွားရင် ရှာဖွေဖို့ပါ။""အကောင့်တစ်ခုပေါ်က ငွေကိုဖြည့်ခြင်း သို့မဟုတ် ထုတ်ယူခြင်း"" ဆိုတဲ့ စာလုံးတွေနဲ့ စတင်တဲ့ ငွေလွှဲခြင်း နဲ့ ထုတ်ယူခြင်း လုပ်ငန်းစဉ် တသီကြီးကို ခင်ဗျား လုပ်နိုင်တယ်။# >>> below_zero.call([1, 2, 3])
+# false
+# >>> below_zero.call([1, 2, -4, 5])
+# true
+def below_zero(operations)
+","def below_zero(operations)
+  balance = 0
+  operations.each do |operation|
+    balance += operation
+    return true if balance < 0
+  end
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_below_zero
+    candidate = method(:below_zero)
+    assert_equal(false, candidate.call([]))
+    assert_equal(false, candidate.call([1, 2, -3, 1, 2, -3]))
+    assert_equal(true, candidate.call([1, 2, -4, 5, 6]))
+    assert_equal(false, candidate.call([1, -1, 2, -2, 5, -5, 4, -4]))
+    assert_equal(true, candidate.call([1, -1, 2, -2, 5, -5, 4, -5]))
+    assert_equal(true, candidate.call([1, -2, 2, -2, 5, -5, 4, -4]))
+  end
+end
+"
+HumanEval_4,mya_Mymr,rb,"MAD = ပျမ်းမျှ။ x - x_mean။element နဲ့ ဗဟိုအမှတ် (ဒီကိစ္စမှာ mean)Mean Absolute Deviation ကေတာ့ ႏွစ္ခုၾကားက အလယ္အလတ္ ပကတိ ကွာဟခ်က္ပါ။ဒီဒေတာစုရဲ့ ပျမ်းမျှအနီးမှာ။input ကိန်းတွေရဲ့ array တစ်ခုအတွက်၊ ပျမ်းမျှ လုံး၀ ကွာဟချက်ကို တွက်ပါ။# >>> mean_absolute_deviation.call([1.0, 2.0, 3.0, 4.0])
+# 1.0
+def mean_absolute_deviation(numbers)
+","def mean_absolute_deviation(numbers)
+  mean = numbers.sum.to_f / numbers.size
+  deviations = numbers.map { |num| (num - mean).abs }
+  deviations.sum / numbers.size
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_mean_absolute_deviation
+    candidate = method(:mean_absolute_deviation)
+    assert_equal(0.5, candidate.call([1.0, 2.0]))
+    assert_equal(1.0, candidate.call([1.0, 2.0, 3.0, 4.0]))
+    assert_equal(1.2, candidate.call([1.0, 2.0, 3.0, 4.0, 5.0]))
+  end
+end
+"
+HumanEval_5,mya_Mymr,rb,"input array ၏ဆက်တိုက် element နှစ်ခုကြားတွင် ""delimiter"" နံပါတ်ကိုထည့်ပါ။# >>> intersperse.call([], 4)
+# []
+# >>> intersperse.call([1, 2, 3], 4)
+# [1, 4, 2, 4, 3]
+def intersperse(numbers, delimeter)
+","def intersperse(numbers, delimeter)
+  return numbers if numbers.empty?
+  result = []
+  numbers.each_with_index do |num, index|
+    result << num
+    result << delimeter unless index == numbers.size - 1
+  end
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_intersperse
+    candidate = method(:intersperse)
+    assert_equal([], candidate.call([], 7))
+    assert_equal([5, 8, 6, 8, 3, 8, 2], candidate.call([5, 6, 3, 2], 8))
+    assert_equal([2, 2, 2, 2, 2], candidate.call([2, 2, 2], 2))
+  end
+end
+"
+HumanEval_6,mya_Mymr,rb,"ဥပမာ (() (()) မှာ အမြင့်ဆုံး နှစ်ဆင့်ရှိပြီး ((())) မှာ သုံးဆင့်ရှိတယ်အုပ်စုတစ်ခုစီအတွက်၊ ကပ် parentheses များ၏ နက်ရှိုင်းဆုံး nesting level ကို output လုပ်ပါ။ဒီ function ရဲ့ input က အလွတ်နေရာနဲ့ ခြားထားတဲ့ parentheses တွေအတွက် အုပ်စုပေါင်းစုံကို ကိုယ်စားပြုတဲ့ string ပါ။# >>> parse_nested_parens.call(""(()()) ((())) () ((())()())"")
+# [2, 3, 1, 3]
+def parse_nested_parens(paren_string)
+","def parse_nested_parens(paren_string)
+  paren_string.split.map do |group|
+    max_depth = current_depth = 0
+    group.chars.each do |char|
+      if char == '('
+        current_depth += 1
+        max_depth = [max_depth, current_depth].max
+      elsif char == ')'
+        current_depth -= 1
+      end
+    end
+    max_depth
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_parse_nested_parens
+    candidate = method(:parse_nested_parens)
+    assert_equal([2, 3, 1, 3], candidate.call(""(()()) ((())) () ((())()())""))
+    assert_equal([1, 2, 3, 4], candidate.call(""() (()) ((())) (((())))""))
+    assert_equal([4], candidate.call(""(()(())((())))""))
+  end
+end
+"
+HumanEval_7,mya_Mymr,rb,"string တွေရဲ့ input array ကို filter လုပ်ပြီး ပေးထားတဲ့ substring တွေကိုပဲ စစ်ပေးတယ်# >>> filter_by_substring.call([], ""a"")
+# []
+# >>> filter_by_substring.call([""abc"", ""bacd"", ""cde"", ""array""], ""a"")
+# [""abc"", ""bacd"", ""array""]
+def filter_by_substring(strings, substring)
+","def filter_by_substring(strings, substring)
+  strings.select { |string| string.include?(substring) }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_filter_by_substring
+    candidate = method(:filter_by_substring)
+    assert_equal([], candidate.call([], ""john""))
+    assert_equal([""xxx"", ""xxxAAA"", ""xxx""], candidate.call([""xxx"", ""asd"", ""xxy"", ""john doe"", ""xxxAAA"", ""xxx""], ""xxx""))
+    assert_equal([""xxx"", ""aaaxxy"", ""xxxAAA"", ""xxx""], candidate.call([""xxx"", ""asd"", ""aaaxxy"", ""john doe"", ""xxxAAA"", ""xxx""], ""xx""))
+    assert_equal([""grunt"", ""prune""], candidate.call([""grunt"", ""trumpet"", ""prune"", ""gruesome""], ""run""))
+  end
+end
+"
+HumanEval_8,mya_Mymr,rb,"အလွတ် product က 1 နဲ့ ညီမျှပြီး အလွတ် sum က 0 နဲ့ ညီမျှသင့်ပါတယ်။ကိန်းပြည့်များ၏ array တစ်ခုအတွက် array တစ်ခုရှိ ကိန်းပြည့်များ၏ ပေါင်းလဒ်နှင့် ပွားများသော array တစ်ခုကို ပြန်ပေးပါ။# >>> sum_product.call([])
+# [0, 1]
+# >>> sum_product.call([1, 2, 3, 4])
+# [10, 24]
+def sum_product(numbers)
+","def sum_product(numbers)
+  sum = numbers.reduce(0, :+)
+  product = numbers.reduce(1, :*)
+  [sum, product]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sum_product
+    candidate = method(:sum_product)
+    assert_equal([0, 1], candidate.call([]))
+    assert_equal([3, 1], candidate.call([1, 1, 1]))
+    assert_equal([100, 0], candidate.call([100, 0]))
+    assert_equal([15, 105], candidate.call([3, 5, 7]))
+    assert_equal([10, 10], candidate.call([10]))
+  end
+end
+"
+HumanEval_9,mya_Mymr,rb,"အဆက်မပြတ်ပေါ့။ပေးထားတဲ့ ကိန်းပြည့်တွေရဲ့ မေထရစ်တစ်ခုကနေ ပေးထားတဲ့ အချိန်ထိ တွေ့ထားတဲ့ အလှည့်ကျ အများဆုံး ဒြပ်စင်ရဲ့ မေထရစ်တစ်ခု ဖန်တီးပါ။# >>> rolling_max.call([1, 2, 3, 2, 3, 4, 2])
+# [1, 2, 3, 3, 3, 4, 4]
+def rolling_max(numbers)
+","def rolling_max(numbers)
+  max_so_far = numbers.first
+  numbers.map do |num|
+    max_so_far = [max_so_far, num].max
+  end
+end
+
+# Example usage:
+# puts rolling_max([1, 2, 3, 2, 3, 4, 2]).inspect","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_rolling_max
+    candidate = method(:rolling_max)
+    assert_equal([], candidate.call([]))
+    assert_equal([1, 2, 3, 4], candidate.call([1, 2, 3, 4]))
+    assert_equal([4, 4, 4, 4], candidate.call([4, 3, 2, 1]))
+    assert_equal([3, 3, 3, 100, 100], candidate.call([3, 2, 3, 100, 3]))
+  end
+end
+"
+HumanEval_10,mya_Mymr,rb,"- string ရဲ့ reverse end ကို palindromic suffix ရှေ့မှာရှိတဲ့ string prefix နဲ့ ပေါင်းထည့်ပါ။- ပေးထားသော string ၏ palindrome ဖြစ်သော postfix အရှည်ဆုံးကို ရှာပါ။အယ်လ်ဂိုရစ်သမ် စိတ်ကူးက ရိုးရှင်းပါတယ်။ပေးထားတဲ့ string နဲ့စတဲ့ အတိုဆုံး palindrome ကိုရှာပါ။# >>> make_palindrome.call("""")
+# """"
+# >>> make_palindrome.call(""cat"")
+# ""catac""
+# >>> make_palindrome.call(""cata"")
+# ""catac""
+def make_palindrome(string)
+","def make_palindrome(string)
+  return string if string.empty?
+
+  def is_palindrome?(s)
+    s == s.reverse
+  end
+
+  (0...string.length).reverse_each do |i|
+    if is_palindrome?(string[i..-1])
+      return string + string[0...i].reverse
+    end
+  end
+
+  string
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_make_palindrome
+    candidate = method(:make_palindrome)
+    assert_equal("""", candidate.call(""""))
+    assert_equal(""x"", candidate.call(""x""))
+    assert_equal(""xyzyx"", candidate.call(""xyz""))
+    assert_equal(""xyx"", candidate.call(""xyx""))
+    assert_equal(""jerryrrej"", candidate.call(""jerry""))
+  end
+end
+"
+HumanEval_11,mya_Mymr,rb,"ဒီထည့်သွင်းချက်တွေမှာ ဘိုင်နရီ XOR ကို လုပ်ဆောင်ပြီး ရလဒ်ကို string အဖြစ်လည်း ပြန်ပို့တယ်။input ကတော့ 1s နဲ့ 0s ပဲပါဝင်တဲ့ a နဲ့ b ဆိုတဲ့ string နှစ်ခုပါ။# >>> string_xor.call(""010"", ""110"")
+# ""100""
+def string_xor(a, b)
+","def string_xor(a, b)
+  result = """"
+  a.length.times do |i|
+    result << (a[i] == b[i] ? ""0"" : ""1"")
+  end
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_string_xor
+    candidate = method(:string_xor)
+    assert_equal(""010010"", candidate.call(""111000"", ""101010""))
+    assert_equal(""0"", candidate.call(""1"", ""1""))
+    assert_equal(""0101"", candidate.call(""0101"", ""0000""))
+  end
+end
+"
+HumanEval_12,mya_Mymr,rb,"input array ဟာ ဗလာဖြစ်နေရင် null ကိုပြန်ပေးတယ်။array ထဲက string တွေထဲက အရှည်ဆုံး string ကို ပြန်ပေးမယ်။# >>> longest.call([])
+# nil
+# >>> longest.call([""a"", ""b"", ""c""])
+# ""a""
+# >>> longest.call([""a"", ""bb"", ""ccc""])
+# ""ccc""
+def longest(strings)
+","def longest(strings)
+  return nil if strings.empty?
+  strings.max_by(&:length)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_longest
+    candidate = method(:longest)
+    assert_equal(nil, candidate.call([]))
+    assert_equal(""x"", candidate.call([""x"", ""y"", ""z""]))
+    assert_equal(""zzzz"", candidate.call([""x"", ""yyy"", ""zzzz"", ""www"", ""kkkk"", ""abc""]))
+  end
+end
+"
+HumanEval_13,mya_Mymr,rb,"a နဲ့ b ဆိုတဲ့ ကိန်းပြည့်နှစ်လုံးရဲ့ အများဆုံး တူညီသော စားကိန်းကို ပြန်ပေးပါ# >>> greatest_common_divisor.call(3, 5)
+# 1
+# >>> greatest_common_divisor.call(25, 15)
+# 5
+def greatest_common_divisor(a, b)
+","def greatest_common_divisor(a, b)
+  while b != 0
+    a, b = b, a % b
+  end
+  a
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_greatest_common_divisor
+    candidate = method(:greatest_common_divisor)
+    assert_equal(1, candidate.call(3, 7))
+    assert_equal(5, candidate.call(10, 15))
+    assert_equal(7, candidate.call(49, 14))
+    assert_equal(12, candidate.call(144, 60))
+  end
+end
+"
+HumanEval_14,mya_Mymr,rb,"input string ၏ အတိုဆုံးမှ အရှည်ဆုံးသို့ ရှေ့ဆက်စာလုံးအားလုံး၏ array ကိုပြန်ပေးသည်။# >>> all_prefixes.call(""abc"")
+# [""a"", ""ab"", ""abc""]
+def all_prefixes(string)
+","def all_prefixes(string)
+  (1..string.length).map { |i| string[0, i] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_all_prefixes
+    candidate = method(:all_prefixes)
+    assert_equal([], candidate.call(""""))
+    assert_equal([""a"", ""as"", ""asd"", ""asdf"", ""asdfg"", ""asdfgh""], candidate.call(""asdfgh""))
+    assert_equal([""W"", ""WW"", ""WWW""], candidate.call(""WWW""))
+  end
+end
+"
+HumanEval_15,mya_Mymr,rb,"0 မှ n အထိ အပါအဝင် နေရာသတ်မှတ်ထားသော နံပါတ်များပါဝင်သော string ကိုပြန်ပေးသည်။ # >>> string_sequence.call(0)
+# ""0""
+# >>> string_sequence.call(5)
+# ""0 1 2 3 4 5""
+def string_sequence(n)
+","def string_sequence(n)
+  (0..n).to_a.join(' ')
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_string_sequence
+    candidate = method(:string_sequence)
+    assert_equal(""0"", candidate.call(0))
+    assert_equal(""0 1 2 3"", candidate.call(3))
+    assert_equal(""0 1 2 3 4 5 6 7 8 9 10"", candidate.call(10))
+  end
+end
+"
+HumanEval_16,mya_Mymr,rb,"String တစ်ခုကို ပေးထားရင် ကွဲပြားတဲ့ စာလုံးတွေ ဘယ်နှစ်လုံးပါလဲဆိုတာ ရှာလိုက်ပါ (အကြီး၊အငယ်၊အမကြီး ကိန်းဂဏန်းတွေကို ဂရုမစိုက်)# >>> count_distinct_characters.call(""xyzXYZ"")
+# 3
+# >>> count_distinct_characters.call(""Jerry"")
+# 4
+def count_distinct_characters(string)
+","def count_distinct_characters(string)
+  string.downcase.chars.uniq.count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_count_distinct_characters
+    candidate = method(:count_distinct_characters)
+    assert_equal(0, candidate.call(""""))
+    assert_equal(5, candidate.call(""abcde""))
+    assert_equal(5, candidate.call(""abcdecadeCADE""))
+    assert_equal(1, candidate.call(""aaaaAAAAaaaa""))
+    assert_equal(5, candidate.call(""Jerry jERRY JeRRRY""))
+  end
+end
+"
+HumanEval_17,mya_Mymr,rb,"""ဟေး"" က လေးချက်သံ၊ တစ်ချက်သံ ကြာတယ်။""o"" က ""d"" ပါ။O က အသံတစ်လုံးပါ၊ စည်းချက် လေးခုပါတယ်။ဒီမှာ ဒဏ္ဍာရီတစ်ခုပါ။နောက်ဆုံးမဟုတ်ဘူး။မင်းအလုပ်က ဒီ string ကို parse လုပ်ပြီး တစ်ခုစီက ရိုက်ချက်ဘယ်နှစ်ချက်နဲ့ ကိုက်ညီတဲ့ ကိန်းပြည့်တွေရဲ့ array ကို ပြန်ပို့တာပါ။ဒီ function ကို ASCII ပုံစံမှာ ဂီတသင်္ကေတတွေကို ကိုယ်စားပြုတဲ့ ကြိုးတစ်ချောင်းနဲ့ ထည့်လိုက်တာပါ။# >>> parse_music.call(""o o| .| o| o| .| .| .| .| o o"")
+# [4, 2, 1, 2, 2, 1, 1, 1, 1, 4, 4]
+def parse_music(music_string)
+","def parse_music(music_string)
+  # Split the input string into individual notes.
+  notes = music_string.split
+
+  # Map each note to its corresponding number of beats.
+  notes.map do |note|
+    case note
+    when 'o'
+      4
+    when 'o|'
+      2
+    when '.|'
+      1
+    else
+      0
+    end
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_parse_music
+    candidate = method(:parse_music)
+    assert_equal([], candidate.call(""""))
+    assert_equal([4, 4, 4, 4], candidate.call(""o o o o""))
+    assert_equal([1, 1, 1, 1], candidate.call("".| .| .| .|""))
+    assert_equal([2, 2, 1, 1, 4, 4, 4, 4], candidate.call(""o| o| .| .| o o o o""))
+    assert_equal([2, 1, 2, 1, 4, 2, 4, 2], candidate.call(""o| .| o| .| o o| o o|""))
+  end
+end
+"
+HumanEval_18,mya_Mymr,rb,"မူလ string ထဲမှာ ပေးထားတဲ့ substring ကို ဘယ်နှစ်ကြိမ် တွေ့ရမလဲ ရှာကြည့်ပါ။ ထပ်ကျော့နေတဲ့ ကိစ္စတွေကို ရေတွက်ပါ။# >>> how_many_times.call("""", ""a"")
+# 0
+# >>> how_many_times.call(""aaa"", ""a"")
+# 3
+# >>> how_many_times.call(""aaaa"", ""aa"")
+# 3
+def how_many_times(string, substring)
+","def how_many_times(string, substring)
+  return 0 if substring.empty?
+  count = 0
+  i = 0
+  while i <= string.length - substring.length
+    if string[i, substring.length] == substring
+      count += 1
+    end
+    i += 1
+  end
+  count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_how_many_times
+    candidate = method(:how_many_times)
+    assert_equal(0, candidate.call("""", ""x""))
+    assert_equal(4, candidate.call(""xyxyxyx"", ""x""))
+    assert_equal(4, candidate.call(""cacacacac"", ""cac""))
+    assert_equal(1, candidate.call(""john doe"", ""john""))
+  end
+end
+"
+HumanEval_19,mya_Mymr,rb,"အကြီးဆုံးကနေ အငယ်ဆုံးအထိ အဆင့်သတ်မှတ်ထားတဲ့ ကိန်းတန်းကို ပြန်ပို့ပါမှန်ကန်သောရွေးချယ်စရာများမှာ 'သုည', 'တစ်', 'နှစ်', 'သုံး', 'လေး', 'ငါး', 'ခြောက်', 'ခုနစ်', 'ရှစ်' နှင့် 'ကိုး' ဖြစ်သည်။input က ""သုည"" ကနေ ""ကိုး"" အထိ နံပါတ်တွေရဲ့ နေရာသတ်မှတ်ထားတဲ့ string ပါ။# >>> sort_numbers.call(""three one five"")
+# ""one three five""
+def sort_numbers(numbers)
+","def sort_numbers(numbers)
+  numeral_map = {
+    'zero' => 0,
+    'one' => 1,
+    'two' => 2,
+    'three' => 3,
+    'four' => 4,
+    'five' => 5,
+    'six' => 6,
+    'seven' => 7,
+    'eight' => 8,
+    'nine' => 9
+  }
+
+  number_words = numbers.split
+  sorted_numbers = number_words.sort_by { |word| numeral_map[word] }
+  sorted_numbers.join(' ')
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sort_numbers
+    candidate = method(:sort_numbers)
+    assert_equal("""", candidate.call(""""))
+    assert_equal(""three"", candidate.call(""three""))
+    assert_equal(""three five nine"", candidate.call(""three five nine""))
+    assert_equal(""zero four five seven eight nine"", candidate.call(""five zero four seven nine eight""))
+    assert_equal(""zero one two three four five six"", candidate.call(""six five four three two one zero""))
+  end
+end
+"
+HumanEval_20,mya_Mymr,rb,"အခြားဟာတွေအလိုက် ပြန်ပို့လိုက်ပါ (အရေအတွက်နည်း၊ အရေအတွက်များ)ပေးထားသော နံပါတ်များထဲက (အနည်းဆုံး နှစ်ခု) တစ်ခုစီနှင့် အနီးစပ်ဆုံး နံပါတ်နှစ်ခုကို ရွေးပြီး ပြန်ပို့ပါ။# >>> find_closest_elements.call([1.0, 2.0, 3.0, 4.0, 5.0, 2.2])
+# [2.0, 2.2]
+# >>> find_closest_elements.call([1.0, 2.0, 3.0, 4.0, 5.0, 2.0])
+# [2.0, 2.0]
+def find_closest_elements(numbers)
+","def find_closest_elements(numbers)
+  sorted_numbers = numbers.sort
+  closest_pair = [sorted_numbers[0], sorted_numbers[1]]
+  min_difference = (sorted_numbers[1] - sorted_numbers[0]).abs
+
+  (1...(sorted_numbers.length - 1)).each do |i|
+    current_difference = (sorted_numbers[i + 1] - sorted_numbers[i]).abs
+    if current_difference < min_difference
+      min_difference = current_difference
+      closest_pair = [sorted_numbers[i], sorted_numbers[i + 1]]
+    end
+  end
+
+  closest_pair
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_find_closest_elements
+    candidate = method(:find_closest_elements)
+    assert_equal([3.9, 4.0], candidate.call([1.0, 2.0, 3.9, 4.0, 5.0, 2.2]))
+    assert_equal([5.0, 5.9], candidate.call([1.0, 2.0, 5.9, 4.0, 5.0]))
+    assert_equal([2.0, 2.2], candidate.call([1.0, 2.0, 3.0, 4.0, 5.0, 2.2]))
+    assert_equal([2.0, 2.0], candidate.call([1.0, 2.0, 3.0, 4.0, 5.0, 2.0]))
+    assert_equal([2.2, 3.1], candidate.call([1.1, 2.2, 3.1, 4.1, 5.1]))
+  end
+end
+"
+HumanEval_21,mya_Mymr,rb,"သေးငယ်ဆုံးကိန်းက ၀ ဖြစ်လာပြီး အကြီးဆုံးက ၁ ဖြစ်လာမယ်။ကိန်းစဉ် (အနည်းဆုံး ဒြပ်စင်နှစ်ခု) ကို ပေးထားရင် ဒီ array ကို အလျားလိုက် ပြောင်းလဲမှုတစ်ခု သုံးပါ။# >>> rescale_to_unit.call([1.0, 2.0, 3.0, 4.0, 5.0])
+# [0.0, 0.25, 0.5, 0.75, 1.0]
+def rescale_to_unit(numbers)
+","def rescale_to_unit(numbers)
+  min = numbers.min
+  max = numbers.max
+  range = max - min
+  return numbers.map { |num| (num - min) / range.to_f }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_rescale_to_unit
+    candidate = method(:rescale_to_unit)
+    assert_equal([0.0, 1.0], candidate.call([2.0, 49.9]))
+    assert_equal([1.0, 0.0], candidate.call([100.0, 49.9]))
+    assert_equal([0.0, 0.25, 0.5, 0.75, 1.0], candidate.call([1.0, 2.0, 3.0, 4.0, 5.0]))
+    assert_equal([0.25, 0.0, 1.0, 0.5, 0.75], candidate.call([2.0, 1.0, 5.0, 3.0, 4.0]))
+    assert_equal([0.25, 0.0, 1.0, 0.5, 0.75], candidate.call([12.0, 11.0, 15.0, 13.0, 14.0]))
+  end
+end
+"
+HumanEval_22,mya_Mymr,rb,"ပေးထားသော array ကို rbthon တန်ဖိုးများအတွက် ဖြောင့်ကိန်းများအတွက်သာ စစ်ပေးပါ။# >>> filter_integers.call([""a"", 3.14, 5])
+# [5]
+# >>> filter_integers.call([1, 2, 3, ""abc"", {}, []])
+# [1, 2, 3]
+def filter_integers(values)
+","def filter_integers(values)
+  values.select { |value| value.is_a?(Integer) }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_filter_integers
+    candidate = method(:filter_integers)
+    assert_equal([], candidate.call([]))
+    assert_equal([4, 9], candidate.call([4, {}, [], 23.2, 9, ""adasd""]))
+    assert_equal([3, 3, 3], candidate.call([3, ""c"", 3, 3, ""a"", ""b""]))
+  end
+end
+"
+HumanEval_23,mya_Mymr,rb,"string ကိုပြန်ပို့ပါ# >>> strlen.call("""")
+# 0
+# >>> strlen.call(""abc"")
+# 3
+def strlen(string)
+","strlen = lambda do |string|
+  string.length
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_strlen
+    candidate = method(:strlen)
+    assert_equal(0, candidate.call(""""))
+    assert_equal(1, candidate.call(""x""))
+    assert_equal(9, candidate.call(""asdasnakj""))
+  end
+end
+"
+HumanEval_24,mya_Mymr,rb,"ပေးထားတဲ့ ကိန်း n အတွက် n ထက် ပိုသေးတဲ့ n ကို ညီမျှစွာ ပိုင်းခြားနိုင်တဲ့ အကြီးဆုံးကိန်းကို ရှာပါ။# >>> largest_divisor.call(15)
+# 5
+def largest_divisor(n)
+","def largest_divisor(n)
+  (n - 1).downto(1) do |i|
+    return i if n % i == 0
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_largest_divisor
+    candidate = method(:largest_divisor)
+    assert_equal(1, candidate.call(3))
+    assert_equal(1, candidate.call(7))
+    assert_equal(5, candidate.call(10))
+    assert_equal(50, candidate.call(100))
+    assert_equal(7, candidate.call(49))
+  end
+end
+"
+HumanEval_25,mya_Mymr,rb,"input number ကတော့ ကိန်းရှင်အားလုံးရဲ့ product နဲ့ညီမျှရမယ်။ကိန်းရှင်တစ်ခုစီကို ကိန်းရှင်ခွဲခြင်းမှာ ဘယ်နှစ်ကြိမ်ပေါ်လာသလဲဆိုတာနဲ့ ကိုက်ညီတဲ့ ကိန်းဂဏန်းနဲ့ စီထားရပါမယ်အငယ်ဆုံးမှ အကြီးဆုံးအထိ အစီအစဉ်လိုက် ပေးထားသော ကိန်းပြည့်၏ အခြေခံကိန်းရှင်များ၏ မေထရစ်ကို ပြန်ပေးသည်။# >>> factorize.call(8)
+# [2, 2, 2]
+# >>> factorize.call(25)
+# [5, 5]
+# >>> factorize.call(70)
+# [2, 5, 7]
+def factorize(n)
+","def factorize(n)
+  factors = []
+  divisor = 2
+  while n > 1
+    while n % divisor == 0
+      factors << divisor
+      n /= divisor
+    end
+    divisor += 1
+  end
+  factors
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_factorize
+    candidate = method(:factorize)
+    assert_equal([2], candidate.call(2))
+    assert_equal([2, 2], candidate.call(4))
+    assert_equal([2, 2, 2], candidate.call(8))
+    assert_equal([3, 19], candidate.call(57))
+    assert_equal([3, 3, 19, 19], candidate.call(3249))
+    assert_equal([3, 3, 3, 19, 19, 19], candidate.call(185193))
+    assert_equal([3, 19, 19, 19], candidate.call(20577))
+    assert_equal([2, 3, 3], candidate.call(18))
+  end
+end
+"
+HumanEval_26,mya_Mymr,rb,"left element တွေရဲ့ အတန်းအစားကို input ထဲက အတန်းအစားအတိုင်း ထားပါ။ကိန်းပြည့်တွေရဲ့ မေထရစ်ကနေ တစ်ကြိမ်ထက်ပိုပြီး ပေါ်လာတဲ့ ဒြပ်စင်အားလုံးကို ဖယ်ရှားပါ။# >>> remove_duplicates.call([1, 2, 3, 2, 4])
+# [1, 3, 4]
+def remove_duplicates(numbers)
+","def remove_duplicates(numbers)
+  numbers.select { |num| numbers.count(num) == 1 }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_remove_duplicates
+    candidate = method(:remove_duplicates)
+    assert_equal([], candidate.call([]))
+    assert_equal([1, 2, 3, 4], candidate.call([1, 2, 3, 4]))
+    assert_equal([1, 4, 5], candidate.call([1, 2, 3, 2, 4, 3, 5]))
+  end
+end
+"
+HumanEval_27,mya_Mymr,rb,"string တစ်ခုအတွက် lowercase characters တွေကို uppercase နဲ့ uppercase တွေကို lowercase ပြောင်းပါ။# >>> flip_case.call(""Hello"")
+# ""hELLO""
+def flip_case(string)
+","def flip_case(string)
+  string.swapcase
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_flip_case
+    candidate = method(:flip_case)
+    assert_equal("""", candidate.call(""""))
+    assert_equal(""hELLO!"", candidate.call(""Hello!""))
+    assert_equal(""tHESE VIOLENT DELIGHTS HAVE VIOLENT ENDS"", candidate.call(""These violent delights have violent ends""))
+  end
+end
+"
+HumanEval_28,mya_Mymr,rb,"string တွေရဲ့ array ကို string တစ်ခုတည်းအဖြစ် ပေါင်းစပ်ပါ။# >>> concatenate.call([])
+# """"
+# >>> concatenate.call([""a"", ""b"", ""c""])
+# ""abc""
+def concatenate(strings)
+","def concatenate(strings)
+  strings.join
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_concatenate
+    candidate = method(:concatenate)
+    assert_equal("""", candidate.call([]))
+    assert_equal(""xyz"", candidate.call([""x"", ""y"", ""z""]))
+    assert_equal(""xyzwk"", candidate.call([""x"", ""y"", ""z"", ""w"", ""k""]))
+  end
+end
+"
+HumanEval_29,mya_Mymr,rb,"ပေးထားတဲ့ ရှေ့ဆက်ပုဒ်နဲ့ စတဲ့ string တွေအတွက်ပဲ input array ကို စစ်ပါ။# >>> filter_by_prefix.call([], ""a"")
+# []
+# >>> filter_by_prefix.call([""abc"", ""bcd"", ""cde"", ""array""], ""a"")
+# [""abc"", ""array""]
+def filter_by_prefix(strings, prefix)
+","def filter_by_prefix(strings, prefix)
+  strings.select { |string| string.start_with?(prefix) }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_filter_by_prefix
+    candidate = method(:filter_by_prefix)
+    assert_equal([], candidate.call([], ""john""))
+    assert_equal([""xxx"", ""xxxAAA"", ""xxx""], candidate.call([""xxx"", ""asd"", ""xxy"", ""john doe"", ""xxxAAA"", ""xxx""], ""xxx""))
+  end
+end
+"
+HumanEval_30,mya_Mymr,rb,"array ထဲက အပေါင်းကိန်းတွေကိုပဲ ပြန်ပေးတယ်။# >>> get_positive.call([-1, 2, -4, 5, 6])
+# [2, 5, 6]
+# >>> get_positive.call([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])
+# [5, 3, 2, 3, 9, 123, 1]
+def get_positive(l)
+","get_positive = lambda do |l|
+  l.select { |num| num > 0 }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_get_positive
+    candidate = method(:get_positive)
+    assert_equal([4, 5, 6], candidate.call([-1, -2, 4, 5, 6]))
+    assert_equal([5, 3, 2, 3, 3, 9, 123, 1], candidate.call([5, 3, -5, 2, 3, 3, 9, 0, 123, 1, -10]))
+    assert_equal([], candidate.call([-1, -2]))
+    assert_equal([], candidate.call([]))
+  end
+end
+"
+HumanEval_31,mya_Mymr,rb,"ပေးထားတဲ့ ကိန်းတစ်ခုဟာ အကြိမ်ကြိမ်ကိန်းဖြစ်ရင် မှန်တဲ့ကိန်းကို ပြန်ပေးပြီး အခြားကိစ္စတွေမှာတော့ မှားတဲ့ကိန်းကို ပြန်ပေးတယ်။# >>> is_prime.call(6)
+# false
+# >>> is_prime.call(101)
+# true
+# >>> is_prime.call(11)
+# true
+# >>> is_prime.call(13441)
+# true
+# >>> is_prime.call(61)
+# true
+# >>> is_prime.call(4)
+# false
+# >>> is_prime.call(1)
+# false
+def is_prime(n)
+","is_prime = lambda do |n|
+  return false if n <= 1
+  return true if n == 2
+  return false if n.even?
+
+  max_divisor = Math.sqrt(n).to_i
+  (3..max_divisor).step(2).each do |i|
+    return false if n % i == 0
+  end
+
+  true
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_prime
+    candidate = method(:is_prime)
+    assert_equal(false, candidate.call(6))
+    assert_equal(true, candidate.call(101))
+    assert_equal(true, candidate.call(11))
+    assert_equal(true, candidate.call(13441))
+    assert_equal(true, candidate.call(61))
+    assert_equal(false, candidate.call(4))
+    assert_equal(false, candidate.call(1))
+    assert_equal(true, candidate.call(5))
+    assert_equal(true, candidate.call(11))
+    assert_equal(true, candidate.call(17))
+    assert_equal(false, candidate.call(85))
+    assert_equal(false, candidate.call(77))
+    assert_equal(false, candidate.call(255379))
+  end
+end
+"
+HumanEval_33,mya_Mymr,rb,"l ၏တန်ဖိုးများနှင့်ညီသောညွှတ်ကိန်းများသို့မညီဘဲခွဲခြားထားသည်။l' သည် l နှင့်တူညီသည်၊ သုံးခုဖြင့်မခွဲနိုင်သောညွှန်းကိန်းများတွင်၊ သုံးခုဖြင့်ခွဲနိုင်သောညွှန်းကိန်းများတွင်၎င်း၏တန်ဖိုးများကတူညီသည်။ဒီ function က array l ကိုယူပြီး array l' ကိုပြန်ပေးတယ်။ ဒီလိုမျိုးပေါ့။# >>> sort_third.call([1, 2, 3])
+# [1, 2, 3]
+# >>> sort_third.call([5, 6, 3, 4, 8, 9, 2])
+# [2, 6, 3, 4, 8, 9, 5]
+def sort_third(l)
+","def sort_third(l)
+  divisible_by_three = l.each_with_index.select { |_, idx| idx % 3 == 0 }.map(&:first).sort
+  l.each_with_index.map { |val, idx| idx % 3 == 0 ? divisible_by_three.shift : val }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sort_third
+    candidate = method(:sort_third)
+    assert_equal([2, 6, 3, 4, 8, 9, 5], candidate.call([5, 6, 3, 4, 8, 9, 2]))
+    assert_equal([2, 8, 3, 4, 6, 9, 5], candidate.call([5, 8, 3, 4, 6, 9, 2]))
+    assert_equal([2, 6, 9, 4, 8, 3, 5], candidate.call([5, 6, 9, 4, 8, 3, 2]))
+    assert_equal([2, 6, 3, 4, 8, 9, 5, 1], candidate.call([5, 6, 3, 4, 8, 9, 2, 1]))
+  end
+end
+"
+HumanEval_34,mya_Mymr,rb,"array ထဲမှာ အမျိုးအစားခွဲထားတဲ့ ထူးခြားတဲ့ ဒြပ်စင်တွေကို ပြန်ပေးမယ်# >>> unique.call([5, 3, 5, 2, 3, 3, 9, 0, 123])
+# [0, 2, 3, 5, 9, 123]
+def unique(l)
+","def unique(l)
+  l.uniq.sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_unique
+    candidate = method(:unique)
+    assert_equal([0, 2, 3, 5, 9, 123], candidate.call([5, 3, 5, 2, 3, 3, 9, 0, 123]))
+  end
+end
+"
+HumanEval_35,mya_Mymr,rb,"array ထဲက အမ်ားဆုံး element ကို ျပန္ေပးပါ.# >>> max_element.call([1, 2, 3])
+# 3
+# >>> max_element.call([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])
+# 123
+def max_element(l)
+","def max_element(l)
+  l.max
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_max_element
+    candidate = method(:max_element)
+    assert_equal(3, candidate.call([1, 2, 3]))
+    assert_equal(124, candidate.call([5, 3, -5, 2, -3, 3, 9, 0, 124, 1, -10]))
+  end
+end
+"
+HumanEval_36,mya_Mymr,rb,"11 သို့မဟုတ် 13 ဖြင့်စားနိုင်သော n ထက်နည်းသော integer များတွင် 7 သည်ပေါ်လာသော အကြိမ်ရေကိုပြန်ပေးသည်။# >>> fizz_buzz.call(50)
+# 0
+# >>> fizz_buzz.call(78)
+# 2
+# >>> fizz_buzz.call(79)
+# 3
+def fizz_buzz(n)
+","def fizz_buzz(n)
+  count = 0
+  (1...n).each do |i|
+    if i % 11 == 0 || i % 13 == 0
+      count += i.to_s.count('7')
+    end
+  end
+  count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fizz_buzz
+    candidate = method(:fizz_buzz)
+    assert_equal(0, candidate.call(50))
+    assert_equal(2, candidate.call(78))
+    assert_equal(3, candidate.call(79))
+    assert_equal(3, candidate.call(100))
+    assert_equal(6, candidate.call(200))
+    assert_equal(192, candidate.call(4000))
+    assert_equal(639, candidate.call(10000))
+    assert_equal(8026, candidate.call(100000))
+  end
+end
+"
+HumanEval_37,mya_Mymr,rb,"l ရဲ့ အညွှန်းကိန်းတွေကို တန်းစီထားတယ်။l' သည် l နှင့်တူညီသည်၊ဒီ function က array l ကိုယူပြီး array l' ကိုပြန်ပေးတယ်။ ဒီလိုမျိုးပေါ့။# >>> sort_even.call([1, 2, 3])
+# [1, 2, 3]
+# >>> sort_even.call([5, 6, 3, 4])
+# [3, 6, 5, 4]
+def sort_even(l)
+","def sort_even(l)
+  even_indices = l.each_index.select { |i| i.even? }
+  even_values = even_indices.map { |i| l[i] }.sort
+  
+  even_index = 0
+  l.each_with_index.map do |value, index|
+    if index.even?
+      even_values[even_index].tap { even_index += 1 }
+    else
+      value
+    end
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sort_even
+    candidate = method(:sort_even)
+    assert_equal([1, 2, 3], candidate.call([1, 2, 3]))
+    assert_equal([-10, 3, -5, 2, -3, 3, 5, 0, 9, 1, 123], candidate.call([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10]))
+    assert_equal([-12, 8, 3, 4, 5, 2, 12, 11, 23, -10], candidate.call([5, 8, -12, 4, 23, 2, 3, 11, 12, -10]))
+  end
+end
+"
+HumanEval_39,mya_Mymr,rb,"prime_fib က ဖီဘိုနာချီကိန်းတစ်ခုဖြစ်တဲ့ n-th ကိန်းတစ်ခုကို ပြန်ပေးတယ် ဒါကလည်း ပရိုင်းမစ် ကိန်းတစ်ခုဖြစ်ပါတယ်# >>> prime_fib.call(1)
+# 2
+# >>> prime_fib.call(2)
+# 3
+# >>> prime_fib.call(3)
+# 5
+# >>> prime_fib.call(4)
+# 13
+# >>> prime_fib.call(5)
+# 89
+def prime_fib(n)
+","def prime_fib(n)
+  require 'prime'
+  
+  fibs = Enumerator.new do |y|
+    a, b = 0, 1
+    loop do
+      a, b = b, a + b
+      y << b
+    end
+  end
+  
+  prime_fibs = fibs.lazy.select { |fib| Prime.prime?(fib) }
+  prime_fibs.first(n).last
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_prime_fib
+    candidate = method(:prime_fib)
+    assert_equal(2, candidate.call(1))
+    assert_equal(3, candidate.call(2))
+    assert_equal(5, candidate.call(3))
+    assert_equal(13, candidate.call(4))
+    assert_equal(89, candidate.call(5))
+    assert_equal(233, candidate.call(6))
+    assert_equal(1597, candidate.call(7))
+    assert_equal(28657, candidate.call(8))
+    assert_equal(514229, candidate.call(9))
+    assert_equal(433494437, candidate.call(10))
+  end
+end
+"
+HumanEval_40,mya_Mymr,rb,"သုညအထိ စုပေါင်းပြီး မဟုတ်ရင် မှားတယ်။array ထဲမှာ မတူတဲ့ element သုံးခုရှိရင် true ပြန်ပေးတယ်။triple_sum_to_zero သည် ကိန်းပြည့်များ၏ မေထရစ်ကို အဝင်အဖြစ် ယူသည်။# >>> triples_sum_to_zero.call([1, 3, 5, 0])
+# false
+# >>> triples_sum_to_zero.call([1, 3, -2, 1])
+# true
+# >>> triples_sum_to_zero.call([1, 2, 3, 7])
+# false
+# >>> triples_sum_to_zero.call([2, 4, -5, 3, 9, 7])
+# true
+# >>> triples_sum_to_zero.call([1])
+# false
+def triples_sum_to_zero(l)
+","def triples_sum_to_zero(l)
+  n = l.length
+  (0...n-2).each do |i|
+    ((i+1)...n-1).each do |j|
+      ((j+1)...n).each do |k|
+        return true if l[i] + l[j] + l[k] == 0
+      end
+    end
+  end
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_triples_sum_to_zero
+    candidate = method(:triples_sum_to_zero)
+    assert_equal(false, candidate.call([1, 3, 5, 0]))
+    assert_equal(false, candidate.call([1, 3, 5, -1]))
+    assert_equal(true, candidate.call([1, 3, -2, 1]))
+    assert_equal(false, candidate.call([1, 2, 3, 7]))
+    assert_equal(false, candidate.call([1, 2, 5, 7]))
+    assert_equal(true, candidate.call([2, 4, -5, 3, 9, 7]))
+    assert_equal(false, candidate.call([1]))
+    assert_equal(false, candidate.call([1, 3, 5, -100]))
+    assert_equal(false, candidate.call([100, 3, 5, -100]))
+  end
+end
+"
+HumanEval_41,mya_Mymr,rb,"ဒီ function က ဒီလိုတိုက်မိမှုတွေရဲ့ အရေအတွက်ကို output လုပ်ပေးတယ်။သူတို့တွေဟာ မတိုက်မိခဲ့သလိုပဲ သူတို့တွေရဲ့ လမ်းကြောင်းထဲမှာ ဆက်လက် ပြေးနေတယ်။ဒါပေမဲ့ ကားတွေက အင်မတန် ခိုင်မာပြီး ခိုင်မာတာကြောင့် ဆက်မောင်းနေတယ်။ဘယ်မှ ညာသို့ သွားနေတဲ့ ကားက ညာမှ ဘယ်သို့ သွားနေတဲ့ ကားကို ဝင်တိုက်မိတဲ့အခါကားအားလုံးဟာ တူညီတဲ့ အလျင်နဲ့ ရွေ့ရှားနေကြတယ်၊ ကားနှစ်စီး တိုက်မိတယ်လို့ ဆိုကြတယ်။ညာဘက်ကနေ ဘယ်ဘက်ကို မောင်းနေကြတာပါ ကားနှစ်စီးဟာ ညာဘက်ကနေ ဘယ်ဘက်ကို အမြန်ဆုံး မောင်းနေကြတာပါကား n စီးနင်းနေတာ ဘယ်မှ ညာသို့ ဖြစ်ပြီး တစ်ပြိုင်နက်မှာ ကား n စီးရဲ့ မတူတဲ့ အစုတွေရှိတယ်။အပြီးပြည့်စုံတဲ့ မျဉ်းဖြောင့်တစ်ကြောင်းလို့ စိတ်ကူးကြည့်ပါ။def car_race_collision(n)
+","def car_race_collision(n)
+  n
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_car_race_collision
+    candidate = method(:car_race_collision)
+    assert_equal(4, candidate.call(2))
+    assert_equal(9, candidate.call(3))
+    assert_equal(16, candidate.call(4))
+    assert_equal(64, candidate.call(8))
+    assert_equal(100, candidate.call(10))
+  end
+end
+"
+HumanEval_42,mya_Mymr,rb,"၁ တိုးမြှင့်ထားတဲ့ ဒြပ်စင်တွေနဲ့ array ကို ပြန်ပေးတယ်။# >>> incr_list.call([1, 2, 3])
+# [2, 3, 4]
+# >>> incr_list.call([5, 3, 5, 2, 3, 3, 9, 0, 123])
+# [6, 4, 6, 3, 4, 4, 10, 1, 124]
+def incr_list(l)
+","def incr_list(l)
+  l.map { |x| x + 1 }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_incr_list
+    candidate = method(:incr_list)
+    assert_equal([], candidate.call([]))
+    assert_equal([4, 3, 2], candidate.call([3, 2, 1]))
+    assert_equal([6, 3, 6, 3, 4, 4, 10, 1, 124], candidate.call([5, 2, 5, 2, 3, 3, 9, 0, 123]))
+  end
+end
+"
+HumanEval_43,mya_Mymr,rb,"သုညအထိ စုပေါင်းပြီး မဟုတ်ရင် မှားတယ်။array ထဲမှာ မတူတဲ့ element နှစ်ခုရှိရင် true ပြန်ပေးတယ်။pairs_sum_to_zero သည် ကိန်းပြည့်များ၏ မေထရစ်ကို အဝင်အဖြစ် ယူသည်။# >>> pairs_sum_to_zero.call([1, 3, 5, 0])
+# false
+# >>> pairs_sum_to_zero.call([1, 3, -2, 1])
+# false
+# >>> pairs_sum_to_zero.call([1, 2, 3, 7])
+# false
+# >>> pairs_sum_to_zero.call([2, 4, -5, 3, 5, 7])
+# true
+# >>> pairs_sum_to_zero.call([1])
+# false
+def pairs_sum_to_zero(l)
+","def pairs_sum_to_zero(l)
+  num_set = l.to_set
+  l.each do |num|
+    return true if num != 0 && num_set.include?(-num)
+  end
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_pairs_sum_to_zero
+    candidate = method(:pairs_sum_to_zero)
+    assert_equal(false, candidate.call([1, 3, 5, 0]))
+    assert_equal(false, candidate.call([1, 3, -2, 1]))
+    assert_equal(false, candidate.call([1, 2, 3, 7]))
+    assert_equal(true, candidate.call([2, 4, -5, 3, 5, 7]))
+    assert_equal(false, candidate.call([1]))
+    assert_equal(true, candidate.call([-3, 9, -1, 3, 2, 30]))
+    assert_equal(true, candidate.call([-3, 9, -1, 3, 2, 31]))
+    assert_equal(false, candidate.call([-3, 9, -1, 4, 2, 30]))
+    assert_equal(false, candidate.call([-3, 9, -1, 4, 2, 31]))
+  end
+end
+"
+HumanEval_44,mya_Mymr,rb,"base numbers က ၁၀ ထက် နည်းပါတယ်။ပြန်ပို့လိုက်တဲ့ string ကို ပြန်ရေးလိုက်တာပါinput number x ရဲ့ base ကို base အျဖစ္ ေျပာင္းလိုက္ပါ။# >>> change_base.call(8, 3)
+# ""22""
+# >>> change_base.call(8, 2)
+# ""1000""
+# >>> change_base.call(7, 2)
+# ""111""
+def change_base(x, base)
+","def change_base(x, base)
+  return '0' if x == 0
+  digits = []
+  while x > 0
+    digits << (x % base).to_s
+    x /= base
+  end
+  digits.reverse.join
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_change_base
+    candidate = method(:change_base)
+    assert_equal(""22"", candidate.call(8, 3))
+    assert_equal(""100"", candidate.call(9, 3))
+    assert_equal(""11101010"", candidate.call(234, 2))
+    assert_equal(""10000"", candidate.call(16, 2))
+    assert_equal(""1000"", candidate.call(8, 2))
+    assert_equal(""111"", candidate.call(7, 2))
+    assert_equal(""2"", candidate.call(2, 3))
+    assert_equal(""3"", candidate.call(3, 4))
+    assert_equal(""4"", candidate.call(4, 5))
+    assert_equal(""5"", candidate.call(5, 6))
+    assert_equal(""6"", candidate.call(6, 7))
+    assert_equal(""7"", candidate.call(7, 8))
+  end
+end
+"
+HumanEval_45,mya_Mymr,rb,"တြိဂံရဲ့ အနားက အလျားနဲ့ အမြင့်ဆုံး အပြန်အလှန် ဧရိယာကို ပေးထားတယ်။# >>> triangle_area.call(5, 3)
+# 7.5
+def triangle_area(a, h)
+","def triangle_area(a, h)
+  (a * h) / 2.0
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_triangle_area
+    candidate = method(:triangle_area)
+    assert_equal(7.5, candidate.call(5, 3))
+    assert_equal(2.0, candidate.call(2, 2))
+    assert_equal(40.0, candidate.call(10, 8))
+  end
+end
+"
+HumanEval_46,mya_Mymr,rb,"fib4 ကိန်းစဉ်၏ n-th အစိတ်အပိုင်းကို ထိရောက်စွာ တွက်ချက်ရန် လုပ်ဆောင်ချက်ကို ရေးပါ။ ပြန်လည်ကောက်ယူမှုကို မသုံးပါနှင့်။fib4 ((n) -> fib4 ((n-1) + fib4 ((n-2) + fib4 ((n-3) + fib4 ((n-4) ။fib4(3) -> 0 fib4(2) -> 2 fib4(1) -> 0 fib4(0) -> 0 Fib4 ကိန်းစဉ်က Fibbonacci ကိန်းစဉ်နဲ့ ဆင်တူတဲ့ ကိန်းစဉ်ဖြစ်ပြီး အောက်ပါအတိုင်း အဓိပ္ပါယ်ဖွင့်ဆိုထားပါတယ်# >>> fib4.call(5)
+# 4
+# >>> fib4.call(6)
+# 8
+# >>> fib4.call(7)
+# 14
+def fib4(n)
+","def fib4(n)
+  return 0 if n == 0 || n == 1 || n == 3
+  return 2 if n == 2
+
+  fib4_seq = [0, 0, 2, 0]
+  (4..n).each do |i|
+    fib4_seq[i] = fib4_seq[i-1] + fib4_seq[i-2] + fib4_seq[i-3] + fib4_seq[i-4]
+  end
+  fib4_seq[n]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fib4
+    candidate = method(:fib4)
+    assert_equal(4, candidate.call(5))
+    assert_equal(28, candidate.call(8))
+    assert_equal(104, candidate.call(10))
+    assert_equal(386, candidate.call(12))
+  end
+end
+"
+HumanEval_47,mya_Mymr,rb,"array ထဲက element ေတြရဲ့ median ကို ျပန္ေပးပါ l.# >>> median.call([3, 1, 2, 4, 5])
+# 3
+# >>> median.call([-10, 4, 6, 1000, 10, 20])
+# 15.0
+def median(l)
+","def median(l)
+  sorted = l.sort
+  len = sorted.length
+  if len.odd?
+    sorted[len / 2]
+  else
+    (sorted[len / 2 - 1] + sorted[len / 2]) / 2.0
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_median
+    candidate = method(:median)
+    assert_equal(3, candidate.call([3, 1, 2, 4, 5]))
+    assert_equal(8.0, candidate.call([-10, 4, 6, 1000, 10, 20]))
+    assert_equal(5, candidate.call([5]))
+    assert_equal(5.5, candidate.call([6, 5]))
+    assert_equal(7, candidate.call([8, 1, 3, 9, 9, 2, 7]))
+  end
+end
+"
+HumanEval_48,mya_Mymr,rb,"ပေးထားတဲ့ string က palindrome ဟုတ်မဟုတ် စစ်ဆေးတယ်။# >>> is_palindrome.call("""")
+# true
+# >>> is_palindrome.call(""aba"")
+# true
+# >>> is_palindrome.call(""aaaaa"")
+# true
+# >>> is_palindrome.call(""zbcd"")
+# false
+def is_palindrome(text)
+","is_palindrome = lambda do |text|
+  text == text.reverse
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_palindrome
+    candidate = method(:is_palindrome)
+    assert_equal(true, candidate.call(""""))
+    assert_equal(true, candidate.call(""aba""))
+    assert_equal(true, candidate.call(""aaaaa""))
+    assert_equal(false, candidate.call(""zbcd""))
+    assert_equal(true, candidate.call(""xywyx""))
+    assert_equal(false, candidate.call(""xywyz""))
+    assert_equal(false, candidate.call(""xywzx""))
+  end
+end
+"
+HumanEval_49,mya_Mymr,rb,"2^n modulo p ကိုပြန်ပေးပါ (ကိန်းဂဏန်းတွေကို သတိပြုပါ) ။# >>> modp.call(3, 5)
+# 3
+# >>> modp.call(1101, 101)
+# 2
+# >>> modp.call(0, 101)
+# 1
+# >>> modp.call(3, 11)
+# 8
+# >>> modp.call(100, 101)
+# 1
+def modp(n, p)
+","def modp(n, p)
+  return 1 if p == 1
+  2.pow(n, p)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_modp
+    candidate = method(:modp)
+    assert_equal(3, candidate.call(3, 5))
+    assert_equal(2, candidate.call(1101, 101))
+    assert_equal(1, candidate.call(0, 101))
+    assert_equal(8, candidate.call(3, 11))
+    assert_equal(1, candidate.call(100, 101))
+    assert_equal(4, candidate.call(30, 5))
+    assert_equal(3, candidate.call(31, 5))
+  end
+end
+"
+HumanEval_51,mya_Mymr,rb,"remove_vowels သည် အသံထွက်မရှိသော string ကိုယူ၍ ပြန်ပေးသော function ဖြစ်သည်။# >>> remove_vowels.call("""")
+# """"
+# >>> remove_vowels.call(""abcdef"")
+# ""bcdf""
+# >>> remove_vowels.call(""aaaaa"")
+# """"
+# >>> remove_vowels.call(""aaBAA"")
+# ""B""
+# >>> remove_vowels.call(""zbcd"")
+# ""zbcd""
+def remove_vowels(text)
+","def remove_vowels(text)
+  text.delete('aeiouAEIOU')
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_remove_vowels
+    candidate = method(:remove_vowels)
+    assert_equal("""", candidate.call(""""))
+    assert_equal(""bcdf
+ghjklm"", candidate.call(""abcdef
+ghijklm""))
+    assert_equal(""fdcb"", candidate.call(""fedcba""))
+    assert_equal("""", candidate.call(""eeeee""))
+    assert_equal(""cB"", candidate.call(""acBAA""))
+    assert_equal(""cB"", candidate.call(""EcBOO""))
+    assert_equal(""ybcd"", candidate.call(""ybcd""))
+  end
+end
+"
+HumanEval_52,mya_Mymr,rb,"array l ထဲက ကိန္းမ်ားအားလံုးသည္ threshold t ထက္နည္းလွ်င္ true ကိုျပန္လည္ေပးပါသည္။# >>> below_threshold.call([1, 2, 4, 10], 100)
+# true
+# >>> below_threshold.call([1, 20, 4, 10], 5)
+# false
+def below_threshold(l, t)
+","def below_threshold(l, t)
+  l.all? { |num| num < t }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_below_threshold
+    candidate = method(:below_threshold)
+    assert_equal(true, candidate.call([1, 2, 4, 10], 100))
+    assert_equal(false, candidate.call([1, 20, 4, 10], 5))
+    assert_equal(true, candidate.call([1, 20, 4, 10], 21))
+    assert_equal(true, candidate.call([1, 20, 4, 10], 22))
+    assert_equal(true, candidate.call([1, 8, 4, 10], 11))
+    assert_equal(false, candidate.call([1, 8, 4, 10], 10))
+  end
+end
+"
+HumanEval_53,mya_Mymr,rb,"ကိန်းနှစ်လုံးပေါင်းပါ x နဲ့ y ပါ။# >>> add.call(2, 3)
+# 5
+# >>> add.call(5, 7)
+# 12
+def add(x, y)
+","add = ->(x, y) { x + y }","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_add
+    candidate = method(:add)
+    assert_equal(1, candidate.call(0, 1))
+    assert_equal(1, candidate.call(1, 0))
+    assert_equal(5, candidate.call(2, 3))
+    assert_equal(12, candidate.call(5, 7))
+    assert_equal(12, candidate.call(7, 5))
+  end
+end
+"
+HumanEval_54,mya_Mymr,rb,"စကားလုံးနှစ်လုံးမှာ တူညီတဲ့စာလုံးတွေရှိလားစစ်ဆေးပါ။# >>> same_chars.call(""eabcdzzzz"", ""dddzzzzzzzddeddabc"")
+# true
+# >>> same_chars.call(""abcd"", ""dddddddabc"")
+# true
+# >>> same_chars.call(""dddddddabc"", ""abcd"")
+# true
+# >>> same_chars.call(""eabcd"", ""dddddddabc"")
+# false
+# >>> same_chars.call(""abcd"", ""dddddddabce"")
+# false
+# >>> same_chars.call(""eabcdzzzz"", ""dddzzzzzzzddddabc"")
+# false
+def same_chars(s0, s1)
+","def same_chars(s0, s1)
+  s0.chars.uniq.all? { |char| s1.include?(char) } &&
+  s1.chars.uniq.all? { |char| s0.include?(char) }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_same_chars
+    candidate = method(:same_chars)
+    assert_equal(true, candidate.call(""eabcdzzzz"", ""dddzzzzzzzddeddabc""))
+    assert_equal(true, candidate.call(""abcd"", ""dddddddabc""))
+    assert_equal(true, candidate.call(""dddddddabc"", ""abcd""))
+    assert_equal(false, candidate.call(""eabcd"", ""dddddddabc""))
+    assert_equal(false, candidate.call(""abcd"", ""dddddddabcf""))
+    assert_equal(false, candidate.call(""eabcdzzzz"", ""dddzzzzzzzddddabc""))
+    assert_equal(false, candidate.call(""aabb"", ""aaccc""))
+  end
+end
+"
+HumanEval_55,mya_Mymr,rb,"n-th ဖီဘိုနာချီကိန်းကို ပြန်ပေးပါ# >>> fib.call(10)
+# 55
+# >>> fib.call(1)
+# 1
+# >>> fib.call(8)
+# 21
+def fib(n)
+","def fib(n)
+  return n if n <= 1
+  fib(n - 1) + fib(n - 2)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fib
+    candidate = method(:fib)
+    assert_equal(55, candidate.call(10))
+    assert_equal(1, candidate.call(1))
+    assert_equal(21, candidate.call(8))
+    assert_equal(89, candidate.call(11))
+    assert_equal(144, candidate.call(12))
+  end
+end
+"
+HumanEval_56,mya_Mymr,rb,"ဖွင့်တဲ့ bracket တစ်ခုစီမှာ သက်ဆိုင်ရာ ပိတ်တဲ့ bracket တစ်ခုရှိရင် true ကိုပြန်ပို့ပါ။brackets ကတော့ ""<"" နဲ့ "">"" တွေပါတဲ့ string ပါ။# >>> correct_bracketing.call(""<"")
+# false
+# >>> correct_bracketing.call(""<>"")
+# true
+# >>> correct_bracketing.call(""<<><>>"")
+# true
+# >>> correct_bracketing.call(""><<>"")
+# false
+def correct_bracketing(brackets)
+","def correct_bracketing(brackets)
+  balance = 0
+  brackets.chars.each do |char|
+    if char == '<'
+      balance += 1
+    elsif char == '>'
+      balance -= 1
+    end
+    return false if balance < 0
+  end
+  balance == 0
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_correct_bracketing
+    candidate = method(:correct_bracketing)
+    assert_equal(true, candidate.call(""<>""))
+    assert_equal(true, candidate.call(""<<><>>""))
+    assert_equal(true, candidate.call(""<><><<><>><>""))
+    assert_equal(true, candidate.call(""<><><<<><><>><>><<><><<>>>""))
+    assert_equal(false, candidate.call(""<<<><>>>>""))
+    assert_equal(false, candidate.call(""><<>""))
+    assert_equal(false, candidate.call(""<""))
+    assert_equal(false, candidate.call(""<<<<""))
+    assert_equal(false, candidate.call("">""))
+    assert_equal(false, candidate.call(""<<>""))
+    assert_equal(false, candidate.call(""<><><<><>><>><<>""))
+    assert_equal(false, candidate.call(""<><><<><>><>>><>""))
+  end
+end
+"
+HumanEval_57,mya_Mymr,rb,"array element တွေဟာ တစ်မျိုးတည်း တိုးလာတာ (သို့) ကျဆင်းလာတာဖြစ်လို့ true ကိုပြန်ပို့ပါ။# >>> monotonic.call([1, 2, 4, 20])
+# true
+# >>> monotonic.call([1, 20, 4, 10])
+# false
+# >>> monotonic.call([4, 1, 0, -10])
+# true
+def monotonic(l)
+","def monotonic(l)
+  increasing = true
+  decreasing = true
+
+  (0...l.length - 1).each do |i|
+    if l[i] < l[i + 1]
+      decreasing = false
+    elsif l[i] > l[i + 1]
+      increasing = false
+    end
+  end
+
+  increasing || decreasing
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_monotonic
+    candidate = method(:monotonic)
+    assert_equal(true, candidate.call([1, 2, 4, 10]))
+    assert_equal(true, candidate.call([1, 2, 4, 20]))
+    assert_equal(false, candidate.call([1, 20, 4, 10]))
+    assert_equal(true, candidate.call([4, 1, 0, -10]))
+    assert_equal(true, candidate.call([4, 1, 1, 0]))
+    assert_equal(false, candidate.call([1, 2, 3, 2, 5, 60]))
+    assert_equal(true, candidate.call([1, 2, 3, 4, 5, 60]))
+    assert_equal(true, candidate.call([9, 9, 9, 9]))
+  end
+end
+"
+HumanEval_58,mya_Mymr,rb,"array နှစ်ခုအတွက်ရွေးချယ်ထားသောတူညီသောထူးခြားသောအရာများကိုပြန်ပေးသည်။# >>> common.call([1, 4, 3, 34, 653, 2, 5], [5, 7, 1, 5, 9, 653, 121])
+# [1, 5, 653]
+# >>> common.call([5, 3, 2, 8], [3, 2])
+# [2, 3]
+def common(l1, l2)
+","def common(l1, l2)
+  (l1 & l2).uniq.sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_common
+    candidate = method(:common)
+    assert_equal([1, 5, 653], candidate.call([1, 4, 3, 34, 653, 2, 5], [5, 7, 1, 5, 9, 653, 121]))
+    assert_equal([2, 3], candidate.call([5, 3, 2, 8], [3, 2]))
+    assert_equal([2, 3, 4], candidate.call([4, 3, 2, 8], [3, 2, 4]))
+    assert_equal([], candidate.call([4, 3, 2, 8], []))
+  end
+end
+"
+HumanEval_59,mya_Mymr,rb,"n ၏ အကြီးဆုံးကိန်းမှ prime factor ကိုပြန်ပေးပါ။ n > 1 ကိုယူပြီး prime မဟုတ်ပါ။ # >>> largest_prime_factor.call(13195)
+# 29
+# >>> largest_prime_factor.call(2048)
+# 2
+def largest_prime_factor(n)
+","def largest_prime_factor(n)
+  factor = 2
+  while factor * factor <= n
+    if n % factor == 0
+      n /= factor
+    else
+      factor += 1
+    end
+  end
+  n
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_largest_prime_factor
+    candidate = method(:largest_prime_factor)
+    assert_equal(5, candidate.call(15))
+    assert_equal(3, candidate.call(27))
+    assert_equal(7, candidate.call(63))
+    assert_equal(11, candidate.call(330))
+    assert_equal(29, candidate.call(13195))
+  end
+end
+"
+HumanEval_60,mya_Mymr,rb,"sum_to_n သည် ၁ မှ n အထိ ကိန်းဂဏန်းများကို ပေါင်းထည့်ပေးသော လုပ်ဆောင်ချက်ဖြစ်သည်။# >>> sum_to_n.call(30)
+# 465
+# >>> sum_to_n.call(100)
+# 5050
+# >>> sum_to_n.call(5)
+# 15
+# >>> sum_to_n.call(10)
+# 55
+# >>> sum_to_n.call(1)
+# 1
+def sum_to_n(n)
+","def sum_to_n(n)
+  (1..n).sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sum_to_n
+    candidate = method(:sum_to_n)
+    assert_equal(1, candidate.call(1))
+    assert_equal(21, candidate.call(6))
+    assert_equal(66, candidate.call(11))
+    assert_equal(465, candidate.call(30))
+    assert_equal(5050, candidate.call(100))
+  end
+end
+"
+HumanEval_61,mya_Mymr,rb,"ဖွင့်တဲ့ bracket တစ်ခုစီမှာ သက်ဆိုင်ရာ ပိတ်တဲ့ bracket တစ်ခုရှိရင် true ကိုပြန်ပို့ပါ။brackets ကတော့ ""("" နဲ့ """")  ဆိုတဲ့ string တွေပါ။# >>> correct_bracketing.call(""("")
+# false
+# >>> correct_bracketing.call(""()"")
+# true
+# >>> correct_bracketing.call(""(()())"")
+# true
+# >>> correct_bracketing.call("")(()"")
+# false
+def correct_bracketing(brackets)
+","def correct_bracketing(brackets)
+  balance = 0
+  brackets.each_char do |char|
+    if char == '('
+      balance += 1
+    elsif char == ')'
+      balance -= 1
+    end
+    return false if balance < 0
+  end
+  balance == 0
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_correct_bracketing
+    candidate = method(:correct_bracketing)
+    assert_equal(true, candidate.call(""()""))
+    assert_equal(true, candidate.call(""(()())""))
+    assert_equal(true, candidate.call(""()()(()())()""))
+    assert_equal(true, candidate.call(""()()((()()())())(()()(()))""))
+    assert_equal(false, candidate.call(""((()())))""))
+    assert_equal(false, candidate.call("")(()""))
+    assert_equal(false, candidate.call(""(""))
+    assert_equal(false, candidate.call(""((((""))
+    assert_equal(false, candidate.call("")""))
+    assert_equal(false, candidate.call(""(()""))
+    assert_equal(false, candidate.call(""()()(()())())(()""))
+    assert_equal(false, candidate.call(""()()(()())()))()""))
+  end
+end
+"
+HumanEval_62,mya_Mymr,rb,"ဒီ polynomial ရဲ့ တူညီတဲ့ပုံစံထဲက အပေါင်းလက္ခဏာကို ပြန်ပေးပါ။xs[0] + xs[1] * x + xs[2] * x^2 + .... xs ကတော့ polynomial ရဲ့ မြှောက်ဖော်ကိန်းတွေပဲပေါ့။# >>> derivative.call([3, 1, 2, 4, 5])
+# [1, 4, 12, 20]
+# >>> derivative.call([1, 2, 3])
+# [2, 6]
+def derivative(xs)
+","def derivative(xs)
+  return [] if xs.length < 2
+  xs.each_with_index.map { |coef, index| coef * index }[1..-1]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_derivative
+    candidate = method(:derivative)
+    assert_equal([1, 4, 12, 20], candidate.call([3, 1, 2, 4, 5]))
+    assert_equal([2, 6], candidate.call([1, 2, 3]))
+    assert_equal([2, 2], candidate.call([3, 2, 1]))
+    assert_equal([2, 2, 0, 16], candidate.call([3, 2, 1, 0, 4]))
+    assert_equal([], candidate.call([1]))
+  end
+end
+"
+HumanEval_63,mya_Mymr,rb,"fibfib ကိန်းစဉ်ရဲ့ n-th အစိတ်အပိုင်းကို ထိရောက်စွာ တွက်ချက်ဖို့ လုပ်ဆောင်ချက်ကို ရေးပါ။fibfib (n) == fibfib (n-1) + fibfib (n-2) + fibfib (n-3) ။အပိုဒ် ၂အထက်ပါအတိုင်း ဖြစ်ပါသည်။0 0 0FibFib ကိန်းစဉ်ဟာ Fibbonacci ကိန်းစဉ်နဲ့ ဆင်တူပါတယ်။ အောက်ပါအတိုင်း အဓိပ္ပါယ်ဖွင့်ဆိုထားတာပါ။# >>> fibfib.call(1)
+# 0
+# >>> fibfib.call(5)
+# 4
+# >>> fibfib.call(8)
+# 24
+def fibfib(n)
+","def fibfib(n)
+  return 0 if n == 0 || n == 1
+  return 1 if n == 2
+
+  a, b, c = 0, 0, 1
+  (3..n).each do
+    a, b, c = b, c, a + b + c
+  end
+  c
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fibfib
+    candidate = method(:fibfib)
+    assert_equal(1, candidate.call(2))
+    assert_equal(0, candidate.call(1))
+    assert_equal(4, candidate.call(5))
+    assert_equal(24, candidate.call(8))
+    assert_equal(81, candidate.call(10))
+    assert_equal(274, candidate.call(12))
+    assert_equal(927, candidate.call(14))
+  end
+end
+"
+HumanEval_64,mya_Mymr,rb,"ဥပမာ: အသံထွက်ဆိုတာက စကားလုံးတစ်လုံးရဲ့ အဆုံးမှာ ရှိတဲ့အခါမှပါ။ဒီကိစ္စမှာ သရအက္ခရာတွေက a, e, i, o, u တို့ပါ။ ဒီမှာ y က a လည်းဖြစ်တယ်။string ထဲက vowels ေတြရဲ႕ အေရအတြက္ကို ျပန္ေပးပါတယ္ကို ကိုယ်စားပြုတဲ့ string ကိုယူတဲ့ function ကိုရေးပါ။# >>> vowels_count.call(""abcde"")
+# 2
+# >>> vowels_count.call(""ACEDY"")
+# 3
+def vowels_count(s)
+","def vowels_count(s)
+  vowels = ['a', 'e', 'i', 'o', 'u']
+  count = 0
+  
+  s.chars.each_with_index do |char, index|
+    if vowels.include?(char.downcase)
+      count += 1
+    elsif char.downcase == 'y' && index == s.length - 1
+      count += 1
+    end
+  end
+  
+  count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_vowels_count
+    candidate = method(:vowels_count)
+    assert_equal(2, candidate.call(""abcde""))
+    assert_equal(3, candidate.call(""Alone""))
+    assert_equal(2, candidate.call(""key""))
+    assert_equal(1, candidate.call(""bye""))
+    assert_equal(2, candidate.call(""keY""))
+    assert_equal(1, candidate.call(""bYe""))
+    assert_equal(3, candidate.call(""ACEDY""))
+  end
+end
+"
+HumanEval_65,mya_Mymr,rb,"shift > ဂဏန်းအရေအတွက်ဆိုရင် ဂဏန်းတွေကို ပြောင်းပြန်ပြန်ပြန်ရိုက်ပါ။ၿပီးရင္ result ကို string အျဖစ္ ျပန္ေပးလိုက္ပါ.ကိန္းတစ္ခုရဲ႕ အေရအတြက္ကို ျဖတ္လိုက္ပါ# >>> circular_shift.call(12, 1)
+# ""21""
+# >>> circular_shift.call(12, 2)
+# ""12""
+def circular_shift(x, shift)
+","def circular_shift(x, shift)
+  digits = x.to_s.chars
+  num_digits = digits.length
+
+  if shift > num_digits
+    return digits.reverse.join
+  else
+    shift = shift % num_digits
+    shifted_digits = digits.rotate(-shift)
+    return shifted_digits.join
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_circular_shift
+    candidate = method(:circular_shift)
+    assert_equal(""001"", candidate.call(100, 2))
+    assert_equal(""12"", candidate.call(12, 2))
+    assert_equal(""79"", candidate.call(97, 8))
+    assert_equal(""21"", candidate.call(12, 1))
+    assert_equal(""11"", candidate.call(11, 101))
+  end
+end
+"
+HumanEval_66,mya_Mymr,rb,"ဥပမာများ:ASCII ကုဒ်များ။""အထုပ်တစ်လုံးရဲ့ input ကိုယူပြီး အပေါ်က စာလုံးတွေရဲ့ ပေါင်းလဒ်ကိုပဲ ပြန်ပေးတဲ့ function တစ်ခုရေးပါ"" လို့ပြောပါအလုပ်။# >>> digitSum.call("""")
+# 0
+# >>> digitSum.call(""abAB"")
+# 131
+# >>> digitSum.call(""abcCd"")
+# 67
+# >>> digitSum.call(""helloE"")
+# 69
+# >>> digitSum.call(""woArBld"")
+# 131
+# >>> digitSum.call(""aAaaaXa"")
+# 153
+def digitSum(s)
+","def digitSum(s)
+  s.chars.select { |char| char =~ /[A-Z]/ }.map(&:ord).sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_digitSum
+    candidate = method(:digitSum)
+    assert_equal(0, candidate.call(""""))
+    assert_equal(131, candidate.call(""abAB""))
+    assert_equal(67, candidate.call(""abcCd""))
+    assert_equal(69, candidate.call(""helloE""))
+    assert_equal(131, candidate.call(""woArBld""))
+    assert_equal(153, candidate.call(""aAaaaXa""))
+    assert_equal(151, candidate.call("" How are yOu?""))
+    assert_equal(327, candidate.call(""You arE Very Smart""))
+  end
+end
+"
+HumanEval_67,mya_Mymr,rb,"examble အတွက်: in the basket ကိုပြန်ပို့ပါလိမ္မော်သီး၊ ပန်းသီး၊ ပြီးတော့ သစ်သီးအရေအတွက်ကို ကိုယ်စားပြုတဲ့ ကိန်းပြည့်တစ်ခု။Apple, Orange, Mango fruit ေတြကို ရွာေဖြၾကည့္ပါစို႔ဒီအသီးအနှံတွေထဲက အသီးတွေကိုဒီလုပ်ဆောင်မှုမှာ ခင်ဗျားကို ပန်းသီးနဲ့ လိမ္မော်သီး အရေအတွက်တစ်ခုနဲ့ ကိုယ်စားပြုတဲ့ ကြိုးတစ်ချောင်းပေးမယ်။# >>> fruit_distribution.call(""5 apples and 6 oranges"", 19)
+# 8
+# >>> fruit_distribution.call(""0 apples and 1 oranges"", 3)
+# 2
+# >>> fruit_distribution.call(""2 apples and 3 oranges"", 100)
+# 95
+# >>> fruit_distribution.call(""100 apples and 1 oranges"", 120)
+# 19
+def fruit_distribution(s, n)
+","def fruit_distribution(s, n)
+  numbers = s.scan(/\d+/).map(&:to_i)
+  apples = numbers[0]
+  oranges = numbers[1]
+  total_fruits = n
+  mangos = total_fruits - (apples + oranges)
+  mangos
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fruit_distribution
+    candidate = method(:fruit_distribution)
+    assert_equal(8, candidate.call(""5 apples and 6 oranges"", 19))
+    assert_equal(10, candidate.call(""5 apples and 6 oranges"", 21))
+    assert_equal(2, candidate.call(""0 apples and 1 oranges"", 3))
+    assert_equal(2, candidate.call(""1 apples and 0 oranges"", 3))
+    assert_equal(95, candidate.call(""2 apples and 3 oranges"", 100))
+    assert_equal(0, candidate.call(""2 apples and 3 oranges"", 5))
+    assert_equal(19, candidate.call(""1 apples and 100 oranges"", 120))
+  end
+end
+"
+HumanEval_68,mya_Mymr,rb,"ဥပမာ ၁။တန်ဖိုးများမှာ အချိုးမညီပါက သို့မဟုတ် ပေးထားသော မေထရစ်သည် ဗလာဖြစ်ပါက [] ကို ပြန်ပေးပါ။ဖယ်ရှားလိုက်သော node ကို array တွင်ပြန်ပို့ရမည်၊ [smallest_value, its index]၊ တူညီသောအသေးဆုံး အချိုးကျတန်ဖိုးပါ node များကိုတွေ့လျှင်အသေးဆုံး index ရှိသော node ကိုပြန်ပေးပါ။ ထိုးထားတဲ့ node က အနိမ့်ဆုံး အချိုးကျ တန်ဖိုးရှိတဲ့ node ဖြစ်ရပါမယ်။မင်းအလုပ်က Node တစ်ခုကို ဆွဲထုတ်ပြီး ပြန်ပို့ဖို့ပါ။""အနှုတ်လက္ခဏာမဟုတ်တဲ့ ကိန်းပြည့်တွေပါတဲ့ အပင်ရဲ့ အကိုင်းကို ကိုယ်စားပြုတဲ့ မေထရစ်ကို ပေးထားရင်# >>> pluck.call([4, 2, 3])
+# [2, 1]
+# Explanation: 2 has the smallest even value, and 2 has the smallest index.
+# Example 2:
+# >>> pluck.call([1, 2, 3])
+# [2, 1]
+# Explanation: 2 has the smallest even value, and 2 has the smallest index.
+# Example 3:
+# >>> pluck.call([])
+# []
+# Example 4:
+# >>> pluck.call([5, 0, 3, 0, 4, 2])
+# [0, 1]
+# Explanation: 0 is the smallest value, but  there are two zeros,
+# so we will choose the first zero, which has the smallest index.
+# Constraints:
+# * 1 <= nodes.length <= 10000
+# * 0 <= node.value
+def pluck(arr)
+","def pluck(arr)
+  smallest_even = nil
+  smallest_index = nil
+  
+  arr.each_with_index do |value, index|
+    if value.even?
+      if smallest_even.nil? || value < smallest_even
+        smallest_even = value
+        smallest_index = index
+      end
+    end
+  end
+
+  smallest_even.nil? ? [] : [smallest_even, smallest_index]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_pluck
+    candidate = method(:pluck)
+    assert_equal([2, 1], candidate.call([4, 2, 3]))
+    assert_equal([2, 1], candidate.call([1, 2, 3]))
+    assert_equal([], candidate.call([]))
+    assert_equal([0, 1], candidate.call([5, 0, 3, 0, 4, 2]))
+    assert_equal([0, 3], candidate.call([1, 2, 3, 0, 5, 3]))
+    assert_equal([4, 1], candidate.call([5, 4, 8, 4, 8]))
+    assert_equal([6, 1], candidate.call([7, 6, 7, 1]))
+    assert_equal([], candidate.call([7, 9, 7, 1]))
+  end
+end
+"
+HumanEval_69,mya_Mymr,rb,"ဥပမာများ:ာ့မရှိလျှင် - 1 ကိုပြန်ပေးပါ။ကိန်းပြည့်ရဲ့ ကြိမ်နှုန်းက ဒီကိန်းပြည့်တွေ မေထရစ်မှာ ပေါ်တဲ့ အကြိမ် အရေအတွက်ပါ။သုညဖြစ်ပြီး ၎င်းရဲ့ကြိမ်နှုန်းက ကိန်းပြည့်ရဲ့ တန်ဖိုးထက် ကြီးတာ (သို့) တူပါတယ်။အပေါင်းကိန်းပြည့်တွေရဲ့ အလွတ်မဟုတ်တဲ့ မေထရစ်ကို ပေးထားတယ်။  ထက် ကြီးတဲ့ အကြီးဆုံးကိန်းပြည့်ကို ပြန်ပေးပါ။# >>> search.call([4, 1, 2, 2, 3, 1])
+# 2
+# >>> search.call([1, 2, 2, 3, 3, 3, 4, 4, 4])
+# 3
+# >>> search.call([5, 5, 4, 4, 4])
+# -1
+def search(lst)
+","def search(lst)
+  freq_hash = lst.each_with_object(Hash.new(0)) { |num, hash| hash[num] += 1 }
+  valid_numbers = freq_hash.select { |num, freq| freq >= num }.keys
+  valid_numbers.empty? ? -1 : valid_numbers.max
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_search
+    candidate = method(:search)
+    assert_equal(1, candidate.call([5, 5, 5, 5, 1]))
+    assert_equal(4, candidate.call([4, 1, 4, 1, 4, 4]))
+    assert_equal(-1, candidate.call([3, 3]))
+    assert_equal(8, candidate.call([8, 8, 8, 8, 8, 8, 8, 8]))
+    assert_equal(2, candidate.call([2, 3, 3, 2, 2]))
+    assert_equal(1, candidate.call([2, 7, 8, 8, 4, 8, 7, 3, 9, 6, 5, 10, 4, 3, 6, 7, 1, 7, 4, 10, 8, 1]))
+    assert_equal(2, candidate.call([3, 2, 8, 2]))
+    assert_equal(1, candidate.call([6, 7, 1, 8, 8, 10, 5, 8, 5, 3, 10]))
+    assert_equal(-1, candidate.call([8, 8, 3, 6, 5, 6, 4]))
+    assert_equal(1, candidate.call([6, 9, 6, 7, 1, 4, 7, 1, 8, 8, 9, 8, 10, 10, 8, 4, 10, 4, 10, 1, 2, 9, 5, 7, 9]))
+    assert_equal(1, candidate.call([1, 9, 10, 1, 3]))
+    assert_equal(5, candidate.call([6, 9, 7, 5, 8, 7, 5, 3, 7, 5, 10, 10, 3, 6, 10, 2, 8, 6, 5, 4, 9, 5, 3, 10]))
+    assert_equal(1, candidate.call([1]))
+    assert_equal(4, candidate.call([8, 8, 10, 6, 4, 3, 5, 8, 2, 4, 2, 8, 4, 6, 10, 4, 2, 1, 10, 2, 1, 1, 5]))
+    assert_equal(2, candidate.call([2, 10, 4, 8, 2, 10, 5, 1, 2, 9, 5, 5, 6, 3, 8, 6, 4, 10]))
+    assert_equal(1, candidate.call([1, 6, 10, 1, 6, 9, 10, 8, 6, 8, 7, 3]))
+    assert_equal(4, candidate.call([9, 2, 4, 1, 5, 1, 5, 2, 5, 7, 7, 7, 3, 10, 1, 5, 4, 2, 8, 4, 1, 9, 10, 7, 10, 2, 8, 10, 9, 4]))
+    assert_equal(4, candidate.call([2, 6, 4, 2, 8, 7, 5, 6, 4, 10, 4, 6, 3, 7, 8, 8, 3, 1, 4, 2, 2, 10, 7]))
+    assert_equal(2, candidate.call([9, 8, 6, 10, 2, 6, 10, 2, 7, 8, 10, 3, 8, 2, 6, 2, 3, 1]))
+    assert_equal(-1, candidate.call([5, 5, 3, 9, 5, 6, 3, 2, 8, 5, 6, 10, 10, 6, 8, 4, 10, 7, 7, 10, 8]))
+    assert_equal(-1, candidate.call([10]))
+    assert_equal(2, candidate.call([9, 7, 7, 2, 4, 7, 2, 10, 9, 7, 5, 7, 2]))
+    assert_equal(1, candidate.call([5, 4, 10, 2, 1, 1, 10, 3, 6, 1, 8]))
+    assert_equal(1, candidate.call([7, 9, 9, 9, 3, 4, 1, 5, 9, 1, 2, 1, 1, 10, 7, 5, 6, 7, 6, 7, 7, 6]))
+    assert_equal(-1, candidate.call([3, 10, 10, 9, 2]))
+  end
+end
+"
+HumanEval_70,mya_Mymr,rb,"ဥပမာများ:ၿပီးရင္ အမ်ားဆုံး ကိန္းျဖစ္တဲ့ ကိန္းကုိ ႏႈန္းအနည္းဆံုး ကိန္းျဖစ္ေအာင္ ႏႈန္းၾကည့္မယ္Strange sorting ကေတာ့ အေသးဆုံးတန္ဖိုးနဲ႔ စတင္တာပါ။ကိန်းပြည့်တွေရဲ့ ကိန်းစဉ်တစ်ခုပေးပြီး ကိန်းစဉ်ကို ထူးဆန်းတဲ့ အစီအစဉ်နဲ့ ပြန်ပေးတယ်။# >>> strange_sort_list.call([1, 2, 3, 4])
+# [1, 4, 2, 3]
+# >>> strange_sort_list.call([5, 5, 5, 5])
+# [5, 5, 5, 5]
+# >>> strange_sort_list.call([])
+# []
+def strange_sort_list(lst)
+","def strange_sort_list(lst)
+  result = []
+  lst.sort!
+  until lst.empty?
+    result << lst.shift
+    result << lst.pop unless lst.empty?
+  end
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_strange_sort_list
+    candidate = method(:strange_sort_list)
+    assert_equal([1, 4, 2, 3], candidate.call([1, 2, 3, 4]))
+    assert_equal([5, 9, 6, 8, 7], candidate.call([5, 6, 7, 8, 9]))
+    assert_equal([1, 5, 2, 4, 3], candidate.call([1, 2, 3, 4, 5]))
+    assert_equal([1, 9, 5, 8, 6, 7], candidate.call([5, 6, 7, 8, 9, 1]))
+    assert_equal([5, 5, 5, 5], candidate.call([5, 5, 5, 5]))
+    assert_equal([], candidate.call([]))
+    assert_equal([1, 8, 2, 7, 3, 6, 4, 5], candidate.call([1, 2, 3, 4, 5, 6, 7, 8]))
+    assert_equal([-5, 5, -5, 5, 0, 2, 2, 2], candidate.call([0, 2, 2, 2, 5, 5, -5, -5]))
+    assert_equal([111111], candidate.call([111111]))
+  end
+end
+"
+HumanEval_71,mya_Mymr,rb,"ဥပမာ: တတိယဘက်က ပိုကောင်းတယ်။တြိဂံရဲ့ ဘေးနှစ်ဘက်ပေါင်းလဒ် ပိုကြီးရင် သုံးဘက်ဟာ မှန်ကန်တဲ့ တြိဂံကို ပြုလုပ်ပါတယ်။မဟုတ်ရင် ပြန်ပို့ - 1 သုံးချောင်းတွဲဟာ သုံးချောင်းတွဲဖြစ်ရင် ဒသမကိန်းနှစ်လုံးအထိ အဝိုင်းဆွဲတယ်။တြိဂံရဲ့ အနားသုံးဘက်ကို ပေးပြီး  ရဲ့ ဧရိယာကို ပြန်ပေးပါ# >>> triangle_area.call(3, 4, 5)
+# 6.0
+# >>> triangle_area.call(1, 2, 10)
+# -1
+def triangle_area(a, b, c)
+","def triangle_area(a, b, c)
+  # Check for valid triangle
+  if a + b > c && a + c > b && b + c > a
+    # Calculate the semi-perimeter
+    s = (a + b + c) / 2.0
+    # Calculate the area using Heron's formula
+    area = Math.sqrt(s * (s - a) * (s - b) * (s - c))
+    # Round to 2 decimal points
+    return area.round(2)
+  else
+    return -1
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_triangle_area
+    candidate = method(:triangle_area)
+    assert_equal(6.0, candidate.call(3, 4, 5))
+    assert_equal(-1, candidate.call(1, 2, 10))
+    assert_equal(8.18, candidate.call(4, 8, 5))
+    assert_equal(1.73, candidate.call(2, 2, 2))
+    assert_equal(-1, candidate.call(1, 2, 3))
+    assert_equal(16.25, candidate.call(10, 5, 7))
+    assert_equal(-1, candidate.call(2, 6, 3))
+    assert_equal(0.43, candidate.call(1, 1, 1))
+    assert_equal(-1, candidate.call(2, 2, 10))
+  end
+end
+"
+HumanEval_72,mya_Mymr,rb,"ဥပမာ: အရာဝတ္ထု q က ၎င်းရဲ့ အလေးချိန် အနည်းဆုံး သို့မဟုတ် အများဆုံးနဲ့ ညီတယ်ဆိုရင် ၎င်းဟာ ပျံသန်းပါလိမ့်မယ်။အကယ်၍ object q ကပျံသန်းမယ်ဆိုရင် true ပြန်ပေးပြီး တခြားကိစ္စမှာ false ပြန်ပေးမယ့် function တစ်ခုရေးပါ။# >>> will_it_fly.call([1, 2], 5)
+# false
+# # 1+2 is less than the maximum possible weight, but it's unbalanced.
+# >>> will_it_fly.call([3, 2, 3], 1)
+# false
+# # it's balanced, but 3+2+3 is more than the maximum possible weight.
+# >>> will_it_fly.call([3, 2, 3], 9)
+# true
+# # 3+2+3 is less than the maximum possible weight, and it's balanced.
+# >>> will_it_fly.call([3], 5)
+# true
+# # 3 is less than the maximum possible weight, and it's balanced.
+def will_it_fly(q, w)
+","def will_it_fly(q, w)
+  is_palindrome = q == q.reverse
+  total_weight = q.sum
+  is_balanced_and_under_weight = is_palindrome && total_weight <= w
+  is_balanced_and_under_weight
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_will_it_fly
+    candidate = method(:will_it_fly)
+    assert_equal(true, candidate.call([3, 2, 3], 9))
+    assert_equal(false, candidate.call([1, 2], 5))
+    assert_equal(true, candidate.call([3], 5))
+    assert_equal(false, candidate.call([3, 2, 3], 1))
+    assert_equal(false, candidate.call([1, 2, 3], 6))
+    assert_equal(true, candidate.call([5], 5))
+  end
+end
+"
+HumanEval_73,mya_Mymr,rb,"ဥပမာ -ရှေ့နောက်ညီညီဖတ်တယ်။ ပြောင်းလဲမှုတစ်ခုမှာ ဒြပ်စင်တစ်ခုကနေ အခြားတစ်ခု ပြောင်းနိုင်တယ်။array ကို palindromic ဖြစ်အောင် ပြောင်းလဲဖို့လိုပါတယ်။ကိန္းျဖဴေတြပါတဲ႔ array arr ကို ေပးထားရင္  element အနည်းဆုံး ဘယ္ေလာက္ရွိလဲဆိုတာရွာပါ# >>> smallest_change.call([1, 2, 3, 5, 4, 7, 9, 6])
+# 4
+# >>> smallest_change.call([1, 2, 3, 4, 3, 2, 2])
+# 1
+# >>> smallest_change.call([1, 2, 3, 2, 1])
+# 0
+def smallest_change(arr)
+","def smallest_change(arr)
+  changes = 0
+  left = 0
+  right = arr.length - 1
+
+  while left < right
+    if arr[left] != arr[right]
+      changes += 1
+    end
+    left += 1
+    right -= 1
+  end
+
+  changes
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_smallest_change
+    candidate = method(:smallest_change)
+    assert_equal(4, candidate.call([1, 2, 3, 5, 4, 7, 9, 6]))
+    assert_equal(1, candidate.call([1, 2, 3, 4, 3, 2, 2]))
+    assert_equal(1, candidate.call([1, 4, 2]))
+    assert_equal(1, candidate.call([1, 4, 4, 2]))
+    assert_equal(0, candidate.call([1, 2, 3, 2, 1]))
+    assert_equal(0, candidate.call([3, 1, 1, 3]))
+    assert_equal(0, candidate.call([1]))
+    assert_equal(1, candidate.call([0, 1]))
+  end
+end
+"
+HumanEval_74,mya_Mymr,rb,"ဥပမာများ array နှစ်ခုမှာ တူညီတဲ့ ကရန်းအရေအတွက်ရှိရင် ပထမ array ကိုပြန်ပို့ပါ။array ရဲ့ string အားလုံးမှာရှိတဲ့ chars စုစုပေါင်း အရေအတွက်က တခြား array တွေထက် နည်းပါတယ်။string array နှစ်ခုကို လက်ခံပြီး  ရှိတဲ့ array ကို ပြန်ပေးတဲ့ function ကိုရေးပါ# >>> total_match.call([], [])
+# []
+# >>> total_match.call([""hi"", ""admin""], [""hI"", ""Hi""])
+# [""hI"", ""Hi""]
+# >>> total_match.call([""hi"", ""admin""], [""hi"", ""hi"", ""admin"", ""project""])
+# [""hi"", ""admin""]
+# >>> total_match.call([""hi"", ""admin""], [""hI"", ""hi"", ""hi""])
+# [""hI"", ""hi"", ""hi""]
+# >>> total_match.call([""4""], [""1"", ""2"", ""3"", ""4"", ""5""])
+# [""4""]
+def total_match(lst1, lst2)
+","def total_match(lst1, lst2)
+  total_chars1 = lst1.map(&:length).sum
+  total_chars2 = lst2.map(&:length).sum
+
+  if total_chars1 < total_chars2
+    lst1
+  elsif total_chars2 < total_chars1
+    lst2
+  else
+    lst1
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_total_match
+    candidate = method(:total_match)
+    assert_equal([], candidate.call([], []))
+    assert_equal([""hi"", ""hi""], candidate.call([""hi"", ""admin""], [""hi"", ""hi""]))
+    assert_equal([""hi"", ""admin""], candidate.call([""hi"", ""admin""], [""hi"", ""hi"", ""admin"", ""project""]))
+    assert_equal([""4""], candidate.call([""4""], [""1"", ""2"", ""3"", ""4"", ""5""]))
+    assert_equal([""hI"", ""Hi""], candidate.call([""hi"", ""admin""], [""hI"", ""Hi""]))
+    assert_equal([""hI"", ""hi"", ""hi""], candidate.call([""hi"", ""admin""], [""hI"", ""hi"", ""hi""]))
+    assert_equal([""hi"", ""admin""], candidate.call([""hi"", ""admin""], [""hI"", ""hi"", ""hii""]))
+    assert_equal([], candidate.call([], [""this""]))
+    assert_equal([], candidate.call([""this""], []))
+  end
+end
+"
+HumanEval_75,mya_Mymr,rb,"ဥပမာ: (a) က ၁၀၀ ထက္ငယ္တယ္ဆိုတာသိထားရင္မဟုတ်ရင်လည်း မှားတယ်။ပေးထားတဲ့ကိန်းက 3 prime ကိန်းတွေရဲ့ မြှောက်လဒ်ဆိုရင် true ပြန်တဲ့ function ကိုရေးပါ# >>> is_multiply_prime.call(30)
+# true
+# 30 = 2 * 3 * 5
+def is_multiply_prime(a)
+","require 'prime'
+
+def is_multiply_prime(a)
+  return false if a >= 100
+  prime_factors = a.prime_division
+  return true if prime_factors.size == 3 && prime_factors.all? { |_, exponent| exponent == 1 }
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_multiply_prime
+    candidate = method(:is_multiply_prime)
+    assert_equal(false, candidate.call(5))
+    assert_equal(true, candidate.call(30))
+    assert_equal(true, candidate.call(8))
+    assert_equal(false, candidate.call(10))
+    assert_equal(true, candidate.call(125))
+    assert_equal(true, candidate.call(105))
+    assert_equal(false, candidate.call(126))
+    assert_equal(false, candidate.call(729))
+    assert_equal(false, candidate.call(891))
+    assert_equal(true, candidate.call(1001))
+  end
+end
+"
+HumanEval_76,mya_Mymr,rb,"ဥပမာ -x ဟာ n ရဲ့ ရိုးရှင်းတဲ့ ထပ်ကိန်းတစ်ခုဖြစ်တယ်။ n**int=x ဆိုရင်n ရဲ့အစွမ်း၊ အခြားကိစ္စတွေမှာတော့ false ပါ။X က ရိုးရှင်းတဲ့ ကိန်းတစ်ခုဆိုရင် မှန်တဲ့ တန်ဖိုးကို ပြန်ပေးတဲ့ လုပ်ဆောင်ချက်ကို ရေးရပါမယ်။# >>> is_simple_power.call(1, 4)
+# true
+# >>> is_simple_power.call(2, 2)
+# true
+# >>> is_simple_power.call(8, 2)
+# true
+# >>> is_simple_power.call(3, 2)
+# false
+# >>> is_simple_power.call(3, 1)
+# false
+# >>> is_simple_power.call(5, 3)
+# false
+def is_simple_power(x, n)
+","def is_simple_power(x, n)
+  return false if x <= 0 || n <= 1
+  return true if x == 1
+
+  power = n
+  while power <= x
+    return true if power == x
+    power *= n
+  end
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_simple_power
+    candidate = method(:is_simple_power)
+    assert_equal(true, candidate.call(16, 2))
+    assert_equal(false, candidate.call(143214, 16))
+    assert_equal(true, candidate.call(4, 2))
+    assert_equal(true, candidate.call(9, 3))
+    assert_equal(true, candidate.call(16, 4))
+    assert_equal(false, candidate.call(24, 2))
+    assert_equal(false, candidate.call(128, 4))
+    assert_equal(false, candidate.call(12, 6))
+    assert_equal(true, candidate.call(1, 1))
+    assert_equal(true, candidate.call(1, 12))
+  end
+end
+"
+HumanEval_77,mya_Mymr,rb,"ဥပမာများ:မှတ်ချက်: သင်ထည့်သွင်းထားသော အချက်အလက်သည် အမြဲတမ်းမှန်ကန်သည်ဟု ယူဆနိုင်သည်။ဒီ integer က ကိန္းတစ္ခုရဲ႕ တန္ဖိုးျဖစ္တယ္ဆိုရင္ကိန်းပြည့် a ကိုယူပြီး true ပြန်ပေးတဲ့ function ကိုရေးပါ# >>> iscube.call(1)
+# true
+# >>> iscube.call(2)
+# false
+# >>> iscube.call(-1)
+# true
+# >>> iscube.call(64)
+# true
+# >>> iscube.call(0)
+# true
+# >>> iscube.call(180)
+# false
+def iscube(a)
+","def iscube(a)
+  cube_root = a.abs**(1.0/3)
+  cube_root.round**3 == a
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_iscube
+    candidate = method(:iscube)
+    assert_equal(true, candidate.call(1))
+    assert_equal(false, candidate.call(2))
+    assert_equal(true, candidate.call(-1))
+    assert_equal(true, candidate.call(64))
+    assert_equal(false, candidate.call(180))
+    assert_equal(true, candidate.call(1000))
+    assert_equal(true, candidate.call(0))
+    assert_equal(false, candidate.call(1729))
+  end
+end
+"
+HumanEval_78,mya_Mymr,rb,"ဥပမာများ:A,B,C,D,E,F ဆိုတဲ့ သင်္ကေတတွေက အမြဲပဲ စာလုံးကြီးတွေနဲ့ပါ။မှတ်ချက်: သင် input ကိုမှန်ကန်သောသို့မဟုတ်အလွတ် string ကိုအမြဲတမ်းယူဆနိုင်ပါတယ်, B (= ဆယ်လီ 11), D (= ဆယ်လီ 13) ။ဒီတော့ အောက်ပါ ဂဏန်းတွေထဲက တစ်ခုကို ရှာရမယ်။ ၂၊ ၃၊ ၅၊ ၇။ပရမ်းမကိန်းတွေဆိုတာက ၂၊ ၃၊ ၅၊ ၇၊ ၁၁၊ ၁၃၊ ၁၇၊ ...ဆဌမအကန်း ဂဏန်းတွေက ၀၊ ၁၊ ၂၊ ၃၊ ၄၊ ၅၊ ၆၊ ၇၊ ၈၊ ၉၊ A၊ B၊ C၊ D၊ E၊ F ပါ။ဒါက ပိုသေးတဲ့ သဘာဝကိန်းနှစ်လုံးရဲ့ မြှောက်လဒ်မဟုတ်တဲ့ ၁ ထက်ကြီးပါတယ်။ကိန်းဂဏန်းတွေဟာ ဂဏန်းဦးရေ ဖြစ်ပါတယ် (ဂဏန်းဦးရေ၊ ဒါမှမဟုတ် ဂဏန်းတစ်လုံးဟာ သဘာဝဂဏန်းတစ်ခုပါ)hexadecimal နံပါတ်ကို string အဖြစ်သုံးပြီး hexadecimal အရေအတွက်ကို ရေတွက်တယ်ခင်ဗျားကို လက်ခံတဲ့ လုပ်ဆောင်ချက်တစ်ခု ရေးဖို့ ပြောထားတယ်။# >>> hex_key.call(""AB"")
+# 1
+# >>> hex_key.call(""1077E"")
+# 2
+# >>> hex_key.call(""ABED1A33"")
+# 4
+# >>> hex_key.call(""123456789ABCDEF0"")
+# 6
+# >>> hex_key.call(""2020"")
+# 2
+def hex_key(num)
+","def hex_key(num)
+  prime_hex_digits = ['2', '3', '5', '7', 'B', 'D']
+  num.chars.count { |digit| prime_hex_digits.include?(digit) }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_hex_key
+    candidate = method(:hex_key)
+    assert_equal(1, candidate.call(""AB""))
+    assert_equal(2, candidate.call(""1077E""))
+    assert_equal(4, candidate.call(""ABED1A33""))
+    assert_equal(2, candidate.call(""2020""))
+    assert_equal(6, candidate.call(""123456789ABCDEF0""))
+    assert_equal(12, candidate.call(""112233445566778899AABBCCDDEEFF00""))
+  end
+end
+"
+HumanEval_79,mya_Mymr,rb,"ဥပမာများ:နောက်ထပ် စာလုံးတွေဆိုရင် ပုံစံကို လွယ်ကူအောင် လုပ်ပေးပါမယ်။string အစနဲ့ အဆုံးမှာ နောက်ထပ် 'db' စာလုံးတစ်စုံ ရှိပါလိမ့်မယ်။string ထဲက စာလုံးတိုင်းဟာ '0' (သို့) '1' ဖြစ်လိမ့်မယ်။binary format ကို အသုံးပြုပြီး string တစ်ခုကို ပြန်ပေးရပါမယ်။ခင်ဗျားကို ဒသမကိန်းပုံစံနဲ့ ပေးထားပြီး ဒါကို အဖြစ်ပြောင်းဖို့ ခင်ဗျား တာဝန်ယူရပါတယ်။# >>> decimal_to_binary.call(15)
+# ""db1111db""
+# >>> decimal_to_binary.call(32)
+# ""db100000db""
+def decimal_to_binary(decimal)
+","def decimal_to_binary(decimal)
+  ""db"" + decimal.to_s(2) + ""db""
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_decimal_to_binary
+    candidate = method(:decimal_to_binary)
+    assert_equal(""db0db"", candidate.call(0))
+    assert_equal(""db100000db"", candidate.call(32))
+    assert_equal(""db1100111db"", candidate.call(103))
+    assert_equal(""db1111db"", candidate.call(15))
+  end
+end
+"
+HumanEval_80,mya_Mymr,rb,"ဥပမာ -string ဟာ အနည်းဆုံး ၃ လုံး ရှည်လျားပြီး အဆက်အသွယ်ရှိတဲ့ စာလုံး ၃ လုံးမှာ တစ်ခုစီက မတူရင် haprb ဖြစ်ပါတယ်။string ဟာ haprb လား haprb မလားဆိုတာ စစ်ဆေးဖို့ သင့်တာဝန်ပါ။ခင်ဗျားကို string s ပေးထားတယ်။# >>> is_happy.call(""a"")
+# false
+# >>> is_happy.call(""aa"")
+# false
+# >>> is_happy.call(""abcd"")
+# true
+# >>> is_happy.call(""aabb"")
+# false
+# >>> is_happy.call(""adb"")
+# true
+# >>> is_happy.call(""xyy"")
+# false
+def is_happy(s)
+","def is_happy(s)
+  return false if s.length < 3
+  
+  (0..s.length - 3).each do |i|
+    return false if s[i] == s[i + 1] || s[i] == s[i + 2] || s[i + 1] == s[i + 2]
+  end
+  
+  true
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_happy
+    candidate = method(:is_happy)
+    assert_equal(false, candidate.call(""a""))
+    assert_equal(false, candidate.call(""aa""))
+    assert_equal(true, candidate.call(""abcd""))
+    assert_equal(false, candidate.call(""aabb""))
+    assert_equal(true, candidate.call(""adb""))
+    assert_equal(false, candidate.call(""xyy""))
+    assert_equal(true, candidate.call(""iopaxpoi""))
+    assert_equal(false, candidate.call(""iopaxioi""))
+  end
+end
+"
+HumanEval_81,mya_Mymr,rb,"ဥပမာ: ၀.၀ E > 0.0 D- > 0.7 D > ၁.၀ D+ > ၁.၃ C- > ၁.၇ C > 2.0 C+ > 2.3 B- > 2.7 B > ၃.၀ B+ > ၃.၃ A- > ၃.၇ A ၄.၀ A+ GPA စာလုံးပေါင်း အဆင့်အတန်းအောက်ပါဇယားကိုသုံးပြီးစာလုံးအဆင့် array ကို output နိုင်တဲ့ function တစ်ခု: သူက ကျောင်းသားတွေအတွက် GPAs အစုအဝေးတစ်ခုပေးပြီး ခင်ဗျားကို ရေးခိုင်းတယ်။ပြဿနာက သူမဟာ အမှတ်ပေးစနစ်ကို မေ့သွားတာပါ။ဆရာမက အမှတ်ပေးစနစ်ကို သူ့နည်းသူဟန်နဲ့ ဖန်တီးပေးတယ်။ဒါဟာ စာသင်နှစ်ရဲ့ နောက်ဆုံးအပတ်ဖြစ်ပြီး ဆရာက အဆင့်တွေ ပေးရမှာပါ။# >>> grade_equation.call([4.0, 3, 1.7, 2, 3.5])
+# [""A+"", ""B"", ""C-"", ""C"", ""A-""]
+def numerical_letter_grade(grades)
+","def numerical_letter_grade(grades)
+  grades.map do |gpa|
+    case 
+    when gpa == 4.0
+      ""A+""
+    when gpa > 3.7
+      ""A""
+    when gpa > 3.3
+      ""A-""
+    when gpa > 3.0
+      ""B+""
+    when gpa > 2.7
+      ""B""
+    when gpa > 2.3
+      ""B-""
+    when gpa > 2.0
+      ""C+""
+    when gpa > 1.7
+      ""C""
+    when gpa > 1.3
+      ""C-""
+    when gpa > 1.0
+      ""D+""
+    when gpa > 0.7
+      ""D""
+    when gpa > 0.0
+      ""D-""
+    else
+      ""E""
+    end
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_numerical_letter_grade
+    candidate = method(:numerical_letter_grade)
+    assert_equal([""A+"", ""B"", ""C-"", ""C"", ""A-""], candidate.call([4.0, 3, 1.7, 2, 3.5]))
+    assert_equal([""D+""], candidate.call([1.2]))
+    assert_equal([""D-""], candidate.call([0.5]))
+    assert_equal([""E""], candidate.call([0.0]))
+    assert_equal([""D"", ""D-"", ""C-"", ""B"", ""B+""], candidate.call([1.0, 0.3, 1.5, 2.8, 3.3]))
+    assert_equal([""E"", ""D-""], candidate.call([0.0, 0.7]))
+  end
+end
+"
+HumanEval_82,mya_Mymr,rb,"ဥပမာများ length သည် ပရမ်းမစ်ကိန်းတစ်ခု ဖြစ်သည် သို့မဟုတ် မဟုတ်လျှင် မှားသည်။string ကိုယူပြီး  string က true ဖြစ်ရင် true ပြန်ပေးတဲ့ function ကိုရေးပါ# >>> prime_length.call(""Hello"")
+# true
+# >>> prime_length.call(""abcdcba"")
+# true
+# >>> prime_length.call(""kittens"")
+# true
+# >>> prime_length.call(""orange"")
+# false
+def prime_length(string)
+","def prime_length(string)
+  length = string.length
+  return false if length < 2
+
+  (2..Math.sqrt(length)).each do |i|
+    return false if length % i == 0
+  end
+
+  true
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_prime_length
+    candidate = method(:prime_length)
+    assert_equal(true, candidate.call(""Hello""))
+    assert_equal(true, candidate.call(""abcdcba""))
+    assert_equal(true, candidate.call(""kittens""))
+    assert_equal(false, candidate.call(""orange""))
+    assert_equal(true, candidate.call(""wow""))
+    assert_equal(true, candidate.call(""world""))
+    assert_equal(true, candidate.call(""MadaM""))
+    assert_equal(true, candidate.call(""Wow""))
+    assert_equal(false, candidate.call(""""))
+    assert_equal(true, candidate.call(""HI""))
+    assert_equal(true, candidate.call(""go""))
+    assert_equal(false, candidate.call(""gogo""))
+    assert_equal(false, candidate.call(""aaaaaaaaaaaaaaa""))
+    assert_equal(true, candidate.call(""Madam""))
+    assert_equal(false, candidate.call(""M""))
+    assert_equal(false, candidate.call(""0""))
+  end
+end
+"
+HumanEval_83,mya_Mymr,rb,"၁ နဲ့စပြီး ၁ နဲ့ဆုံးတဲ့ အပေါင်းကိန်းပြည့်တွေပေါ့။အပေါင်းကိန်းပြည့် n ကိုပေးရင် ဂဏန်း n ရဲ့ ဂဏန်းတွက်ချက်မှုကိုပြန်ပေးမယ်def starts_one_ends(n)
+","def starts_one_ends(n)
+  return 0 if n <= 0
+
+  # Count numbers starting with 1
+  start_with_1 = 9 ** (n - 1)
+
+  # Count numbers ending with 1
+  end_with_1 = 9 ** (n - 1)
+
+  # Adjust for double counting the number that both starts and ends with 1
+  both_start_and_end_with_1 = 9 ** (n - 2) if n > 1
+  
+  start_with_1 + end_with_1 - (both_start_and_end_with_1 || 0)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_starts_one_ends
+    candidate = method(:starts_one_ends)
+    assert_equal(1, candidate.call(1))
+    assert_equal(18, candidate.call(2))
+    assert_equal(180, candidate.call(3))
+    assert_equal(1800, candidate.call(4))
+    assert_equal(18000, candidate.call(5))
+  end
+end
+"
+HumanEval_84,mya_Mymr,rb,"ဥပမာ။အပေါင်းကိန်းပြည့် N ကိုပေးထားလျှင် ဘိုင်နရီစနစ်ဖြင့် ၎င်း၏ဂဏန်းများစုစုပေါင်းကိုပြန်ပေးပါ။# >>> solve.call(1000)
+# ""1""
+# >>> solve.call(150)
+# ""110""
+# >>> solve.call(147)
+# ""1100""
+# Variables:
+# @N integer
+# Constraints: 0 ≤ N ≤ 10000.
+# Output:
+# a string of binary number
+def solve(n)
+","def solve(n)
+  sum_of_digits = n.to_s.chars.map(&:to_i).sum
+  sum_of_digits.to_s(2)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_solve
+    candidate = method(:solve)
+    assert_equal(""1"", candidate.call(1000))
+    assert_equal(""110"", candidate.call(150))
+    assert_equal(""1100"", candidate.call(147))
+    assert_equal(""1001"", candidate.call(333))
+    assert_equal(""10010"", candidate.call(963))
+  end
+end
+"
+HumanEval_85,mya_Mymr,rb,"ဥပမာများ:အပြည့်အစုံတွေရဲ့ အလွတ်မဟုတ်တဲ့ array ကိုပေးပြီး lst က odd index တွေမှာရှိတဲ့ အက္ခရာတစ်စုံကို ပေါင်းပါ# >>> add.call([4, 2, 6, 7])
+# 2
+def add(lst)
+","def add(lst)
+  lst.each_with_index.select { |num, index| index.odd? && num.even? }.map(&:first).sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_add
+    candidate = method(:add)
+    assert_equal(88, candidate.call([4, 88]))
+    assert_equal(122, candidate.call([4, 5, 6, 7, 2, 122]))
+    assert_equal(0, candidate.call([4, 0, 6, 7]))
+    assert_equal(12, candidate.call([4, 4, 6, 8]))
+  end
+end
+"
+HumanEval_86,mya_Mymr,rb,"ဥပမာ -မှတ်ချက်: စကားလုံးများနှင့် စာလုံးကွက်များ၏ အစီအစဉ်ကို ဂရုစိုက်ပါ။ascending order အပေါ် အခြေခံပြီး ascii value ကို အခြေခံတယ်။ မှာ စီစဉ်ထားတဲ့ စာလုံးအားလုံးပါတဲ့ စကားလုံးသစ်နဲ့ အစားထိုးတယ်။String ရဲ့ အစီအစဉ်ချထားတဲ့ပုံစံက စာလုံးအားလုံး (ကွက်လပ်နဲ့ခွဲထား) ရှိတဲ့ string ပါ။String တစ်ခုကိုယူပြီး ၎င်းရဲ့ အစီအစဉ်ချထားတဲ့ပုံစံကို ပြန်ပေးတဲ့ function တစ်ခုရေးပါ။# >>> anti_shuffle.call(""Hi"")
+# ""Hi""
+# >>> anti_shuffle.call(""hello"")
+# ""ehllo""
+# >>> anti_shuffle.call(""Hello World!!!"")
+# ""Hello !!!Wdlor""
+def anti_shuffle(s)
+","def anti_shuffle(s)
+  s.split(/(\s+)/).map { |word| word.chars.sort.join }.join
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_anti_shuffle
+    candidate = method(:anti_shuffle)
+    assert_equal(""Hi"", candidate.call(""Hi""))
+    assert_equal(""ehllo"", candidate.call(""hello""))
+    assert_equal(""bemnru"", candidate.call(""number""))
+    assert_equal(""abcd"", candidate.call(""abcd""))
+    assert_equal(""Hello !!!Wdlor"", candidate.call(""Hello World!!!""))
+    assert_equal("""", candidate.call(""""))
+    assert_equal("".Hi My aemn is Meirst .Rboot How aer ?ouy"", candidate.call(""Hi. My name is Mister Robot. How are you?""))
+  end
+end
+"
+HumanEval_87,mya_Mymr,rb,"ဥပမာများ:နောက်ပြီး အတန်းရဲ့ ကိုဩဒိနိတ်တွေကိုလည်း အောက်ပြန်ဆင်းတဲ့ အတန်းစဉ်နဲ့ ရွေးရမယ်။ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာ ာarray တိုင်းဟာ ၀ နဲ့စတဲ့ အညမည - (တန်း၊ အတိုင်) ပါ။arrays တွေရဲ့ array ကိုပြန်ပို့မယ် [(x1, y1), (x2, y2) ...] ဒီလိုဆိုတော့lst နဲ့ integer x ကို ပေးထားရင် array ထဲမှာ integer x တွေကို ရှာပါ။အတန်းတစ်ခုစီမှာ ကော်လံအရေအတွက် မတူညီနိုင်ပါ။matrix နဲ့တူတယ် matrix နဲ့မတူဘူးခင်ဗျားကို ဘက်နှစ်ဖက်မြင် ဒေတာတစ်ခု ပေးထားတယ်၊ အသိုက်ထဲက မေထရစ်တွေပေါ့။# >>> get_row.call([[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 1, 6], [1, 2, 3, 4, 5, 1]], 1)
+# [[0, 0], [1, 4], [1, 0], [2, 5], [2, 0]]
+# >>> get_row.call([], 1)
+# []
+# >>> get_row.call([[], [1], [1, 2, 3]], 3)
+# [[2, 2]]
+def get_row(lst, x)
+","def get_row(lst, x)
+  result = []
+
+  lst.each_with_index do |row, i|
+    row.each_with_index do |value, j|
+      result << [i, j] if value == x
+    end
+  end
+
+  result.sort_by { |coord| [coord[0], -coord[1]] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_get_row
+    candidate = method(:get_row)
+    assert_equal([[0, 0], [1, 4], [1, 0], [2, 5], [2, 0]], candidate.call([[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 1, 6], [1, 2, 3, 4, 5, 1]], 1))
+    assert_equal([[0, 1], [1, 1], [2, 1], [3, 1], [4, 1], [5, 1]], candidate.call([[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6]], 2))
+    assert_equal([[0, 0], [1, 0], [2, 1], [2, 0], [3, 2], [3, 0], [4, 3], [4, 0], [5, 4], [5, 0], [6, 5], [6, 0]], candidate.call([[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 1, 3, 4, 5, 6], [1, 2, 1, 4, 5, 6], [1, 2, 3, 1, 5, 6], [1, 2, 3, 4, 1, 6], [1, 2, 3, 4, 5, 1]], 1))
+    assert_equal([], candidate.call([], 1))
+    assert_equal([], candidate.call([[1]], 2))
+    assert_equal([[2, 2]], candidate.call([[], [1], [1, 2, 3]], 3))
+  end
+end
+"
+HumanEval_88,mya_Mymr,rb,"ဥပမာများ:* ပေးထားတဲ့ array ကို မပြောင်းလဲပါနဲ့။မှတ်ချက်:သို့မဟုတ် စုစုပေါင်းက ((ပထမ ဦး ဆုံးညွှန်းကိန်းတန်ဖိုး၊ နောက်ဆုံးညွှန်းကိန်းတန်ဖိုး) သည်တောင်ဖြစ်ပါကဆင်းသက်သောအစဉ်ဖြင့်ရွေးချယ်ပါ။array ကို တက္တက္တက္စီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီစီအနှုတ်မထွက်တဲ့ ကိန်းပြည့်တွေရဲ့ မေထရစ်ကို ပေးပြီးတဲ့အခါ ဖို့ပြီးတဲ့အခါ ပေးထားတဲ့ မေထရစ်ရဲ့ corb ကို ပြန်ပေးပါ။# >>> sort_array.call([])
+# []
+# >>> sort_array.call([5])
+# [5]
+# >>> sort_array.call([2, 4, 3, 0, 1, 5])
+# [0, 1, 2, 3, 4, 5]
+# >>> sort_array.call([2, 4, 3, 0, 1, 5, 6])
+# [6, 5, 4, 3, 2, 1, 0]
+def sort_array(array)
+","def sort_array(array)
+  return array if array.empty? || array.size == 1
+
+  if (array.first + array.last).odd?
+    array.sort
+  else
+    array.sort.reverse
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sort_array
+    candidate = method(:sort_array)
+    assert_equal([], candidate.call([]))
+    assert_equal([5], candidate.call([5]))
+    assert_equal([0, 1, 2, 3, 4, 5], candidate.call([2, 4, 3, 0, 1, 5]))
+    assert_equal([6, 5, 4, 3, 2, 1, 0], candidate.call([2, 4, 3, 0, 1, 5, 6]))
+    assert_equal([1, 2], candidate.call([2, 1]))
+    assert_equal([0, 11, 15, 32, 42, 87], candidate.call([15, 42, 87, 32, 11, 0]))
+    assert_equal([23, 21, 14, 11], candidate.call([21, 14, 23, 11]))
+  end
+end
+"
+HumanEval_89,mya_Mymr,rb,"ဥပမာ -နေရာနှစ်ခုကို နှစ်နဲ့ မြှောက်လိုက်ရင် နေရာနှစ်ခုကို ပြောင်းသွားမယ်။အက္ခရာတွေကို ြပီး ြပီး ြပီး ြပီး ြပီး ြပီး အက္ခရာတွေကို လှည့်ပေးပြီး ကုဒ်သွင်းထားတဲ့ string ကို ပြန်ပေးတယ်။ဖို့ argument အဖြစ် string ကိုယူတဲ့ function encrypt ကိုဖန်တီးပြီး # >>> encrypt.call(""hi"")
+# ""lm""
+# >>> encrypt.call(""asdfghjkl"")
+# ""ewhjklnop""
+# >>> encrypt.call(""gf"")
+# ""kj""
+# >>> encrypt.call(""et"")
+# ""ix""
+def encrypt(s)
+","def encrypt(s)
+  s.chars.map do |char|
+    if char =~ /[a-z]/
+      ((char.ord - 'a'.ord + 4) % 26 + 'a'.ord).chr
+    elsif char =~ /[A-Z]/
+      ((char.ord - 'A'.ord + 4) % 26 + 'A'.ord).chr
+    else
+      char
+    end
+  end.join
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_encrypt
+    candidate = method(:encrypt)
+    assert_equal(""lm"", candidate.call(""hi""))
+    assert_equal(""ewhjklnop"", candidate.call(""asdfghjkl""))
+    assert_equal(""kj"", candidate.call(""gf""))
+    assert_equal(""ix"", candidate.call(""et""))
+    assert_equal(""jeiajeaijeiak"", candidate.call(""faewfawefaewg""))
+    assert_equal(""lippsqcjvmirh"", candidate.call(""hellomyfriend""))
+    assert_equal(""hbdhpqrmpjylqmpyjlpmlyjrqpmqryjlpmqryjljygyjl"", candidate.call(""dxzdlmnilfuhmilufhlihufnmlimnufhlimnufhfucufh""))
+    assert_equal(""e"", candidate.call(""a""))
+  end
+end
+"
+HumanEval_90,mya_Mymr,rb,"မရှိလျှင် null ကိုပြန်ပေးပါ။array ရဲ့ ဒုတိယအသေးဆုံး element ကိုပြန်ပေးတဲ့ next_smallest () ဆိုတဲ့ function ကိုရေးပါ။ခင်ဗျားကို ဖြောင့်ကိန်းတွေ ပေးထားတယ်။# >>> next_smallest.call([1, 2, 3, 4, 5])
+# 2
+# >>> next_smallest.call([5, 1, 4, 3, 2])
+# 2
+# >>> next_smallest.call([])
+# nil
+# >>> next_smallest.call([1, 1])
+# nil
+def next_smallest(lst)
+","def next_smallest(lst)
+  unique_sorted = lst.uniq.sort
+  unique_sorted.length >= 2 ? unique_sorted[1] : nil
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_next_smallest
+    candidate = method(:next_smallest)
+    assert_equal(2, candidate.call([1, 2, 3, 4, 5]))
+    assert_equal(2, candidate.call([5, 1, 4, 3, 2]))
+    assert_equal(nil, candidate.call([]))
+    assert_equal(nil, candidate.call([1, 1]))
+    assert_equal(1, candidate.call([1, 1, 1, 1, 0]))
+    assert_equal(nil, candidate.call([1, 1]))
+    assert_equal(-35, candidate.call([-35, 34, 12, -45]))
+  end
+end
+"
+HumanEval_91,mya_Mymr,rb,"ဥပမာ -စကားစုများကို ' '၊ ' ' သို့မဟုတ် '! ' ဖြင့်ခွဲခြားထားသည်။ငြီးငွေ့မှုက ""ငါ"" ဆိုတဲ့ စကားလုံးနဲ့ စတဲ့ ဝါကျတစ်ခုပါ။ခင်ဗျားကို စကားလုံးတစ်ကြောင်းစီ ပေးလိုက်မယ်။ ခင်ဗျားအလုပ်က ဂဏန်းတွက်ဖို့လေ။# >>> is_bored.call(""Hello world"")
+# 0
+# >>> is_bored.call(""The sky is blue. The sun is shining. I love this weather"")
+# 1
+def is_bored(s)
+","def is_bored(s)
+  sentences = s.split(/(?<=[.?!])/)
+  sentences.count { |sentence| sentence.strip.start_with?('I') }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_bored
+    candidate = method(:is_bored)
+    assert_equal(0, candidate.call(""Hello world""))
+    assert_equal(0, candidate.call(""Is the sky blue?""))
+    assert_equal(1, candidate.call(""I love It !""))
+    assert_equal(0, candidate.call(""bIt""))
+    assert_equal(2, candidate.call(""I feel good today. I will be productive. will kill It""))
+    assert_equal(0, candidate.call(""You and I are going for a walk""))
+  end
+end
+"
+HumanEval_92,mya_Mymr,rb,"ဥပမာများ အခြားကိစ္စများတွင် false ပြန်ပေးသည်။ကိန်းဂဏန်းတစ်လုံးက အခြားနှစ်ခုရဲ့ ပေါင်းလဒ်နဲ့ ညီပြီး ကိန်းအားလုံးက ကိန်းပြည့်တွေဆိုရင် မှန်တယ်လို့ ပြန်ပေးတယ်။ဂဏန်းသုံးလုံးပါတဲ့ function တစ်ခုကို ဖန်တီးပါ။# >>> any_int.call(5, 2, 7)
+# true
+# >>> any_int.call(3, 2, 2)
+# false
+# >>> any_int.call(3, -2, 1)
+# true
+# >>> any_int.call(3.6, -2.2, 2)
+# false
+def any_int(x, y, z)
+","def any_int(x, y, z)
+  if [x, y, z].all? { |n| n.is_a?(Integer) }
+    x == y + z || y == x + z || z == x + y
+  else
+    false
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_any_int
+    candidate = method(:any_int)
+    assert_equal(true, candidate.call(2, 3, 1))
+    assert_equal(false, candidate.call(2.5, 2, 3))
+    assert_equal(false, candidate.call(1.5, 5, 3.5))
+    assert_equal(false, candidate.call(2, 6, 2))
+    assert_equal(true, candidate.call(4, 2, 2))
+    assert_equal(false, candidate.call(2.2, 2.2, 2.2))
+    assert_equal(true, candidate.call(-4, 6, 2))
+    assert_equal(true, candidate.call(2, 1, 1))
+    assert_equal(true, candidate.call(3, 4, 7))
+    assert_equal(false, candidate.call(3.0, 4, 7))
+  end
+end
+"
+HumanEval_93,mya_Mymr,rb,"ဥပမာများ:စာလုံးတွေကိုပဲ ယူလိုက်ပါအင်္ဂလိပ်အက္ခရာထဲက သရအက္ခရာပါ။စာလုံးက အဲဒီစာလုံးရဲ့ ရှေ့မှာ နှစ်ခုပါရင်ြပီးေတာ့ စာလုံးေပါင္းေတြရဲ႕ case ေတြကိုလဲေပးတယ္ ြပီးေတာ့ ြပီးေတာ့ ြပီးေတာ့ ြပီးေတာ့ ြပီးေတာ့ ြပီးေတာ့message တစ္ခုကို ယူၿပီး ႏွိပ္ေပးတဲ့ function တစ္ခုကို ေရးပါ# >>> encode.call(""test"")
+# ""TGST""
+# >>> encode.call(""This is a message"")
+# ""tHKS KS C MGSSCGG""
+def encode(message)
+","def encode(message)
+  vowels = 'aeiou'
+  swap_vowels = {'a' => 'c', 'e' => 'g', 'i' => 'k', 'o' => 'q', 'u' => 'w'}
+  
+  encoded_message = message.chars.map do |char|
+    if vowels.include?(char.downcase)
+      new_char = swap_vowels[char.downcase]
+      char == char.upcase ? new_char.upcase : new_char.downcase
+    else
+      char == char.upcase ? char.downcase : char.upcase
+    end
+  end
+
+  encoded_message.join
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_encode
+    candidate = method(:encode)
+    assert_equal(""tgst"", candidate.call(""TEST""))
+    assert_equal(""mWDCSKR"", candidate.call(""Mudasir""))
+    assert_equal(""ygs"", candidate.call(""YES""))
+    assert_equal(""tHKS KS C MGSSCGG"", candidate.call(""This is a message""))
+    assert_equal(""k dQnT kNqW wHcT Tq wRkTg"", candidate.call(""I DoNt KnOw WhAt tO WrItE""))
+  end
+end
+"
+HumanEval_94,mya_Mymr,rb,"ဥပမာများ:အကြီးဆုံးကိန်းဂဏန်းတန်ဖိုးကိုရှာပြီး ဂဏန်းတွေရဲ့ပေါင်းလဒ်ကိုပြန်ပေးရပါမယ်ခင်ဗျားကို ဖြောင့်ကိန်းတွေ ပေးထားတယ်။# >>> skjkasdkd.call([0, 3, 2, 1, 3, 5, 7, 4, 5, 5, 5, 2, 181, 32, 4, 32, 3, 2, 32, 324, 4, 3])
+# 10
+# >>> skjkasdkd.call([1, 0, 1, 8, 2, 4597, 2, 1, 3, 40, 1, 2, 1, 2, 4, 2, 5, 1])
+# 25
+# >>> skjkasdkd.call([1, 3, 1, 32, 5107, 34, 83278, 109, 163, 23, 2323, 32, 30, 1, 9, 3])
+# 13
+# >>> skjkasdkd.call([0, 724, 32, 71, 99, 32, 6, 0, 5, 91, 83, 0, 5, 6])
+# 11
+# >>> skjkasdkd.call([0, 81, 12, 3, 1, 21])
+# 3
+# >>> skjkasdkd.call([0, 8, 1, 2, 1, 7])
+# 7
+def skjkasdkd(lst)
+","def skjkasdkd(lst)
+  require 'prime'
+
+  # Find the largest prime number in the array
+  largest_prime = lst.select { |num| Prime.prime?(num) }.max
+  
+  # Return 0 if no prime number is found
+  return 0 if largest_prime.nil?
+
+  # Calculate the sum of digits of the largest prime number
+  largest_prime.to_s.chars.map(&:to_i).sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_skjkasdkd
+    candidate = method(:skjkasdkd)
+    assert_equal(10, candidate.call([0, 3, 2, 1, 3, 5, 7, 4, 5, 5, 5, 2, 181, 32, 4, 32, 3, 2, 32, 324, 4, 3]))
+    assert_equal(25, candidate.call([1, 0, 1, 8, 2, 4597, 2, 1, 3, 40, 1, 2, 1, 2, 4, 2, 5, 1]))
+    assert_equal(13, candidate.call([1, 3, 1, 32, 5107, 34, 83278, 109, 163, 23, 2323, 32, 30, 1, 9, 3]))
+    assert_equal(11, candidate.call([0, 724, 32, 71, 99, 32, 6, 0, 5, 91, 83, 0, 5, 6]))
+    assert_equal(3, candidate.call([0, 81, 12, 3, 1, 21]))
+    assert_equal(7, candidate.call([0, 8, 1, 2, 1, 7]))
+    assert_equal(19, candidate.call([8191]))
+    assert_equal(19, candidate.call([8191, 123456, 127, 7]))
+    assert_equal(10, candidate.call([127, 97, 8192]))
+  end
+end
+"
+HumanEval_95,mya_Mymr,rb,"ဥပမာများ:function က false ကိုပြန်ပေးရမယ် ပေးထားတဲ့ hash ကအလွတ်ဖြစ်နေရင်ပေါ့case သို့မဟုတ် ခလုတ်အားလုံးက uppercase နဲ့ string ဖြစ်ရင် false ပြန်ပေးတယ်။hash ကိုပေးထားရင် ခလုတ်အားလုံးက lower ထဲက string တွေဆိုရင် true ကိုပြန်ပေးတယ်။# >>> check_dict_case.call({""a"" => ""apple"", ""b"" => ""banana""})
+# true
+# >>> check_dict_case.call({""a"" => ""apple"", ""A"" => ""banana"", ""B"" => ""banana""})
+# false
+# >>> check_dict_case.call({""a"" => ""apple"", 8 => ""banana"", ""a"" => ""apple""})
+# false
+# >>> check_dict_case.call({""Name"" => ""John"", ""Age"" => ""36"", ""City"" => ""Houston""})
+# false
+# >>> check_dict_case.call({""STATE"" => ""NC"", ""ZIP"" => ""12345""})
+# true
+def check_dict_case(dict)
+","def check_dict_case(dict)
+  return false if dict.empty?
+
+  lowercase_keys = dict.keys.all? { |key| key.is_a?(String) && key == key.downcase }
+  uppercase_keys = dict.keys.all? { |key| key.is_a?(String) && key == key.upcase }
+
+  lowercase_keys || uppercase_keys
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_check_dict_case
+    candidate = method(:check_dict_case)
+    assert_equal(true, candidate.call({""p"" => ""pineapple"", ""b"" => ""banana""}))
+    assert_equal(false, candidate.call({""p"" => ""pineapple"", ""A"" => ""banana"", ""B"" => ""banana""}))
+    assert_equal(false, candidate.call({""p"" => ""pineapple"", ""5"" => ""banana"", ""a"" => ""apple""}))
+    assert_equal(false, candidate.call({""Name"" => ""John"", ""Age"" => ""36"", ""City"" => ""Houston""}))
+    assert_equal(true, candidate.call({""STATE"" => ""NC"", ""ZIP"" => ""12345""}))
+    assert_equal(true, candidate.call({""fruit"" => ""Orange"", ""taste"" => ""Sweet""}))
+    assert_equal(false, candidate.call({}))
+  end
+end
+"
+HumanEval_96,mya_Mymr,rb,"ဥပမာ -ဖြောင့်ကိန်းတွေပဲ ရှိပါသေးတယ်။အနှုတ်မပါသော ကိန်းပြည့်ကိုယူပြီး ပထမ n ၏ array ကိုပြန်ပေးသော function ကိုအကောင်အထည်ဖော်ပါ# >>> count_up_to.call(5)
+# [2, 3]
+# >>> count_up_to.call(11)
+# [2, 3, 5, 7]
+# >>> count_up_to.call(0)
+# []
+# >>> count_up_to.call(20)
+# [2, 3, 5, 7, 11, 13, 17, 19]
+# >>> count_up_to.call(1)
+# []
+# >>> count_up_to.call(18)
+# [2, 3, 5, 7, 11, 13, 17]
+def count_up_to(n)
+","def count_up_to(n)
+  return [] if n <= 2
+  primes = []
+  (2...n).each do |num|
+    is_prime = true
+    (2..Math.sqrt(num)).each do |i|
+      if num % i == 0
+        is_prime = false
+        break
+      end
+    end
+    primes << num if is_prime
+  end
+  primes
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_count_up_to
+    candidate = method(:count_up_to)
+    assert_equal([2, 3], candidate.call(5))
+    assert_equal([2, 3, 5], candidate.call(6))
+    assert_equal([2, 3, 5], candidate.call(7))
+    assert_equal([2, 3, 5, 7], candidate.call(10))
+    assert_equal([], candidate.call(0))
+    assert_equal([2, 3, 5, 7, 11, 13, 17, 19], candidate.call(22))
+    assert_equal([], candidate.call(1))
+    assert_equal([2, 3, 5, 7, 11, 13, 17], candidate.call(18))
+    assert_equal([2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43], candidate.call(47))
+    assert_equal([2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97], candidate.call(101))
+  end
+end
+"
+HumanEval_97,mya_Mymr,rb,"ဥပမာများ:input ကိုအမြဲတမ်းမှန်တယ်လို့ယူဆပါ။သူတို့ယူနစ်ဂဏန်းတွေရဲ့ product ကိုယူတယ်။Function ကို ပြီးအောင်လုပ်ပြီး # >>> multiply.call(148, 412)
+# 16
+# >>> multiply.call(19, 28)
+# 72
+# >>> multiply.call(2020, 1851)
+# 0
+# >>> multiply.call(14, -15)
+# 20
+def multiply(a, b)
+","def multiply(a, b)
+  a_unit_digit = a.abs % 10
+  b_unit_digit = b.abs % 10
+  a_unit_digit * b_unit_digit
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_multiply
+    candidate = method(:multiply)
+    assert_equal(16, candidate.call(148, 412))
+    assert_equal(72, candidate.call(19, 28))
+    assert_equal(0, candidate.call(2020, 1851))
+    assert_equal(20, candidate.call(14, -15))
+    assert_equal(42, candidate.call(76, 67))
+    assert_equal(49, candidate.call(17, 27))
+    assert_equal(0, candidate.call(0, 1))
+    assert_equal(0, candidate.call(0, 0))
+  end
+end
+"
+HumanEval_98,mya_Mymr,rb,"ဥပမာ -string s ကိုပေးထားရင် စာလုံးကြီးတွေရဲ့ စာလုံးကြီးတွေကို ဂဏန်းတွဲကိန်းနဲ့ ရေတွက်ပါ။# >>> count_upper.call(""aBCdEf"")
+# 1
+# >>> count_upper.call(""abcdefg"")
+# 0
+# >>> count_upper.call(""dBBE"")
+# 0
+def count_upper(s)
+","def count_upper(s)
+  vowels = ['A', 'E', 'I', 'O', 'U']
+  count = 0
+
+  s.chars.each_with_index do |char, index|
+    if index.even? && vowels.include?(char)
+      count += 1
+    end
+  end
+
+  count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_count_upper
+    candidate = method(:count_upper)
+    assert_equal(1, candidate.call(""aBCdEf""))
+    assert_equal(0, candidate.call(""abcdefg""))
+    assert_equal(0, candidate.call(""dBBE""))
+    assert_equal(0, candidate.call(""B""))
+    assert_equal(1, candidate.call(""U""))
+    assert_equal(0, candidate.call(""""))
+    assert_equal(2, candidate.call(""EEEE""))
+  end
+end
+"
+HumanEval_99,mya_Mymr,rb,"ဥပမာများ ကိန်းပြည့် နှစ်ခုကနေ သုညကို အနီးကပ်ဆုံးဖြတ်လိုက်။၎င်းနဲ့ အနီးစပ်ဆုံးကိန်းပြည့်ကို ပြန်ပေးမယ်။ကိန်းတစ်ခုကို ကိုယ်စားပြုတဲ့ တန်ဖိုး (string) ကို ယူတဲ့ လုပ်ဆောင်ချက်ကို ဖန်တီးပါ။# >>> closest_integer.call(""10"")
+# 10
+# >>> closest_integer.call(""15.3"")
+# 15
+# Note:
+# Rounding away from zero means that if the given number is equidistant
+# from two integers, the one you should return is the one that is the
+# farthest from zero. For example closest_integer(""14.5"") should
+# return 15 and closest_integer(""-14.5"") should return -15.
+def closest_integer(value)
+","def closest_integer(value)
+  number = value.to_f
+  if number > 0
+    (number + 0.5).floor
+  else
+    (number - 0.5).ceil
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_closest_integer
+    candidate = method(:closest_integer)
+    assert_equal(10, candidate.call(""10""))
+    assert_equal(15, candidate.call(""14.5""))
+    assert_equal(-16, candidate.call(""-15.5""))
+    assert_equal(15, candidate.call(""15.3""))
+    assert_equal(0, candidate.call(""0""))
+  end
+end
+"
+HumanEval_100,mya_Mymr,rb,"ဥပမာများ:i ကတော့ အထက်တန်းစား (i+1) မှာရှိတဲ့ ကျောက်တုံး အရေအတွက်ကို ကိုယ်စားပြုပါတယ်။index တွင် element ရှိသည့် array တွင် level တစ်ခုစီရှိ ကျောက်တုံးအရေအတွက်ကိုပြန်ပေးသည်။- နောက် n သည် အချိုးကျပါက နောက် အချိုးကျကိန်းပါ။- နောက်တစ်ကြိမ် ထပ်ထည့်လိုက်ရင်နောက်တစ်ဆင့်မှာရှိတဲ့ ကျောက်တုံး အရေအတွက်ကပထမအဆင့်မှာ N ကျောက်တုံးတွေရှိတယ်။အပေါင်းကိန်းပြည့် n ကိုပေးရင် ကျောက်တုံးတွေကို အဆင့် n နဲ့ပုံချရမယ်။# >>> make_a_pile.call(3)
+# [3, 5, 7]
+def make_a_pile(n)
+","def make_a_pile(n)
+  result = []
+  current_stones = n
+  n.times do
+    result << current_stones
+    current_stones += 2
+  end
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_make_a_pile
+    candidate = method(:make_a_pile)
+    assert_equal([3, 5, 7], candidate.call(3))
+    assert_equal([4, 6, 8, 10], candidate.call(4))
+    assert_equal([5, 7, 9, 11, 13], candidate.call(5))
+    assert_equal([6, 8, 10, 12, 14, 16], candidate.call(6))
+    assert_equal([8, 10, 12, 14, 16, 18, 20, 22], candidate.call(8))
+  end
+end
+"
+HumanEval_101,mya_Mymr,rb,"ဥပမာ -string ကို စကားလုံးတွေအဖြစ်ခွဲပြီး စကားလုံးတွေရဲ့ array တစ်ခုကိုပြန်ပို့ဖို့ပါ။comma (သို့) spaces တွေနဲ့ခွဲထားတဲ့ စကားလုံးတစ်ကြောင်းပေးပါလိမ့်မယ်။ ခင်ဗျားရဲ့အလုပ်က# >>> words_string.call(""Hi, my name is John"")
+# [""Hi"", ""my"", ""name"", ""is"", ""John""]
+# >>> words_string.call(""One, two, three, four, five, six"")
+# [""One"", ""two"", ""three"", ""four"", ""five"", ""six""]
+def words_string(s)
+","def words_string(s)
+  s.split(/[\s,]+/)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_words_string
+    candidate = method(:words_string)
+    assert_equal([""Hi"", ""my"", ""name"", ""is"", ""John""], candidate.call(""Hi, my name is John""))
+    assert_equal([""One"", ""two"", ""three"", ""four"", ""five"", ""six""], candidate.call(""One, two, three, four, five, six""))
+    assert_equal([""Hi"", ""my"", ""name""], candidate.call(""Hi, my name""))
+    assert_equal([""One"", ""two"", ""three"", ""four"", ""five"", ""six""], candidate.call(""One,, two, three, four, five, six,""))
+    assert_equal([], candidate.call(""""))
+    assert_equal([""ahmed"", ""gamal""], candidate.call(""ahmed     , gamal""))
+  end
+end
+"
+HumanEval_102,mya_Mymr,rb,"ဥပမာ -အဲဒီ ကိန္းဂဏန္းမရွိဘူးဆိုရင္ - 1 ကိုျပန္ေပးရမယ္[x, y] အပါအဝင် အကြီးဆုံး ဖြောင့်ကိန်း ဖြစ်တယ်ဆိုရင်ဒီ function က အပေါင်းကိန်းနှစ်ခု x နဲ့ y ကိုယူပြီး ကိုပြန်ပေးတယ်။# >>> choose_num.call(12, 15)
+# 14
+# >>> choose_num.call(13, 12)
+# -1
+def choose_num(x, y)
+","def choose_num(x, y)
+  return -1 if x > y
+  # Start looking from the largest number
+  max_even = y.even? ? y : y - 1
+  # Iterate downwards to find the biggest even number
+  max_even.downto(x) do |n|
+    return n if n.even?
+  end
+  -1
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_choose_num
+    candidate = method(:choose_num)
+    assert_equal(14, candidate.call(12, 15))
+    assert_equal(-1, candidate.call(13, 12))
+    assert_equal(12354, candidate.call(33, 12354))
+    assert_equal(-1, candidate.call(5234, 5233))
+    assert_equal(28, candidate.call(6, 29))
+    assert_equal(-1, candidate.call(27, 10))
+    assert_equal(-1, candidate.call(7, 7))
+    assert_equal(546, candidate.call(546, 546))
+  end
+end
+"
+HumanEval_103,mya_Mymr,rb,"ဥပမာ: n က m ထက်ကြီးရင် - 1 ပြန်ပေး။အဖြေကို အနီးဆုံးကိန်းပြည့်အဖြစ် အဝိုင်းချပြီး ဒါကို ဘိုင်နရီအဖြစ် ပြောင်းလိုက်ပါn မှ m အထိ (n နှင့် m အပါအဝင်) ကိန်းပြည့်များ၏ ပျမ်းမျှ။N နဲ့ M အပေါင်းကိန်းနှစ်ခုကို ပေးထားပြီး ခင်ဗျားအလုပ်က# >>> rounded_avg.call(1, 5)
+# ""0b11""
+# >>> rounded_avg.call(7, 5)
+# -1
+# >>> rounded_avg.call(10, 20)
+# ""0b1111""
+# >>> rounded_avg.call(20, 33)
+# ""0b11010""
+def rounded_avg(n, m)
+","def rounded_avg(n, m)
+  return -1 if n > m
+
+  sum = (n..m).reduce(:+)
+  count = m - n + 1
+  average = (sum.to_f / count).round
+  ""0b"" + average.to_i.to_s(2)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_rounded_avg
+    candidate = method(:rounded_avg)
+    assert_equal(""0b11"", candidate.call(1, 5))
+    assert_equal(""0b1010"", candidate.call(7, 13))
+    assert_equal(""0b1111001010"", candidate.call(964, 977))
+    assert_equal(""0b1111100100"", candidate.call(996, 997))
+    assert_equal(""0b1011000010"", candidate.call(560, 851))
+    assert_equal(""0b101101110"", candidate.call(185, 546))
+    assert_equal(""0b110101101"", candidate.call(362, 496))
+    assert_equal(""0b1001110010"", candidate.call(350, 902))
+    assert_equal(""0b11010111"", candidate.call(197, 233))
+    assert_equal(-1, candidate.call(7, 5))
+    assert_equal(-1, candidate.call(5, 1))
+    assert_equal(""0b101"", candidate.call(5, 5))
+  end
+end
+"
+HumanEval_104,mya_Mymr,rb,"ဥပမာ -မှတ်ချက်: ပြန်ပေးသော array ကို တိုးတက်လာသော အစီအစဉ်အတိုင်း စီစဉ်ရပါမည်။ကိန်းဂဏန်းတွေမရှိတဲ့ ဒြပ်စင်တွေပေါ့။အပေါင်းကိန်းပြည့် x ရဲ့ array ကိုပေးထားရင် အားလုံးရဲ့ sorted array ကိုပြန်ပေးမယ်# >>> unique_digits.call([15, 33, 1422, 1])
+# [1, 15, 33]
+# >>> unique_digits.call([152, 323, 1422, 10])
+# []
+def unique_digits(x)
+","def unique_digits(x)
+  x.select { |num| num.to_s.chars.none? { |digit| digit.to_i.even? } }.sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_unique_digits
+    candidate = method(:unique_digits)
+    assert_equal([1, 15, 33], candidate.call([15, 33, 1422, 1]))
+    assert_equal([], candidate.call([152, 323, 1422, 10]))
+    assert_equal([111, 151], candidate.call([12345, 2033, 111, 151]))
+    assert_equal([31, 135], candidate.call([135, 103, 31]))
+  end
+end
+"
+HumanEval_105,mya_Mymr,rb,"ဥပမာ -""တစ်၊ နှစ်၊ သုံး၊ လေး၊ ငါး၊ ခြောက်၊ ခုနစ်၊ ရှစ်၊ ကိုး""ရလဒ်အနေနဲ့ array ကို ပြောင်းပြန်လှန်ပြီး ထဲက ကိန်းဂဏန်းတိုင်းကို ၎င်းရဲ့ သက်ဆိုင်ရာ အမည်နဲ့ အစားထိုးလိုက်ပါတယ်။ကိန်းပြည့်တွေရဲ့ မေထရစ်တစ်ခုပေးပြီး ၁ နဲ့ ၉ အပါအဝင် ကိန်းပြည့်တွေကို ရွေးပါ။# >>> by_length.call([2, 1, 1, 4, 5, 8, 2, 3])
+# [""Eight"", ""Five"", ""Four"", ""Three"", ""Two"", ""Two"", ""One"", ""One""]
+# If the array is empty, return an empty array:
+# >>> by_length.call([])
+# []
+# If the array has any strange number ignore it:
+# >>> by_length.call([1, -1, 55])
+# [""One""]
+def by_length(arr)
+","def by_length(arr)
+  number_names = {
+    1 => ""One"",
+    2 => ""Two"",
+    3 => ""Three"",
+    4 => ""Four"",
+    5 => ""Five"",
+    6 => ""Six"",
+    7 => ""Seven"",
+    8 => ""Eight"",
+    9 => ""Nine""
+  }
+
+  filtered_sorted_reversed = arr.select { |x| x.between?(1, 9) }.sort.reverse
+  filtered_sorted_reversed.map { |num| number_names[num] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_by_length
+    candidate = method(:by_length)
+    assert_equal([""Eight"", ""Five"", ""Four"", ""Three"", ""Two"", ""Two"", ""One"", ""One""], candidate.call([2, 1, 1, 4, 5, 8, 2, 3]))
+    assert_equal([], candidate.call([]))
+    assert_equal([""One""], candidate.call([1, -1, 55]))
+    assert_equal([""Three"", ""Two"", ""One""], candidate.call([1, -1, 3, 2]))
+    assert_equal([""Nine"", ""Eight"", ""Four""], candidate.call([9, 4, 8]))
+  end
+end
+"
+HumanEval_106,mya_Mymr,rb,"ဥပမာ: i ရဲ့ ကိန်းရှင်ဟာ 1 ကနေ i အထိရှိတဲ့ ကိန်းတွေရဲ့ မြှောက်လဒ်ဖြစ်တယ်။ (1 * 2 * ... * i)i က ၁ ကနေစတယ်။သို့မဟုတ် ၁ ကနေ i ထိ ကိန်းဂဏန်းတွေရဲ့ ပေါင်းလဒ်ဖြစ်တယ်။index i မှာရှိတဲ့ ဒြပ်စင်ရဲ့တန်ဖိုးဟာ i ရဲ့ မြှောက်ဖော်ကိန်းဖြစ်နေရင် i ဟာ အချိုးအစား n ရှိတဲ့ မေထရစ်ကို ပြန်ပေးတယ်။Function f ကို n ကို parameter အဖြစ်ယူပြီး အကောင်အထည်ဖော်ပါ။# >>> f.call(5)
+# [1, 2, 6, 24, 15]
+def f(n)
+","def f(n)
+  (1..n).map do |i|
+    if i.even?
+      (1..i).inject(:*) || 1
+    else
+      (1..i).inject(:+)
+    end
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_f
+    candidate = method(:f)
+    assert_equal([1, 2, 6, 24, 15], candidate.call(5))
+    assert_equal([1, 2, 6, 24, 15, 720, 28], candidate.call(7))
+    assert_equal([1], candidate.call(1))
+    assert_equal([1, 2, 6], candidate.call(3))
+  end
+end
+"
+HumanEval_107,mya_Mymr,rb,"ဥပမာ ၁။ကိန်းပြည့် palindromes တွေဟာ ((၁၊ n) အပါအဝင်) အတွင်းမှာ ကျရောက်တယ်။အပေါင်းကိန်းပြည့် n ကိုပေးရင် ကိန်းတန်းတစ်ခု ပြန်ပေးပါ # >>> even_odd_palindrome.call(3)
+# [1, 2]
+# Explanation:
+# Integer palindrome are 1, 2, 3. one of them is even, and two of them are odd.
+# Example 2:
+# >>> even_odd_palindrome.call(12)
+# [4, 6]
+# Explanation:
+# Integer palindrome are 1, 2, 3, 4, 5, 6, 7, 8, 9, 11. four of them are even, and 6 of them are odd.
+# Note:
+# 1. 1 <= n <= 10^3
+# 2. returned array has the number of even and odd integer palindromes respectively.
+def even_odd_palindrome(n)
+","def even_odd_palindrome(n)
+  even_count = 0
+  odd_count = 0
+
+  (1..n).each do |num|
+    if num.to_s == num.to_s.reverse
+      if num.even?
+        even_count += 1
+      else
+        odd_count += 1
+      end
+    end
+  end
+
+  [even_count, odd_count]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_even_odd_palindrome
+    candidate = method(:even_odd_palindrome)
+    assert_equal([8, 13], candidate.call(123))
+    assert_equal([4, 6], candidate.call(12))
+    assert_equal([1, 2], candidate.call(3))
+    assert_equal([6, 8], candidate.call(63))
+    assert_equal([5, 6], candidate.call(25))
+    assert_equal([4, 6], candidate.call(19))
+    assert_equal([4, 5], candidate.call(9))
+    assert_equal([0, 1], candidate.call(1))
+  end
+end
+"
+HumanEval_108,mya_Mymr,rb,"ဥပမာ -123 မှာ -1, 2 နဲ့ 3 ရဲ့ အက္ခရာတွေရှိတယ်။ကိန်းတစ်လုံးက အနှုတ်ဆိုရင် ပထမဆုံး အက္ခရာက အနှုတ်ဖြစ်မယ်။0 ထက်ပိုတဲ့ အက္ခရာပေါင်းနဲ့ အက္ခရာပေါင်းတွေပါတဲ့အရာ အရေအတွက်ကိန်းပြည့်များ၏ array ကိုယူပြီး ပြန်ပေးသော function count_nums ကိုရေးပါ။# >>> count_nums.call([])
+# 0
+# >>> count_nums.call([-1, 11, -11])
+# 1
+# >>> count_nums.call([1, 1, 2])
+# 3
+def count_nums(arr)
+","def count_nums(arr)
+  arr.count do |num|
+    num.to_s.chars.map(&:to_i).sum > 0
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_count_nums
+    candidate = method(:count_nums)
+    assert_equal(0, candidate.call([]))
+    assert_equal(0, candidate.call([-1, -2, 0]))
+    assert_equal(6, candidate.call([1, 1, 2, -2, 3, 4, 5]))
+    assert_equal(5, candidate.call([1, 6, 9, -6, 0, 1, 5]))
+    assert_equal(4, candidate.call([1, 100, 98, -7, 1, -1]))
+    assert_equal(5, candidate.call([12, 23, 34, -45, -56, 0]))
+    assert_equal(1, candidate.call([0, 1]))
+    assert_equal(1, candidate.call([1]))
+  end
+end
+"
+HumanEval_109,mya_Mymr,rb,"ဥပမာအားဖြင့်၊မှတ်ချက်: ပေးထားသော array သည် ထူးခြားသော element များရှိရန် အာမခံထားသည်။ပေးထားတဲ့ array ဟာ ဗလာဆိုရင် true ကိုပြန်ပို့ပါ။ၿပီးရင္ true ကို ျပန္ေပးပါအထက်ပါလုပ်ဆောင်ချက်များကိုလုပ်ဆောင်ခြင်းအားဖြင့်ရွေးချယ်ထားသော array ကိုရယူရန်ဖြစ်နိုင်လျှင် array ထဲက 0th index ကေန စတင္တဲ့ ေနရာပါ။array ရဲ့ နောက်ဆုံးအစိတ်အပိုင်းကို  ဆီ ရွှေ့သွားမယ်။ညာဘက်ကိုရွှေ့ခြင်း လုပ်ဆောင်ချက်က မေထရစ်ရဲ့ ဒြပ်စင်အားလုံးကို တစ်ကြိမ် ရွှေ့ခြင်းပါ။ညာဘက်ကို ဘယ်နှစ်ကြိမ်မဆို ရွှေ့လို့ရပါတယ်။အောက်ပါလုပ်ဆောင်ချက်ကို array မှာလုပ်ပါ။array ကို ျဖည့္စြက္ျခင္းျဖင့္ ျဖည့္စြက္ျခင္းမရွိေသာ အလိုက္ ရယူႏိုင္ပါသည္။array ထဲက ကိန္းဂဏန္းေတြကို random order ျဖင့္ေရြးခ်ယ္ေပးပါကျွန်တော်တို့မှာ array 'arr' ရှိပါတယ် N ကိန်းပြည့်တွေပါ arr[1], arr[2], ..., arr[N] # >>> move_one_ball.call([3, 4, 5, 1, 2])
+# true
+# Explanation: By performin 2 right shift operations, non-decreasing order can
+# be achieved for the given array.
+# >>> move_one_ball.call([3, 5, 4, 1, 2])
+# false
+# Explanation:It is not possible to get non-decreasing order for the given
+# array by performing any number of right shift operations.
+def move_one_ball(arr)
+","def move_one_ball(arr)
+  return true if arr.empty?
+
+  n = arr.size
+  count_rotation_point = 0
+  rotation_index = -1
+
+  (0...n).each do |i|
+    next_index = (i + 1) % n
+    if arr[i] > arr[next_index]
+      count_rotation_point += 1
+      rotation_index = next_index
+    end
+  end
+
+  count_rotation_point <= 1
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_move_one_ball
+    candidate = method(:move_one_ball)
+    assert_equal(true, candidate.call([3, 4, 5, 1, 2]))
+    assert_equal(true, candidate.call([3, 5, 10, 1, 2]))
+    assert_equal(false, candidate.call([4, 3, 1, 2]))
+    assert_equal(false, candidate.call([3, 5, 4, 1, 2]))
+    assert_equal(true, candidate.call([]))
+  end
+end
+"
+HumanEval_110,mya_Mymr,rb,"ဥပမာ -မဟုတ်ရင် ""NO"" ပြန်ပေးပါ။lst1 ၏ element အားလုံးသည် အချိုးညီဖြစ်ရန် ""YES"" ကိုပြန်ပို့ပါ။lst1 နှင့် lst2 အကြား element များကို လဲလှယ်ရန် ဖြစ်နိုင်လျှင်lst1 နှင့် lst2 အကြား အလဲအလှယ်ပြုလုပ်သော အစိတ်အပိုင်းအရေအတွက်အတွက် ကန့်သတ်ချက်မရှိပါ။lst1 ကို ကိန္းသခ်ၤာေတြပါတဲ႔ array တစ္ခုျဖစ္ေအာင္လုပ္လိုက္ပါပြီးတော့ အစိတ်အပိုင်းတွေကို လဲလှယ်လို့ရလားလို့လည်း ဆုံးဖြတ်ပေးတယ်ဒီပုစ္ဆာမှာ ကိန်းတန်းနှစ်ခုပါတဲ့ လုပ်ဆောင်ချက်ကို သုံးပါမယ်။# >>> exchange.call([1, 2, 3, 4], [1, 2, 3, 4])
+# ""YES""
+# >>> exchange.call([1, 2, 3, 4], [1, 5, 3, 4])
+# ""NO""
+# It is assumed that the input arrays will be non-empty.
+def exchange(lst1, lst2)
+","def exchange(lst1, lst2)
+  # Check if lst1 already consists solely of even numbers
+  return ""YES"" if lst1.all?(&:even?)
+
+  # Check if there are at least as many even numbers in lst2
+  # as there are odd numbers in lst1
+  odd_count_lst1 = lst1.count(&:odd?)
+  even_count_lst2 = lst2.count(&:even?)
+
+  odd_count_lst1 <= even_count_lst2 ? ""YES"" : ""NO""
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_exchange
+    candidate = method(:exchange)
+    assert_equal(""YES"", candidate.call([1, 2, 3, 4], [1, 2, 3, 4]))
+    assert_equal(""NO"", candidate.call([1, 2, 3, 4], [1, 5, 3, 4]))
+    assert_equal(""YES"", candidate.call([1, 2, 3, 4], [2, 1, 4, 3]))
+    assert_equal(""YES"", candidate.call([5, 7, 3], [2, 6, 4]))
+    assert_equal(""NO"", candidate.call([5, 7, 3], [2, 6, 3]))
+    assert_equal(""NO"", candidate.call([3, 2, 6, 1, 8, 9], [3, 5, 5, 1, 1, 1]))
+    assert_equal(""YES"", candidate.call([100, 200], [200, 200]))
+  end
+end
+"
+HumanEval_111,mya_Mymr,rb,"ဥပမာ: စာလုံးပေါင်းများစွာမှာ တူညီတဲ့ဖြစ်ရပ်ရှိရင် အားလုံးပြန်ပေးပါ။စာလုံးအရေအတွက်နဲ့ ထပ်ခါထပ်ခါ ထပ်ခါထပ်ခါ ထည့်လိုက်ရင်စာလုံးအသေးစားများကို စာကြောင်းအသေးစားများဖြင့် ခွဲခြားထားသော string ကိုပေးလျှင် hash ကိုပြန်ပေးပါ။# >>> histogram.call(""a b c"")
+# {""a"" => 1, ""b"" => 1, ""c"" => 1}
+# >>> histogram.call(""a b b a"")
+# {""a"" => 2, ""b"" => 2}
+# >>> histogram.call(""a b c a b"")
+# {""a"" => 2, ""b"" => 2}
+# >>> histogram.call(""b b b b a"")
+# {""b"" => 4}
+# >>> histogram.call("""")
+# {}
+def histogram(test)
+","def histogram(test)
+  return {} if test.empty?
+
+  count = Hash.new(0)
+
+  test.split.each do |char|
+    count[char] += 1
+  end
+
+  max_count = count.values.max
+  count.select { |_, value| value == max_count }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_histogram
+    candidate = method(:histogram)
+    assert_equal({""a"" => 2, ""b"" => 2}, candidate.call(""a b b a""))
+    assert_equal({""a"" => 2, ""b"" => 2}, candidate.call(""a b c a b""))
+    assert_equal({""a"" => 1, ""b"" => 1, ""c"" => 1, ""d"" => 1, ""g"" => 1}, candidate.call(""a b c d g""))
+    assert_equal({""r"" => 1, ""t"" => 1, ""g"" => 1}, candidate.call(""r t g""))
+    assert_equal({""b"" => 4}, candidate.call(""b b b b a""))
+    assert_equal({""r"" => 1, ""t"" => 1, ""g"" => 1}, candidate.call(""r t g""))
+    assert_equal({}, candidate.call(""""))
+    assert_equal({""a"" => 1}, candidate.call(""a""))
+  end
+end
+"
+HumanEval_112,mya_Mymr,rb,"ဥပမာ။စစ်ဆေးမှုအတွက် ရလဒ် string နှင့် true/false ပါသော array ကိုပြန်ပို့ရပါမည်။ရှေ့ပြန်နဲ့နောက်ပြန် တူညီနေရင် string ကို palindrome လို့ခေါ်တယ်။ၿပီးရင္ result string က palindrome ျဖစ္ေနသလားဆိုတာ စစ္ေဆးပါ။S နဲ့ C ဆိုတဲ့ String နှစ်ခုကို ပေးထားတယ်။ အဲဒီ String ထဲက စာလုံးတိုင်းကို ဖျက်ပစ်ရမယ်။အလုပ်။# >>> reverse_delete.call(""abcde"", ""ae"")
+# [""bcd"", false]
+# >>> reverse_delete.call(""abcdef"", ""b"")
+# [""acdef"", false]
+# >>> reverse_delete.call(""abcdedcba"", ""ab"")
+# [""cdedc"", true]
+def reverse_delete(s, c)
+","def reverse_delete(s, c)
+  # Remove all characters in c from s
+  filtered_string = s.delete(c)
+  
+  # Check if the filtered string is a palindrome
+  is_palindrome = filtered_string == filtered_string.reverse
+  
+  # Return the result array
+  [filtered_string, is_palindrome]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_reverse_delete
+    candidate = method(:reverse_delete)
+    assert_equal([""bcd"", false], candidate.call(""abcde"", ""ae""))
+    assert_equal([""acdef"", false], candidate.call(""abcdef"", ""b""))
+    assert_equal([""cdedc"", true], candidate.call(""abcdedcba"", ""ab""))
+    assert_equal([""dik"", false], candidate.call(""dwik"", ""w""))
+    assert_equal(["""", true], candidate.call(""a"", ""a""))
+    assert_equal([""abcdedcba"", true], candidate.call(""abcdedcba"", """"))
+    assert_equal([""abcdedcba"", true], candidate.call(""abcdedcba"", ""v""))
+    assert_equal([""abba"", true], candidate.call(""vabba"", ""v""))
+    assert_equal(["""", true], candidate.call(""mamma"", ""mia""))
+  end
+end
+"
+HumanEval_113,mya_Mymr,rb,"input ရဲ့ i'th string မှာရှိတဲ့ odd digits တွေရဲ့ကိန်းစဉ်ပါ။input ရဲ့ string i ကို။"" ဒီမှာ i တွေအားလုံးကို နံပါတ်နဲ့ အစားထိုးသင့်ပါတယ်။output i ရဲ့ element တစ်ခုစီဟာ ထဲမှာရှိတဲ့ odd element တွေရဲ့ အရေအတွက် ဖြစ်သင့်ပါတယ်။string တွေရဲ့ array တစ်ခုကို ပေးပြီး string တစ်ခုစီမှာ ဂဏန်းတွေပဲရှိရင် array တစ်ခု ပြန်ပေးမယ်။# >>> odd_count.call([""1234567""])
+# [""the number of odd elements 4n the str4ng 4 of the 4nput.""]
+# >>> odd_count.call([""3"", ""11111111""])
+# [""the number of odd elements 1n the str1ng 1 of the 1nput."", ""the number of odd elements 8n the str8ng 8 of the 8nput.""]
+def odd_count(lst)
+","def odd_count(lst)
+  lst.map do |num_str|
+    count = num_str.count('13579')
+    ""the number of odd elements #{count}n the str#{count}ng #{count} of the #{count}nput.""
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_odd_count
+    candidate = method(:odd_count)
+    assert_equal([""the number of odd elements 4n the str4ng 4 of the 4nput.""], candidate.call([""1234567""]))
+    assert_equal([""the number of odd elements 1n the str1ng 1 of the 1nput."", ""the number of odd elements 8n the str8ng 8 of the 8nput.""], candidate.call([""3"", ""11111111""]))
+    assert_equal([""the number of odd elements 2n the str2ng 2 of the 2nput."", ""the number of odd elements 3n the str3ng 3 of the 3nput."", ""the number of odd elements 2n the str2ng 2 of the 2nput.""], candidate.call([""271"", ""137"", ""314""]))
+  end
+end
+"
+HumanEval_114,mya_Mymr,rb,"ဥပမာ။အပိုဒ်များ၏ကိန္းျဖဴကိန္းမ်ား၏ array တစ္ခုကို ေပးထားလွ်င္ အပိုင္းကိန္းမ်ား၏ အေသးဆံုး sum ကိုရွာပါ# >>> minSubArraySum.call([2, 3, 4, 1, 2, 4])
+# 1
+# >>> minSubArraySum.call([-1, -2, -3])
+# -6
+def minSubArraySum(nums)
+","def minSubArraySum(nums)
+  min_sum = nums[0]
+  current_sum = 0
+  nums.each do |num|
+    if current_sum > 0
+      current_sum = num
+    else
+      current_sum += num
+    end
+    min_sum = [min_sum, current_sum].min
+  end
+  min_sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_minSubArraySum
+    candidate = method(:minSubArraySum)
+    assert_equal(1, candidate.call([2, 3, 4, 1, 2, 4]))
+    assert_equal(-6, candidate.call([-1, -2, -3]))
+    assert_equal(-14, candidate.call([-1, -2, -3, 2, -10]))
+    assert_equal(-9999999999999999, candidate.call([-9999999999999999]))
+    assert_equal(0, candidate.call([0, 10, 20, 1000000]))
+    assert_equal(-6, candidate.call([-1, -2, -3, 10, -5]))
+    assert_equal(-6, candidate.call([100, -1, -2, -3, 10, -5]))
+    assert_equal(3, candidate.call([10, 11, 13, 8, 3, 4]))
+    assert_equal(-33, candidate.call([100, -33, 32, -1, 0, -2]))
+    assert_equal(-10, candidate.call([-10]))
+    assert_equal(7, candidate.call([7]))
+    assert_equal(-1, candidate.call([1, -1]))
+  end
+end
+"
+HumanEval_115,mya_Mymr,rb,"ဥပမာ ၁။အပြင်ထွက်ရေအိုးတွေကို ဘယ်နှစ်ကြိမ် ချဖို့လိုသလဲဆိုတာရိုက်ထည့်ပါ။မင်းအလုပ်က ရေအိုးတွေကို ရေအိုင်တွေသုတ်ဖို့ အသုံးပြုဖို့ပါ။ပြီးတော့ ဒီပုံးတွေအားလုံးဟာ တူညီတဲ့ ပမာဏကို ဆောင်ထားတယ်။ရေတွင်းတိုင်းမှာ ရေကို ခုတ်ယူဖို့ ရေအိုးတစ်လုံးစီ ရှိတယ်။အတန်းထဲက ၁ လုံးဟာ ရေရဲ့ယူနစ် တစ်ခုပါပဲ။သင်ဟာ လေးထောင့်ကွက်ကွက်ရဲ့ အပုံတစ်ပုံ ရမယ်။ အတန်းတစ်တန်းစီဟာ အပေါက်တစ်ပေါက်ပါ။# >>> max_fill.call([[0, 0, 1, 0], [0, 1, 0, 0], [1, 1, 1, 1]], 1)
+# 6
+# Example 2:
+# >>> max_fill.call([[0, 0, 1, 1], [0, 0, 0, 0], [1, 1, 1, 1], [0, 1, 1, 1]], 2)
+# 5
+# Example 3:
+# >>> max_fill.call([[0, 0, 0], [0, 0, 0]], 5)
+# 0
+# Constraints:
+# * all wells have the same length
+# * 1 <= grid.length <= 10^2
+# * 1 <= grid[:,1].length <= 10^2
+# * grid[i][j] -> 0 | 1
+# * 1 <= capacity <= 10
+def max_fill(grid, capacity)
+","def max_fill(grid, capacity)
+  total_water_units = grid.flatten.sum
+  (total_water_units.to_f / capacity).ceil
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_max_fill
+    candidate = method(:max_fill)
+    assert_equal(6, candidate.call([[0, 0, 1, 0], [0, 1, 0, 0], [1, 1, 1, 1]], 1))
+    assert_equal(5, candidate.call([[0, 0, 1, 1], [0, 0, 0, 0], [1, 1, 1, 1], [0, 1, 1, 1]], 2))
+    assert_equal(0, candidate.call([[0, 0, 0], [0, 0, 0]], 5))
+    assert_equal(4, candidate.call([[1, 1, 1, 1], [1, 1, 1, 1]], 2))
+    assert_equal(2, candidate.call([[1, 1, 1, 1], [1, 1, 1, 1]], 9))
+  end
+end
+"
+HumanEval_116,mya_Mymr,rb,"အောက်ပါအတိုင်း အကောင်အထည်ဖော်ရပါမယ်-အလားတူ 1s များအတွက် ဒဿမကိန်းတန်ဖိုးကို အခြေခံပြီး ရွေးပါ။binary representation ထဲက နံပါတ္ေတြကို တက္တက္တက္တက္တက္တက္တက္တက္တက္နဲ႔ ေရးထားတယ္။Kata ထဲမှာ၊ ခင်ဗျားဟာ အနှုတ်လက္ခဏာ မဟုတ်တဲ့ ကိန်းပြည့်တွေရဲ့ မေထရစ်ကို ∈ (n) နဲ့ စီစဉ်ရပါမယ်။# >>> sort_array.call([1, 5, 2, 3, 4])
+# [1, 2, 3, 4, 5]
+# >>> sort_array.call([-2, -3, -4, -5, -6])
+# [-6, -5, -4, -3, -2]
+# >>> sort_array.call([1, 0, 2, 3, 4])
+# [0, 1, 2, 3, 4]
+def sort_array(arr)
+","def sort_array(arr)
+  arr.sort_by { |n| [n.to_s(2).count('1'), n] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sort_array
+    candidate = method(:sort_array)
+    assert_equal([1, 2, 4, 3, 5], candidate.call([1, 5, 2, 3, 4]))
+    assert_equal([-4, -2, -6, -5, -3], candidate.call([-2, -3, -4, -5, -6]))
+    assert_equal([0, 1, 2, 4, 3], candidate.call([1, 0, 2, 3, 4]))
+    assert_equal([], candidate.call([]))
+    assert_equal([2, 2, 4, 4, 3, 3, 5, 5, 5, 7, 77], candidate.call([2, 5, 77, 4, 5, 3, 5, 7, 2, 3, 4]))
+    assert_equal([32, 3, 5, 6, 12, 44], candidate.call([3, 6, 44, 12, 32, 5]))
+    assert_equal([2, 4, 8, 16, 32], candidate.call([2, 4, 8, 16, 32]))
+    assert_equal([2, 4, 8, 16, 32], candidate.call([2, 4, 8, 16, 32]))
+  end
+end
+"
+HumanEval_117,mya_Mymr,rb,"ဥပမာများ:မှတ်ချက်: input string မှာ စာလုံးနဲ့ စာခြားနားချက်တွေပဲရှိတယ်လို့ ယူဆနိုင်ပါတယ်။တကယ်လို့ string s က ဗလာကျတယ်ဆိုရင် ဒီ function က ဗလာကျတဲ့ array ကိုပြန်ပေးလိမ့်မယ်။n ကို s ထဲမှာရှိတဲ့ စကားလုံးတွေရဲ့ အစီအစဉ်နဲ့ ပေါင်းလိုက်ပါတယ်။string s ထဲက စကားလုံးအားလုံးရဲ့ array ကို ပြန်ပေးတဲ့ function တစ်ခုပါ။string s နဲ့ natural number n ကို ပေးထားရင် ခင်ဗျားကို လုပ်ဆောင်ဖို့ ပြောထားတယ်# >>> select_words.call(""Mary had a little lamb"", 4)
+# [""little""]
+# >>> select_words.call(""Mary had a little lamb"", 3)
+# [""Mary"", ""lamb""]
+# >>> select_words.call(""simple white space"", 2)
+# []
+# >>> select_words.call(""Hello world"", 4)
+# [""world""]
+# >>> select_words.call(""Uncle sam"", 3)
+# [""Uncle""]
+def select_words(s, n)
+","def select_words(s, n)
+  vowels = ""aeiouAEIOU""
+  words = s.split
+  words.select do |word|
+    consonant_count = word.chars.count { |char| !vowels.include?(char) }
+    consonant_count == n
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_select_words
+    candidate = method(:select_words)
+    assert_equal([""little""], candidate.call(""Mary had a little lamb"", 4))
+    assert_equal([""Mary"", ""lamb""], candidate.call(""Mary had a little lamb"", 3))
+    assert_equal([], candidate.call(""simple white space"", 2))
+    assert_equal([""world""], candidate.call(""Hello world"", 4))
+    assert_equal([""Uncle""], candidate.call(""Uncle sam"", 3))
+    assert_equal([], candidate.call("""", 4))
+    assert_equal([""b"", ""c"", ""d"", ""f""], candidate.call(""a b c d e f"", 1))
+  end
+end
+"
+HumanEval_118,mya_Mymr,rb,"ဥပမာ: string ထဲမှာ အင်္ဂလိပ်စာလုံးတွေပဲ ပါတယ်လို့ ယူဆနိုင်ပါတယ်။အထက်ပါ အခြေအနေကို ကျင့်တဲ့ အသံအနိမ့်အမြင့်တစ်ခု ရှာပါ။အစနဲ့ အဆုံးက သရသံတွေ မရေတွက်ဘူး။ မရေတွက်ရင် ဗလာ string ပြန်ပေး။ညာဘက်ခြမ်းမှ ဗျည်းနှစ်လုံး (အကြီးအသေးနားလည်) ။ခင်ဗျားကို စကားလုံးတစ်လုံးပေးလိုက်တယ်ဗျာ ခင်ဗျားရဲ့အလုပ်က အဲဒီစကားလုံးတွေ ကြားက အနီးစပ်ဆုံး သရအက္ခရာတစ်လုံးကို ရှာဖို့ပါ# >>> get_closest_vowel.call(""yogurt"")
+# ""u""
+# >>> get_closest_vowel.call(""FULL"")
+# ""U""
+# >>> get_closest_vowel.call(""quick"")
+# """"
+# >>> get_closest_vowel.call(""ab"")
+# """"
+def get_closest_vowel(word)
+","def get_closest_vowel(word)
+  vowels = ""aeiouAEIOU""
+  (1...word.length - 1).reverse_each do |i|
+    if vowels.include?(word[i]) && !vowels.include?(word[i - 1]) && !vowels.include?(word[i + 1])
+      return word[i]
+    end
+  end
+  return """"
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_get_closest_vowel
+    candidate = method(:get_closest_vowel)
+    assert_equal(""u"", candidate.call(""yogurt""))
+    assert_equal(""u"", candidate.call(""full""))
+    assert_equal("""", candidate.call(""easy""))
+    assert_equal("""", candidate.call(""eAsy""))
+    assert_equal("""", candidate.call(""ali""))
+    assert_equal(""a"", candidate.call(""bad""))
+    assert_equal(""o"", candidate.call(""most""))
+    assert_equal("""", candidate.call(""ab""))
+    assert_equal("""", candidate.call(""ba""))
+    assert_equal("""", candidate.call(""quick""))
+    assert_equal(""i"", candidate.call(""anime""))
+    assert_equal("""", candidate.call(""Asia""))
+    assert_equal(""o"", candidate.call(""Above""))
+  end
+end
+"
+HumanEval_119,mya_Mymr,rb,"ဥပမာများ:String ကောင်းကောင်းတစ်ခု ဖန်တီးဖို့ နည်းလမ်းရှိရင် 'Yes' ပြန်ပေးပြီး အခြားနည်းနဲ့ဆိုရင် 'No' ပြန်ပေးပါ။"" (()) "" ဆိုတာ မပါပါဘူး။ဥပမာ၊ string '(())))' က ကောင်းတယ် string  ကတော့ ကောင်းတယ်S ထဲက အကန့်တွေအားလုံး သာလျှင် string S ဟာ ကောင်းတယ်လို့ ယူဆရပါတယ်။ရလဒ်က ကောင်းမှာဖြစ်လို့ပါ။မင်းအလုပ်က ဒီကြိုးနှစ်ချောင်းကို ချိတ်ဆက်လို့ ရလားဆိုတာ စစ်ဆေးဖို့ပါ။ကလစ် ' (() ' သို့မဟုတ် ကလစ် ') ' ကိုသာ သုံးပါ။ခင်ဗျားကို string နှစ်ခုပါတဲ့ array ပေးထားတယ်။ နှစ်ခုစလုံးက open ဖြစ်တယ်။# >>> match_parens.call([""()("", "")""])
+# ""Yes""
+# >>> match_parens.call(["")"", "")""])
+# ""No""
+def match_parens(lst)
+","def match_parens(lst)
+  a, b = lst
+
+  # Define a helper method to check if a string is balanced
+  def balanced?(s)
+    count = 0
+    s.each_char do |c|
+      count += 1 if c == '('
+      count -= 1 if c == ')'
+      return false if count < 0
+    end
+    count == 0
+  end
+
+  # Check if either concatenation forms a good string
+  if balanced?(a + b) || balanced?(b + a)
+    ""Yes""
+  else
+    ""No""
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_match_parens
+    candidate = method(:match_parens)
+    assert_equal(""Yes"", candidate.call([""()("", "")""]))
+    assert_equal(""No"", candidate.call(["")"", "")""]))
+    assert_equal(""No"", candidate.call([""(()(())"", ""())())""]))
+    assert_equal(""Yes"", candidate.call(["")())"", ""(()()(""]))
+    assert_equal(""Yes"", candidate.call([""(())))"", ""(()())((""]))
+    assert_equal(""No"", candidate.call([""()"", ""())""]))
+    assert_equal(""Yes"", candidate.call([""(()("", ""()))()""]))
+    assert_equal(""No"", candidate.call([""(((("", ""((())""]))
+    assert_equal(""No"", candidate.call(["")(()"", ""(()(""]))
+    assert_equal(""No"", candidate.call(["")("", "")(""]))
+    assert_equal(""Yes"", candidate.call([""("", "")""]))
+    assert_equal(""Yes"", candidate.call(["")"", ""(""]))
+  end
+end
+"
+HumanEval_120,mya_Mymr,rb,"ဥပမာ ၁။အရှည် k မှာ အမြင့်ဆုံး k ကိန်းဂဏန်းတွေပါပြီး arr ပါ။ကိန်းပြည့်များ၏ array arr နှင့် k အပေါင်းကိန်းပြည့်ကို ပေးထားလျှင် စီစဉ်ထားသော array ကို ပြန်ပေးပါ။# >>> maximum.call([-3, -4, 5], 3)
+# [-4, -3, 5]
+# Example 2:
+# >>> maximum.call([4, -4, 4], 2)
+# [4, 4]
+# Example 3:
+# >>> maximum.call([-3, 2, 1, 2, -1, -2, 1], 1)
+# [2]
+# Note:
+# 1. The length of the array will be in the range of [1, 1000].
+# 2. The elements in the array will be in the range of [-1000, 1000].
+# 3. 0 <= k <= len(arr)
+def maximum(arr, k)
+","def maximum(arr, k)
+  arr.sort.last(k).sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_maximum
+    candidate = method(:maximum)
+    assert_equal([-4, -3, 5], candidate.call([-3, -4, 5], 3))
+    assert_equal([4, 4], candidate.call([4, -4, 4], 2))
+    assert_equal([2], candidate.call([-3, 2, 1, 2, -1, -2, 1], 1))
+    assert_equal([2, 20, 123], candidate.call([123, -123, 20, 0, 1, 2, -3], 3))
+    assert_equal([0, 1, 2, 20], candidate.call([-123, 20, 0, 1, 2, -3], 4))
+    assert_equal([-13, -8, 0, 0, 3, 5, 15], candidate.call([5, 15, 0, 3, -13, -8, 0], 7))
+    assert_equal([3, 5], candidate.call([-1, 0, 2, 5, 3, -10], 2))
+    assert_equal([5], candidate.call([1, 0, 5, -7], 1))
+    assert_equal([-4, 4], candidate.call([4, -4], 2))
+    assert_equal([-10, 10], candidate.call([-10, 10], 2))
+    assert_equal([], candidate.call([1, 2, 3, -23, 243, -400, 0], 0))
+  end
+end
+"
+HumanEval_121,mya_Mymr,rb,"ဥပမာများ ဖြောင့်ကိန်းတွေရဲ့ အလွတ်မဟုတ်တဲ့ မေထရစ်ကို ပေးပြီး ကိန်းတစ်ထပ်တည်းရှိတဲ့ မကိန်းတွေ အားလုံးရဲ့ ပေါင်းလဒ်ကို ပြန်ပေးပါ။# >>> solution.call([5, 8, 7, 1])
+# 12
+# >>> solution.call([3, 3, 3, 3, 3])
+# 9
+# >>> solution.call([30, 13, 24, 321])
+# 0
+def solution(lst)
+","def solution(lst)
+  lst.each_with_index.reduce(0) do |sum, (val, idx)|
+    (idx.even? && val.odd?) ? sum + val : sum
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_solution
+    candidate = method(:solution)
+    assert_equal(12, candidate.call([5, 8, 7, 1]))
+    assert_equal(9, candidate.call([3, 3, 3, 3, 3]))
+    assert_equal(0, candidate.call([30, 13, 24, 321]))
+    assert_equal(5, candidate.call([5, 9]))
+    assert_equal(0, candidate.call([2, 4, 8]))
+    assert_equal(23, candidate.call([30, 13, 23, 32]))
+    assert_equal(3, candidate.call([3, 13, 2, 9]))
+  end
+end
+"
+HumanEval_122,mya_Mymr,rb,"ဥပမာ: ပထမ k element တွေထဲက အနည်းဆုံး ဂဏန်းနှစ်လုံးပါ element တွေရဲ့ စုစုပေါင်း arr ။ဖြောင့်ကိန်း arr နဲ့ ဖြောင့်ကိန်း k တို့ရဲ့ အလွတ်မဟုတ်တဲ့ မေထရစ်ကို ပေးပြီး ပြန်ပို့ပါ # >>> add_elements.call([111, 21, 3, 4000, 5, 6, 7, 8, 9], 4)
+# 24
+# Constraints:
+# 1. 1 <= len(arr) <= 100
+# 2. 1 <= k <= len(arr)
+def add_elements(arr, k)
+","def add_elements(arr, k)
+  arr.first(k).select { |num| num.abs.to_s.length <= 2 }.sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_add_elements
+    candidate = method(:add_elements)
+    assert_equal(-4, candidate.call([1, -2, -3, 41, 57, 76, 87, 88, 99], 3))
+    assert_equal(0, candidate.call([111, 121, 3, 4000, 5, 6], 2))
+    assert_equal(125, candidate.call([11, 21, 3, 90, 5, 6, 7, 8, 9], 4))
+    assert_equal(24, candidate.call([111, 21, 3, 4000, 5, 6, 7, 8, 9], 4))
+    assert_equal(1, candidate.call([1], 1))
+  end
+end
+"
+HumanEval_123,mya_Mymr,rb,"get_odd_collatz(5) က [1, 5] ကို ပြန်ပေးတယ်။ # collatz sequence က [5, 16, 8, 4, 2, 1] ဖြစ်လို့ odd က 1 နဲ့ 5 ပဲရှိတာပါ။ဥပမာ -(၂) ပြန်ပို့သော array ကို တိုးတက်လာသော အဆင့်အတိုင်း စီစဉ်ထားသည်။Collatz ((1) သည် [1] ဖြစ်ပါသည်။မှတ်ချက်:ထာမ်မပေါင်း ၁။ n ရဲ့ တန်ဖိုးက ဘာပဲဖြစ်ဖြစ် အစဉ်ဟာ အမြဲ ၁ ထိ ရောက်တယ်လို့ ထင်မြင်ချက်ပါ။""မ"" က odd term ဆိုရင္ ေနာက္ထပ္ term က 3x ပဲျဖစ္လာမယ္။နောက်တစ်ကြိမ်မှာ  ရဲ့ တစ်ဝက်ကို  ထပ်ညွှန်းကိန်းအဖြစ် ရေးပါ။အောက်ပါအတိုင်း: အပေါင်းကိန်းပြည့် n တစ်ခုစီနဲ့ စလိုက်ပါ၊ မှ သက်တမ်းတစ်ခုစီကို ရမယ်။Collatz အဆိုကြမ်းသည် သင်္ချာပညာတွင် ဖော်ပြထားသော အစဉ်တစ်ခုနှင့် သက်ဆိုင်သော အဆိုကြမ်းဖြစ်သည်။အပေါင်းကိန်းပြည့် n ကိုပေးထားလျှင် collatz အစဉ်အတိုင်း မကိန်းများပါသော အမျိုးအစားခွဲထားတဲ့ array ကိုပြန်ပေးပါ။# >>> get_odd_collatz.call(5)
+# [1, 5]
+def get_odd_collatz(n)
+","def get_odd_collatz(n)
+  collatz_sequence = []
+  while n != 1
+    collatz_sequence << n if n.odd?
+    if n.even?
+      n = n / 2
+    else
+      n = 3 * n + 1
+    end
+  end
+  collatz_sequence << 1 if n == 1
+
+  collatz_sequence.sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_get_odd_collatz
+    candidate = method(:get_odd_collatz)
+    assert_equal([1, 5, 7, 11, 13, 17], candidate.call(14))
+    assert_equal([1, 5], candidate.call(5))
+    assert_equal([1, 3, 5], candidate.call(12))
+    assert_equal([1], candidate.call(1))
+  end
+end
+"
+HumanEval_124,mya_Mymr,rb,"၄) ရက်စွဲကို mm-dd-yyyy ပုံစံဖြင့် ရေးရပါမည်။(၃) လသည် ၁ လထက်မနည်း၍ ၁၂ လထက်မပိုရ။၂ ရက်သည် ၁ ရက်ထက်နည်းသည်မဟုတ်၊ ၃၁ ရက်ထက်ပိုသည်မဟုတ်၊ ၁၊ ၃၊ ၅၊ ၇၊ ၈၊ ၁၀၊ ၁၂ ရက်များအတွက် ၁ ရက်ထက်နည်းသည်မဟုတ်၊ ၃၀ ရက်ထက်ပိုသည်မဟုတ်၊ ၄၊ ၆၊ ၉၊ ၁၁ ရက်များအတွက် ၁ ရက်ထက်နည်းသည်မဟုတ်၊ ၂၉ ရက်ထက်ပိုသည်မဟုတ်၊ ၂.၁. နေ့စွဲ string ဟာ အလွတ်မဟုတ်ဘူး။အောက်ပါ စည်းမျဉ်းများ အားလုံးကို လိုက်နာပါက နေ့စွဲသည် မှန်ကန်ပါသည်။date သည် မှန်လျှင် မှန်သည်၊ မဟုတ်လျှင် မှားသည် ကိုပြန်ပေးသည်။Date String ကို ခိုင်လုံအောင်လုပ်တဲ့ Function တစ်ခုကို ရေးရမယ်။# >>> valid_date.call(""03-11-2000"")
+# true
+# >>> valid_date.call(""15-01-2012"")
+# false
+# >>> valid_date.call(""04-0-2040"")
+# false
+# >>> valid_date.call(""06-04-2020"")
+# true
+# >>> valid_date.call(""06/04/2020"")
+# false
+def valid_date(date)
+","def valid_date(date)
+  return false if date.nil? || date.empty?
+  
+  # Check if the date format is correct
+  match = date.match(/^(\d{2})-(\d{2})-(\d{4})$/)
+  return false unless match
+  
+  month, day, year = match.captures.map(&:to_i)
+  
+  # Check if month is valid
+  return false if month < 1 || month > 12
+  
+  # Check if day is valid according to the month
+  case month
+  when 1, 3, 5, 7, 8, 10, 12
+    return day >= 1 && day <= 31
+  when 4, 6, 9, 11
+    return day >= 1 && day <= 30
+  when 2
+    return day >= 1 && day <= 29
+  else
+    return false
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_valid_date
+    candidate = method(:valid_date)
+    assert_equal(true, candidate.call(""03-11-2000""))
+    assert_equal(false, candidate.call(""15-01-2012""))
+    assert_equal(false, candidate.call(""04-0-2040""))
+    assert_equal(true, candidate.call(""06-04-2020""))
+    assert_equal(true, candidate.call(""01-01-2007""))
+    assert_equal(false, candidate.call(""03-32-2011""))
+    assert_equal(false, candidate.call(""""))
+    assert_equal(false, candidate.call(""04-31-3000""))
+    assert_equal(true, candidate.call(""06-06-2005""))
+    assert_equal(false, candidate.call(""21-31-2000""))
+    assert_equal(true, candidate.call(""04-12-2003""))
+    assert_equal(false, candidate.call(""04122003""))
+    assert_equal(false, candidate.call(""20030412""))
+    assert_equal(false, candidate.call(""2003-04""))
+    assert_equal(false, candidate.call(""2003-04-12""))
+    assert_equal(false, candidate.call(""04-2003""))
+  end
+end
+"
+HumanEval_125,mya_Mymr,rb,"ဥပမာများ အက္ခရာ, အော်ဒါ (a) = 0, အော်ဒါ (b) = 1, ... အော်ဒါ (z) = 25 commas ',' ကိုခွဲသင့်တယ် commas မရှိရင် သင်ဟာ စာလုံးသေးသေးလေးတွေရဲ့ အရေအတွက်ကို ထဲမှာ တစ်မျိုးတစ်ဖုံစီစဉ်ပြီး ပြန်ပေးရမယ်။စကားလုံးတစ်ကြောင်းပေးထားလျှင် စာသားထဲတွင် နေရာလွတ်များမရှိပါက စာလုံးများကို နေရာလွတ်များဖြင့်ခွဲထားသော array ကိုပြန်ပို့ပါ။# >>> split_words.call(""Hello world!"")
+# [""Hello"", ""world!""]
+# >>> split_words.call(""Hello,world!"")
+# [""Hello"", ""world!""]
+# >>> split_words.call(""abcdef"")
+# 3
+def split_words(txt)
+","def split_words(txt)
+  if txt.include?(' ')
+    return txt.split(' ')
+  elsif txt.include?(',')
+    return txt.split(',')
+  else
+    odd_count = txt.chars.count { |char| ('a'..'z').include?(char) && (char.ord - 'a'.ord).odd? }
+    return odd_count
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_split_words
+    candidate = method(:split_words)
+    assert_equal([""Hello"", ""world!""], candidate.call(""Hello world!""))
+    assert_equal([""Hello"", ""world!""], candidate.call(""Hello,world!""))
+    assert_equal([""Hello"", ""world,!""], candidate.call(""Hello world,!""))
+    assert_equal([""Hello,Hello,world"", ""!""], candidate.call(""Hello,Hello,world !""))
+    assert_equal(3, candidate.call(""abcdef""))
+    assert_equal(2, candidate.call(""aaabb""))
+    assert_equal(1, candidate.call(""aaaBb""))
+    assert_equal(0, candidate.call(""""))
+  end
+end
+"
+HumanEval_126,mya_Mymr,rb,"ဥပမာများ number, return false ။ အနှုတ်ဂဏန်းမရှိဘဲ ကိန်းပြည့်တွေကိုသာ ယူပါ။array မှာ တူညီတဲ့ တစ်မျိုးထက်ပိုပါရင်ကိန်းစဉ်တစ်ခုရဲ့ ကိန်းစဉ်တစ်ခုပေးပြီး ၎င်းဟာ စီစဉ်ထားခြင်း ရှိ/မရှိ ပြန်ပေးပါ# >>> is_sorted.call([5])
+# true
+# >>> is_sorted.call([1, 2, 3, 4, 5])
+# true
+# >>> is_sorted.call([1, 3, 2, 4, 5])
+# false
+# >>> is_sorted.call([1, 2, 3, 4, 5, 6])
+# true
+# >>> is_sorted.call([1, 2, 3, 4, 5, 6, 7])
+# true
+# >>> is_sorted.call([1, 3, 2, 4, 5, 6, 7])
+# false
+# >>> is_sorted.call([1, 2, 2, 3, 3, 4])
+# true
+# >>> is_sorted.call([1, 2, 2, 2, 3, 4])
+# false
+def is_sorted(lst)
+","def is_sorted(lst)
+  lst.each_cons(2).with_index do |(a, b), index|
+    return false if a > b
+    return false if index < lst.length - 2 && a == b && lst[index + 2] == b
+  end
+  true
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_sorted
+    candidate = method(:is_sorted)
+    assert_equal(true, candidate.call([5]))
+    assert_equal(true, candidate.call([1, 2, 3, 4, 5]))
+    assert_equal(false, candidate.call([1, 3, 2, 4, 5]))
+    assert_equal(true, candidate.call([1, 2, 3, 4, 5, 6]))
+    assert_equal(true, candidate.call([1, 2, 3, 4, 5, 6, 7]))
+    assert_equal(false, candidate.call([1, 3, 2, 4, 5, 6, 7]))
+    assert_equal(true, candidate.call([]))
+    assert_equal(true, candidate.call([1]))
+    assert_equal(false, candidate.call([3, 2, 1]))
+    assert_equal(false, candidate.call([1, 2, 2, 2, 3, 4]))
+    assert_equal(false, candidate.call([1, 2, 3, 3, 3, 4]))
+    assert_equal(true, candidate.call([1, 2, 2, 3, 3, 4]))
+    assert_equal(true, candidate.call([1, 2, 3, 4]))
+  end
+end
+"
+HumanEval_127,mya_Mymr,rb,"[အဝင်/အထွက်] နမူနာများ: အကယ်၍ ကြားကာလနှစ်ခု မဆုံမိရင် NO ကို ပြန်ပို့ပါ။မဟုတ်ရင် ""NO"" ပြန်ပေးပါ။အကယ်၍ လမ်းဆုံ၏ အလျားသည် ပရိုင်းမန်းကိန်းဖြစ်ပါက ""YES"" ကို ပြန်ပေးပါ။၎င်းရဲ့ အရှည်က 1 ဖြစ်ပြီး ပုဂ္ဂိုလ်အရေအတွက် မဟုတ်ပါ။ဥပမာ၊ ကြားကာလ (1, 3) (2, 4) ရဲ့ဖြတ်လမ်းက (2, 3) ပါ။intervals က ပရမ်းမစ် ကိန်းဂဏန်းပါ။ဒီနှစ်ခုရဲ့ ဆုံချက်အလျားက  နှစ်ခုလားဆိုတာ ခင်ဗျားရှာရပါမယ်။ပေးထားတဲ့ ကြားကာလတိုင်းအတွက် ၎င်းရဲ့ အစဟာ အဆုံးထက် ပိုငယ်တာ (သို့) တူတယ်လို့ ယူဆရတယ်။အစနဲ့ အဆုံး နှစ်ခုစလုံး ပါပါတယ်။ပေးထားသော ကြားကာလများက ပိတ်ထားသည်၊ ဆိုလိုသည်မှာ ကြားကာလ (စတင်၊ အဆုံးသတ်) သည်ဒီမှာ ကြားကာလတိုင်းက ကိန်းပြည့်စုံစုံပါ။ ဥပမာ ကြားကာလ = (စတင်၊ အဆုံး) = (1, 2)ခင်ဗျားကို အချိန် ၂ ကြိမ်လောက် ပေးထားတယ်။# >>> intersection.call([1, 2], [2, 3])
+# ""NO""
+# >>> intersection.call([-1, 1], [0, 4])
+# ""NO""
+# >>> intersection.call([-3, -1], [-5, 5])
+# ""YES""
+def intersection(interval1, interval2)
+","def intersection(interval1, interval2)
+  start1, end1 = interval1
+  start2, end2 = interval2
+
+  intersection_start = [start1, start2].max
+  intersection_end = [end1, end2].min
+
+  if intersection_start > intersection_end
+    return ""NO""
+  end
+
+  intersection_length = intersection_end - intersection_start + 1
+
+  return ""YES"" if prime?(intersection_length)
+
+  ""NO""
+end
+
+def prime?(n)
+  return false if n <= 1
+  return true if n == 2 || n == 3
+
+  (2..Math.sqrt(n).to_i).each do |i|
+    return false if n % i == 0
+  end
+
+  true
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_intersection
+    candidate = method(:intersection)
+    assert_equal(""NO"", candidate.call([1, 2], [2, 3]))
+    assert_equal(""NO"", candidate.call([-1, 1], [0, 4]))
+    assert_equal(""YES"", candidate.call([-3, -1], [-5, 5]))
+    assert_equal(""YES"", candidate.call([-2, 2], [-4, 0]))
+    assert_equal(""NO"", candidate.call([-11, 2], [-1, -1]))
+    assert_equal(""NO"", candidate.call([1, 2], [3, 5]))
+    assert_equal(""NO"", candidate.call([1, 2], [1, 2]))
+    assert_equal(""NO"", candidate.call([-2, -2], [-3, -2]))
+  end
+end
+"
+HumanEval_128,mya_Mymr,rb,"ဥပမာ: မှတ်ချက်: အလွတ် arr အတွက် nil ပြန်ပေးပါ။array ထဲက နံပါတ္တိုင္းကို ၁၊ -၁၊ ၀ နဲ႔တင္ျပထားပါတယ္။ကိန်းပြည့်တွေရဲ့ မြှောက်လဒ်နဲ့ မြှောက်ထားတဲ့ ကိန်းပြည့်တွေရဲ့ မြှောက်လဒ်နဲ့ မြှောက်ထားတဲ့ ကိန်းပြည့်တွေရဲ့ မြှောက်လဒ်ပါ။ခင်ဗျားကို ဖြောင့်ကိန်းတွေထဲက array array တစ်ခုကို ပေးထားပြီး ခင်ဗျားက ပြန်ပေးရမယ်။# >>> prod_signs.call([1, 2, 2, -4])
+# 9
+# >>> prod_signs.call([0, 1])
+# 0
+# >>> prod_signs.call([])
+# nil
+def prod_signs(arr)
+","def prod_signs(arr)
+  return nil if arr.empty?
+  
+  product_signs = arr.reduce(1) { |prod, num| prod * num <=> 0 }
+  sum_magnitudes = arr.map(&:abs).sum
+  
+  product_signs * sum_magnitudes
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_prod_signs
+    candidate = method(:prod_signs)
+    assert_equal(-9, candidate.call([1, 2, 2, -4]))
+    assert_equal(0, candidate.call([0, 1]))
+    assert_equal(-10, candidate.call([1, 1, 1, 2, 3, -1, 1]))
+    assert_equal(nil, candidate.call([]))
+    assert_equal(20, candidate.call([2, 4, 1, 2, -1, -1, 9]))
+    assert_equal(4, candidate.call([-1, 1, -1, 1]))
+    assert_equal(-4, candidate.call([-1, 1, 1, 1]))
+    assert_equal(0, candidate.call([-1, 1, 1, 0]))
+  end
+end
+"
+HumanEval_129,mya_Mymr,rb,"ဥပမာများ:အနည်းဆုံးလမ်းကြောင်းဖြတ်သွားတဲ့ ကွက်တွေပေါ်က တန်ဖိုးတွေရဲ့ အစီအစဉ်ကျ အတန်းတစ်ခုကို ပြန်ပေးတယ်။အဖြေက ထူးခြားတယ်ဆိုတာ အာမခံတယ် lst_A[j] = lst_B[j]။lst_A[i] < lst_B[i] ဆိုပြီး j (1 <= j < i) အတွက် ကျွန်တော်တို့မှာ lst_B ထက် ပိုများတယ်။ တစ်နည်းပြောရရင် integer index i ရှိတယ်။lst_A နဲ့ lst_B လို့ ခေါ်ကြပါစို့၊ lst_A ကတော့ lexicographically less ပါ။A နဲ့ B ကွက်တွေပေါ်က တန်ဖိုးတွေရဲ့ အစီအစဉ်ကျ အတန်းတွေ လုပ်ပြီးတဲ့အခါလမ်းကြောင်း A (အလျား k) သည် လမ်းကြောင်း B (အလျား k) ထက် ပိုငယ်သည်ဟု ယူဆရလျှင်သင်ဟာ ဂရိမှ အပြင်ကို ထွက်လို့မရဘူး။အတိအကျကို မခွဲခြားနိုင်ပါဘူး။k အရှည်ရှိတဲ့လမ်းကြောင်းက k ကွက်လပ်တွေကို အတိအကျ သွားဖို့ဆိုတာ သတိပြုပါ။အခန်းငယ်လေးပါတနည်းပြောရရင် ခင်ဗျားတို့ရဲ့ လက်ရှိဆဲလ်နဲ့ ချိတ်ဆက်နေတဲ့ အနားကို သွားလို့ရတယ်ဘယ်ဆဲလ်ကမဆို ချိတ်ဆက်လို့ရတယ်။ အဆင့်တိုင်းမှာ အိမ်နီးချင်းဆဲလ်တိုင်းကို ချိတ်ဆက်လို့ရတယ်။K အလျားရဲ့ အနိမ့်ဆုံးလမ်းကြောင်းက ကွန်ရက်ထဲမှာ ရှိဖို့လိုတယ်။ စလို့ရပါပြီ။အပါအဝင်ဟာ grid ရဲ့ ကွက်တွေထဲမှာ တစ်ကြိမ်ပဲ ပေါ်တယ်။ဂရစ်ထဲက ကွက်လပ်တိုင်းမှာ တန်ဖိုးတစ်ခုပါတယ်။ [1, N * N] ကွက်လပ်ထဲက ကိန်းပြည့်တိုင်းပါ။အတန်း N နဲ့ အတိုင် N (N >= 2) နဲ့ အပေါင်းကိန်းပြည့် k ရှိတဲ့ ဂရစ်တစ်ခုပေးရင်# >>> minPath.call([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 3)
+# [1, 2, 1]
+# >>> minPath.call([[5, 9, 3], [4, 1, 6], [7, 8, 2]], 1)
+# [1]
+def minPath(grid, k)
+","def minPath(grid, k)
+  n = grid.size
+  directions = [[-1, 0], [1, 0], [0, -1], [0, 1]]
+  min_path = nil
+
+  n.times do |i|
+    n.times do |j|
+      queue = [[[i, j], [grid[i][j]]]]
+      until queue.empty?
+        position, path = queue.shift
+        if path.size == k
+          min_path = path if min_path.nil? || path < min_path
+          next
+        end
+        directions.each do |dx, dy|
+          x, y = position[0] + dx, position[1] + dy
+          if x.between?(0, n-1) && y.between?(0, n-1)
+            queue.push([[x, y], path + [grid[x][y]]])
+          end
+        end
+      end
+    end
+  end
+  min_path
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_minPath
+    candidate = method(:minPath)
+    assert_equal([1, 2, 1], candidate.call([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 3))
+    assert_equal([1], candidate.call([[5, 9, 3], [4, 1, 6], [7, 8, 2]], 1))
+    assert_equal([1, 2, 1, 2], candidate.call([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]], 4))
+    assert_equal([1, 10, 1, 10, 1, 10, 1], candidate.call([[6, 4, 13, 10], [5, 7, 12, 1], [3, 16, 11, 15], [8, 14, 9, 2]], 7))
+    assert_equal([1, 7, 1, 7, 1], candidate.call([[8, 14, 9, 2], [6, 4, 13, 15], [5, 7, 1, 12], [3, 10, 11, 16]], 5))
+    assert_equal([1, 6, 1, 6, 1, 6, 1, 6, 1], candidate.call([[11, 8, 7, 2], [5, 16, 14, 4], [9, 3, 15, 6], [12, 13, 10, 1]], 9))
+    assert_equal([1, 6, 1, 6, 1, 6, 1, 6, 1, 6, 1, 6], candidate.call([[12, 13, 10, 1], [9, 3, 15, 6], [5, 16, 14, 4], [11, 8, 7, 2]], 12))
+    assert_equal([1, 3, 1, 3, 1, 3, 1, 3], candidate.call([[2, 7, 4], [3, 1, 5], [6, 8, 9]], 8))
+    assert_equal([1, 5, 1, 5, 1, 5, 1, 5], candidate.call([[6, 1, 5], [3, 8, 9], [2, 7, 4]], 8))
+    assert_equal([1, 2, 1, 2, 1, 2, 1, 2, 1, 2], candidate.call([[1, 2], [3, 4]], 10))
+    assert_equal([1, 3, 1, 3, 1, 3, 1, 3, 1, 3], candidate.call([[1, 3], [3, 2]], 10))
+  end
+end
+"
+HumanEval_130,mya_Mymr,rb,"ဥပမာများ:Tribonacci ရဲ့ ပထမ n + 1 ကိန်းစဉ်တွေပါN ကို ရပါၿပီ။ ဒီေတာ့ array တစ္ခုကို ျပန္ေပးရပါမယ္။= ၂ + ၃ + ၃ = ၈ ။tri(3) = tri(2) + tri(1) + tri(4)tri ((4) = ၃ tri ((2) = 1 + (2 / 2) = 2 ဥပမာ -tri (n) = tri (n - 1) + tri (n - 2) + tri (n + 1) ဖြစ်ပြီး n ကတော့ odd ဖြစ်ရင်ပေါ့။tri (n) = 1 + n / 2၊ n က အချိုးအစားဆိုရင်။tri(1) = ၃ Tribonacci အစဉ်ကို ထပ်ကျော့ခြင်းဖြင့် သတ်မှတ်သည်။ဒါပေမယ့် လူတွေက Tribonacci ရဲ့ အစီအစဉ်ကို မသိကြသေးပါဘူး။Fibonacci Sequence ကို လူတိုင်းသိပြီး ဒါကို ၁၉၇၀ က သင်္ချာပညာရှင်တွေ အလေးအနက် လေ့လာထားတာပါ။# >>> tri.call(3)
+# [1, 3, 2, 8]
+def tri(n)
+","def tri(n)
+  sequence = [1, 3]
+  
+  (2..n).each do |i|
+    if i.even?
+      sequence[i] = 1 + i / 2
+    else
+      sequence[i] = sequence[i - 1] + sequence[i - 2] + sequence[i + 1] rescue 0
+    end
+  end
+  
+  sequence[0..n]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_tri
+    candidate = method(:tri)
+    assert_equal([1, 3, 2, 8], candidate.call(3))
+    assert_equal([1, 3, 2, 8, 3], candidate.call(4))
+    assert_equal([1, 3, 2, 8, 3, 15], candidate.call(5))
+    assert_equal([1, 3, 2, 8, 3, 15, 4], candidate.call(6))
+    assert_equal([1, 3, 2, 8, 3, 15, 4, 24], candidate.call(7))
+    assert_equal([1, 3, 2, 8, 3, 15, 4, 24, 5], candidate.call(8))
+    assert_equal([1, 3, 2, 8, 3, 15, 4, 24, 5, 35], candidate.call(9))
+    assert_equal([1, 3, 2, 8, 3, 15, 4, 24, 5, 35, 6, 48, 7, 63, 8, 80, 9, 99, 10, 120, 11], candidate.call(20))
+    assert_equal([1], candidate.call(0))
+    assert_equal([1, 3], candidate.call(1))
+  end
+end
+"
+HumanEval_131,mya_Mymr,rb,"ဥပမာ -အကယ်၍ ဂဏန်းအားလုံးသည် အချိုးညီပါက ၀ ကိုပြန်ပေးပါ။အပေါင်းကိန်းပြည့် n ကိုပေးရင် ဂဏန်းတစ်လုံးချင်းရဲ့ မြောက်လဒ်ကို ပြန်ပေးပါ။# >>> digits.call(1)
+# 1
+# >>> digits.call(4)
+# 0
+# >>> digits.call(235)
+# 15
+def digits(n)
+","def digits(n)
+  odd_digits = n.to_s.chars.map(&:to_i).select { |digit| digit.odd? }
+  return 0 if odd_digits.empty?
+  odd_digits.reduce(:*)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_digits
+    candidate = method(:digits)
+    assert_equal(5, candidate.call(5))
+    assert_equal(5, candidate.call(54))
+    assert_equal(1, candidate.call(120))
+    assert_equal(5, candidate.call(5014))
+    assert_equal(315, candidate.call(98765))
+    assert_equal(2625, candidate.call(5576543))
+    assert_equal(0, candidate.call(2468))
+  end
+end
+"
+HumanEval_132,mya_Mymr,rb,"အနည်းဆုံးတော့ နောက်ဆက်တွဲမှာ ကပ်ထားတဲ့ ကန့်လန့်ဖြတ်တစ်ခုရှိတယ်။တကယ်လို့ bracket တွေရဲ့ နောက်ဆက်တွဲမှန်တယ်ဆိုရင် function က true ပြန်ပေးတယ်။ညာဘက်အကန့်အသတ်များသာပါဝင်သော input အဖြစ် string ကိုယူသော function တစ်ခုကိုဖန်တီးပါ။# >>> is_nested.call(""[[]]"")
+# true
+# >>> is_nested.call(""[]]]]]]][[[[[]"")
+# false
+# >>> is_nested.call(""[][]"")
+# false
+# >>> is_nested.call(""[]"")
+# false
+# >>> is_nested.call(""[[][]]"")
+# true
+# >>> is_nested.call(""[[]][["")
+# true
+def is_nested(string)
+","def is_nested(string)
+  stack = []
+  has_nested = false
+
+  string.each_char do |char|
+    if char == '['
+      stack.push(char)
+    elsif char == ']'
+      if stack.empty?
+        return false
+      end
+      stack.pop
+      has_nested = true if stack.any?
+    end
+  end
+
+  has_nested
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_nested
+    candidate = method(:is_nested)
+    assert_equal(true, candidate.call(""[[]]""))
+    assert_equal(false, candidate.call(""[]]]]]]][[[[[]""))
+    assert_equal(false, candidate.call(""[][]""))
+    assert_equal(false, candidate.call(""[]""))
+    assert_equal(true, candidate.call(""[[[[]]]]""))
+    assert_equal(false, candidate.call(""[]]]]]]]]]]""))
+    assert_equal(true, candidate.call(""[][][[]]""))
+    assert_equal(false, candidate.call(""[[]""))
+    assert_equal(false, candidate.call(""[]]""))
+    assert_equal(true, candidate.call(""[[]][[""))
+    assert_equal(true, candidate.call(""[[][]]""))
+    assert_equal(false, candidate.call(""""))
+    assert_equal(false, candidate.call(""[[[[[[[[""))
+    assert_equal(false, candidate.call(""]]]]]]]]""))
+  end
+end
+"
+HumanEval_133,mya_Mymr,rb,"ဥပမာများ:array ထဲက element ေတြကို အေပၚဆံုး int (~ ceiling) ထိ ေဝမွ်ေပးလိုက္ပါArray ထဲက ကိန္းႏွစ္ထပ္ကိန္းေတြကို ျပန္ရမယ္ခင်ဗျားကို ဂဏန်းတွေ ပေးထားတယ်# >>> lst.call([1.0, 2.0, 3.0])
+# 14
+# >>> lst.call([1.0, 4.0, 9.0])
+# 98
+# >>> lst.call([1.0, 3.0, 5.0, 7.0])
+# 84
+# >>> lst.call([1.4, 4.2, 0.0])
+# 29
+# >>> lst.call([-2.4, 1.0, 1.0])
+# 6
+def sum_squares(lst)
+","def sum_squares(lst)
+  lst.map { |num| (num.ceil)**2 }.sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sum_squares
+    candidate = method(:sum_squares)
+    assert_equal(14, candidate.call([1.0, 2.0, 3.0]))
+    assert_equal(14, candidate.call([1.0, 2.0, 3.0]))
+    assert_equal(84, candidate.call([1.0, 3.0, 5.0, 7.0]))
+    assert_equal(29, candidate.call([1.4, 4.2, 0.0]))
+    assert_equal(6, candidate.call([-2.4, 1.0, 1.0]))
+    assert_equal(10230, candidate.call([100.0, 1.0, 15.0, 2.0]))
+    assert_equal(200000000, candidate.call([10000.0, 10000.0]))
+    assert_equal(75, candidate.call([-1.4, 4.6, 6.3]))
+    assert_equal(1086, candidate.call([-1.4, 17.9, 18.9, 19.9]))
+    assert_equal(0, candidate.call([0.0]))
+    assert_equal(1, candidate.call([-1.0]))
+    assert_equal(2, candidate.call([-1.0, 1.0, 0.0]))
+  end
+end
+"
+HumanEval_134,mya_Mymr,rb,"ဥပမာများ:မှတ်ချက်: ""word"" သည် စာလုံးစုတစ်စုဖြစ်ပြီး စာလုံးစုများကို နေရာလပ်ဖြင့် ခွဲခြားထားသည်။စကားလုံးတစ်လုံးရဲ့ အပိုင်းဖြစ်ပြီး မမှန်ရင် မှားတယ်။string ရဲ့ အက္ခရာစဉ် character တစ်ခုဖြစ်ပြီး  မဟုတ်ဘူး။နောက်ဆုံး စာလုံးက ဆိုရင် true ပြန်ပေးတဲ့ လုပ်ဆောင်ချက်ကို ဖန်တီးပါ။# >>> check_if_last_char_is_a_letter.call(""apple pie"")
+# false
+# >>> check_if_last_char_is_a_letter.call(""apple pi e"")
+# true
+# >>> check_if_last_char_is_a_letter.call(""apple pi e "")
+# false
+# >>> check_if_last_char_is_a_letter.call("""")
+# false
+def check_if_last_char_is_a_letter(txt)
+","check_if_last_char_is_a_letter = ->(txt) {
+  return false if txt.strip.empty?
+  words = txt.strip.split(' ')
+  last_word = words.last
+  return false if last_word.empty?
+  last_char = last_word[-1]
+
+  last_char =~ /[a-zA-Z]/ && (words.size == 1 || txt[txt.rindex(last_char) - 1] == ' ')
+}","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_check_if_last_char_is_a_letter
+    candidate = method(:check_if_last_char_is_a_letter)
+    assert_equal(false, candidate.call(""apple""))
+    assert_equal(true, candidate.call(""apple pi e""))
+    assert_equal(false, candidate.call(""eeeee""))
+    assert_equal(true, candidate.call(""A""))
+    assert_equal(false, candidate.call(""Pumpkin pie ""))
+    assert_equal(false, candidate.call(""Pumpkin pie 1""))
+    assert_equal(false, candidate.call(""""))
+    assert_equal(false, candidate.call(""eeeee e ""))
+    assert_equal(false, candidate.call(""apple pie""))
+    assert_equal(false, candidate.call(""apple pi e ""))
+  end
+end
+"
+HumanEval_135,mya_Mymr,rb,"ဥပမာများ:တန်ဖိုးများ ထပ်တူကျခြင်း။ထိုကဲ့သို့သော element မရှိလျှင် -1 ပြန်ပေးပါ။ ပေးထားသော array တွင်  မရှိပါ။၎င်းရဲ့ ရှေ့မှာရှိတဲ့ အစိတ်အပိုင်းထက် မကြီး ဒါမှမဟုတ် တူညီတာမဟုတ်ဘူး။ြပည်သူ့ေတွရဲ့ အကြီးဆုံး index ကိုပြန်ပေးမယ့် function ကိုဖန်တီးပါ။# >>> can_arrange.call([1, 2, 4, 3, 5])
+# 3
+# >>> can_arrange.call([1, 2, 3])
+# -1
+def can_arrange(arr)
+","def can_arrange(arr)
+  (1...arr.length).reverse_each do |i|
+    return i if arr[i] < arr[i - 1]
+  end
+  -1
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_can_arrange
+    candidate = method(:can_arrange)
+    assert_equal(3, candidate.call([1, 2, 4, 3, 5]))
+    assert_equal(-1, candidate.call([1, 2, 4, 5]))
+    assert_equal(2, candidate.call([1, 4, 2, 5, 6, 7, 8, 9, 10]))
+    assert_equal(4, candidate.call([4, 8, 5, 7, 3]))
+    assert_equal(-1, candidate.call([]))
+  end
+end
+"
+HumanEval_136,mya_Mymr,rb,"ဥပမာများ:အနှုတ် သို့မဟုတ် အပေါင်းကိန်းပြည့်မရှိလျှင် ၎င်းတို့ကို nil အဖြစ်ပြန်ပို့ပါ။array ထဲမှာ အပေါင်းကိန်းပြည့်တွေ ပါလာမယ်။""b"" က အေသးဆံုးျဖစ္ၿပီး'a' သည်  ဖြစ်သော array (a, b) ကို ပြန်ပေးသော function တစ်ခုကို ဖန်တီးပါ။# >>> largest_smallest_integers.call([2, 4, 1, 3, 5, 7])
+# [nil, 1]
+# >>> largest_smallest_integers.call([])
+# [nil, nil]
+# >>> largest_smallest_integers.call([0])
+# [nil, nil]
+def largest_smallest_integers(lst)
+","def largest_smallest_integers(lst)
+  largest_negative = nil
+  smallest_positive = nil
+  
+  lst.each do |num|
+    if num < 0
+      largest_negative = num if largest_negative.nil? || num > largest_negative
+    elsif num > 0
+      smallest_positive = num if smallest_positive.nil? || num < smallest_positive
+    end
+  end
+  
+  [largest_negative, smallest_positive]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_largest_smallest_integers
+    candidate = method(:largest_smallest_integers)
+    assert_equal([nil, 1], candidate.call([2, 4, 1, 3, 5, 7]))
+    assert_equal([nil, 1], candidate.call([2, 4, 1, 3, 5, 7, 0]))
+    assert_equal([-2, 1], candidate.call([1, 3, 2, 4, 5, 6, -2]))
+    assert_equal([-7, 2], candidate.call([4, 5, 3, 6, 2, 7, -7]))
+    assert_equal([-9, 2], candidate.call([7, 3, 8, 4, 9, 2, 5, -9]))
+    assert_equal([nil, nil], candidate.call([]))
+    assert_equal([nil, nil], candidate.call([0]))
+    assert_equal([-1, nil], candidate.call([-1, -3, -5, -6]))
+    assert_equal([-1, nil], candidate.call([-1, -3, -5, -6, 0]))
+    assert_equal([-3, 1], candidate.call([-6, -4, -4, -3, 1]))
+    assert_equal([-3, 1], candidate.call([-6, -4, -4, -3, -100, 1]))
+  end
+end
+"
+HumanEval_137,mya_Mymr,rb,"မှတ်ချက်: တကယ်လို့ တကယ့်ကိန်းတစ်ခုကို string တစ်ခုအဖြစ် ဖော်ပြမယ်ဆိုရင်၊ မျောနေတဲ့ အမှတ်အသားက . သို့မဟုတ် ,  ဖြစ်နိုင်ပါတယ်။တန်ဖိုးများတူညီလျှင် nil ကိုပြန်ပေးပါ။real numbers တွေကိုရှာပြီး ပေးထားတဲ့ variable အမျိုးအစားထဲက ပိုကြီးတဲ့ variable ကိုပြန်ပေးတယ်။ကို ကိုယ်စားပြုတဲ့ ကိန်းပြည့်တွေ၊ float တွေ၊ strings တွေကို ယူတဲ့ လုပ်ဆောင်ချက်တစ်ခု ဖန်တီးပါ။# >>> compare_one.call(1, 2.5)
+# 2.5
+# >>> compare_one.call(1, ""2,3"")
+# ""2,3""
+# >>> compare_one.call(""5,1"", ""6"")
+# ""6""
+# >>> compare_one.call(""1"", 1)
+# nil
+def compare_one(a, b)
+","def compare_one(a, b)
+  a = a.to_s.tr(',', '.').to_f if a.is_a?(String) && a.include?(',')
+  b = b.to_s.tr(',', '.').to_f if b.is_a?(String) && b.include?(',')
+
+  if a.is_a?(String) && b.is_a?(String)
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Float) && b.is_a?(Float)
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Integer) && b.is_a?(Integer)
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Integer) && b.is_a?(Float)
+    a = a.to_f
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Float) && b.is_a?(Integer)
+    b = b.to_f
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(String) && b.is_a?(Float)
+    b = b.to_s # Only supporting variable type comparison, retain original types
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Float) && b.is_a?(String)
+    a = a.to_s # Only supporting variable type comparison, retain original types
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(String) && b.is_a?(Integer)
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Integer) && b.is_a?(String)
+    return nil if a == b
+    return a > b ? a : b
+  else
+    return nil
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_compare_one
+    candidate = method(:compare_one)
+    assert_equal(2, candidate.call(1, 2))
+    assert_equal(2.5, candidate.call(1, 2.5))
+    assert_equal(3, candidate.call(2, 3))
+    assert_equal(6, candidate.call(5, 6))
+    assert_equal(""2,3"", candidate.call(1, ""2,3""))
+    assert_equal(""6"", candidate.call(""5,1"", ""6""))
+    assert_equal(""2"", candidate.call(""1"", ""2""))
+    assert_equal(nil, candidate.call(""1"", 1))
+  end
+end
+"
+HumanEval_138,mya_Mymr,rb,"ဥပမာ။ပေးထားတဲ့ ကိန်း n ကို အပေါင်းကိန်း ၄ လုံးရဲ့ ပေါင်းလဒ်အဖြစ် ရေးနိုင်လားဆိုတာတွက်ချက်ပါ။# >>> is_equal_to_sum_even.call(4)
+# false
+# >>> is_equal_to_sum_even.call(6)
+# false
+# >>> is_equal_to_sum_even.call(8)
+# true
+def is_equal_to_sum_even(n)
+","def is_equal_to_sum_even(n)
+  return false if n < 8
+  n.even?
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_equal_to_sum_even
+    candidate = method(:is_equal_to_sum_even)
+    assert_equal(false, candidate.call(4))
+    assert_equal(false, candidate.call(6))
+    assert_equal(true, candidate.call(8))
+    assert_equal(true, candidate.call(10))
+    assert_equal(false, candidate.call(11))
+    assert_equal(true, candidate.call(12))
+    assert_equal(false, candidate.call(13))
+    assert_equal(true, candidate.call(16))
+  end
+end
+"
+HumanEval_139,mya_Mymr,rb,"ဥပမာ -အဲဒီမှာ n > 0 brazilian_factorial (n) = n! * (n-1)! * (n-2)! * ... * 1! ဘရာဇီး factorial ကို အောက်ပါအတိုင်း သတ်မှတ်ပါတယ်။# >>> special_factorial.call(4)
+# 288
+# The function will receive an integer as input and should return the special
+# factorial of this integer.
+def special_factorial(n)
+","def special_factorial(n)
+  return 1 if n <= 1
+  (1..n).inject(1) { |product, i| product * factorial(i) }
+end
+
+def factorial(num)
+  return 1 if num <= 1
+  (2..num).inject(1, :*)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_special_factorial
+    candidate = method(:special_factorial)
+    assert_equal(288, candidate.call(4))
+    assert_equal(34560, candidate.call(5))
+    assert_equal(125411328000, candidate.call(7))
+    assert_equal(1, candidate.call(1))
+  end
+end
+"
+HumanEval_140,mya_Mymr,rb,"ပြီးရင် အဆက်အသွယ်ရှိတဲ့ စာလုံးတွေကို -  နဲ့ အစားထိုးလိုက်ပါstring မှာ space နှစ်ခုထက်ပိုပြီးရှိရင်စာသားတန်းတစ်ခုကိုပေးပြီး ၎င်းထဲက နေရာလွတ်အားလုံးကို အောက်ခြေဖြတ် သင်္ကေတတွေနဲ့ အစားထိုးလိုက်ပါ။# >>> fix_spaces.call("" Example"")
+# ""Example""
+# >>> fix_spaces.call("" Example 1"")
+# ""Example_1""
+# >>> fix_spaces.call("" Example 2"")
+# ""_Example_2""
+# >>> fix_spaces.call("" Example 3"")
+# ""_Example-3""
+def fix_spaces(text)
+","def fix_spaces(text)
+  text.strip.gsub(/\s{3,}/, '-').gsub(' ', '_')
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fix_spaces
+    candidate = method(:fix_spaces)
+    assert_equal(""Example"", candidate.call(""Example""))
+    assert_equal(""Mudasir_Hanif_"", candidate.call(""Mudasir Hanif ""))
+    assert_equal(""Yellow_Yellow__Dirty__Fellow"", candidate.call(""Yellow Yellow  Dirty  Fellow""))
+    assert_equal(""Exa-mple"", candidate.call(""Exa   mple""))
+    assert_equal(""-Exa_1_2_2_mple"", candidate.call(""   Exa 1 2 2 mple""))
+  end
+end
+"
+HumanEval_141,mya_Mymr,rb,"ဥပမာများ:- ဒီကွန်ကရစ်နောက်က အောက်ခြေကြိုးက အောက်ပါထဲက တစ်ခုဖြစ်သင့်တယ်။လက်တင်အက္ခရာအက္ခရာများ (a-z နှင့် A-Z) ။- ဒီစက္ဝိုင္းရဲ႕ေရွ႕မွာရွိတဲ့စက္ဝိုင္းဟာ အပိုင္းမဲ့မေနသင့္ပါဘူး ဒါ့အျပင္ ဆိုတဲ့စာလုံးနဲ႔စတယ္- ဖိုင်နာမည်မှာ အမှတ်တစ်ခုတည်းပဲ ရှိပါတယ် '.'- ဖိုင်အမည်တွင် ဂဏန်းသုံးလုံးထက်ပို၍ မပါရှိသင့် (""0"" - ""9"") ။ြ ္း ေြပာြပီးအောက်ပါ အခြေအနေများအားလုံး ပြည့်စုံပါက ဖိုင်အမည်ကိုသာ ခိုင်လုံသည်ဟု ယူဆရသည်။""Yes"" ကိုဖိုင်နာမည်မှန်လျှင်ပြန်ပေးသည် ""No"" ကိုပြန်ပေးသည်ဖိုင်နာမည်ကို ကိုယ်စားပြုတဲ့ string ကိုယူပြီး  ပြန်ပေးတဲ့ function ကိုဖန်တီးပါ။# >>> file_name_check.call(""example.txt"")
+# ""Yes""
+# >>> file_name_check.call(""1example.dll"")
+# ""No""
+def file_name_check(file_name)
+","def file_name_check(file_name)
+  # Check if there's exactly one dot in the filename
+  return 'No' unless file_name.count('.') == 1
+  
+  # Split the filename into the name and extension
+  name, extension = file_name.split('.')
+  
+  # Check if the name part starts with a letter
+  return 'No' if name.empty? || !name[0].match?(/[a-zA-Z]/)
+  
+  # Check if the extension is valid
+  return 'No' unless ['txt', 'exe', 'dll'].include?(extension)
+  
+  # Count digits in the file name
+  digit_count = file_name.count(""0-9"")
+  
+  # Check if digits are more than three
+  return 'No' if digit_count > 3
+  
+  'Yes'
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_file_name_check
+    candidate = method(:file_name_check)
+    assert_equal(""Yes"", candidate.call(""example.txt""))
+    assert_equal(""No"", candidate.call(""1example.dll""))
+    assert_equal(""No"", candidate.call(""s1sdf3.asd""))
+    assert_equal(""Yes"", candidate.call(""K.dll""))
+    assert_equal(""Yes"", candidate.call(""MY16FILE3.exe""))
+    assert_equal(""No"", candidate.call(""His12FILE94.exe""))
+    assert_equal(""No"", candidate.call(""_Y.txt""))
+    assert_equal(""No"", candidate.call(""?aREYA.exe""))
+    assert_equal(""No"", candidate.call(""/this_is_valid.dll""))
+    assert_equal(""No"", candidate.call(""this_is_valid.wow""))
+    assert_equal(""Yes"", candidate.call(""this_is_valid.txt""))
+    assert_equal(""No"", candidate.call(""this_is_valid.txtexe""))
+    assert_equal(""No"", candidate.call(""#this2_i4s_5valid.ten""))
+    assert_equal(""No"", candidate.call(""@this1_is6_valid.exe""))
+    assert_equal(""No"", candidate.call(""this_is_12valid.6exe4.txt""))
+    assert_equal(""No"", candidate.call(""all.exe.txt""))
+    assert_equal(""Yes"", candidate.call(""I563_No.exe""))
+    assert_equal(""Yes"", candidate.call(""Is3youfault.txt""))
+    assert_equal(""Yes"", candidate.call(""no_one#knows.dll""))
+    assert_equal(""No"", candidate.call(""1I563_Yes3.exe""))
+    assert_equal(""No"", candidate.call(""I563_Yes3.txtt""))
+    assert_equal(""No"", candidate.call(""final..txt""))
+    assert_equal(""No"", candidate.call(""final132""))
+    assert_equal(""No"", candidate.call(""_f4indsartal132.""))
+    assert_equal(""No"", candidate.call("".txt""))
+    assert_equal(""No"", candidate.call(""s.""))
+  end
+end
+"
+HumanEval_142,mya_Mymr,rb,"ဥပမာများ:ထို့နောက် function သည် entry များ၏ ပေါင်းလဒ်ကို ပြန်ပေးရမည်။3 ရဲ့ မြှောက်ကိန်းဖြစ်ပြီး ၎င်းရဲ့ညွှန်းကိန်းက 4 ရဲ့ မြှောက်ကိန်းမဟုတ်ဘဲ 3 ရဲ့ မြှောက်ကိန်းသာဆိုရင် ကိန်းပြည့်ကို မြှောက်ကိန်းဖြစ်လိမ့်မယ်။ဤလုပ်ဆောင်ချက်သည် ကိန်းပြည့်များ၏ array တစ်ခုကို ယူလိမ့်မည်။ array ထဲရှိ entry အားလုံးအတွက်, ၎င်း၏ index သည် a  ဖြစ်ပါက လုပ်ဆောင်ချက်သည် integer entry ကို square လုပ်ရမည်။"" လို့ မေးတယ်။# >>> lst
+# [1, 2, 3]
+# >>> lst
+# []
+# >>> lst
+# [-1, -5, 2, -1, -5]
+def sum_squares(lst)
+","def sum_squares(lst)
+  lst.map.with_index do |num, index|
+    if index % 3 == 0
+      num ** 2
+    elsif index % 4 == 0
+      num ** 3
+    else
+      num
+    end
+  end.sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sum_squares
+    candidate = method(:sum_squares)
+    assert_equal(6, candidate.call([1, 2, 3]))
+    assert_equal(14, candidate.call([1, 4, 9]))
+    assert_equal(0, candidate.call([]))
+    assert_equal(9, candidate.call([1, 1, 1, 1, 1, 1, 1, 1, 1]))
+    assert_equal(-3, candidate.call([-1, -1, -1, -1, -1, -1, -1, -1, -1]))
+    assert_equal(0, candidate.call([0]))
+    assert_equal(-126, candidate.call([-1, -5, 2, -1, -5]))
+    assert_equal(3030, candidate.call([-56, -99, 1, 0, -2]))
+    assert_equal(0, candidate.call([-1, 0, 0, 0, 0, 0, 0, 0, -1]))
+    assert_equal(-14196, candidate.call([-16, -9, -2, 36, 36, 26, -20, 25, -40, 20, -4, 12, -26, 35, 37]))
+    assert_equal(-1448, candidate.call([-1, -3, 17, -1, -15, 13, -1, 14, -14, -12, -5, 14, -14, 6, 13, 11, 16, 16, 4, 10]))
+  end
+end
+"
+HumanEval_143,mya_Mymr,rb,"ဥပမာ ၁။string အသစ်ထဲက စကားလုံးတွေရဲ့ အစီအစဉ်ဟာ မူလထဲက စကားလုံးတွေနဲ့ အတူတူပဲ ဖြစ်ရပါမယ်။အရှည်က ဂဏန်းစု prime prime တွေပါၿပီးေတာ့ မူလအပိုင္းက စာလံုးေတြကို ပါဝင္တဲ့ string ကို ျပန္ေပးရပါမယ္။စကားလုံးတစ်ချို့ကို စာခြားနားချက်နဲ့ ခြားထားတယ်။ခင်ဗျားကို ဝါကျတစ်ခုနဲ့ ကိုယ်စားပြုတဲ့ ကြိုးတစ်ချောင်းပေးတယ်။# >>> words_in_sentence.call(""This is a test"")
+# ""is""
+# Example 2:
+# >>> words_in_sentence.call(""lets go for swimming"")
+# ""go for""
+# Constraints:
+# * 1 <= len(sentence) <= 100
+# * sentence contains only letters
+def words_in_sentence(sentence)
+","def words_in_sentence(sentence)
+  def is_prime?(num)
+    return false if num <= 1
+    (2..Math.sqrt(num)).none? { |i| num % i == 0 }
+  end
+  
+  words = sentence.split("" "")
+  prime_length_words = words.select { |word| is_prime?(word.length) }
+  prime_length_words.join("" "")
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_words_in_sentence
+    candidate = method(:words_in_sentence)
+    assert_equal(""is"", candidate.call(""This is a test""))
+    assert_equal(""go for"", candidate.call(""lets go for swimming""))
+    assert_equal(""there is no place"", candidate.call(""there is no place available here""))
+    assert_equal(""Hi am Hussein"", candidate.call(""Hi I am Hussein""))
+    assert_equal(""go for it"", candidate.call(""go for it""))
+    assert_equal("""", candidate.call(""here""))
+    assert_equal(""is"", candidate.call(""here is""))
+  end
+end
+"
+HumanEval_144,mya_Mymr,rb,"X, N ကိုေခၚလို႔ရတယ္ဆိုရင္ေတာ့<numerator>/<denominator> မှာတော့ အပေါင်းကိန်းပြည့်တွေအဖြစ် အပေါင်းကိန်းနဲ့ အပေါင်းကိန်းပြည့်တွေအဖြစ် အပေါင်းကိန်းပြည့်တွေအဖြစ် အပေါင်းကိန်းပြည့်တွေအဖြစ် အပေါင်းကိန်းပြည့်တွေအဖြစ် အပေါင်းကိန်းပြည့်တွေအဖြစ် အပေါင်းကိန်းပြည့်တွေအဖြစ် အပေါင်းကိန်းပြည့်တွေအဖြစ် အပေါင်းကိန်းပြည့်တွေအဖြစ် အပေါင်းကိန်းပြည့်တွေအဖြစ်x နဲ့ n နှစ်ခုစလုံးဟာ အပိုင်းအစရဲ့ ကြိုးအမှတ်အသားဖြစ်ပြီး အောက်ပါပုံစံကို ဆောင်တယ်။x * n သည် ကိန်းပြည့်ဖြစ်လျှင် function သည် true ကိုပြန်ပေးပြီး false သင်လုပ်ရမှာက ဖော်ပြချက်ကို ရိုးရှင်းစေမယ့် လုပ်ဆောင်ချက်ကို ထည့်သွင်းဖို့ပါ။# >>> simplify.call(""1/5"", ""5/1"")
+# true
+# >>> simplify.call(""1/6"", ""2/1"")
+# false
+# >>> simplify.call(""7/10"", ""10/2"")
+# false
+def simplify(x, n)
+","def simplify(x, n)
+  # Convert x and n to numerators and denominators
+  num_x, den_x = x.split('/').map(&:to_i)
+  num_n, den_n = n.split('/').map(&:to_i)
+
+  # Multiply fractions: (num_x * num_n) / (den_x * den_n)
+  numerator = num_x * num_n
+  denominator = den_x * den_n
+
+  # Check if the result is a whole number
+  numerator % denominator == 0
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_simplify
+    candidate = method(:simplify)
+    assert_equal(true, candidate.call(""1/5"", ""5/1""))
+    assert_equal(false, candidate.call(""1/6"", ""2/1""))
+    assert_equal(true, candidate.call(""5/1"", ""3/1""))
+    assert_equal(false, candidate.call(""7/10"", ""10/2""))
+    assert_equal(true, candidate.call(""2/10"", ""50/10""))
+    assert_equal(true, candidate.call(""7/2"", ""4/2""))
+    assert_equal(true, candidate.call(""11/6"", ""6/1""))
+    assert_equal(false, candidate.call(""2/3"", ""5/2""))
+    assert_equal(false, candidate.call(""5/2"", ""3/5""))
+    assert_equal(true, candidate.call(""2/4"", ""8/4""))
+    assert_equal(true, candidate.call(""2/4"", ""4/2""))
+    assert_equal(true, candidate.call(""1/5"", ""5/1""))
+    assert_equal(false, candidate.call(""1/5"", ""1/5""))
+  end
+end
+"
+HumanEval_145,mya_Mymr,rb,"ဥပမာ -မူလ array ထဲက index ကို အခြေခံပြီး စီထားပါ။မှတ်ချက်: အက္ခရာပေါင်းတူသော စာရင်းအင်းများစွာရှိလျှင် အထက်ပါ ဂဏန်းများ စုစုပေါင်းလိုက်လျှင် အပေါ်သို့ တက်သွားသော အစီအစဉ်ဖြင့် ရေးသားရပါမည်။ပေးထားတဲ့ ကိန်းပြည့်တွေရဲ့ ကိန်းစဉ်ကို အမျိုးအစားခွဲတဲ့ လုပ်ဆောင်ချက်ကို ရေးပါ# >>> order_by_points.call([1, 11, -1, -11, -12])
+# [-1, -11, 1, -12, 11]
+# >>> order_by_points.call([])
+# []
+def order_by_points(nums)
+","def order_by_points(nums)
+  nums.sort_by.with_index do |num, index|
+    [num.to_s.chars.map(&:to_i).sum.abs, index]
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_order_by_points
+    candidate = method(:order_by_points)
+    assert_equal([-1, -11, 1, -12, 11], candidate.call([1, 11, -1, -11, -12]))
+    assert_equal([0, 2, 3, 6, 53, 423, 423, 423, 1234, 145, 37, 46, 56, 463, 3457], candidate.call([1234, 423, 463, 145, 2, 423, 423, 53, 6, 37, 3457, 3, 56, 0, 46]))
+    assert_equal([], candidate.call([]))
+    assert_equal([-3, -32, -98, -11, 1, 2, 43, 54], candidate.call([1, -11, -32, 43, 54, -98, 2, -3]))
+    assert_equal([1, 10, 2, 11, 3, 4, 5, 6, 7, 8, 9], candidate.call([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]))
+    assert_equal([-76, -21, 0, 4, 23, 6, 6], candidate.call([0, 6, 6, -76, -21, 23, 4]))
+  end
+end
+"
+HumanEval_146,mya_Mymr,rb,"ဥပမာ -ကိန်းဂဏန်းတစ်လုံးရဲ့ ပထမနဲ့ နောက်ဆုံး အက္ခရာတွေဟာ တစ်ထပ်တည်းဖြစ်ပါတယ် (၁၊ ၃၊ ၅၊ ၇၊ ၉)array ထဲက 10 ထက္ပိုၿပီး ႀကီးမားတဲ့ element ေတြရဲ႕ အေရအတြက္ နဲ႔ ႏွစ္ခုစလံုး input နဲ့ return အဖြစ် ကိန်းစဉ်တစ်စုကို ယူတဲ့ function တစ်ခုရေးပါ# >>> specialFilter.call([15, -73, 14, -15])
+# 1
+# >>> specialFilter.call([33, -2, -3, 45, 21, 109])
+# 2
+def specialFilter(nums)
+","def specialFilter(nums)
+  nums.count do |num|
+    num > 10 && num.to_s[0].to_i.odd? && num.to_s[-1].to_i.odd?
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_specialFilter
+    candidate = method(:specialFilter)
+    assert_equal(0, candidate.call([5, -2, 1, -5]))
+    assert_equal(1, candidate.call([15, -73, 14, -15]))
+    assert_equal(2, candidate.call([33, -2, -3, 45, 21, 109]))
+    assert_equal(4, candidate.call([43, -12, 93, 125, 121, 109]))
+    assert_equal(3, candidate.call([71, -2, -33, 75, 21, 19]))
+    assert_equal(0, candidate.call([1]))
+    assert_equal(0, candidate.call([]))
+  end
+end
+"
+HumanEval_147,mya_Mymr,rb,"ဥပမာ: a[i] + a[j] + a[k] က ၃ ရဲ႕ အၾကိမ္ျဖစ္တယ္i < j < k,  ရှိသည့် a ၏ သုံးထပ်ကိန်း (a[i], a[j], a[k]) အရေအတွက်ကို ပြန်ပေးသည်။i တစ်ခုစီအတွက် (1 ≤ i ≤ n) a[i] = i * i - i + 1 ၏တန်ဖိုး။ခင်ဗျားကို အပေါင်းကိန်းပြည့် n ပေးထားတယ်။ ခင်ဗျားက အရှည် n ရှိတဲ့ a ဆိုတဲ့ ကိန်းပြည့် မေထရစ်ကို ဖန်တီးရမယ်။# >>> get_max_triples.call(5)
+# 1
+# Explanation: 
+# a = [1, 3, 7, 13, 21]
+# The only valid triple is (1, 7, 13).
+def get_max_triples(n)
+","def get_max_triples(n)
+  a = Array.new(n) { |i| (i + 1) * (i + 1) - (i + 1) + 1 }
+  count = 0
+  
+  (0...n).each do |i|
+    (i+1...n).each do |j|
+      (j+1...n).each do |k|
+        count += 1 if (a[i] + a[j] + a[k]) % 3 == 0
+      end
+    end
+  end
+  
+  count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_get_max_triples
+    candidate = method(:get_max_triples)
+    assert_equal(1, candidate.call(5))
+    assert_equal(4, candidate.call(6))
+    assert_equal(36, candidate.call(10))
+    assert_equal(53361, candidate.call(100))
+  end
+end
+"
+HumanEval_148,mya_Mymr,rb,"ဥပမာများ ဂြိုဟ်တွေရဲ့ အမည်တွေ မှားနေလို့ပါ။ဒီ function က empty array ကို return လုပ္ရမယ္ planet1 or planet2 နေနဲ့ နီးစပ်မှုပါ။ဂြိုဟ် (၁) နဲ့ (၂) ရဲ့ ပတ်လမ်းကြားမှာ တည်ရှိပြီး ာစ် function က ဂြိုဟ်တွေအားလုံးရဲ့ ပတ်လမ်းတွေကို ာင်တဲ့ array ကို ပြန်ပေးရမယ်ဂြိုဟ်နာမည်နှစ်ခုကို ဂြိုဟ်1 နဲ့ ဂြိုဟ်2 ဆိုတဲ့ string တွေအဖြစ်ယူတဲ့ function တစ်ခုရေးပါ။ဥရေနယ်၊ နက်ထွန်း။ဗုဒ္ဓဟူးက နောက်တစ်လုံး ဗုဒ္ဓဟူးက နောက်တစ်ခု ကမ္ဘာမြေ၊ အင်္ဂါဂြိုဟ်၊ ကြယ်စင်၊ စနေဂြိုဟ်၊နေအဖွဲ့အစည်းမှာ ဂြိုဟ်ရှစ်လုံးရှိတယ်- နေနဲ့ အနီးဆုံးက ဂြိုဟ်တွေပါ။# >>> bf.call(""Jupiter"", ""Neptune"")
+# [""Saturn"", ""Uranus""]
+# >>> bf.call(""Earth"", ""Mercury"")
+# ""Venus""
+# >>> bf.call(""Mercury"", ""Uranus"")
+# [""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn""]
+def bf(planet1, planet2)
+","def bf(planet1, planet2)
+  planets = [""Mercury"", ""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn"", ""Uranus"", ""Neptune""]
+  
+  idx1 = planets.index(planet1)
+  idx2 = planets.index(planet2)
+  
+  return [] if idx1.nil? || idx2.nil?
+
+  start_idx, end_idx = [idx1, idx2].sort
+  
+  planets[(start_idx + 1)...end_idx]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_bf
+    candidate = method(:bf)
+    assert_equal([""Saturn"", ""Uranus""], candidate.call(""Jupiter"", ""Neptune""))
+    assert_equal([""Venus""], candidate.call(""Earth"", ""Mercury""))
+    assert_equal([""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn""], candidate.call(""Mercury"", ""Uranus""))
+    assert_equal([""Earth"", ""Mars"", ""Jupiter"", ""Saturn"", ""Uranus""], candidate.call(""Neptune"", ""Venus""))
+    assert_equal([], candidate.call(""Earth"", ""Earth""))
+    assert_equal([], candidate.call(""Mars"", ""Earth""))
+    assert_equal([], candidate.call(""Jupiter"", ""Makemake""))
+  end
+end
+"
+HumanEval_149,mya_Mymr,rb,"ဥပမာ -စကားလုံးအားလုံးဟာ တူညီတဲ့ အရှည်ရှိတယ်လို့ ယူဆနိုင်ပါတယ်။Function က string တွေကို sorted order နဲ့ array ပြန်ပေးရမယ်။စကားလုံး နှစ်လုံးက တူညီတဲ့ အရှည်ရှိရင် မေထရစ်ကို အက္ခရာစဉ်အတိုင်း စီလိုက်ပါ။ဒီစည်းမျဉ်းနဲ့ စီစဉ်ထားတဲ့ မေထရစ်ကို ပြန်ပေးရပါမယ်။Array ရဲ့ အစီအစဉ်ဟာ စကားလုံးတိုင်းရဲ့ အရှည်နဲ့အတူ မြင့်တက်သွားသင့်ပြီး ခင်ဗျားက၎င်းတွင် နှစ်ထပ်ကွမ်းစာများ ပါဝင်နိုင်သည်။array ဟာ string array ပါပဲ နံပါတ္ array တစ္ခုမွ မဟုတ္ပါဘူးဖို့စီစဉ်ထားတဲ့ array ကိုပြန်ပေးတယ်။၎င်းက မကိန်းကိန်းရှိတဲ့ ကြိုးတွေကို ဖျက်ပစ်တယ်။String တွေရဲ့ array ကို parameter အဖြစ် လက်ခံတဲ့ function တစ်ခုရေးပါ# >>> list_sort.call([""aa"", ""a"", ""aaa""])
+# [""aa""]
+# >>> list_sort.call([""ab"", ""a"", ""aaa"", ""cd""])
+# [""ab"", ""cd""]
+def sorted_list_sum(lst)
+","def list_sort(arr)
+  arr.select { |s| s.length.even? }
+     .sort_by { |s| [s.length, s] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sorted_list_sum
+    candidate = method(:sorted_list_sum)
+    assert_equal([""aa""], candidate.call([""aa"", ""a"", ""aaa""]))
+    assert_equal([""AI"", ""asdf"", ""school""], candidate.call([""school"", ""AI"", ""asdf"", ""b""]))
+    assert_equal([], candidate.call([""d"", ""b"", ""c"", ""a""]))
+    assert_equal([""abcd"", ""dcba""], candidate.call([""d"", ""dcba"", ""abcd"", ""a""]))
+    assert_equal([""AI"", ""ai"", ""au""], candidate.call([""AI"", ""ai"", ""au""]))
+    assert_equal([], candidate.call([""a"", ""b"", ""b"", ""c"", ""c"", ""a""]))
+    assert_equal([""cc"", ""dd"", ""aaaa"", ""bbbb""], candidate.call([""aaaa"", ""bbbb"", ""dd"", ""cc""]))
+  end
+end
+"
+HumanEval_150,mya_Mymr,rb,"ဥပမာများ:prime number တစ်ခုဖြစ်ပြီး y ရဲ့တန်ဖိုးကိုပြန်ပေးရပါမယ်။N သည်  ဆိုလျှင် x ၏ တန်ဖိုးကို ပြန်ပေးရမည့် ရိုးရှင်းသော ပရိုဂရမ်။# >>> x_or_y.call(7, 34, 12)
+# 34
+# >>> x_or_y.call(15, 8, 5)
+# 5
+def x_or_y(n, x, y)
+","def x_or_y(n, x, y)
+  require 'prime'
+  n.prime? ? x : y
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_x_or_y
+    candidate = method(:x_or_y)
+    assert_equal(34, candidate.call(7, 34, 12))
+    assert_equal(5, candidate.call(15, 8, 5))
+    assert_equal(33, candidate.call(3, 33, 5212))
+    assert_equal(3, candidate.call(1259, 3, 52))
+    assert_equal(-1, candidate.call(7919, -1, 12))
+    assert_equal(583, candidate.call(3609, 1245, 583))
+    assert_equal(129, candidate.call(91, 56, 129))
+    assert_equal(1234, candidate.call(6, 34, 1234))
+    assert_equal(0, candidate.call(1, 2, 0))
+    assert_equal(2, candidate.call(2, 2, 0))
+  end
+end
+"
+HumanEval_151,mya_Mymr,rb,"ကိန္းစုထဲမွာ odd ျဖစ္ေနရင္ negative ျဖစ္ေနရင္ေတာ့ ignore လုပ္လိုက္ပါကိန်းတွေရဲ့ မေထရစ်ကို ပေးပြီး ကိန်းတွေရဲ့ နှစ်ထပ်ကိန်းပေါင်းကို ပြန်ပေးပါ# >>> double_the_difference.call([1, 3, 2, 0])
+# 10
+# >>> double_the_difference.call([-1, -2, 0])
+# 0
+# >>> double_the_difference.call([9, -2])
+# 81
+# >>> double_the_difference.call([0])
+# 0
+# If the input array is empty, return 0.
+def double_the_difference(lst)
+","def double_the_difference(lst)
+  lst.select { |n| n.is_a?(Integer) && n.odd? && n >= 0 }
+     .map { |n| n ** 2 }
+     .sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_double_the_difference
+    candidate = method(:double_the_difference)
+    assert_equal(0, candidate.call([]))
+    assert_equal(25, candidate.call([5.0, 4.0]))
+    assert_equal(0, candidate.call([0.1, 0.2, 0.3]))
+    assert_equal(0, candidate.call([-10.0, -20.0, -30.0]))
+    assert_equal(0, candidate.call([-1.0, -2.0, 8.0]))
+    assert_equal(34, candidate.call([0.2, 3.0, 5.0]))
+    assert_equal(165, candidate.call([-9.0, -7.0, -5.0, -3.0, -1.0, 1.0, 3.0, 5.0, 7.0, 9.0]))
+  end
+end
+"
+HumanEval_152,mya_Mymr,rb,"ဥပမာ: တန်ဖိုးက ၀ ဖြစ်ပြီး မဟုတ်ရင် ခန့်မှန်းမှုနဲ့ အမှတ်ကြားက ပကတိ ကွာခြားချက်ပါ။တူညီတဲ့ အရှည်ရှိတဲ့ array တစ်ခုကို ပြန်ပေးတယ်။ ဒါက မှန်းဆချက်တစ်ခုစီရဲ့ အကွာအဝေးကို ဖော်ပြတယ်။ သူတို့ မှန်ကန်စွာ မှန်းဆရင်အမှတ်တွေနဲ့ ခန့်မှန်းချက်တွေရဲ့ မေထရစ်နှစ်ခုကို ပေးထားတယ်၊ တူညီတဲ့ အရှည်နဲ့ပါ၊ ညွှန်ပြကိန်းတစ်ခုစီက တူညီတာကို ပြပါတယ်။သင့်အလုပ်က လူတစ်ယောက်ဟာ ပြိုင်ပွဲတစ်ခုရဲ့ ရလဒ်တွေကို မှန်ကန်စွာ မှန်းဆခဲ့လားဆိုတာ ဆုံးဖြတ်ဖို့ပါ။မှတ်သားဖို့နဲ့ နှိုင်းယှဉ်ဖို့ လုံးဝ ထိုက်တန်ပါတယ်။ဒီဖြစ်ရပ်ဟာ နောက်ဆုံးမှာ သင်သိသွားတာပါ။ အဲဒီအခိုက်မှာ သင့်မှာရှိတဲ့ ခံစားချက်တွေ၊ အတွေးတွေဟာကျွန်တော်တို့အားလုံး အဲဒီခံစားချက်ကို မှတ်မိနေမယ် ထင်ပါတယ်၊ မျှော်လင့်ထားခဲ့ကြတဲ့ အရာတစ်ခုခု ဖြစ်လာမယ့် အချိန်ကာလမျိုး ရောက်လာရင်ပေါ့လေ။# >>> compare.call([1, 2, 3, 4, 5, 1], [1, 2, 3, 4, 2, -2])
+# [0, 0, 0, 0, 3, 3]
+# >>> compare.call([0, 5, 0, 0, 0, 4], [4, 1, 1, 0, 0, -2])
+# [4, 4, 1, 0, 0, 6]
+def compare(game, guess)
+","def compare(game, guess)
+  game.zip(guess).map { |score, prediction| (score - prediction).abs }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_compare
+    candidate = method(:compare)
+    assert_equal([0, 0, 0, 0, 3, 3], candidate.call([1, 2, 3, 4, 5, 1], [1, 2, 3, 4, 2, -2]))
+    assert_equal([0, 0, 0, 0, 0, 0], candidate.call([0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]))
+    assert_equal([2, 4, 6], candidate.call([1, 2, 3], [-1, -2, -3]))
+    assert_equal([2, 0, 0, 1], candidate.call([1, 2, 3, 5], [-1, 2, 3, 4]))
+  end
+end
+"
+HumanEval_153,mya_Mymr,rb,"ဥပမာ: (အစွမ်းက -1) ပါ။""Slices.SERVINGSliCes"" ကိုပြန်ပေးရမယ် ဘာလို့လဲဆိုတော့ ""SERVINGSliCes"" က ခိုင်မာတဲ့ extension ဖြစ်နေလို့ပါextension: ['SERVINGSliCes', 'Cheese', 'StuFfed'] ဆိုရင္ေတာ့ သင္ဟာ ဥပမာ၊ ခင်ဗျားကို Slices ဆိုတဲ့ စာတန်းနဲ့ array ရဲ့ အတန်းပေးထားရင်array ထဲမွာ ပထမဆံုးထြက္လာတာကို ေရြးခ်ယ္ပါ။တကယ်လို့ အသားကျယ်တဲ့ အသားတင်အသားတင် အချိုးအစား နှစ်ခု (သို့) ဒါထက်ပိုရှိရင်format: ClassName.StrongestExtensionName ကို အသုံးပြုသည်။ဒီထဲမှာ အားအကောင်းဆုံး extension ကိုရှာပြီး string ကိုပြန်ပို့လိုက်ရင်extension ရဲ့အမည်မှာ CAP - SM အပိုင်းနဲ့ ပြင်းအားကို ဖော်ပြထားပါတယ်။extension ရဲ့နာမည်မှာ စာလုံးတွေရှိပြီး SM က စာလုံးသေးတွေရဲ့ အရေအတွက်ဖြစ်ပါစေ။CAP သည် စာလုံးကြီး၏ နံပါတ်ဖြစ်ပါစေ။extension တွေကို class တွေရဲ့အပြင်မှာ class တွေကို load လုပ်ဖို့သုံးရတယ်သင်ဟာ အတန်းရဲ့နာမည် (string တစ်ခု) နဲ့ ဖြန့်ချိမှုတွေရဲ့ array တစ်ခုကို ရပါလိမ့်မယ်။# >>> Strongest_Extension.call(""my_class"", [""AA"", ""Be"", ""CC""])
+# ""my_class.AA""
+def Strongest_Extension(class_name, extensions)
+","def Strongest_Extension(class_name, extensions)
+  strongest_extension = extensions.max_by do |extension|
+    cap_count = extension.count('A-Z')
+    sm_count = extension.count('a-z')
+    cap_count - sm_count
+  end
+  ""#{class_name}.#{strongest_extension}""
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_Strongest_Extension
+    candidate = method(:Strongest_Extension)
+    assert_equal(""Watashi.eIGHt8OKe"", candidate.call(""Watashi"", [""tEN"", ""niNE"", ""eIGHt8OKe""]))
+    assert_equal(""Boku123.YEs.WeCaNe"", candidate.call(""Boku123"", [""nani"", ""NazeDa"", ""YEs.WeCaNe"", ""32145tggg""]))
+    assert_equal(""__YESIMHERE.NuLl__"", candidate.call(""__YESIMHERE"", [""t"", ""eMptY"", ""nothing"", ""zeR00"", ""NuLl__"", ""123NoooneB321""]))
+    assert_equal(""K.TAR"", candidate.call(""K"", [""Ta"", ""TAR"", ""t234An"", ""cosSo""]))
+    assert_equal(""__HAHA.123"", candidate.call(""__HAHA"", [""Tab"", ""123"", ""781345"", ""-_-""]))
+    assert_equal(""YameRore.okIWILL123"", candidate.call(""YameRore"", [""HhAas"", ""okIWILL123"", ""WorkOut"", ""Fails"", ""-_-""]))
+    assert_equal(""finNNalLLly.WoW"", candidate.call(""finNNalLLly"", [""Die"", ""NowW"", ""Wow"", ""WoW""]))
+    assert_equal(""_.Bb"", candidate.call(""_"", [""Bb"", ""91245""]))
+    assert_equal(""Sp.671235"", candidate.call(""Sp"", [""671235"", ""Bb""]))
+  end
+end
+"
+HumanEval_154,mya_Mymr,rb,"""true"" ကိုပြန်ပေးရမယ်။ ဒုတိယစကားလုံး ဒါမှမဟုတ် ၎င်းရဲ့ လည်ပတ်မှုတစ်ခုခုက ပထမစကားလုံးရဲ့ အောက်ခြေဖြစ်ရင်ပေါ့# >>> cycpattern_check.call(""abcd"", ""abd"")
+# false
+# >>> cycpattern_check.call(""hello"", ""ell"")
+# true
+# >>> cycpattern_check.call(""whassup"", ""psus"")
+# false
+# >>> cycpattern_check.call(""abab"", ""baa"")
+# true
+# >>> cycpattern_check.call(""efef"", ""eeff"")
+# false
+# >>> cycpattern_check.call(""himenss"", ""simen"")
+# true
+def cycpattern_check(a, b)
+","def cycpattern_check(a, b)
+  (0...b.length).each do |i|
+    rotated_b = b[i..-1] + b[0...i]
+    return true if a.include?(rotated_b)
+  end
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_cycpattern_check
+    candidate = method(:cycpattern_check)
+    assert_equal(false, candidate.call(""xyzw"", ""xyw""))
+    assert_equal(true, candidate.call(""yello"", ""ell""))
+    assert_equal(false, candidate.call(""whattup"", ""ptut""))
+    assert_equal(true, candidate.call(""efef"", ""fee""))
+    assert_equal(false, candidate.call(""abab"", ""aabb""))
+    assert_equal(true, candidate.call(""winemtt"", ""tinem""))
+  end
+end
+"
+HumanEval_155,mya_Mymr,rb,"ဥပမာ: ကိန်းပြည့်တစ်ခုပေးရင် ကိန်းပြည့်နဲ့ ကိန်းတစ်ခြားစီ ကိန်းဂဏန်းတွေရှိတဲ့ array တစ်ခုကို ပြန်ပေးတယ်။# >>> even_odd_count.call(-12)
+# [1, 1]
+# >>> even_odd_count.call(123)
+# [1, 2]
+def even_odd_count(num)
+","def even_odd_count(num)
+  num.to_s.chars.map(&:to_i).select { |digit| digit != 0 }.partition(&:even?).map(&:count)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_even_odd_count
+    candidate = method(:even_odd_count)
+    assert_equal([0, 1], candidate.call(7))
+    assert_equal([1, 1], candidate.call(-78))
+    assert_equal([2, 2], candidate.call(3452))
+    assert_equal([3, 3], candidate.call(346211))
+    assert_equal([3, 3], candidate.call(-345821))
+    assert_equal([1, 0], candidate.call(-2))
+    assert_equal([2, 3], candidate.call(-45347))
+    assert_equal([1, 0], candidate.call(0))
+  end
+end
+"
+HumanEval_156,mya_Mymr,rb,"ဥပမာများ:ကန့်သတ်ချက်များ: 1 <= num <= 1000 ဒါကို စာလုံးသေးသေးနဲ့ ပြန်ရေးလိုက်ပါအပေါင်းကိန်းပြည့်တစ်ခုပေးရင် ရိုမန်ဂဏန်းနဲ့ညီတဲ့ string တစ်ခုအဖြစ်ရယူပါ # >>> int_to_mini_roman.call(19)
+# ""xix""
+# >>> int_to_mini_roman.call(152)
+# ""clii""
+# >>> int_to_mini_roman.call(426)
+# ""cdxxvi""
+def int_to_mini_roman(number)
+","def int_to_mini_roman(number)
+  values = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
+  numerals = ['m', 'cm', 'd', 'cd', 'c', 'xc', 'l', 'xl', 'x', 'ix', 'v', 'iv', 'i']
+
+  result = ''
+  values.each_with_index do |value, index|
+    while number >= value
+      number -= value
+      result += numerals[index]
+    end
+  end
+
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_int_to_mini_roman
+    candidate = method(:int_to_mini_roman)
+    assert_equal(""xix"", candidate.call(19))
+    assert_equal(""clii"", candidate.call(152))
+    assert_equal(""ccli"", candidate.call(251))
+    assert_equal(""cdxxvi"", candidate.call(426))
+    assert_equal(""d"", candidate.call(500))
+    assert_equal(""i"", candidate.call(1))
+    assert_equal(""iv"", candidate.call(4))
+    assert_equal(""xliii"", candidate.call(43))
+    assert_equal(""xc"", candidate.call(90))
+    assert_equal(""xciv"", candidate.call(94))
+    assert_equal(""dxxxii"", candidate.call(532))
+    assert_equal(""cm"", candidate.call(900))
+    assert_equal(""cmxciv"", candidate.call(994))
+    assert_equal(""m"", candidate.call(1000))
+  end
+end
+"
+HumanEval_157,mya_Mymr,rb,"ဥပမာ: ၉၀ ဒီဂရီ။ထောင့်မှန်တြိဂံဆိုတာ ထောင့်တစ်ခုက ထောင့်မှန်ဖြစ်နေတဲ့ တြိဂံပါ။အဖြားက တြိဂံကို ဖွဲ့တာ မဟုတ်ရင် မှားတယ်။တြိဂံရဲ့ အနားသုံးခုရဲ့ အလျားကို ပေးပြီး သုံးခုက မှန်တယ်ဆိုရင် မှန်တဲ့ အခါကို ပြန်ပေးပါ# >>> right_angle_triangle.call(3, 4, 5)
+# true
+# >>> right_angle_triangle.call(1, 2, 3)
+# false
+def right_angle_triangle(a, b, c)
+","def right_angle_triangle(a, b, c)
+  sides = [a, b, c].sort
+  sides[0]**2 + sides[1]**2 == sides[2]**2
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_right_angle_triangle
+    candidate = method(:right_angle_triangle)
+    assert_equal(true, candidate.call(3, 4, 5))
+    assert_equal(false, candidate.call(1, 2, 3))
+    assert_equal(true, candidate.call(10, 6, 8))
+    assert_equal(false, candidate.call(2, 2, 2))
+    assert_equal(true, candidate.call(7, 24, 25))
+    assert_equal(false, candidate.call(10, 5, 7))
+    assert_equal(true, candidate.call(5, 12, 13))
+    assert_equal(true, candidate.call(15, 8, 17))
+    assert_equal(true, candidate.call(48, 55, 73))
+    assert_equal(false, candidate.call(1, 1, 1))
+    assert_equal(false, candidate.call(2, 2, 10))
+  end
+end
+"
+HumanEval_158,mya_Mymr,rb,"စာလုံးပေါင်းများ၏ စာလုံးပေါင်းများ၏ စာလုံးပေါင်းများ၏ စာလုံးပေါင်းများ၏ စာလုံးပေါင်းများ၏ စာလုံးပေါင်းများ၏ စာလုံးပေါင်းများ၏ စာလုံးပေါင်းများ၏ စာလုံးပေါင်းများ၏ စာလုံးပေါင်းများ၏ စာလုံးပေါင်းများ၏ စာလုံးပေါင်းများ၏ စာလုံးပေါင်းများ၏ စာလုံးပေါင်းများ၏ စာလုံးပေါင်းများ၏ စာလုံးပေါင်းများ၏ စာလုံးပေါင်းများ၏ စာလုံးပေါင်းများ၏ စာလုံးပေါင်းများ၏ စာလုံးပေါင်းများ၏ စာလုံးပေါင်းများ၏ စာလုံးပေါင်းများ၏ စာလုံးပေါင်းများ၏ စာလုံးပေါင်းများ၏ စာလုံးပေါင်းများ၏ စာလုံးပေါင်းများ၏ စာလုံးပေါင်းများ၏String မ်ားမွာ Unique မ်ားအမ်ားဆံုးရွိရင္array တွင် စကားလုံးအမျိုးမျိုးပါဝင်သည်။ အများဆုံးသော စကားလုံးများကို ပြန်ပေးပါ။String တွေရဲ့ array ကို လက်ခံတဲ့ function တစ်ခုရေးပါ။# >>> find_max.call([""name"", ""of"", ""string""])
+# ""string""
+# >>> find_max.call([""name"", ""enam"", ""game""])
+# ""enam""
+# >>> find_max.call([""aaaaaaa"", ""bb"", ""cc""])
+# ""aaaaaaa""
+def find_max(words)
+","def find_max(words)
+  # Helper function to count unique characters
+  def unique_char_count(word)
+    word.chars.uniq.size
+  end
+
+  words.max_by { |word| [unique_char_count(word), -word] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_find_max
+    candidate = method(:find_max)
+    assert_equal(""string"", candidate.call([""name"", ""of"", ""string""]))
+    assert_equal(""enam"", candidate.call([""name"", ""enam"", ""game""]))
+    assert_equal(""aaaaaaa"", candidate.call([""aaaaaaa"", ""bb"", ""cc""]))
+    assert_equal(""abc"", candidate.call([""abc"", ""cba""]))
+    assert_equal(""footbott"", candidate.call([""play"", ""this"", ""game"", ""of"", ""footbott""]))
+    assert_equal(""gonna"", candidate.call([""we"", ""are"", ""gonna"", ""rock""]))
+    assert_equal(""nation"", candidate.call([""we"", ""are"", ""a"", ""mad"", ""nation""]))
+    assert_equal(""this"", candidate.call([""this"", ""is"", ""a"", ""prrk""]))
+    assert_equal(""b"", candidate.call([""b""]))
+    assert_equal(""play"", candidate.call([""play"", ""play"", ""play""]))
+  end
+end
+"
+HumanEval_159,mya_Mymr,rb,"ဥပမာ: ကျန်တဲ့ဂေါ်ဖီတွေ မလုံလောက်ဘူးဆိုရင်တော့ ကျန်တဲ့ဂေါ်ဖီတွေ အားလုံးကို စားလိုက်ရဦးမယ် ဒါပေမယ့် မင်းက ဗိုက်ဆာနေတုန်းပဲလေ။စားပြီးသွားရင် ကျန်နေသေးတဲ့ ဂေါ်ဖီအရေအတွက်][အစာစားပြီးနောက် စားသုံးခဲ့တဲ့ မုန်လာဥနီအရေအတွက်]ဒါပေမဲ့ အခုကျတော့ နေ့စဉ်စားစရာတွေ ပြည့်ဝဖို့ ဂေါ်ဖီထုပ်တွေ ပိုစားဖို့ လိုလာပါပြီ။မင်းဟာ ငတ်နေတဲ့ ယုန်တစ်ကောင်၊ မင်းဟာ မုန်လာဥနီ အများကြီးစားပြီးနှင့်ပြီ။# >>> eat.call(5, 6, 10)
+# [11, 4]
+# >>> eat.call(4, 8, 9)
+# [12, 1]
+# >>> eat.call(1, 10, 10)
+# [11, 0]
+# >>> eat.call(2, 11, 5)
+# [7, 0]
+# Variables:
+# @number : integer
+# the number of carrots that you have eaten.
+# @need : integer
+# the number of carrots that you need to eat.
+# @remaining : integer
+# the number of remaining carrots thet exist in stock
+# Constrain:
+# * 0 <= number <= 1000
+# * 0 <= need <= 1000
+# * 0 <= remaining <= 1000
+# Have fun :)
+def eat(number, need, remaining)
+","def eat(number, need, remaining)
+  total_eaten = number + [need, remaining].min
+  carrots_left = [remaining - need, 0].max
+  [total_eaten, carrots_left]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_eat
+    candidate = method(:eat)
+    assert_equal([11, 4], candidate.call(5, 6, 10))
+    assert_equal([12, 1], candidate.call(4, 8, 9))
+    assert_equal([11, 0], candidate.call(1, 10, 10))
+    assert_equal([7, 0], candidate.call(2, 11, 5))
+    assert_equal([9, 2], candidate.call(4, 5, 7))
+    assert_equal([5, 0], candidate.call(4, 5, 1))
+  end
+end
+"
+HumanEval_160,mya_Mymr,rb,"အနည်းဆုံး အော်ပရေတာတစ်ခုနဲ့ အော်ပရန်းဒစ် နှစ်ခုပါတဲ့ အော်ပရန်းဒစ် မေထရစ်တစ်ခုပါ။အော်ပရန်းဒ်က အနုတ်မဟုတ်တဲ့ ကိန်းပြည့်တွေရဲ့ မေထရစ်ပါ။operator array ရဲ့အရှည်က operand array ရဲ့အရှည် အနှုတ် ၁ နဲ့ညီတယ်။မှတ်ချက်:=> ရလဒ် = ၉ ရလဒ် = 2 + 3 * 4 - 5 array = [2, 3, 4, 5]  ကိုနှိပ်ပါ။operator['+', '*', '-']  လုပ်ဆောင်သူဥပမာ: မြှောက်ဖော်ကိန်း (**)ကြမ်းပြင်ခွဲဝေမှု ( //) မြှောက်ခြင်း (*) အနှုတ် ( - ) ပေါင်းထည့်ခြင်း (+) အခြေခံ အယ်လ်ဂျီဘရာ လုပ်ဆောင်ချက်များ expression ကိုရှာပြီး ဒီ expression ရဲ့ evaluation ကိုပြန်ပေးတယ်။ဒုတိယ မေထရစ်က ကိန်းပြည့်တွေရဲ့ မေထရစ်ပါ ဒီ မေထရစ်နှစ်မျိုးနဲ့ အယ်လ်ဂျီဘရီကို တည်ဆောက်ပါArray ရဲ့ operator နဲ့ operand နှစ်ခုကို ပေးပြီး ပထမ Array မှာ အခြေခံ အယ်ဂျီဘရာ လုပ်ဆောင်ချက်တွေ ရှိပြီးdef do_algebra(operator, operand)
+","def do_algebra(operator, operand)
+  expression = operand[0].to_s
+  operator.each_with_index do |op, index|
+    if op == '//'
+      expression += ' / ' + operand[index + 1].to_s
+    else
+      expression += ' ' + op + ' ' + operand[index + 1].to_s
+    end
+  end
+  eval(expression)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_do_algebra
+    candidate = method(:do_algebra)
+    assert_equal(37, candidate.call([""**"", ""*"", ""+""], [2, 3, 4, 5]))
+    assert_equal(9, candidate.call([""+"", ""*"", ""-""], [2, 3, 4, 5]))
+    assert_equal(8, candidate.call([""//"", ""*""], [7, 3, 4]))
+  end
+end
+"
+HumanEval_161,mya_Mymr,rb,"ဥပမာများ ထို function သည် ရလဒ် string ကို ပြန်ပေးရမည်။အကယ်၍ string မှာ စာလုံးမရှိဘူးဆိုရင် string ကို ပြောင်းပြန်လှန်လိုက်ပါမဟုတ်ရင် ရှိတဲ့အတိုင်းထားပါ။s[i] က စာလုံးဆိုရင် အောက်ကနေ အပေါ် (သို့) ပြောင်းပြန် လှည့်လိုက်ပါခင်ဗျားကို string s ပေးထားတယ်။# >>> solve.call(""1234"")
+# ""4321""
+# >>> solve.call(""ab"")
+# ""AB""
+# >>> solve.call(""#a@C"")
+# ""#A@c""
+def solve(s)
+","def solve(s)
+  if s =~ /[a-zA-Z]/
+    s.chars.map { |char| char =~ /[a-zA-Z]/ ? char.swapcase : char }.join
+  else
+    s.reverse
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_solve
+    candidate = method(:solve)
+    assert_equal(""aSdF"", candidate.call(""AsDf""))
+    assert_equal(""4321"", candidate.call(""1234""))
+    assert_equal(""AB"", candidate.call(""ab""))
+    assert_equal(""#A@c"", candidate.call(""#a@C""))
+    assert_equal(""#aSDFw^45"", candidate.call(""#AsdfW^45""))
+    assert_equal(""2@6#"", candidate.call(""#6@2""))
+    assert_equal(""#$A^d"", candidate.call(""#$a^D""))
+    assert_equal(""#CCC"", candidate.call(""#ccc""))
+  end
+end
+"
+HumanEval_162,mya_Mymr,rb,"'text' သည် အလွတ် string ဖြစ်လျှင်, nil ကို ပြန်ပေးပါ။string 'text' ကိုပေးထားပြီး md5 hash တူညီတဲ့ string ကိုပြန်ပေးပါ။# >>> string_to_md5.call(""Hello world"")
+# ""3e25960a79dbc69b674cd4ec67a72c62""
+def string_to_md5(text)
+","require 'digest'
+
+def string_to_md5(text)
+  return nil if text.empty?
+  Digest::MD5.hexdigest(text)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_string_to_md5
+    candidate = method(:string_to_md5)
+    assert_equal(""3e25960a79dbc69b674cd4ec67a72c62"", candidate.call(""Hello world""))
+    assert_equal(nil, candidate.call(""""))
+    assert_equal(""0ef78513b0cb8cef12743f5aeb35f888"", candidate.call(""A B C""))
+    assert_equal(""5f4dcc3b5aa765d61d8327deb882cf99"", candidate.call(""password""))
+  end
+end
+"
+HumanEval_163,mya_Mymr,rb,"ဥပမာ -b, တိုးတက်လာသော အစီအစဉ်အရ။အပေါင်းကိန်းပြည့် a နဲ့ b နှစ်ခုကို ပေးပြီး a နဲ့ b ကြားက ကိန်းတစ်ချပ်ကို ပြန်ပေးပါ# >>> generate_integers.call(2, 8)
+# [2, 4, 6, 8]
+# >>> generate_integers.call(8, 2)
+# [2, 4, 6, 8]
+# >>> generate_integers.call(10, 14)
+# []
+def generate_integers(a, b)
+","def generate_integers(a, b)
+  (a..b).to_a.concat((b..a).to_a).select { |num| num.even? }.uniq.sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_generate_integers
+    candidate = method(:generate_integers)
+    assert_equal([2, 4, 6, 8], candidate.call(2, 10))
+    assert_equal([2, 4, 6, 8], candidate.call(10, 2))
+    assert_equal([2, 4, 6, 8], candidate.call(132, 2))
+    assert_equal([], candidate.call(17, 89))
+  end
+end
+"

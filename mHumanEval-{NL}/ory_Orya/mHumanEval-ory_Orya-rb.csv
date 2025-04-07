@@ -1,0 +1,4634 @@
+task_id,nl,pl,prompt,canonical_solution,tests
+HumanEval_0,ory_Orya,rb,"ଏହି ତ୍ରୟୋଦଶ ବର୍ଷରେଯାଞ୍ଚ କରନ୍ତୁ ଯେ, କୌଣସି ଦୁଇଟି ସଂଖ୍ୟା  ଠାରୁ ପରସ୍ପରର ନିକଟତର କି ନୁହେଁ ।# >>> has_close_elements.call([1.0, 2.0, 3.0], 0.5)
+# false
+# >>> has_close_elements.call([1.0, 2.8, 3.0, 4.0, 5.0, 2.0], 0.3)
+# true
+def has_close_elements(numbers, threshold)
+","def has_close_elements(numbers, threshold)
+  numbers.combination(2).any? { |a, b| (a - b).abs < threshold }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_has_close_elements
+    candidate = method(:has_close_elements)
+    assert_equal(true, candidate.call([1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.3))
+    assert_equal(false, candidate.call([1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.05))
+    assert_equal(true, candidate.call([1.0, 2.0, 5.9, 4.0, 5.0], 0.95))
+    assert_equal(false, candidate.call([1.0, 2.0, 5.9, 4.0, 5.0], 0.8))
+    assert_equal(true, candidate.call([1.0, 2.0, 3.0, 4.0, 5.0, 2.0], 0.1))
+    assert_equal(true, candidate.call([1.1, 2.2, 3.1, 4.1, 5.1], 1.0))
+    assert_equal(false, candidate.call([1.1, 2.2, 3.1, 4.1, 5.1], 0.5))
+  end
+end
+"
+HumanEval_1,ory_Orya,rb,"ପ୍ରବେଶ ସଂକେତରେ ଥିବା ସମସ୍ତ ସ୍ପେସକୁ ଅଣଦେଖା କରନ୍ତୁ.ଅଲଗା ଅଲଗା ଗୋଷ୍ଠୀ ସନ୍ତୁଳିତ (ପ୍ରତ୍ୟେକ ଖୋଲା କଣ୍ଟା ସଠିକ ଭାବରେ ବନ୍ଦ) ଏବଂ ପରସ୍ପର ମଧ୍ୟରେ ନାଇଷ୍ଟ୍ ହୋଇନଥାଏ _ସେହି ସମୂହକୁ ପୃଥକ ଧାଡ଼ିରେ ଅଲଗା କରନ୍ତୁ ଏବଂ ସେହିଗୁଡ଼ିକର ସରଳୀକରଣ ଫେରାନ୍ତୁ.ଏହି ଫଳନକୁ ଇନପୁଟ୍ କରିବା ପାଇଁ ଗୋଟିଏ ଷ୍ଟ୍ରିଙ୍ଗ ଅଛି ଯେଉଁଥିରେ ନେଷ୍ଟ୍ ବାକ୍ୟଖଣ୍ଡର ଏକାଧିକ ଗୋଷ୍ଠୀ ଅଛି. ଆପଣଙ୍କର ଲକ୍ଷ୍ୟ ହେଉଛି # >>> separate_paren_groups.call(""( ) (( )) (( )( ))"")
+# [""()"", ""(())"", ""(()())""]
+def separate_paren_groups(paren_string)
+","def separate_paren_groups(paren_string)
+  # Remove spaces from the string
+  paren_string = paren_string.gsub("" "", """")
+  
+  result = []
+  current_group = """"
+  balance = 0
+
+  paren_string.each_char do |char|
+    current_group += char
+    balance += 1 if char == '('
+    balance -= 1 if char == ')'
+
+    if balance == 0 && !current_group.empty?
+      result << current_group
+      current_group = """"
+    end
+  end
+
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_separate_paren_groups
+    candidate = method(:separate_paren_groups)
+    assert_equal([""(()())"", ""((()))"", ""()"", ""((())()())""], candidate.call(""(()()) ((())) () ((())()())""))
+    assert_equal([""()"", ""(())"", ""((()))"", ""(((())))""], candidate.call(""() (()) ((())) (((())))""))
+    assert_equal([""(()(())((())))""], candidate.call(""(()(())((())))""))
+    assert_equal([""()"", ""(())"", ""(()())""], candidate.call(""( ) (( )) (( )( ))""))
+  end
+end
+"
+HumanEval_2,ory_Orya,rb,"ସଂଖ୍ୟାର ଦଶମିକ ଅଂଶକୁ ଫେରାଇଦିଅନ୍ତୁ.(ବଳକା ଅଂଶ ସବୁବେଳେ ୧ ରୁ କମ୍) ।ଏବଂ ସମ୍ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା ଅଂଶ (ଦତ୍ତ ସଂଖ୍ୟା ଠାରୁ ବଡ଼ ସମ୍ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା) ଏବଂ ଦଶମିକ ସଂଖ୍ୟା ଏକ ସକାରାତ୍ମକ ଭାସମାନ ବିନ୍ଦୁ ସଂଖ୍ୟା ଦିଆଗଲା, ଏହାକୁ  ରେ ବିଭକ୍ତ କରାଯାଇପାରିବ# >>> truncate_number.call(3.5)
+# 0.5
+def truncate_number(number)
+","def truncate_number(number)
+  number - number.to_i
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_truncate_number
+    candidate = method(:truncate_number)
+    assert_equal(0.5, candidate.call(3.5))
+    assert_equal(0.25, candidate.call(1.25))
+    assert_equal(0.0, candidate.call(123.0))
+  end
+end
+"
+HumanEval_3,ory_Orya,rb,"ସେହି ସମୟରେ ଫଳନଟି true ଫେରାଇବ । ଅନ୍ୟଥା ଏହା false ଫେରାଇବ ।ଶୂନ ସନ୍ତୁଳନ. ଆପଣଙ୍କର କାମ ହେଉଛି ଯେ କୌଣସି ସମୟରେ ଖାତାର ସନ୍ତୁଳନ ଶୂନ ତଳକୁ ଖସିଗଲେ, ଏବଂ ଆପଣଙ୍କୁ ଏକ ବ୍ୟାଙ୍କ ଖାତାରେ ଜମା ଓ ଉଠାଣର ଏକ ଶୃଙ୍ଖଳ ଦିଆଯାଇଛି ଯାହା  ସହିତ ଆରମ୍ଭ ହୋଇଥାଏ# >>> below_zero.call([1, 2, 3])
+# false
+# >>> below_zero.call([1, 2, -4, 5])
+# true
+def below_zero(operations)
+","def below_zero(operations)
+  balance = 0
+  operations.each do |operation|
+    balance += operation
+    return true if balance < 0
+  end
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_below_zero
+    candidate = method(:below_zero)
+    assert_equal(false, candidate.call([]))
+    assert_equal(false, candidate.call([1, 2, -3, 1, 2, -3]))
+    assert_equal(true, candidate.call([1, 2, -4, 5, 6]))
+    assert_equal(false, candidate.call([1, -1, 2, -2, 5, -5, 4, -4]))
+    assert_equal(true, candidate.call([1, -1, 2, -2, 5, -5, 4, -5]))
+    assert_equal(true, candidate.call([1, -2, 2, -2, 5, -5, 4, -4]))
+  end
+end
+"
+HumanEval_4,ory_Orya,rb,"MAD = ହାରାହାରି  x - x_mean ଉପାଦାନ ଏବଂ ଏକ କେନ୍ଦ୍ର ବିନ୍ଦୁ (ଏହି କ୍ଷେତ୍ରରେ ମଧ୍ୟମ):ମଝି ଅବଲମ୍ବନ ବିଚ୍ୟୁତି ହେଉଛି ଉଭୟର ହାରାହାରି ଅବଲମ୍ବନ ବିଚ୍ୟୁତି ।ଏହି ଡାଟାସେଟର ହାରାହାରି ପାଖାପାଖି ।ଏକ ନିର୍ଦ୍ଦିଷ୍ଟ ଆରେରେ ନିବେଶ ସଂଖ୍ୟା ପାଇଁ, ମିଆଁନ ଅବ୍ ସଲ୍ୟୁଟ ଡିଭାଇଏସନ ଗଣନା କରନ୍ତୁ # >>> mean_absolute_deviation.call([1.0, 2.0, 3.0, 4.0])
+# 1.0
+def mean_absolute_deviation(numbers)
+","def mean_absolute_deviation(numbers)
+  mean = numbers.sum.to_f / numbers.size
+  deviations = numbers.map { |num| (num - mean).abs }
+  deviations.sum / numbers.size
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_mean_absolute_deviation
+    candidate = method(:mean_absolute_deviation)
+    assert_equal(0.5, candidate.call([1.0, 2.0]))
+    assert_equal(1.0, candidate.call([1.0, 2.0, 3.0, 4.0]))
+    assert_equal(1.2, candidate.call([1.0, 2.0, 3.0, 4.0, 5.0]))
+  end
+end
+"
+HumanEval_5,ory_Orya,rb,"ପ୍ରତ୍ୟେକ ଦୁଇ କ୍ରମିକ ଉପାଦାନ ମଧ୍ୟରେ ଏକ ସଂଖ୍ୟା 'ବ୍ୟାପକ' ଭର୍ତ୍ତି କରନ୍ତୁ _# >>> intersperse.call([], 4)
+# []
+# >>> intersperse.call([1, 2, 3], 4)
+# [1, 4, 2, 4, 3]
+def intersperse(numbers, delimeter)
+","def intersperse(numbers, delimeter)
+  return numbers if numbers.empty?
+  result = []
+  numbers.each_with_index do |num, index|
+    result << num
+    result << delimeter unless index == numbers.size - 1
+  end
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_intersperse
+    candidate = method(:intersperse)
+    assert_equal([], candidate.call([], 7))
+    assert_equal([5, 8, 6, 8, 3, 8, 2], candidate.call([5, 6, 3, 2], 8))
+    assert_equal([2, 2, 2, 2, 2], candidate.call([2, 2, 2], 2))
+  end
+end
+"
+HumanEval_6,ory_Orya,rb,"ଉଦାହରଣ ସ୍ୱରୂପ (() (()) ରେ ସର୍ବାଧିକ ଦୁଇଟି ସ୍ତର ଥିବା ବେଳେ ((())) ରେ ତିନୋଟି ସ୍ତର ରହିଛି ।ପ୍ରତ୍ୟେକ ଗୋଷ୍ଠୀ ପାଇଁ, ବ୍ରେକହୋଲଗୁଡ଼ିକର ଗଣ୍ଠିକରଣର ଗଭୀରତମ ସ୍ତରକୁ ବାହାର କରନ୍ତୁ.ଏହି ଫଳନକୁ ଇନପୁଟ୍ ହେଉଛି ଏକ ଷ୍ଟ୍ରିଙ୍ଗ ଯାହାକି ଅନ୍ତଃସ୍ଥଳ ବନ୍ଧନୀ ପାଇଁ ସ୍ପେସ୍ ଦ୍ୱାରା ପୃଥକ ହୋଇଥିବା ଏକାଧିକ ଗୋଷ୍ଠୀକୁ ପ୍ରତିନିଧିତ୍ୱ କରେ ।# >>> parse_nested_parens.call(""(()()) ((())) () ((())()())"")
+# [2, 3, 1, 3]
+def parse_nested_parens(paren_string)
+","def parse_nested_parens(paren_string)
+  paren_string.split.map do |group|
+    max_depth = current_depth = 0
+    group.chars.each do |char|
+      if char == '('
+        current_depth += 1
+        max_depth = [max_depth, current_depth].max
+      elsif char == ')'
+        current_depth -= 1
+      end
+    end
+    max_depth
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_parse_nested_parens
+    candidate = method(:parse_nested_parens)
+    assert_equal([2, 3, 1, 3], candidate.call(""(()()) ((())) () ((())()())""))
+    assert_equal([1, 2, 3, 4], candidate.call(""() (()) ((())) (((())))""))
+    assert_equal([4], candidate.call(""(()(())((())))""))
+  end
+end
+"
+HumanEval_7,ory_Orya,rb,"କେବଳ ସେହିଗୁଡ଼ିକ ପାଇଁ ନିବେଶ ଶୃଙ୍ଖଳାର ଏକ ମାପଦଣ୍ଡକୁ ଫିଲ୍ଟର୍ କରନ୍ତୁ ଯେଉଁଥିରେ ଦିଆଯାଇଥିବା ସବଷ୍ଟ୍ରିଙ୍ଗ ଅଛି # >>> filter_by_substring.call([], ""a"")
+# []
+# >>> filter_by_substring.call([""abc"", ""bacd"", ""cde"", ""array""], ""a"")
+# [""abc"", ""bacd"", ""array""]
+def filter_by_substring(strings, substring)
+","def filter_by_substring(strings, substring)
+  strings.select { |string| string.include?(substring) }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_filter_by_substring
+    candidate = method(:filter_by_substring)
+    assert_equal([], candidate.call([], ""john""))
+    assert_equal([""xxx"", ""xxxAAA"", ""xxx""], candidate.call([""xxx"", ""asd"", ""xxy"", ""john doe"", ""xxxAAA"", ""xxx""], ""xxx""))
+    assert_equal([""xxx"", ""aaaxxy"", ""xxxAAA"", ""xxx""], candidate.call([""xxx"", ""asd"", ""aaaxxy"", ""john doe"", ""xxxAAA"", ""xxx""], ""xx""))
+    assert_equal([""grunt"", ""prune""], candidate.call([""grunt"", ""trumpet"", ""prune"", ""gruesome""], ""run""))
+  end
+end
+"
+HumanEval_8,ory_Orya,rb,"ଶୂନ୍ୟ ସମୂହ ଶୂନ ହେବା ଉଚିତ ଏବଂ ଶୂନ୍ୟ ଗୁଣନ ୧ ହେବା ଉଚିତ ।ଏକ ନିର୍ଦ୍ଦିଷ୍ଟ ସମ୍ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା ପାଇଁ, ଏକ ସମୁଦାୟ ଏବଂ ଏକ ସମୁଦାୟରେ ସମସ୍ତ ସମ୍ପୂର୍ଣ୍ଣ ସଂଖ୍ୟାଗୁଡ଼ିକର ଉତ୍ପାଦିତ ଏକ ସରଳୀକରଣ ଫେରାନ୍ତୁ.# >>> sum_product.call([])
+# [0, 1]
+# >>> sum_product.call([1, 2, 3, 4])
+# [10, 24]
+def sum_product(numbers)
+","def sum_product(numbers)
+  sum = numbers.reduce(0, :+)
+  product = numbers.reduce(1, :*)
+  [sum, product]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sum_product
+    candidate = method(:sum_product)
+    assert_equal([0, 1], candidate.call([]))
+    assert_equal([3, 1], candidate.call([1, 1, 1]))
+    assert_equal([100, 0], candidate.call([100, 0]))
+    assert_equal([15, 105], candidate.call([3, 5, 7]))
+    assert_equal([10, 10], candidate.call([10]))
+  end
+end
+"
+HumanEval_9,ory_Orya,rb,"କ୍ରମରେ ।ଏକ ନିର୍ଦ୍ଦିଷ୍ଟ ସମୁଦାୟ ସଂଖ୍ୟାରୁ, ନିର୍ଦ୍ଦିଷ୍ଟ ମୁହୂର୍ତ୍ତ ପର୍ଯ୍ୟନ୍ତ ମିଳିଥିବା ସର୍ବାଧିକ ଉପାଦାନର ଏକ ସମୂହ ସୃଷ୍ଟି କରନ୍ତୁ # >>> rolling_max.call([1, 2, 3, 2, 3, 4, 2])
+# [1, 2, 3, 3, 3, 4, 4]
+def rolling_max(numbers)
+","def rolling_max(numbers)
+  max_so_far = numbers.first
+  numbers.map do |num|
+    max_so_far = [max_so_far, num].max
+  end
+end
+
+# Example usage:
+# puts rolling_max([1, 2, 3, 2, 3, 4, 2]).inspect","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_rolling_max
+    candidate = method(:rolling_max)
+    assert_equal([], candidate.call([]))
+    assert_equal([1, 2, 3, 4], candidate.call([1, 2, 3, 4]))
+    assert_equal([4, 4, 4, 4], candidate.call([4, 3, 2, 1]))
+    assert_equal([3, 3, 3, 100, 100], candidate.call([3, 2, 3, 100, 3]))
+  end
+end
+"
+HumanEval_10,ory_Orya,rb,"- ସ୍ଟ୍ରିଙ୍ଗର ଶେଷ ଭାଗରେ ଏକ ସ୍ଟ୍ରିଙ୍ଗ୍ ପ୍ରିଫିକ୍ସ ଯୋଡନ୍ତୁ ଯାହା ପାଲିଣ୍ଡ୍ରୋମିକ୍ ସଫିକ୍ସ ପୂର୍ବରୁ ଆସେ ।- ପ୍ରଦାନ କରାଯାଇଥିବା ଷ୍ଟ୍ରିଙ୍ଗର ସବୁଠାରୁ ଲମ୍ବା ପୋଷ୍ଟଫିକ୍ସ ଖୋଜନ୍ତୁ ଯାହା ଏକ ପାଲିଣ୍ଡ୍ରୋମ ଅଟେ ।ଆଲଗୋରିଦମ ଧାରଣା ସରଳ: ସବୁଠାରୁ ଛୋଟ ପାଲିଣ୍ଡ୍ରୋମ ଖୋଜନ୍ତୁ ଯାହା ଏକ ସରଞ୍ଜାମରେ ଆରମ୍ଭ ହୋଇଥାଏ।# >>> make_palindrome.call("""")
+# """"
+# >>> make_palindrome.call(""cat"")
+# ""catac""
+# >>> make_palindrome.call(""cata"")
+# ""catac""
+def make_palindrome(string)
+","def make_palindrome(string)
+  return string if string.empty?
+
+  def is_palindrome?(s)
+    s == s.reverse
+  end
+
+  (0...string.length).reverse_each do |i|
+    if is_palindrome?(string[i..-1])
+      return string + string[0...i].reverse
+    end
+  end
+
+  string
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_make_palindrome
+    candidate = method(:make_palindrome)
+    assert_equal("""", candidate.call(""""))
+    assert_equal(""x"", candidate.call(""x""))
+    assert_equal(""xyzyx"", candidate.call(""xyz""))
+    assert_equal(""xyx"", candidate.call(""xyx""))
+    assert_equal(""jerryrrej"", candidate.call(""jerry""))
+  end
+end
+"
+HumanEval_11,ory_Orya,rb,"ଏହି ଇନପୁଟଗୁଡ଼ିକ ଉପରେ ବାଇନାରୀ XOR କରନ୍ତୁ ଏବଂ ଫଳାଫଳକୁ ଏକ ଷ୍ଟ୍ରିଙ୍ଗ ଭାବରେ ଫେରାନ୍ତୁ.ଇନପୁଟ୍ ହେଉଛି ଦୁଇଟି ଷ୍ଟ୍ରିଙ୍ଗ୍ a ଏବଂ b ଯାହା କେବଳ 1s ଏବଂ 0s ରେ ଗଠିତ ।# >>> string_xor.call(""010"", ""110"")
+# ""100""
+def string_xor(a, b)
+","def string_xor(a, b)
+  result = """"
+  a.length.times do |i|
+    result << (a[i] == b[i] ? ""0"" : ""1"")
+  end
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_string_xor
+    candidate = method(:string_xor)
+    assert_equal(""010010"", candidate.call(""111000"", ""101010""))
+    assert_equal(""0"", candidate.call(""1"", ""1""))
+    assert_equal(""0101"", candidate.call(""0101"", ""0000""))
+  end
+end
+"
+HumanEval_12,ory_Orya,rb,"ସମାନ ଲମ୍ବର ଶୃଙ୍ଖଳାଗୁଡିକ. ଯଦି ନିବେଶ ମାଲିକାନା ଖାଲି ଥାଏ ତେବେ ଶୂନ୍ୟକୁ ଫେରାଇଥାଏ.ସରଳୀକରଣର ସରଳୀକରଣରୁ, ଦୀର୍ଘତମକୁ ଫେରାଇଥାଏ. ଏକାଧିକ  କ୍ଷେତ୍ରରେ ପ୍ରଥମକୁ ଫେରାଇଥାଏ.# >>> longest.call([])
+# nil
+# >>> longest.call([""a"", ""b"", ""c""])
+# ""a""
+# >>> longest.call([""a"", ""bb"", ""ccc""])
+# ""ccc""
+def longest(strings)
+","def longest(strings)
+  return nil if strings.empty?
+  strings.max_by(&:length)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_longest
+    candidate = method(:longest)
+    assert_equal(nil, candidate.call([]))
+    assert_equal(""x"", candidate.call([""x"", ""y"", ""z""]))
+    assert_equal(""zzzz"", candidate.call([""x"", ""yyy"", ""zzzz"", ""www"", ""kkkk"", ""abc""]))
+  end
+end
+"
+HumanEval_13,ory_Orya,rb,"ଦୁଇଟି ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା a ଓ b ର ସର୍ବ ବୃହତ ସାଧାରଣ ବିଭାଜକକୁ ଫେରାଇଥାଏ # >>> greatest_common_divisor.call(3, 5)
+# 1
+# >>> greatest_common_divisor.call(25, 15)
+# 5
+def greatest_common_divisor(a, b)
+","def greatest_common_divisor(a, b)
+  while b != 0
+    a, b = b, a % b
+  end
+  a
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_greatest_common_divisor
+    candidate = method(:greatest_common_divisor)
+    assert_equal(1, candidate.call(3, 7))
+    assert_equal(5, candidate.call(10, 15))
+    assert_equal(7, candidate.call(49, 14))
+    assert_equal(12, candidate.call(144, 60))
+  end
+end
+"
+HumanEval_14,ory_Orya,rb,"ପ୍ରବେଶ ସଂକେତର ସର୍ବୋଚ୍ଚରୁ ସର୍ବୋଚ୍ଚ ପର୍ଯ୍ୟନ୍ତ ସମସ୍ତ ଉପସର୍ଗର ଏକ ସରଳୀକରଣ ଫେରାଇଥାଏ # >>> all_prefixes.call(""abc"")
+# [""a"", ""ab"", ""abc""]
+def all_prefixes(string)
+","def all_prefixes(string)
+  (1..string.length).map { |i| string[0, i] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_all_prefixes
+    candidate = method(:all_prefixes)
+    assert_equal([], candidate.call(""""))
+    assert_equal([""a"", ""as"", ""asd"", ""asdf"", ""asdfg"", ""asdfgh""], candidate.call(""asdfgh""))
+    assert_equal([""W"", ""WW"", ""WWW""], candidate.call(""WWW""))
+  end
+end
+"
+HumanEval_15,ory_Orya,rb,"0 ରୁ n ସମେତ ଅନ୍ତରୀଣ ସଂଖ୍ୟା ବିଶିଷ୍ଟ ଏକ ଷ୍ଟ୍ରିଙ୍ଗକୁ ଫେରାଇଥାଏ।# >>> string_sequence.call(0)
+# ""0""
+# >>> string_sequence.call(5)
+# ""0 1 2 3 4 5""
+def string_sequence(n)
+","def string_sequence(n)
+  (0..n).to_a.join(' ')
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_string_sequence
+    candidate = method(:string_sequence)
+    assert_equal(""0"", candidate.call(0))
+    assert_equal(""0 1 2 3"", candidate.call(3))
+    assert_equal(""0 1 2 3 4 5 6 7 8 9 10"", candidate.call(10))
+  end
+end
+"
+HumanEval_16,ory_Orya,rb,"ଗୋଟିଏ ଷ୍ଟ୍ରିଙ୍ଗ ଦିଆଗଲା, କେତେ ଅଲଗା ଅକ୍ଷର (କେସକୁ ନେଇ) ଅଛି ତାହା ଖୋଜନ୍ତୁ # >>> count_distinct_characters.call(""xyzXYZ"")
+# 3
+# >>> count_distinct_characters.call(""Jerry"")
+# 4
+def count_distinct_characters(string)
+","def count_distinct_characters(string)
+  string.downcase.chars.uniq.count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_count_distinct_characters
+    candidate = method(:count_distinct_characters)
+    assert_equal(0, candidate.call(""""))
+    assert_equal(5, candidate.call(""abcde""))
+    assert_equal(5, candidate.call(""abcdecadeCADE""))
+    assert_equal(1, candidate.call(""aaaaAAAAaaaa""))
+    assert_equal(5, candidate.call(""Jerry jERRY JeRRRY""))
+  end
+end
+"
+HumanEval_17,ory_Orya,rb,"'କକହ' - କ୍ୱାର୍ଟର ନୋଟ୍, ଗୋଟିଏ ବିଟ୍ ପର୍ଯ୍ୟନ୍ତ ରହିଥାଏ 'ଓ' କହିଲେ ଅଧା ନୋଟ୍, ଦୁଇଟା ବିଟ୍ ଯାଏଁ ।'ଓ' - ପୁରା ନୋଟ୍, ଚାରିଟି ବିଟ୍ ପର୍ଯ୍ୟନ୍ତ ରହିଥାଏ ଏଠାରେ ଏକ କିମ୍ବଦନ୍ତୀ ରହିଛି:ଶେଷ ନୁହେଁ ।ଆପଣଙ୍କର କାମ ହେଉଛି ଏହି ଷ୍ଟ୍ରିଙ୍ଗକୁ ବିଶ୍ଳେଷଣ କରିବା ଏବଂ ପ୍ରତ୍ୟେକ କେତେ ବିଟ୍ କରେ ତାହା ସହିତ ସମାନ ସଂଖ୍ୟକ ସଂଖ୍ୟାଗୁଡ଼ିକର ଏକ ଧାଡି ଫେରାଇବା ଏହି ଫଳନକୁ ଇନପୁଟ୍ ହେଉଛି ଏକ ସ୍ୱତନ୍ତ୍ର ASCII ଫର୍ମାଟରେ ମ୍ୟୁଜିକାଲ୍ ନୋଟ୍ ପ୍ରତିନିଧିତ୍ୱ କରୁଥିବା ଏକ ଷ୍ଟ୍ରିଙ୍ଗ୍ ।# >>> parse_music.call(""o o| .| o| o| .| .| .| .| o o"")
+# [4, 2, 1, 2, 2, 1, 1, 1, 1, 4, 4]
+def parse_music(music_string)
+","def parse_music(music_string)
+  # Split the input string into individual notes.
+  notes = music_string.split
+
+  # Map each note to its corresponding number of beats.
+  notes.map do |note|
+    case note
+    when 'o'
+      4
+    when 'o|'
+      2
+    when '.|'
+      1
+    else
+      0
+    end
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_parse_music
+    candidate = method(:parse_music)
+    assert_equal([], candidate.call(""""))
+    assert_equal([4, 4, 4, 4], candidate.call(""o o o o""))
+    assert_equal([1, 1, 1, 1], candidate.call("".| .| .| .|""))
+    assert_equal([2, 2, 1, 1, 4, 4, 4, 4], candidate.call(""o| o| .| .| o o o o""))
+    assert_equal([2, 1, 2, 1, 4, 2, 4, 2], candidate.call(""o| .| o| .| o o| o o|""))
+  end
+end
+"
+HumanEval_18,ory_Orya,rb,"ମୂଳ ଷ୍ଟ୍ରିଙ୍ଗରେ କେତେଥର ଦିଆଯାଇଥିବା ସବଷ୍ଟ୍ରିଙ୍ଗ୍ ମିଳିପାରିବ ତାହା ଖୋଜ _ ଆଲଟପଲ୍ଲଟ କେସ୍ ଗୁଡିକୁ ଗଣନା କର _# >>> how_many_times.call("""", ""a"")
+# 0
+# >>> how_many_times.call(""aaa"", ""a"")
+# 3
+# >>> how_many_times.call(""aaaa"", ""aa"")
+# 3
+def how_many_times(string, substring)
+","def how_many_times(string, substring)
+  return 0 if substring.empty?
+  count = 0
+  i = 0
+  while i <= string.length - substring.length
+    if string[i, substring.length] == substring
+      count += 1
+    end
+    i += 1
+  end
+  count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_how_many_times
+    candidate = method(:how_many_times)
+    assert_equal(0, candidate.call("""", ""x""))
+    assert_equal(4, candidate.call(""xyxyxyx"", ""x""))
+    assert_equal(4, candidate.call(""cacacacac"", ""cac""))
+    assert_equal(1, candidate.call(""john doe"", ""john""))
+  end
+end
+"
+HumanEval_19,ory_Orya,rb,"ଛୋଟରୁ ବଡ଼ ପର୍ଯ୍ୟନ୍ତ ସର୍ଟ ହୋଇଥିବା ସଂଖ୍ୟା ସହିତ ଶୃଙ୍ଖଳାକୁ ଫେରାଇଥାଏ ବୈଧ ବିକଳ୍ପଗୁଡ଼ିକ ହେଉଛି 'ଶୂନ', 'ଏକ', 'ଦୁଇ', 'ତିନି', 'ଚାରି', 'ପାଞ୍ଚ', 'ଛଅ', 'ସାତ', 'ଆଠ' ଏବଂ 'ନଅ'।ଇନପୁଟ୍ ହେଉଛି 'ଶୂନ'ରୁ 'ନଅ' ପର୍ଯ୍ୟନ୍ତ ସଂଖ୍ୟାଗୁଡ଼ିକର ଏକ ସ୍ପେସ୍-ସୀମିତ ଷ୍ଟ୍ରିଙ୍ଗ୍ ।# >>> sort_numbers.call(""three one five"")
+# ""one three five""
+def sort_numbers(numbers)
+","def sort_numbers(numbers)
+  numeral_map = {
+    'zero' => 0,
+    'one' => 1,
+    'two' => 2,
+    'three' => 3,
+    'four' => 4,
+    'five' => 5,
+    'six' => 6,
+    'seven' => 7,
+    'eight' => 8,
+    'nine' => 9
+  }
+
+  number_words = numbers.split
+  sorted_numbers = number_words.sort_by { |word| numeral_map[word] }
+  sorted_numbers.join(' ')
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sort_numbers
+    candidate = method(:sort_numbers)
+    assert_equal("""", candidate.call(""""))
+    assert_equal(""three"", candidate.call(""three""))
+    assert_equal(""three five nine"", candidate.call(""three five nine""))
+    assert_equal(""zero four five seven eight nine"", candidate.call(""five zero four seven nine eight""))
+    assert_equal(""zero one two three four five six"", candidate.call(""six five four three two one zero""))
+  end
+end
+"
+HumanEval_20,ory_Orya,rb,"ଅନ୍ୟକୁ କ୍ରମ ଅନୁସାରେ ଫେରାଇ ଦିଅନ୍ତୁ (ଅଧିକ ସଂଖ୍ୟା, କମ୍ ସଂଖ୍ୟା) ।ଯୋଗାଣ କରାଯାଇଥିବା ସଂଖ୍ୟାଗୁଡ଼ିକର ଏକ ଆରେ (ଅତିକମରେ ଦୁଇଟି ଲମ୍ବ) ରୁ ପ୍ରତ୍ୟେକକୁ ନିକଟତମ ଥିବା ଦୁଇଟିକୁ ବାଛନ୍ତୁ ଏବଂ ଫେରାନ୍ତୁ # >>> find_closest_elements.call([1.0, 2.0, 3.0, 4.0, 5.0, 2.2])
+# [2.0, 2.2]
+# >>> find_closest_elements.call([1.0, 2.0, 3.0, 4.0, 5.0, 2.0])
+# [2.0, 2.0]
+def find_closest_elements(numbers)
+","def find_closest_elements(numbers)
+  sorted_numbers = numbers.sort
+  closest_pair = [sorted_numbers[0], sorted_numbers[1]]
+  min_difference = (sorted_numbers[1] - sorted_numbers[0]).abs
+
+  (1...(sorted_numbers.length - 1)).each do |i|
+    current_difference = (sorted_numbers[i + 1] - sorted_numbers[i]).abs
+    if current_difference < min_difference
+      min_difference = current_difference
+      closest_pair = [sorted_numbers[i], sorted_numbers[i + 1]]
+    end
+  end
+
+  closest_pair
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_find_closest_elements
+    candidate = method(:find_closest_elements)
+    assert_equal([3.9, 4.0], candidate.call([1.0, 2.0, 3.9, 4.0, 5.0, 2.2]))
+    assert_equal([5.0, 5.9], candidate.call([1.0, 2.0, 5.9, 4.0, 5.0]))
+    assert_equal([2.0, 2.2], candidate.call([1.0, 2.0, 3.0, 4.0, 5.0, 2.2]))
+    assert_equal([2.0, 2.0], candidate.call([1.0, 2.0, 3.0, 4.0, 5.0, 2.0]))
+    assert_equal([2.2, 3.1], candidate.call([1.1, 2.2, 3.1, 4.1, 5.1]))
+  end
+end
+"
+HumanEval_21,ory_Orya,rb,"ତେଣୁ ଛୋଟ ସଂଖ୍ୟାଟି 0 ହେବ ଏବଂ ବଡ ସଂଖ୍ୟାଟି 1 ହେବ ।ସଂଖ୍ୟାଗୁଡ଼ିକର ଏକ ସରଳୀକୃତ ଧାରା (ଅତିକମରେ ଦୁଇଟି ଉପାଦାନର), ସେହି ସରଳୀକୃତ ଧାରାକୁ ଏକ ସରଳ ପରିବର୍ତ୍ତନ ପ୍ରୟୋଗ କରନ୍ତୁ, # >>> rescale_to_unit.call([1.0, 2.0, 3.0, 4.0, 5.0])
+# [0.0, 0.25, 0.5, 0.75, 1.0]
+def rescale_to_unit(numbers)
+","def rescale_to_unit(numbers)
+  min = numbers.min
+  max = numbers.max
+  range = max - min
+  return numbers.map { |num| (num - min) / range.to_f }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_rescale_to_unit
+    candidate = method(:rescale_to_unit)
+    assert_equal([0.0, 1.0], candidate.call([2.0, 49.9]))
+    assert_equal([1.0, 0.0], candidate.call([100.0, 49.9]))
+    assert_equal([0.0, 0.25, 0.5, 0.75, 1.0], candidate.call([1.0, 2.0, 3.0, 4.0, 5.0]))
+    assert_equal([0.25, 0.0, 1.0, 0.5, 0.75], candidate.call([2.0, 1.0, 5.0, 3.0, 4.0]))
+    assert_equal([0.25, 0.0, 1.0, 0.5, 0.75], candidate.call([12.0, 11.0, 15.0, 13.0, 14.0]))
+  end
+end
+"
+HumanEval_22,ory_Orya,rb,"କେବଳ ପୂର୍ଣ୍ଣ ସଂଖ୍ୟାଗୁଡିକ ପାଇଁ କୌଣସି rbthon ମୂଲ୍ୟର ଦିଆଯାଇଥିବା ମାପଦଣ୍ଡକୁ ଫିଲ୍ଟର୍ କରନ୍ତୁ # >>> filter_integers.call([""a"", 3.14, 5])
+# [5]
+# >>> filter_integers.call([1, 2, 3, ""abc"", {}, []])
+# [1, 2, 3]
+def filter_integers(values)
+","def filter_integers(values)
+  values.select { |value| value.is_a?(Integer) }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_filter_integers
+    candidate = method(:filter_integers)
+    assert_equal([], candidate.call([]))
+    assert_equal([4, 9], candidate.call([4, {}, [], 23.2, 9, ""adasd""]))
+    assert_equal([3, 3, 3], candidate.call([3, ""c"", 3, 3, ""a"", ""b""]))
+  end
+end
+"
+HumanEval_23,ory_Orya,rb,"ଦିଆଯାଇଥିବା ଷ୍ଟ୍ରିଙ୍ଗର ରିଟର୍ଣ୍ଣ ଲମ୍ବ # >>> strlen.call("""")
+# 0
+# >>> strlen.call(""abc"")
+# 3
+def strlen(string)
+","strlen = lambda do |string|
+  string.length
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_strlen
+    candidate = method(:strlen)
+    assert_equal(0, candidate.call(""""))
+    assert_equal(1, candidate.call(""x""))
+    assert_equal(9, candidate.call(""asdasnakj""))
+  end
+end
+"
+HumanEval_24,ory_Orya,rb,"କୌଣସି ଏକ n ସଂଖ୍ୟା ପାଇଁ, n ଠାରୁ ଛୋଟ, ସବୁଠାରୁ ବଡ ସଂଖ୍ୟା ଖୋଜନ୍ତୁ ଯାହା n କୁ ସମାନ ଭାବରେ ଭାଗ କରେ # >>> largest_divisor.call(15)
+# 5
+def largest_divisor(n)
+","def largest_divisor(n)
+  (n - 1).downto(1) do |i|
+    return i if n % i == 0
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_largest_divisor
+    candidate = method(:largest_divisor)
+    assert_equal(1, candidate.call(3))
+    assert_equal(1, candidate.call(7))
+    assert_equal(5, candidate.call(10))
+    assert_equal(50, candidate.call(100))
+    assert_equal(7, candidate.call(49))
+  end
+end
+"
+HumanEval_25,ory_Orya,rb,"ଇନପୁଟ୍ ସଂଖ୍ୟା ସବୁ ଗୁଣକର ଗୁଣନ ସହିତ ସମାନ ହେବା ଉଚିତ ପ୍ରତ୍ୟେକ ଗୁଣକକୁ କେତେଥର ବିଭାଜନରେ ଦେଖାଯାଏ ତାହା ସହିତ ସମାନ ଭାବରେ ଆରେ କରାଯିବ _ଛୋଟରୁ ବଡ଼ ପର୍ଯ୍ୟନ୍ତ ନିର୍ଦ୍ଦିଷ୍ଟ ସମ୍ପୂର୍ଣ୍ଣ ସଂଖ୍ୟାର ଅଶେଷ ଗୁଣକମାନଙ୍କର ଏକ ସରଳୀକରଣ ଫେରାଇଥାଏ ।# >>> factorize.call(8)
+# [2, 2, 2]
+# >>> factorize.call(25)
+# [5, 5]
+# >>> factorize.call(70)
+# [2, 5, 7]
+def factorize(n)
+","def factorize(n)
+  factors = []
+  divisor = 2
+  while n > 1
+    while n % divisor == 0
+      factors << divisor
+      n /= divisor
+    end
+    divisor += 1
+  end
+  factors
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_factorize
+    candidate = method(:factorize)
+    assert_equal([2], candidate.call(2))
+    assert_equal([2, 2], candidate.call(4))
+    assert_equal([2, 2, 2], candidate.call(8))
+    assert_equal([3, 19], candidate.call(57))
+    assert_equal([3, 3, 19, 19], candidate.call(3249))
+    assert_equal([3, 3, 3, 19, 19, 19], candidate.call(185193))
+    assert_equal([3, 19, 19, 19], candidate.call(20577))
+    assert_equal([2, 3, 3], candidate.call(18))
+  end
+end
+"
+HumanEval_26,ory_Orya,rb,"ଉପାଦାନଗୁଡ଼ିକର କ୍ରମାଙ୍କକୁ ଇନପୁଟରେ ଥିବା କ୍ରମାଙ୍କ ସହିତ ସମାନ ରଖନ୍ତୁ ।ଏକ ସମୁଦାୟ ସଂଖ୍ୟାର ଏକ ସରଳୀକୃତ ଧାରାରୁ, ସମସ୍ତ ଉପାଦାନଗୁଡ଼ିକୁ କାଢ଼ି ଦିଅନ୍ତୁ ଯାହା ଥରେରୁ ଅଧିକ ଥର ଘଟେ ।# >>> remove_duplicates.call([1, 2, 3, 2, 4])
+# [1, 3, 4]
+def remove_duplicates(numbers)
+","def remove_duplicates(numbers)
+  numbers.select { |num| numbers.count(num) == 1 }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_remove_duplicates
+    candidate = method(:remove_duplicates)
+    assert_equal([], candidate.call([]))
+    assert_equal([1, 2, 3, 4], candidate.call([1, 2, 3, 4]))
+    assert_equal([1, 4, 5], candidate.call([1, 2, 3, 2, 4, 3, 5]))
+  end
+end
+"
+HumanEval_27,ory_Orya,rb,"କୌଣସି ଏକ ଧାଡ଼ି ପାଇଁ, ଛୋଟ ଅକ୍ଷରକୁ ବଡ଼ ଅକ୍ଷର ଓ ବଡ଼ ଅକ୍ଷରକୁ ଛୋଟ ଅକ୍ଷର ଭାବରେ ବଦଳାନ୍ତୁ.# >>> flip_case.call(""Hello"")
+# ""hELLO""
+def flip_case(string)
+","def flip_case(string)
+  string.swapcase
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_flip_case
+    candidate = method(:flip_case)
+    assert_equal("""", candidate.call(""""))
+    assert_equal(""hELLO!"", candidate.call(""Hello!""))
+    assert_equal(""tHESE VIOLENT DELIGHTS HAVE VIOLENT ENDS"", candidate.call(""These violent delights have violent ends""))
+  end
+end
+"
+HumanEval_28,ory_Orya,rb,"ଗୋଟିଏ ଧାଡ଼ିରେ ଶୃଙ୍ଖଳାର ଏକତ୍ରିତ ଧାଡ଼ି # >>> concatenate.call([])
+# """"
+# >>> concatenate.call([""a"", ""b"", ""c""])
+# ""abc""
+def concatenate(strings)
+","def concatenate(strings)
+  strings.join
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_concatenate
+    candidate = method(:concatenate)
+    assert_equal("""", candidate.call([]))
+    assert_equal(""xyz"", candidate.call([""x"", ""y"", ""z""]))
+    assert_equal(""xyzwk"", candidate.call([""x"", ""y"", ""z"", ""w"", ""k""]))
+  end
+end
+"
+HumanEval_29,ory_Orya,rb,"କେବଳ ସେହିଗୁଡ଼ିକ ପାଇଁ ଏକ ଇନପୁଟ୍ ଆରେ ଫିଲ୍ଟର୍ କରନ୍ତୁ ଯାହା ଏକ ନିର୍ଦ୍ଦିଷ୍ଟ ଉପସର୍ଗ ସହିତ ଆରମ୍ଭ ହୋଇଥାଏ.# >>> filter_by_prefix.call([], ""a"")
+# []
+# >>> filter_by_prefix.call([""abc"", ""bcd"", ""cde"", ""array""], ""a"")
+# [""abc"", ""array""]
+def filter_by_prefix(strings, prefix)
+","def filter_by_prefix(strings, prefix)
+  strings.select { |string| string.start_with?(prefix) }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_filter_by_prefix
+    candidate = method(:filter_by_prefix)
+    assert_equal([], candidate.call([], ""john""))
+    assert_equal([""xxx"", ""xxxAAA"", ""xxx""], candidate.call([""xxx"", ""asd"", ""xxy"", ""john doe"", ""xxxAAA"", ""xxx""], ""xxx""))
+  end
+end
+"
+HumanEval_30,ory_Orya,rb,"କେବଳ ଧନାତ୍ମକ ସଂଖ୍ୟାଗୁଡ଼ିକୁ ମାପଦଣ୍ଡରେ ଫେରାଇଥାଏ.# >>> get_positive.call([-1, 2, -4, 5, 6])
+# [2, 5, 6]
+# >>> get_positive.call([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])
+# [5, 3, 2, 3, 9, 123, 1]
+def get_positive(l)
+","get_positive = lambda do |l|
+  l.select { |num| num > 0 }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_get_positive
+    candidate = method(:get_positive)
+    assert_equal([4, 5, 6], candidate.call([-1, -2, 4, 5, 6]))
+    assert_equal([5, 3, 2, 3, 3, 9, 123, 1], candidate.call([5, 3, -5, 2, 3, 3, 9, 0, 123, 1, -10]))
+    assert_equal([], candidate.call([-1, -2]))
+    assert_equal([], candidate.call([]))
+  end
+end
+"
+HumanEval_31,ory_Orya,rb,"ଯଦି କୌଣସି ସଂଖ୍ୟା ଅଶୂନ୍ୟ ହୋଇଥାଏ ତେବେ ଏହା ସତ୍ୟ ଫେରାଇଥାଏ, ଅନ୍ୟଥା ଏହା ମିଥ୍ୟା ହୋଇଥାଏ ।# >>> is_prime.call(6)
+# false
+# >>> is_prime.call(101)
+# true
+# >>> is_prime.call(11)
+# true
+# >>> is_prime.call(13441)
+# true
+# >>> is_prime.call(61)
+# true
+# >>> is_prime.call(4)
+# false
+# >>> is_prime.call(1)
+# false
+def is_prime(n)
+","is_prime = lambda do |n|
+  return false if n <= 1
+  return true if n == 2
+  return false if n.even?
+
+  max_divisor = Math.sqrt(n).to_i
+  (3..max_divisor).step(2).each do |i|
+    return false if n % i == 0
+  end
+
+  true
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_prime
+    candidate = method(:is_prime)
+    assert_equal(false, candidate.call(6))
+    assert_equal(true, candidate.call(101))
+    assert_equal(true, candidate.call(11))
+    assert_equal(true, candidate.call(13441))
+    assert_equal(true, candidate.call(61))
+    assert_equal(false, candidate.call(4))
+    assert_equal(false, candidate.call(1))
+    assert_equal(true, candidate.call(5))
+    assert_equal(true, candidate.call(11))
+    assert_equal(true, candidate.call(17))
+    assert_equal(false, candidate.call(85))
+    assert_equal(false, candidate.call(77))
+    assert_equal(false, candidate.call(255379))
+  end
+end
+"
+HumanEval_33,ory_Orya,rb,"କିନ୍ତୁ ଏହା ସର୍ଟ କରାଯାଇଛି ।l' ହେଉଛି l ସହିତ ସମାନ, ଯେଉଁ ସୂଚକାଙ୍କଗୁଡ଼ିକ ତିନି ଭାଗରେ ବିଭକ୍ତ ହୋଇନଥାଏ, କିନ୍ତୁ ଏହାର ମୂଲ୍ୟଗୁଡ଼ିକ ସେହି ସୂଚକାଙ୍କଗୁଡ଼ିକରେ ସମାନ ହୋଇଥାଏ, ଯାହା ତିନି ଭାଗରେ ବିଭକ୍ତ ହୋଇଥାଏ ।ଏହି ଫଳନ ଏକ ସରଳୀକୃତ l କୁ ନେଇଥାଏ ଏବଂ ଏକ ସରଳୀକୃତ l' କୁ ଫେରାଇଥାଏ ଯେପରିକି # >>> sort_third.call([1, 2, 3])
+# [1, 2, 3]
+# >>> sort_third.call([5, 6, 3, 4, 8, 9, 2])
+# [2, 6, 3, 4, 8, 9, 5]
+def sort_third(l)
+","def sort_third(l)
+  divisible_by_three = l.each_with_index.select { |_, idx| idx % 3 == 0 }.map(&:first).sort
+  l.each_with_index.map { |val, idx| idx % 3 == 0 ? divisible_by_three.shift : val }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sort_third
+    candidate = method(:sort_third)
+    assert_equal([2, 6, 3, 4, 8, 9, 5], candidate.call([5, 6, 3, 4, 8, 9, 2]))
+    assert_equal([2, 8, 3, 4, 6, 9, 5], candidate.call([5, 8, 3, 4, 6, 9, 2]))
+    assert_equal([2, 6, 9, 4, 8, 3, 5], candidate.call([5, 6, 9, 4, 8, 3, 2]))
+    assert_equal([2, 6, 3, 4, 8, 9, 5, 1], candidate.call([5, 6, 3, 4, 8, 9, 2, 1]))
+  end
+end
+"
+HumanEval_34,ory_Orya,rb,"ଗୋଟିଏ ଧାଡ଼ିରେ ସଜାଡ଼ାଯାଇଥିବା ଅନନ୍ୟ ଉପାଦାନଗୁଡ଼ିକୁ ଫେରାଇଥାଏ# >>> unique.call([5, 3, 5, 2, 3, 3, 9, 0, 123])
+# [0, 2, 3, 5, 9, 123]
+def unique(l)
+","def unique(l)
+  l.uniq.sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_unique
+    candidate = method(:unique)
+    assert_equal([0, 2, 3, 5, 9, 123], candidate.call([5, 3, 5, 2, 3, 3, 9, 0, 123]))
+  end
+end
+"
+HumanEval_35,ory_Orya,rb,"ଆରେରେ ସର୍ବାଧିକ ଉପାଦାନକୁ ଫେରାଇଥାଏ. # >>> max_element.call([1, 2, 3])
+# 3
+# >>> max_element.call([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])
+# 123
+def max_element(l)
+","def max_element(l)
+  l.max
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_max_element
+    candidate = method(:max_element)
+    assert_equal(3, candidate.call([1, 2, 3]))
+    assert_equal(124, candidate.call([5, 3, -5, 2, -3, 3, 9, 0, 124, 1, -10]))
+  end
+end
+"
+HumanEval_36,ory_Orya,rb,"11 କିମ୍ବା 13 ଦ୍ୱାରା ବିଭାଜନ ହେଉଥିବା n ରୁ କମ୍ ସଂଖ୍ୟାରେ 7 ସଂଖ୍ୟା କେତେ ଥର ଦେଖାଯାଏ ତାହା ଫେରାଇଥାଏ ।# >>> fizz_buzz.call(50)
+# 0
+# >>> fizz_buzz.call(78)
+# 2
+# >>> fizz_buzz.call(79)
+# 3
+def fizz_buzz(n)
+","def fizz_buzz(n)
+  count = 0
+  (1...n).each do |i|
+    if i % 11 == 0 || i % 13 == 0
+      count += i.to_s.count('7')
+    end
+  end
+  count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fizz_buzz
+    candidate = method(:fizz_buzz)
+    assert_equal(0, candidate.call(50))
+    assert_equal(2, candidate.call(78))
+    assert_equal(3, candidate.call(79))
+    assert_equal(3, candidate.call(100))
+    assert_equal(6, candidate.call(200))
+    assert_equal(192, candidate.call(4000))
+    assert_equal(639, candidate.call(10000))
+    assert_equal(8026, candidate.call(100000))
+  end
+end
+"
+HumanEval_37,ory_Orya,rb,"କିନ୍ତୁ ସର୍ଟ କରାଯାଇଛି ।l' ଅଙ୍କରେ l ସହିତ ସମାନ, କିନ୍ତୁ ସମାନ ଅଙ୍କରେ l ସମାନ ।ଏହି ଫଳନ ଏକ ସରଳୀକୃତ l କୁ ନେଇଥାଏ ଏବଂ ଏକ ସରଳୀକୃତ l' କୁ ଫେରାଇଥାଏ ଯେପରିକି # >>> sort_even.call([1, 2, 3])
+# [1, 2, 3]
+# >>> sort_even.call([5, 6, 3, 4])
+# [3, 6, 5, 4]
+def sort_even(l)
+","def sort_even(l)
+  even_indices = l.each_index.select { |i| i.even? }
+  even_values = even_indices.map { |i| l[i] }.sort
+  
+  even_index = 0
+  l.each_with_index.map do |value, index|
+    if index.even?
+      even_values[even_index].tap { even_index += 1 }
+    else
+      value
+    end
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sort_even
+    candidate = method(:sort_even)
+    assert_equal([1, 2, 3], candidate.call([1, 2, 3]))
+    assert_equal([-10, 3, -5, 2, -3, 3, 5, 0, 9, 1, 123], candidate.call([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10]))
+    assert_equal([-12, 8, 3, 4, 5, 2, 12, 11, 23, -10], candidate.call([5, 8, -12, 4, 23, 2, 3, 11, 12, -10]))
+  end
+end
+"
+HumanEval_39,ory_Orya,rb,"prime_fib n-th ସଂଖ୍ୟାକୁ ଫେରାଇଥାଏ ଯାହାକି ଏକ ଫାଇବୋନ୍ୟାଚି ସଂଖ୍ୟା ଅଟେ ଏବଂ ଏହା ମଧ୍ୟ ଅଶୂର ଅଟେ ।# >>> prime_fib.call(1)
+# 2
+# >>> prime_fib.call(2)
+# 3
+# >>> prime_fib.call(3)
+# 5
+# >>> prime_fib.call(4)
+# 13
+# >>> prime_fib.call(5)
+# 89
+def prime_fib(n)
+","def prime_fib(n)
+  require 'prime'
+  
+  fibs = Enumerator.new do |y|
+    a, b = 0, 1
+    loop do
+      a, b = b, a + b
+      y << b
+    end
+  end
+  
+  prime_fibs = fibs.lazy.select { |fib| Prime.prime?(fib) }
+  prime_fibs.first(n).last
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_prime_fib
+    candidate = method(:prime_fib)
+    assert_equal(2, candidate.call(1))
+    assert_equal(3, candidate.call(2))
+    assert_equal(5, candidate.call(3))
+    assert_equal(13, candidate.call(4))
+    assert_equal(89, candidate.call(5))
+    assert_equal(233, candidate.call(6))
+    assert_equal(1597, candidate.call(7))
+    assert_equal(28657, candidate.call(8))
+    assert_equal(514229, candidate.call(9))
+    assert_equal(433494437, candidate.call(10))
+  end
+end
+"
+HumanEval_40,ory_Orya,rb,"ସମୂହ ଶୂନ୍ୟ, ଅନ୍ୟଥା ମିଥ୍ୟା ।ଏହା ସତ୍ୟ ଫେରାଇଥାଏ ଯଦି ଆରେରେ ତିନୋଟି ଭିନ୍ନ ଉପାଦାନ ଅଛି ଯାହା triples_sum_to_zero ଏକ ଇଣ୍ଟେଜର ଆରେକୁ ଇନପୁଟ ଭାବରେ ଗ୍ରହଣ କରିଥାଏ ।# >>> triples_sum_to_zero.call([1, 3, 5, 0])
+# false
+# >>> triples_sum_to_zero.call([1, 3, -2, 1])
+# true
+# >>> triples_sum_to_zero.call([1, 2, 3, 7])
+# false
+# >>> triples_sum_to_zero.call([2, 4, -5, 3, 9, 7])
+# true
+# >>> triples_sum_to_zero.call([1])
+# false
+def triples_sum_to_zero(l)
+","def triples_sum_to_zero(l)
+  n = l.length
+  (0...n-2).each do |i|
+    ((i+1)...n-1).each do |j|
+      ((j+1)...n).each do |k|
+        return true if l[i] + l[j] + l[k] == 0
+      end
+    end
+  end
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_triples_sum_to_zero
+    candidate = method(:triples_sum_to_zero)
+    assert_equal(false, candidate.call([1, 3, 5, 0]))
+    assert_equal(false, candidate.call([1, 3, 5, -1]))
+    assert_equal(true, candidate.call([1, 3, -2, 1]))
+    assert_equal(false, candidate.call([1, 2, 3, 7]))
+    assert_equal(false, candidate.call([1, 2, 5, 7]))
+    assert_equal(true, candidate.call([2, 4, -5, 3, 9, 7]))
+    assert_equal(false, candidate.call([1]))
+    assert_equal(false, candidate.call([1, 3, 5, -100]))
+    assert_equal(false, candidate.call([100, 3, 5, -100]))
+  end
+end
+"
+HumanEval_41,ory_Orya,rb,"ଏହି ଫଙ୍କସନ ସେହି ଧକ୍କାର ସଂଖ୍ୟାକୁ ଆଉଟପୁଟ କରିଥାଏ ।ସେମାନଙ୍କ ଗତିପଥରେ ଏପରି ଭାବେ ଗତି କରୁଛି ଯେପରି ସେମାନେ ପରସ୍ପର ସହ ଧକ୍କା ହୋଇନାହାନ୍ତି ।କିନ୍ତୁ ଏହି କାରଗୁଡିକ ଅକଳନୀୟ ଦୃଢ଼ ଓ ଶକ୍ତିଶାଳୀ, ତେଣୁ ସେମାନେ ଆଗକୁ ବଢ଼ି ଚାଲିଥାନ୍ତି ।ଯେତେବେଳେ ବାମରୁ ଡାହାଣକୁ ଯାଉଥିବା ଏକ କାର ବାମରୁ ଡାହାଣକୁ ଯାଉଥିବା ଏକ କାରକୁ ଧକ୍କା ଦେଇଥାଏ ।ପରସ୍ପରକୁ. ସବୁ ଗାଡି ସମାନ ବେଗରେ ଗତି କରୁଛି. ଦୁଇଟି ଗାଡି ଧକ୍କା ହେବା କଥା କୁହାଯାଉଛି.ଦୁଇଟି ଯାକ ଗାଡ଼ିର ଆରମ୍ଭ ବହୁତ ଦୂରରେ ଥିଲା ।nଟି କାର ବାମରୁ ଡାହାଣକୁ ଯାଉଛନ୍ତି; ଏକା ସମୟରେ, nଟି କାରର ଭିନ୍ନ ସେଟ୍ ଏକ ସଡ଼କ କଳ୍ପନା କରନ୍ତୁ ଯାହା ଏକ ସମ୍ପୂର୍ଣ୍ଣ ସିଧା ଅସୀମ ଦୀର୍ଘ ରେଖା ଅଟେ ।def car_race_collision(n)
+","def car_race_collision(n)
+  n
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_car_race_collision
+    candidate = method(:car_race_collision)
+    assert_equal(4, candidate.call(2))
+    assert_equal(9, candidate.call(3))
+    assert_equal(16, candidate.call(4))
+    assert_equal(64, candidate.call(8))
+    assert_equal(100, candidate.call(10))
+  end
+end
+"
+HumanEval_42,ory_Orya,rb,"1 ଦ୍ବାରା ବୃଦ୍ଧି କରାଯାଇଥିବା ଉପାଦାନ ସହିତ ଆରେ ଫେରାଇଥାଏ ।# >>> incr_list.call([1, 2, 3])
+# [2, 3, 4]
+# >>> incr_list.call([5, 3, 5, 2, 3, 3, 9, 0, 123])
+# [6, 4, 6, 3, 4, 4, 10, 1, 124]
+def incr_list(l)
+","def incr_list(l)
+  l.map { |x| x + 1 }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_incr_list
+    candidate = method(:incr_list)
+    assert_equal([], candidate.call([]))
+    assert_equal([4, 3, 2], candidate.call([3, 2, 1]))
+    assert_equal([6, 3, 6, 3, 4, 4, 10, 1, 124], candidate.call([5, 2, 5, 2, 3, 3, 9, 0, 123]))
+  end
+end
+"
+HumanEval_43,ory_Orya,rb,"ସମୂହ ଶୂନ୍ୟ, ଅନ୍ୟଥା ମିଥ୍ୟା ।ଏହା ସତ୍ୟ ଫେରାଇଥାଏ ଯଦି ଆରେରେ ଦୁଇଟି ଭିନ୍ନ ଉପାଦାନ ଅଛି ଯାହା pairs_sum_to_zero ଏକ ଇଣ୍ଟେଜର ଆରେକୁ ଇନପୁଟ ଭାବରେ ଗ୍ରହଣ କରିଥାଏ ।# >>> pairs_sum_to_zero.call([1, 3, 5, 0])
+# false
+# >>> pairs_sum_to_zero.call([1, 3, -2, 1])
+# false
+# >>> pairs_sum_to_zero.call([1, 2, 3, 7])
+# false
+# >>> pairs_sum_to_zero.call([2, 4, -5, 3, 5, 7])
+# true
+# >>> pairs_sum_to_zero.call([1])
+# false
+def pairs_sum_to_zero(l)
+","def pairs_sum_to_zero(l)
+  num_set = l.to_set
+  l.each do |num|
+    return true if num != 0 && num_set.include?(-num)
+  end
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_pairs_sum_to_zero
+    candidate = method(:pairs_sum_to_zero)
+    assert_equal(false, candidate.call([1, 3, 5, 0]))
+    assert_equal(false, candidate.call([1, 3, -2, 1]))
+    assert_equal(false, candidate.call([1, 2, 3, 7]))
+    assert_equal(true, candidate.call([2, 4, -5, 3, 5, 7]))
+    assert_equal(false, candidate.call([1]))
+    assert_equal(true, candidate.call([-3, 9, -1, 3, 2, 30]))
+    assert_equal(true, candidate.call([-3, 9, -1, 3, 2, 31]))
+    assert_equal(false, candidate.call([-3, 9, -1, 4, 2, 30]))
+    assert_equal(false, candidate.call([-3, 9, -1, 4, 2, 31]))
+  end
+end
+"
+HumanEval_44,ory_Orya,rb,"ଆଧାର ସଂଖ୍ୟା ୧୦ରୁ କମ୍ ।ପରିବର୍ତ୍ତନ ପରେ ଶୃଙ୍ଖଳ ପ୍ରତିନିଧିତ୍ୱକୁ ଫେରାଇଥାଏ ।ନିବେଶ ସଂଖ୍ୟା x ର ସଂଖ୍ୟାଗତ ଆଧାରକୁ ଆଧାରରେ ପରିବର୍ତ୍ତନ କରନ୍ତୁ.# >>> change_base.call(8, 3)
+# ""22""
+# >>> change_base.call(8, 2)
+# ""1000""
+# >>> change_base.call(7, 2)
+# ""111""
+def change_base(x, base)
+","def change_base(x, base)
+  return '0' if x == 0
+  digits = []
+  while x > 0
+    digits << (x % base).to_s
+    x /= base
+  end
+  digits.reverse.join
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_change_base
+    candidate = method(:change_base)
+    assert_equal(""22"", candidate.call(8, 3))
+    assert_equal(""100"", candidate.call(9, 3))
+    assert_equal(""11101010"", candidate.call(234, 2))
+    assert_equal(""10000"", candidate.call(16, 2))
+    assert_equal(""1000"", candidate.call(8, 2))
+    assert_equal(""111"", candidate.call(7, 2))
+    assert_equal(""2"", candidate.call(2, 3))
+    assert_equal(""3"", candidate.call(3, 4))
+    assert_equal(""4"", candidate.call(4, 5))
+    assert_equal(""5"", candidate.call(5, 6))
+    assert_equal(""6"", candidate.call(6, 7))
+    assert_equal(""7"", candidate.call(7, 8))
+  end
+end
+"
+HumanEval_45,ory_Orya,rb,"ଏକ ତ୍ରିଭୁଜ ପାଇଁ ଏକ ପାର୍ଶ୍ବ ଓ ଉଚ୍ଚ ରିଟର୍ଣ୍ଣ କ୍ଷେତ୍ରର ଲମ୍ବ ଦିଆଗଲା ।# >>> triangle_area.call(5, 3)
+# 7.5
+def triangle_area(a, h)
+","def triangle_area(a, h)
+  (a * h) / 2.0
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_triangle_area
+    candidate = method(:triangle_area)
+    assert_equal(7.5, candidate.call(5, 3))
+    assert_equal(2.0, candidate.call(2, 2))
+    assert_equal(40.0, candidate.call(10, 8))
+  end
+end
+"
+HumanEval_46,ory_Orya,rb,"ଦୟାକରି fib4 ସଂଖ୍ଯା କ୍ରମର n-ତମ ଉପାଦାନକୁ ଦକ୍ଷତାର ସହିତ ଗଣନା କରିବା ପାଇଁ ଏକ ଫଳନ ଲେଖନ୍ତୁ. ପୁନଃପୌନିକତା ବ୍ୟବହାର କରନ୍ତୁ ନାହିଁ.ଫିବରୋମାଇନ୍ (ଏନ) -> ଫିବରୋମାଇନ୍ (ଏନ -1) + ଫିବରୋମାଇନ୍ (ଏନ -2) + ଫିବରୋମାଇନ୍ (ଏନ -3) + ଫିବରୋମାଇନ୍ (ଏନ -4) ।ଫିବ୍ର 4 ({3) -> 0 ଫିବ୍ର 4 ({2) -> 2 fib4 ((1) -> 0 fib4 ((0) -> 0 Fib4 ସଂଖ୍ଯା କ୍ରମ ହେଉଛି Fibbonacci କ୍ରମ ପରି ଏକ କ୍ରମ ଯାହାକି ନିମ୍ନଲିଖିତ ପରିଭାଷିତ:# >>> fib4.call(5)
+# 4
+# >>> fib4.call(6)
+# 8
+# >>> fib4.call(7)
+# 14
+def fib4(n)
+","def fib4(n)
+  return 0 if n == 0 || n == 1 || n == 3
+  return 2 if n == 2
+
+  fib4_seq = [0, 0, 2, 0]
+  (4..n).each do |i|
+    fib4_seq[i] = fib4_seq[i-1] + fib4_seq[i-2] + fib4_seq[i-3] + fib4_seq[i-4]
+  end
+  fib4_seq[n]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fib4
+    candidate = method(:fib4)
+    assert_equal(4, candidate.call(5))
+    assert_equal(28, candidate.call(8))
+    assert_equal(104, candidate.call(10))
+    assert_equal(386, candidate.call(12))
+  end
+end
+"
+HumanEval_47,ory_Orya,rb,"ମାପଦଣ୍ଡରେ ଥିବା ଉପାଦାନଗୁଡ଼ିକର ମଧ୍ୟମାଂଶକୁ ଫେରାଇଥାଏ l. # >>> median.call([3, 1, 2, 4, 5])
+# 3
+# >>> median.call([-10, 4, 6, 1000, 10, 20])
+# 15.0
+def median(l)
+","def median(l)
+  sorted = l.sort
+  len = sorted.length
+  if len.odd?
+    sorted[len / 2]
+  else
+    (sorted[len / 2 - 1] + sorted[len / 2]) / 2.0
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_median
+    candidate = method(:median)
+    assert_equal(3, candidate.call([3, 1, 2, 4, 5]))
+    assert_equal(8.0, candidate.call([-10, 4, 6, 1000, 10, 20]))
+    assert_equal(5, candidate.call([5]))
+    assert_equal(5.5, candidate.call([6, 5]))
+    assert_equal(7, candidate.call([8, 1, 3, 9, 9, 2, 7]))
+  end
+end
+"
+HumanEval_48,ory_Orya,rb,"ଦିଆଯାଇଥିବା ଷ୍ଟ୍ରିଙ୍ଗ୍ ଏକ ପାଲିଣ୍ଡ୍ରୋମ୍ କି ନୁହେଁ ଯାଞ୍ଚ କରେ # >>> is_palindrome.call("""")
+# true
+# >>> is_palindrome.call(""aba"")
+# true
+# >>> is_palindrome.call(""aaaaa"")
+# true
+# >>> is_palindrome.call(""zbcd"")
+# false
+def is_palindrome(text)
+","is_palindrome = lambda do |text|
+  text == text.reverse
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_palindrome
+    candidate = method(:is_palindrome)
+    assert_equal(true, candidate.call(""""))
+    assert_equal(true, candidate.call(""aba""))
+    assert_equal(true, candidate.call(""aaaaa""))
+    assert_equal(false, candidate.call(""zbcd""))
+    assert_equal(true, candidate.call(""xywyx""))
+    assert_equal(false, candidate.call(""xywyz""))
+    assert_equal(false, candidate.call(""xywzx""))
+  end
+end
+"
+HumanEval_49,ory_Orya,rb,"2^n ମଡୁଲୋ p କୁ ଫେରାଇଦିଅନ୍ତୁ (ସଂଖ୍ୟାନ ବିଷୟରେ ସଚେତନ ରୁହନ୍ତୁ) ।# >>> modp.call(3, 5)
+# 3
+# >>> modp.call(1101, 101)
+# 2
+# >>> modp.call(0, 101)
+# 1
+# >>> modp.call(3, 11)
+# 8
+# >>> modp.call(100, 101)
+# 1
+def modp(n, p)
+","def modp(n, p)
+  return 1 if p == 1
+  2.pow(n, p)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_modp
+    candidate = method(:modp)
+    assert_equal(3, candidate.call(3, 5))
+    assert_equal(2, candidate.call(1101, 101))
+    assert_equal(1, candidate.call(0, 101))
+    assert_equal(8, candidate.call(3, 11))
+    assert_equal(1, candidate.call(100, 101))
+    assert_equal(4, candidate.call(30, 5))
+    assert_equal(3, candidate.call(31, 5))
+  end
+end
+"
+HumanEval_51,ory_Orya,rb,"remove_vowels ହେଉଛି ଏକ ଫଙ୍କସନ୍ ଯାହାକି ସ୍ୱରଗୁଡ଼ିକ ବିନା string କୁ ନେଇଥାଏ ଏବଂ ଫେରାଇଥାଏ ।# >>> remove_vowels.call("""")
+# """"
+# >>> remove_vowels.call(""abcdef"")
+# ""bcdf""
+# >>> remove_vowels.call(""aaaaa"")
+# """"
+# >>> remove_vowels.call(""aaBAA"")
+# ""B""
+# >>> remove_vowels.call(""zbcd"")
+# ""zbcd""
+def remove_vowels(text)
+","def remove_vowels(text)
+  text.delete('aeiouAEIOU')
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_remove_vowels
+    candidate = method(:remove_vowels)
+    assert_equal("""", candidate.call(""""))
+    assert_equal(""bcdf
+ghjklm"", candidate.call(""abcdef
+ghijklm""))
+    assert_equal(""fdcb"", candidate.call(""fedcba""))
+    assert_equal("""", candidate.call(""eeeee""))
+    assert_equal(""cB"", candidate.call(""acBAA""))
+    assert_equal(""cB"", candidate.call(""EcBOO""))
+    assert_equal(""ybcd"", candidate.call(""ybcd""))
+  end
+end
+"
+HumanEval_52,ory_Orya,rb,"ଯଦି ସରଳରେଖା l ର ସମସ୍ତ ସଂଖ୍ୟା ସୀମା t ତଳେ ଥାଏ ତେବେ true କୁ ଫେରାଇଥାଏ ।# >>> below_threshold.call([1, 2, 4, 10], 100)
+# true
+# >>> below_threshold.call([1, 20, 4, 10], 5)
+# false
+def below_threshold(l, t)
+","def below_threshold(l, t)
+  l.all? { |num| num < t }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_below_threshold
+    candidate = method(:below_threshold)
+    assert_equal(true, candidate.call([1, 2, 4, 10], 100))
+    assert_equal(false, candidate.call([1, 20, 4, 10], 5))
+    assert_equal(true, candidate.call([1, 20, 4, 10], 21))
+    assert_equal(true, candidate.call([1, 20, 4, 10], 22))
+    assert_equal(true, candidate.call([1, 8, 4, 10], 11))
+    assert_equal(false, candidate.call([1, 8, 4, 10], 10))
+  end
+end
+"
+HumanEval_53,ory_Orya,rb,"ଦୁଇଟି ସଂଖ୍ୟା x ଓ y କୁ ମିଶାନ୍ତୁ # >>> add.call(2, 3)
+# 5
+# >>> add.call(5, 7)
+# 12
+def add(x, y)
+","add = ->(x, y) { x + y }","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_add
+    candidate = method(:add)
+    assert_equal(1, candidate.call(0, 1))
+    assert_equal(1, candidate.call(1, 0))
+    assert_equal(5, candidate.call(2, 3))
+    assert_equal(12, candidate.call(5, 7))
+    assert_equal(12, candidate.call(7, 5))
+  end
+end
+"
+HumanEval_54,ory_Orya,rb,"ଦୁଇଟି ଶବ୍ଦର ଅକ୍ଷର ସମାନ କି ନାହିଁ ଦେଖନ୍ତୁ ।# >>> same_chars.call(""eabcdzzzz"", ""dddzzzzzzzddeddabc"")
+# true
+# >>> same_chars.call(""abcd"", ""dddddddabc"")
+# true
+# >>> same_chars.call(""dddddddabc"", ""abcd"")
+# true
+# >>> same_chars.call(""eabcd"", ""dddddddabc"")
+# false
+# >>> same_chars.call(""abcd"", ""dddddddabce"")
+# false
+# >>> same_chars.call(""eabcdzzzz"", ""dddzzzzzzzddddabc"")
+# false
+def same_chars(s0, s1)
+","def same_chars(s0, s1)
+  s0.chars.uniq.all? { |char| s1.include?(char) } &&
+  s1.chars.uniq.all? { |char| s0.include?(char) }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_same_chars
+    candidate = method(:same_chars)
+    assert_equal(true, candidate.call(""eabcdzzzz"", ""dddzzzzzzzddeddabc""))
+    assert_equal(true, candidate.call(""abcd"", ""dddddddabc""))
+    assert_equal(true, candidate.call(""dddddddabc"", ""abcd""))
+    assert_equal(false, candidate.call(""eabcd"", ""dddddddabc""))
+    assert_equal(false, candidate.call(""abcd"", ""dddddddabcf""))
+    assert_equal(false, candidate.call(""eabcdzzzz"", ""dddzzzzzzzddddabc""))
+    assert_equal(false, candidate.call(""aabb"", ""aaccc""))
+  end
+end
+"
+HumanEval_55,ory_Orya,rb,"n-ତମ ଫିବୋନାସୀ ସଂଖ୍ୟାକୁ ଫେରାଇଦେବେ. # >>> fib.call(10)
+# 55
+# >>> fib.call(1)
+# 1
+# >>> fib.call(8)
+# 21
+def fib(n)
+","def fib(n)
+  return n if n <= 1
+  fib(n - 1) + fib(n - 2)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fib
+    candidate = method(:fib)
+    assert_equal(55, candidate.call(10))
+    assert_equal(1, candidate.call(1))
+    assert_equal(21, candidate.call(8))
+    assert_equal(89, candidate.call(11))
+    assert_equal(144, candidate.call(12))
+  end
+end
+"
+HumanEval_56,ory_Orya,rb,"ଯଦି ପ୍ରତ୍ୟେକ ଖୋଲିବା ବ୍ରାକେଟରେ ସମାନ ବନ୍ଦ ବ୍ରାକେଟ ଥାଏ ତେବେ true ଫେରାଇଦେବେbrackets ହେଉଛି ""<"" ଏବଂ "">"" ର ଏକ ଷ୍ଟ୍ରିଙ୍ଗ୍.# >>> correct_bracketing.call(""<"")
+# false
+# >>> correct_bracketing.call(""<>"")
+# true
+# >>> correct_bracketing.call(""<<><>>"")
+# true
+# >>> correct_bracketing.call(""><<>"")
+# false
+def correct_bracketing(brackets)
+","def correct_bracketing(brackets)
+  balance = 0
+  brackets.chars.each do |char|
+    if char == '<'
+      balance += 1
+    elsif char == '>'
+      balance -= 1
+    end
+    return false if balance < 0
+  end
+  balance == 0
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_correct_bracketing
+    candidate = method(:correct_bracketing)
+    assert_equal(true, candidate.call(""<>""))
+    assert_equal(true, candidate.call(""<<><>>""))
+    assert_equal(true, candidate.call(""<><><<><>><>""))
+    assert_equal(true, candidate.call(""<><><<<><><>><>><<><><<>>>""))
+    assert_equal(false, candidate.call(""<<<><>>>>""))
+    assert_equal(false, candidate.call(""><<>""))
+    assert_equal(false, candidate.call(""<""))
+    assert_equal(false, candidate.call(""<<<<""))
+    assert_equal(false, candidate.call("">""))
+    assert_equal(false, candidate.call(""<<>""))
+    assert_equal(false, candidate.call(""<><><<><>><>><<>""))
+    assert_equal(false, candidate.call(""<><><<><>><>>><>""))
+  end
+end
+"
+HumanEval_57,ory_Orya,rb,"true କୁ ଫେରାଇଦିଏ, ଯଦି ଆରେ ଉପାଦାନଗୁଡ଼ିକ ଏକକ ଭାବରେ ବୃଦ୍ଧି କିମ୍ବା ହ୍ରାସ ହୁଏ ।# >>> monotonic.call([1, 2, 4, 20])
+# true
+# >>> monotonic.call([1, 20, 4, 10])
+# false
+# >>> monotonic.call([4, 1, 0, -10])
+# true
+def monotonic(l)
+","def monotonic(l)
+  increasing = true
+  decreasing = true
+
+  (0...l.length - 1).each do |i|
+    if l[i] < l[i + 1]
+      decreasing = false
+    elsif l[i] > l[i + 1]
+      increasing = false
+    end
+  end
+
+  increasing || decreasing
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_monotonic
+    candidate = method(:monotonic)
+    assert_equal(true, candidate.call([1, 2, 4, 10]))
+    assert_equal(true, candidate.call([1, 2, 4, 20]))
+    assert_equal(false, candidate.call([1, 20, 4, 10]))
+    assert_equal(true, candidate.call([4, 1, 0, -10]))
+    assert_equal(true, candidate.call([4, 1, 1, 0]))
+    assert_equal(false, candidate.call([1, 2, 3, 2, 5, 60]))
+    assert_equal(true, candidate.call([1, 2, 3, 4, 5, 60]))
+    assert_equal(true, candidate.call([9, 9, 9, 9]))
+  end
+end
+"
+HumanEval_58,ory_Orya,rb,"ଦୁଇଟି ସରଳୀକରଣ ପାଇଁ ସର୍ଟ ହୋଇଥିବା ଅନନ୍ୟ ସାଧାରଣ ଉପାଦାନଗୁଡ଼ିକୁ ଫେରାଇଥାଏ.# >>> common.call([1, 4, 3, 34, 653, 2, 5], [5, 7, 1, 5, 9, 653, 121])
+# [1, 5, 653]
+# >>> common.call([5, 3, 2, 8], [3, 2])
+# [2, 3]
+def common(l1, l2)
+","def common(l1, l2)
+  (l1 & l2).uniq.sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_common
+    candidate = method(:common)
+    assert_equal([1, 5, 653], candidate.call([1, 4, 3, 34, 653, 2, 5], [5, 7, 1, 5, 9, 653, 121]))
+    assert_equal([2, 3], candidate.call([5, 3, 2, 8], [3, 2]))
+    assert_equal([2, 3, 4], candidate.call([4, 3, 2, 8], [3, 2, 4]))
+    assert_equal([], candidate.call([4, 3, 2, 8], []))
+  end
+end
+"
+HumanEval_59,ory_Orya,rb,"n ର ସବୁଠାରୁ ବଡ ଅକ୍ଷର ଫ୍ୟାକ୍ଟର ଫେରାଇ ଦିଅନ୍ତୁ _ n > 1 କୁ ଧରି ନିଅନ୍ତୁ ଏବଂ ଅକ୍ଷର ନୁହେଁ _# >>> largest_prime_factor.call(13195)
+# 29
+# >>> largest_prime_factor.call(2048)
+# 2
+def largest_prime_factor(n)
+","def largest_prime_factor(n)
+  factor = 2
+  while factor * factor <= n
+    if n % factor == 0
+      n /= factor
+    else
+      factor += 1
+    end
+  end
+  n
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_largest_prime_factor
+    candidate = method(:largest_prime_factor)
+    assert_equal(5, candidate.call(15))
+    assert_equal(3, candidate.call(27))
+    assert_equal(7, candidate.call(63))
+    assert_equal(11, candidate.call(330))
+    assert_equal(29, candidate.call(13195))
+  end
+end
+"
+HumanEval_60,ory_Orya,rb,"sum_to_n ହେଉଛି ଏକ ଫଙ୍କସନ୍ ଯାହା 1 ରୁ n ପର୍ଯ୍ୟନ୍ତ ସଂଖ୍ୟାଗୁଡିକୁ ଯୋଗ କରିଥାଏ ।# >>> sum_to_n.call(30)
+# 465
+# >>> sum_to_n.call(100)
+# 5050
+# >>> sum_to_n.call(5)
+# 15
+# >>> sum_to_n.call(10)
+# 55
+# >>> sum_to_n.call(1)
+# 1
+def sum_to_n(n)
+","def sum_to_n(n)
+  (1..n).sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sum_to_n
+    candidate = method(:sum_to_n)
+    assert_equal(1, candidate.call(1))
+    assert_equal(21, candidate.call(6))
+    assert_equal(66, candidate.call(11))
+    assert_equal(465, candidate.call(30))
+    assert_equal(5050, candidate.call(100))
+  end
+end
+"
+HumanEval_61,ory_Orya,rb,"ଯଦି ପ୍ରତ୍ୟେକ ଖୋଲିବା ବ୍ରାକେଟରେ ସମାନ ବନ୍ଦ ବ୍ରାକେଟ ଥାଏ ତେବେ true ଫେରାଇଦେବେbrackets ହେଉଛି ""("" ଏବଂ """") ର ଏକ ଷ୍ଟ୍ରିଙ୍ଗ୍.# >>> correct_bracketing.call(""("")
+# false
+# >>> correct_bracketing.call(""()"")
+# true
+# >>> correct_bracketing.call(""(()())"")
+# true
+# >>> correct_bracketing.call("")(()"")
+# false
+def correct_bracketing(brackets)
+","def correct_bracketing(brackets)
+  balance = 0
+  brackets.each_char do |char|
+    if char == '('
+      balance += 1
+    elsif char == ')'
+      balance -= 1
+    end
+    return false if balance < 0
+  end
+  balance == 0
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_correct_bracketing
+    candidate = method(:correct_bracketing)
+    assert_equal(true, candidate.call(""()""))
+    assert_equal(true, candidate.call(""(()())""))
+    assert_equal(true, candidate.call(""()()(()())()""))
+    assert_equal(true, candidate.call(""()()((()()())())(()()(()))""))
+    assert_equal(false, candidate.call(""((()())))""))
+    assert_equal(false, candidate.call("")(()""))
+    assert_equal(false, candidate.call(""(""))
+    assert_equal(false, candidate.call(""((((""))
+    assert_equal(false, candidate.call("")""))
+    assert_equal(false, candidate.call(""(()""))
+    assert_equal(false, candidate.call(""()()(()())())(()""))
+    assert_equal(false, candidate.call(""()()(()())()))()""))
+  end
+end
+"
+HumanEval_62,ory_Orya,rb,"ଏହି ବହୁପଦଟିର ସମକକ୍ଷକୁ ସେହି ସମାନ ରୂପରେ ଫେରାଇଦିଅନ୍ତୁ.xs[0] + xs[1] * x + xs[2] * x^2 + ....  ଏହା ଏକ ବର୍ଗର ଏକକ ଅଟେ ।xs ଏକ ବହୁପଦ ର ଗୁଣକ କୁ ଦର୍ଶାଏ.# >>> derivative.call([3, 1, 2, 4, 5])
+# [1, 4, 12, 20]
+# >>> derivative.call([1, 2, 3])
+# [2, 6]
+def derivative(xs)
+","def derivative(xs)
+  return [] if xs.length < 2
+  xs.each_with_index.map { |coef, index| coef * index }[1..-1]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_derivative
+    candidate = method(:derivative)
+    assert_equal([1, 4, 12, 20], candidate.call([3, 1, 2, 4, 5]))
+    assert_equal([2, 6], candidate.call([1, 2, 3]))
+    assert_equal([2, 2], candidate.call([3, 2, 1]))
+    assert_equal([2, 2, 0, 16], candidate.call([3, 2, 1, 0, 4]))
+    assert_equal([], candidate.call([1]))
+  end
+end
+"
+HumanEval_63,ory_Orya,rb,"ଦୟାକରି ଏକ ଫଳନ ଲେଖନ୍ତୁ ଯାହା ଦ୍ବାରା ଫିବିବ ସଂଖ୍ଯା କ୍ରମର n-ତମ ଉପାଦାନକୁ ସଠିକ ଭାବରେ ଗଣନା କରିହେବ ।ଫିବିବ (n) == ଫିବିବ (n-1) + ଫିବିବ (n-2) + ଫିବିବ (n-3) ।ଫିବିବ (୨) == ୧ ଫିବିବ (୧) == ୦ ଫିବିବ (୦) == ୦ ଫିବୋନାଚି କ୍ରମରେ ସମାନ କ୍ରମରେ ଫିବୋନାଚି କ୍ରମରେ ସମାନ କ୍ରମରେ ନିମ୍ନଲିଖିତ ପରିଭାଷା ଅଛି:# >>> fibfib.call(1)
+# 0
+# >>> fibfib.call(5)
+# 4
+# >>> fibfib.call(8)
+# 24
+def fibfib(n)
+","def fibfib(n)
+  return 0 if n == 0 || n == 1
+  return 1 if n == 2
+
+  a, b, c = 0, 0, 1
+  (3..n).each do
+    a, b, c = b, c, a + b + c
+  end
+  c
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fibfib
+    candidate = method(:fibfib)
+    assert_equal(1, candidate.call(2))
+    assert_equal(0, candidate.call(1))
+    assert_equal(4, candidate.call(5))
+    assert_equal(24, candidate.call(8))
+    assert_equal(81, candidate.call(10))
+    assert_equal(274, candidate.call(12))
+    assert_equal(927, candidate.call(14))
+  end
+end
+"
+HumanEval_64,ory_Orya,rb,"ଉଦାହରଣ:ସ୍ୱର, କିନ୍ତୁ କେବଳ ଯେତେବେଳେ ଏହା ଦିଆଯାଇଥିବା ଶବ୍ଦର ଶେଷରେ ଥାଏ ।ଏହି କ୍ଷେତ୍ରରେ ସ୍ୱରଗୁଡ଼ିକ ହେଉଛି 'a', 'e', 'i', 'o', 'u' । ଏଠାରେ 'y' ମଧ୍ୟ ଏକ ଗୋଟିଏ ଶବ୍ଦକୁ ଇନପୁଟ୍ ଭାବରେ ବ୍ୟବହାର କରି, ସେହି ବାକ୍ୟଖଣ୍ଡରେ ଥିବା ସ୍ୱରଗୁଡ଼ିକର ସଂଖ୍ୟାକୁ ଫେରାଇଥାଏ.ଏକ ଫଙ୍କସନ ଲେଖନ୍ତୁ, ଯେଉଁଥିରେ ଏକ ଷ୍ଟ୍ରିଙ୍ଗ୍ ଅଛି, ଯାହା # >>> vowels_count.call(""abcde"")
+# 2
+# >>> vowels_count.call(""ACEDY"")
+# 3
+def vowels_count(s)
+","def vowels_count(s)
+  vowels = ['a', 'e', 'i', 'o', 'u']
+  count = 0
+  
+  s.chars.each_with_index do |char, index|
+    if vowels.include?(char.downcase)
+      count += 1
+    elsif char.downcase == 'y' && index == s.length - 1
+      count += 1
+    end
+  end
+  
+  count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_vowels_count
+    candidate = method(:vowels_count)
+    assert_equal(2, candidate.call(""abcde""))
+    assert_equal(3, candidate.call(""Alone""))
+    assert_equal(2, candidate.call(""key""))
+    assert_equal(1, candidate.call(""bye""))
+    assert_equal(2, candidate.call(""keY""))
+    assert_equal(1, candidate.call(""bYe""))
+    assert_equal(3, candidate.call(""ACEDY""))
+  end
+end
+"
+HumanEval_65,ory_Orya,rb,"ଯଦି shift > ଅଙ୍କ ସଂଖ୍ୟା, ତେବେ ଅଙ୍କ ସଂଖ୍ୟାକୁ ଫେରାଇଦେବେ ।ଏବଂ ଫଳାଫଳକୁ ଗୋଟିଏ ଧାଡ଼ି ଭାବରେ ଫେରାଇଥାଏ.ସର୍କୁଲାର ଭାବରେ x ର ଅଙ୍କକୁ ଘୁଞ୍ଚାଇ, ଅଙ୍କକୁ ଘୁଞ୍ଚାଇ # >>> circular_shift.call(12, 1)
+# ""21""
+# >>> circular_shift.call(12, 2)
+# ""12""
+def circular_shift(x, shift)
+","def circular_shift(x, shift)
+  digits = x.to_s.chars
+  num_digits = digits.length
+
+  if shift > num_digits
+    return digits.reverse.join
+  else
+    shift = shift % num_digits
+    shifted_digits = digits.rotate(-shift)
+    return shifted_digits.join
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_circular_shift
+    candidate = method(:circular_shift)
+    assert_equal(""001"", candidate.call(100, 2))
+    assert_equal(""12"", candidate.call(12, 2))
+    assert_equal(""79"", candidate.call(97, 8))
+    assert_equal(""21"", candidate.call(12, 1))
+    assert_equal(""11"", candidate.call(11, 101))
+  end
+end
+"
+HumanEval_66,ory_Orya,rb,"ଉଦାହରଣ:ଏଏସସିଆଇଆଇ କୋଡ ।ଏକ ଫଳନ ଲେଖନ୍ତୁ ଯାହା ଏକ ଷ୍ଟ୍ରିଙ୍ଗକୁ ଇନପୁଟ ଭାବରେ ଗ୍ରହଣ କରେ ଏବଂ କେବଳ ଉପର ଅକ୍ଷରର ସମୁଦାୟ ଫେରାଇଥାଏ' କାର୍ଯ୍ୟ # >>> digitSum.call("""")
+# 0
+# >>> digitSum.call(""abAB"")
+# 131
+# >>> digitSum.call(""abcCd"")
+# 67
+# >>> digitSum.call(""helloE"")
+# 69
+# >>> digitSum.call(""woArBld"")
+# 131
+# >>> digitSum.call(""aAaaaXa"")
+# 153
+def digitSum(s)
+","def digitSum(s)
+  s.chars.select { |char| char =~ /[A-Z]/ }.map(&:ord).sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_digitSum
+    candidate = method(:digitSum)
+    assert_equal(0, candidate.call(""""))
+    assert_equal(131, candidate.call(""abAB""))
+    assert_equal(67, candidate.call(""abcCd""))
+    assert_equal(69, candidate.call(""helloE""))
+    assert_equal(131, candidate.call(""woArBld""))
+    assert_equal(153, candidate.call(""aAaaaXa""))
+    assert_equal(151, candidate.call("" How are yOu?""))
+    assert_equal(327, candidate.call(""You arE Very Smart""))
+  end
+end
+"
+HumanEval_67,ory_Orya,rb,"ଏକ୍ସାମ୍ବଲ ପାଇଁ: ବାସ୍କେଟରେ ଥିବା ଆମ୍ବ ଫଳର ସଂଖ୍ୟାକୁ ଫେରାଇବ ।ଆଳୁ ଓ ଆପଲ୍ ଏବଂ ଏକ ସମ୍ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା ଯାହା ଫଳଗୁଡ଼ିକର ସମୁଦାୟ ସଂଖ୍ୟାକୁ ପ୍ରତିନିଧିତ୍ୱ କରେ _ଆପଲ୍, କମଳା, ଏବଂ ଆମ୍ବ ଫଳ.ଫଳ ବାସ୍କେଟରେ ବଣ୍ଟନ କରା ଯାଇଥିବା ଫଳ ଏହି ବାସ୍କେଟରେ ଅଛି ।ଏହି କାମରେ, ଆପଣଙ୍କୁ ଏକ ଷ୍ଟ୍ରିଙ୍ଗ ଦିଆଯିବ ଯାହା ଆପଲ୍ ଓ କମଳା ସଂଖ୍ୟାକୁ ପ୍ରତିନିଧିତ୍ୱ କରିବ # >>> fruit_distribution.call(""5 apples and 6 oranges"", 19)
+# 8
+# >>> fruit_distribution.call(""0 apples and 1 oranges"", 3)
+# 2
+# >>> fruit_distribution.call(""2 apples and 3 oranges"", 100)
+# 95
+# >>> fruit_distribution.call(""100 apples and 1 oranges"", 120)
+# 19
+def fruit_distribution(s, n)
+","def fruit_distribution(s, n)
+  numbers = s.scan(/\d+/).map(&:to_i)
+  apples = numbers[0]
+  oranges = numbers[1]
+  total_fruits = n
+  mangos = total_fruits - (apples + oranges)
+  mangos
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fruit_distribution
+    candidate = method(:fruit_distribution)
+    assert_equal(8, candidate.call(""5 apples and 6 oranges"", 19))
+    assert_equal(10, candidate.call(""5 apples and 6 oranges"", 21))
+    assert_equal(2, candidate.call(""0 apples and 1 oranges"", 3))
+    assert_equal(2, candidate.call(""1 apples and 0 oranges"", 3))
+    assert_equal(95, candidate.call(""2 apples and 3 oranges"", 100))
+    assert_equal(0, candidate.call(""2 apples and 3 oranges"", 5))
+    assert_equal(19, candidate.call(""1 apples and 100 oranges"", 120))
+  end
+end
+"
+HumanEval_68,ory_Orya,rb,"ଉଦାହରଣ 1: ଯଦି କୌଣସି ଯୁଗ୍ମ ମୂଲ୍ୟ ନଥାଏ କିମ୍ବା ଦିଆଯାଇଥିବା ସରଳୀକୃତ ଶୂନ୍ୟ ହୋଇଥାଏ, ତେବେ ଫେରାଇଦେବେ [].ଚୋରି ହୋଇଥିବା ନୋଡକୁ ଏକ ଆରେରେ ଫେରାଇଦିଆଯିବ, [ smalest_value, ଏହାର ସୂଚକାଙ୍କ ], ଯଦି ଏକାଧିକ ନୋଡ ସମାନ ସର୍ବନିମ୍ନ ଯୁଗ୍ମ ମୂଲ୍ୟ ସହିତ ମିଳିଥାଏ ତେବେ ନୋଡକୁ ଫେରାଇଥାଏ ଯାହାର ସର୍ବନିମ୍ନ ସୂଚକାଙ୍କ ଅଛି ।ଚୋରା ନୋଡଟି ସବୁଠାରୁ ଛୋଟ ଯୁଗ୍ମ ମୂଲ୍ୟର ନୋଡ ହେବା ଉଚିତ ।ଆପଣଙ୍କର କାମ ହେଉଛି ଗୋଟିଏ ନୋଡକୁ କାଢ଼ି ତାକୁ ଫେରାଇ ଦେବା ।""ଏକ ବୃକ୍ଷର ଶାଖାକୁ ପ୍ରତିନିଧିତ୍ୱ କରୁଥିବା ଏକ ସରଳୀକରଣ ଦିଆଯାଇଥାଏ ଯାହାର ନନ୍-ନଗେଟିଭ୍ ଇଣ୍ଟେଜର ନୋଡ ଅଛି # >>> pluck.call([4, 2, 3])
+# [2, 1]
+# Explanation: 2 has the smallest even value, and 2 has the smallest index.
+# Example 2:
+# >>> pluck.call([1, 2, 3])
+# [2, 1]
+# Explanation: 2 has the smallest even value, and 2 has the smallest index.
+# Example 3:
+# >>> pluck.call([])
+# []
+# Example 4:
+# >>> pluck.call([5, 0, 3, 0, 4, 2])
+# [0, 1]
+# Explanation: 0 is the smallest value, but  there are two zeros,
+# so we will choose the first zero, which has the smallest index.
+# Constraints:
+# * 1 <= nodes.length <= 10000
+# * 0 <= node.value
+def pluck(arr)
+","def pluck(arr)
+  smallest_even = nil
+  smallest_index = nil
+  
+  arr.each_with_index do |value, index|
+    if value.even?
+      if smallest_even.nil? || value < smallest_even
+        smallest_even = value
+        smallest_index = index
+      end
+    end
+  end
+
+  smallest_even.nil? ? [] : [smallest_even, smallest_index]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_pluck
+    candidate = method(:pluck)
+    assert_equal([2, 1], candidate.call([4, 2, 3]))
+    assert_equal([2, 1], candidate.call([1, 2, 3]))
+    assert_equal([], candidate.call([]))
+    assert_equal([0, 1], candidate.call([5, 0, 3, 0, 4, 2]))
+    assert_equal([0, 3], candidate.call([1, 2, 3, 0, 5, 3]))
+    assert_equal([4, 1], candidate.call([5, 4, 8, 4, 8]))
+    assert_equal([6, 1], candidate.call([7, 6, 7, 1]))
+    assert_equal([], candidate.call([7, 9, 7, 1]))
+  end
+end
+"
+HumanEval_69,ory_Orya,rb,"ଉଦାହରଣ:ଯଦି ଏପରି କୌଣସି ମୂଲ୍ୟ ନଥାଏ, ତେବେ -1 ଫେରାଇଦେବେ.ଏକ ସମ୍ପୂର୍ଣ୍ଣ ସଂଖ୍ୟାର ବାରମ୍ବାରତା ହେଉଛି ଏହା ଧାଡ଼ିରେ ଦେଖାଯାଉଥିବା ସମୟର ସଂଖ୍ୟା ।ଶୂନ, ଏବଂ ଏହାର ଫ୍ରିକ୍ୱେନ୍ସି ନିଜେ ସମ୍ପୂର୍ଣ୍ଣ ସଂଖ୍ୟାର ମୂଲ୍ୟ ଠାରୁ ଅଧିକ କିମ୍ବା ସମାନ ।ଆପଣଙ୍କୁ ଧନାତ୍ମକ ପୂର୍ଣ୍ଣ ସଂଖ୍ୟାର ଏକ ଅଣ-ଖାଲି ଧାରା ଦିଆ ଯାଇଛି. ସବୁଠାରୁ ବଡ ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା ଫେରାଇ ଦିଅନ୍ତୁ ଯାହା  ଠାରୁ ବଡ# >>> search.call([4, 1, 2, 2, 3, 1])
+# 2
+# >>> search.call([1, 2, 2, 3, 3, 3, 4, 4, 4])
+# 3
+# >>> search.call([5, 5, 4, 4, 4])
+# -1
+def search(lst)
+","def search(lst)
+  freq_hash = lst.each_with_object(Hash.new(0)) { |num, hash| hash[num] += 1 }
+  valid_numbers = freq_hash.select { |num, freq| freq >= num }.keys
+  valid_numbers.empty? ? -1 : valid_numbers.max
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_search
+    candidate = method(:search)
+    assert_equal(1, candidate.call([5, 5, 5, 5, 1]))
+    assert_equal(4, candidate.call([4, 1, 4, 1, 4, 4]))
+    assert_equal(-1, candidate.call([3, 3]))
+    assert_equal(8, candidate.call([8, 8, 8, 8, 8, 8, 8, 8]))
+    assert_equal(2, candidate.call([2, 3, 3, 2, 2]))
+    assert_equal(1, candidate.call([2, 7, 8, 8, 4, 8, 7, 3, 9, 6, 5, 10, 4, 3, 6, 7, 1, 7, 4, 10, 8, 1]))
+    assert_equal(2, candidate.call([3, 2, 8, 2]))
+    assert_equal(1, candidate.call([6, 7, 1, 8, 8, 10, 5, 8, 5, 3, 10]))
+    assert_equal(-1, candidate.call([8, 8, 3, 6, 5, 6, 4]))
+    assert_equal(1, candidate.call([6, 9, 6, 7, 1, 4, 7, 1, 8, 8, 9, 8, 10, 10, 8, 4, 10, 4, 10, 1, 2, 9, 5, 7, 9]))
+    assert_equal(1, candidate.call([1, 9, 10, 1, 3]))
+    assert_equal(5, candidate.call([6, 9, 7, 5, 8, 7, 5, 3, 7, 5, 10, 10, 3, 6, 10, 2, 8, 6, 5, 4, 9, 5, 3, 10]))
+    assert_equal(1, candidate.call([1]))
+    assert_equal(4, candidate.call([8, 8, 10, 6, 4, 3, 5, 8, 2, 4, 2, 8, 4, 6, 10, 4, 2, 1, 10, 2, 1, 1, 5]))
+    assert_equal(2, candidate.call([2, 10, 4, 8, 2, 10, 5, 1, 2, 9, 5, 5, 6, 3, 8, 6, 4, 10]))
+    assert_equal(1, candidate.call([1, 6, 10, 1, 6, 9, 10, 8, 6, 8, 7, 3]))
+    assert_equal(4, candidate.call([9, 2, 4, 1, 5, 1, 5, 2, 5, 7, 7, 7, 3, 10, 1, 5, 4, 2, 8, 4, 1, 9, 10, 7, 10, 2, 8, 10, 9, 4]))
+    assert_equal(4, candidate.call([2, 6, 4, 2, 8, 7, 5, 6, 4, 10, 4, 6, 3, 7, 8, 8, 3, 1, 4, 2, 2, 10, 7]))
+    assert_equal(2, candidate.call([9, 8, 6, 10, 2, 6, 10, 2, 7, 8, 10, 3, 8, 2, 6, 2, 3, 1]))
+    assert_equal(-1, candidate.call([5, 5, 3, 9, 5, 6, 3, 2, 8, 5, 6, 10, 10, 6, 8, 4, 10, 7, 7, 10, 8]))
+    assert_equal(-1, candidate.call([10]))
+    assert_equal(2, candidate.call([9, 7, 7, 2, 4, 7, 2, 10, 9, 7, 5, 7, 2]))
+    assert_equal(1, candidate.call([5, 4, 10, 2, 1, 1, 10, 3, 6, 1, 8]))
+    assert_equal(1, candidate.call([7, 9, 9, 9, 3, 4, 1, 5, 9, 1, 2, 1, 1, 10, 7, 5, 6, 7, 6, 7, 7, 6]))
+    assert_equal(-1, candidate.call([3, 10, 10, 9, 2]))
+  end
+end
+"
+HumanEval_70,ory_Orya,rb,"ଉଦାହରଣ:ତାପରେ ବାକି ସଂଖ୍ୟାର ସର୍ବାଧିକ, ତାପରେ ସର୍ବନିମ୍ନ, ଏବଂ ଏହିପରି ଭାବରେ _ଅଜବ ସର୍ଟ କରିବା, ଯେତେବେଳେ ଆପଣ ସର୍ବନିମ୍ନ ମୂଲ୍ୟ ସହିତ ଆରମ୍ଭ କରନ୍ତି, ସମ୍ପୂର୍ଣ୍ଣ ସଂଖ୍ୟାଗୁଡ଼ିକର ଏକ ସରଳୀକୃତ ଧାରାକୁ ଦେଇ, ଅଜବ କ୍ରମରେ ସରଳୀକୃତ ଧାରାକୁ ଫେରାଇବ.# >>> strange_sort_list.call([1, 2, 3, 4])
+# [1, 4, 2, 3]
+# >>> strange_sort_list.call([5, 5, 5, 5])
+# [5, 5, 5, 5]
+# >>> strange_sort_list.call([])
+# []
+def strange_sort_list(lst)
+","def strange_sort_list(lst)
+  result = []
+  lst.sort!
+  until lst.empty?
+    result << lst.shift
+    result << lst.pop unless lst.empty?
+  end
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_strange_sort_list
+    candidate = method(:strange_sort_list)
+    assert_equal([1, 4, 2, 3], candidate.call([1, 2, 3, 4]))
+    assert_equal([5, 9, 6, 8, 7], candidate.call([5, 6, 7, 8, 9]))
+    assert_equal([1, 5, 2, 4, 3], candidate.call([1, 2, 3, 4, 5]))
+    assert_equal([1, 9, 5, 8, 6, 7], candidate.call([5, 6, 7, 8, 9, 1]))
+    assert_equal([5, 5, 5, 5], candidate.call([5, 5, 5, 5]))
+    assert_equal([], candidate.call([]))
+    assert_equal([1, 8, 2, 7, 3, 6, 4, 5], candidate.call([1, 2, 3, 4, 5, 6, 7, 8]))
+    assert_equal([-5, 5, -5, 5, 0, 2, 2, 2], candidate.call([0, 2, 2, 2, 5, 5, -5, -5]))
+    assert_equal([111111], candidate.call([111111]))
+  end
+end
+"
+HumanEval_71,ory_Orya,rb,"ଉଦାହରଣ:ତୃତୀୟ ପକ୍ଷ ଅପେକ୍ଷା ଅଧିକ ।ତିନୋଟି ପାର୍ଶ୍ବ ଏକ ବୈଧ ତ୍ରିଭୁଜ ସୃଷ୍ଟି କରେ ଯେତେବେଳେ କୌଣସି ଦୁଇଟି ପାର୍ଶ୍ବ ର ସମୁଦାୟ ଅଧିକ ହୋଇଥାଏ ଅନ୍ୟଥା ଫେରସ୍ତ -1 ତ୍ରିଭୁଜକୁ ଦୁଇ ଦଶମିକ ବିନ୍ଦୁରେ ଗୋଲ କରନ୍ତୁ ଯଦି ତିନୋଟି ପାର୍ଶ୍ବ ଏକ ବୈଧ ତ୍ରିଭୁଜ ଗଠନ କରନ୍ତି ।ଏକ ତ୍ରିଭୁଜର ତିନି ପାର୍ଶ୍ବ ର ଲମ୍ବ ଦିଆଗଲା.  ର କ୍ଷେତ୍ରଫଳ ଫେରେଇ ନିଅନ୍ତୁ.# >>> triangle_area.call(3, 4, 5)
+# 6.0
+# >>> triangle_area.call(1, 2, 10)
+# -1
+def triangle_area(a, b, c)
+","def triangle_area(a, b, c)
+  # Check for valid triangle
+  if a + b > c && a + c > b && b + c > a
+    # Calculate the semi-perimeter
+    s = (a + b + c) / 2.0
+    # Calculate the area using Heron's formula
+    area = Math.sqrt(s * (s - a) * (s - b) * (s - c))
+    # Round to 2 decimal points
+    return area.round(2)
+  else
+    return -1
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_triangle_area
+    candidate = method(:triangle_area)
+    assert_equal(6.0, candidate.call(3, 4, 5))
+    assert_equal(-1, candidate.call(1, 2, 10))
+    assert_equal(8.18, candidate.call(4, 8, 5))
+    assert_equal(1.73, candidate.call(2, 2, 2))
+    assert_equal(-1, candidate.call(1, 2, 3))
+    assert_equal(16.25, candidate.call(10, 5, 7))
+    assert_equal(-1, candidate.call(2, 6, 3))
+    assert_equal(0.43, candidate.call(1, 1, 1))
+    assert_equal(-1, candidate.call(2, 2, 10))
+  end
+end
+"
+HumanEval_72,ory_Orya,rb,"ଉଦାହରଣ:ବସ୍ତୁ q ଉଡିଯିବ ଯଦି ଏହା ସନ୍ତୁଳିତ (ଏହା ଏକ ପାଲିଣ୍ଡ୍ରୋମିକ ଆରେ) ଏବଂ ଏହାର ଉପାଦାନଗୁଡ଼ିକର ସମୁଦାୟ ସର୍ବାଧିକ ସମ୍ଭାବ୍ୟ ଓଜନ w ଠାରୁ କମ୍ କିମ୍ବା ସମାନ ହୋଇଥାଏ ।ଏକ ଫଳନ ଲେଖନ୍ତୁ ଯାହା ସତ୍ୟ ଫେରାଇଥାଏ ଯଦି ବସ୍ତୁ q ଉଡିଯିବ, ଏବଂ ଅନ୍ୟଥା ମିଥ୍ୟା _# >>> will_it_fly.call([1, 2], 5)
+# false
+# # 1+2 is less than the maximum possible weight, but it's unbalanced.
+# >>> will_it_fly.call([3, 2, 3], 1)
+# false
+# # it's balanced, but 3+2+3 is more than the maximum possible weight.
+# >>> will_it_fly.call([3, 2, 3], 9)
+# true
+# # 3+2+3 is less than the maximum possible weight, and it's balanced.
+# >>> will_it_fly.call([3], 5)
+# true
+# # 3 is less than the maximum possible weight, and it's balanced.
+def will_it_fly(q, w)
+","def will_it_fly(q, w)
+  is_palindrome = q == q.reverse
+  total_weight = q.sum
+  is_balanced_and_under_weight = is_palindrome && total_weight <= w
+  is_balanced_and_under_weight
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_will_it_fly
+    candidate = method(:will_it_fly)
+    assert_equal(true, candidate.call([3, 2, 3], 9))
+    assert_equal(false, candidate.call([1, 2], 5))
+    assert_equal(true, candidate.call([3], 5))
+    assert_equal(false, candidate.call([3, 2, 3], 1))
+    assert_equal(false, candidate.call([1, 2, 3], 6))
+    assert_equal(true, candidate.call([5], 5))
+  end
+end
+"
+HumanEval_73,ory_Orya,rb,"ଉଦାହରଣ ସ୍ୱରୂପ: ଗୋଟିଏ ପରିବର୍ତ୍ତନରେ ଆପଣ ଗୋଟିଏ ଉପାଦାନକୁ ଅନ୍ୟ କୌଣସି ଉପାଦାନରେ ବଦଳାଇ ପାରିବେ ।ଏକ ପାଲିଣ୍ଡ୍ରୋମିକ ଆରେ ହେଉଛି ଏକ ଆରେ ଯାହା ଏକ ସରଳୀକୃତ ସମୁଦାୟ ସଂଖ୍ୟା arr ଦିଆଗଲା, ସର୍ବନିମ୍ନ ଉପାଦାନ ସଂଖ୍ୟା ଖୋଜନ୍ତୁ ଯାହା # >>> smallest_change.call([1, 2, 3, 5, 4, 7, 9, 6])
+# 4
+# >>> smallest_change.call([1, 2, 3, 4, 3, 2, 2])
+# 1
+# >>> smallest_change.call([1, 2, 3, 2, 1])
+# 0
+def smallest_change(arr)
+","def smallest_change(arr)
+  changes = 0
+  left = 0
+  right = arr.length - 1
+
+  while left < right
+    if arr[left] != arr[right]
+      changes += 1
+    end
+    left += 1
+    right -= 1
+  end
+
+  changes
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_smallest_change
+    candidate = method(:smallest_change)
+    assert_equal(4, candidate.call([1, 2, 3, 5, 4, 7, 9, 6]))
+    assert_equal(1, candidate.call([1, 2, 3, 4, 3, 2, 2]))
+    assert_equal(1, candidate.call([1, 4, 2]))
+    assert_equal(1, candidate.call([1, 4, 4, 2]))
+    assert_equal(0, candidate.call([1, 2, 3, 2, 1]))
+    assert_equal(0, candidate.call([3, 1, 1, 3]))
+    assert_equal(0, candidate.call([1]))
+    assert_equal(1, candidate.call([0, 1]))
+  end
+end
+"
+HumanEval_74,ory_Orya,rb,"ଉଦାହରଣ ଯଦି ଦୁଇଟି ସରଳରେଖାରେ ସମାନ ସଂଖ୍ୟକ ଅକ୍ଷର ଥାଏ, ତେବେ ପ୍ରଥମ ସରଳୀକୁ ଫେରାଇଦିଅନ୍ତୁ.ଅନ୍ୟ ଆରେରେ ଥିବା ସମସ୍ତ ଷ୍ଟ୍ରିଙ୍ଗରେ ଥିବା ଚାରର ମୋଟ ସଂଖ୍ୟା ଅନ୍ୟ ଆରେରେ ଥିବା ଚାର ଠାରୁ କମ୍ ।ଗୋଟିଏ ଫଳନ ଲେଖନ୍ତୁ ଯାହା ଦୁଇଟି ଧାଡିର ଧାଡି ଗ୍ରହଣ କରେ ଏବଂ ଧାଡିକୁ ଫେରାଇଥାଏ ଯାହାର # >>> total_match.call([], [])
+# []
+# >>> total_match.call([""hi"", ""admin""], [""hI"", ""Hi""])
+# [""hI"", ""Hi""]
+# >>> total_match.call([""hi"", ""admin""], [""hi"", ""hi"", ""admin"", ""project""])
+# [""hi"", ""admin""]
+# >>> total_match.call([""hi"", ""admin""], [""hI"", ""hi"", ""hi""])
+# [""hI"", ""hi"", ""hi""]
+# >>> total_match.call([""4""], [""1"", ""2"", ""3"", ""4"", ""5""])
+# [""4""]
+def total_match(lst1, lst2)
+","def total_match(lst1, lst2)
+  total_chars1 = lst1.map(&:length).sum
+  total_chars2 = lst2.map(&:length).sum
+
+  if total_chars1 < total_chars2
+    lst1
+  elsif total_chars2 < total_chars1
+    lst2
+  else
+    lst1
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_total_match
+    candidate = method(:total_match)
+    assert_equal([], candidate.call([], []))
+    assert_equal([""hi"", ""hi""], candidate.call([""hi"", ""admin""], [""hi"", ""hi""]))
+    assert_equal([""hi"", ""admin""], candidate.call([""hi"", ""admin""], [""hi"", ""hi"", ""admin"", ""project""]))
+    assert_equal([""4""], candidate.call([""4""], [""1"", ""2"", ""3"", ""4"", ""5""]))
+    assert_equal([""hI"", ""Hi""], candidate.call([""hi"", ""admin""], [""hI"", ""Hi""]))
+    assert_equal([""hI"", ""hi"", ""hi""], candidate.call([""hi"", ""admin""], [""hI"", ""hi"", ""hi""]))
+    assert_equal([""hi"", ""admin""], candidate.call([""hi"", ""admin""], [""hI"", ""hi"", ""hii""]))
+    assert_equal([], candidate.call([], [""this""]))
+    assert_equal([], candidate.call([""this""], []))
+  end
+end
+"
+HumanEval_75,ory_Orya,rb,"ଉଦାହରଣ:ଜାଣିଛୁ ଯେ (a) 100 ରୁ କମ ଅଟେ ।ଏବଂ ଅନ୍ୟଥା ମିଥ୍ୟା ।ଗୋଟିଏ ଫଳନ ଲେଖନ୍ତୁ ଯାହା ସତ୍ୟ ଫେରାଇବ ଯଦି ଦିଆଯାଇଥିବା ସଂଖ୍ୟାଟି 3ଟି ଅଶୂର ସଂଖ୍ୟା ଗୁଡ଼ିକର ଗୁଣନ # >>> is_multiply_prime.call(30)
+# true
+# 30 = 2 * 3 * 5
+def is_multiply_prime(a)
+","require 'prime'
+
+def is_multiply_prime(a)
+  return false if a >= 100
+  prime_factors = a.prime_division
+  return true if prime_factors.size == 3 && prime_factors.all? { |_, exponent| exponent == 1 }
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_multiply_prime
+    candidate = method(:is_multiply_prime)
+    assert_equal(false, candidate.call(5))
+    assert_equal(true, candidate.call(30))
+    assert_equal(true, candidate.call(8))
+    assert_equal(false, candidate.call(10))
+    assert_equal(true, candidate.call(125))
+    assert_equal(true, candidate.call(105))
+    assert_equal(false, candidate.call(126))
+    assert_equal(false, candidate.call(729))
+    assert_equal(false, candidate.call(891))
+    assert_equal(true, candidate.call(1001))
+  end
+end
+"
+HumanEval_76,ory_Orya,rb,"ଉଦାହରଣ ସ୍ୱରୂପ: x ହେଉଛି n ର ଏକ ସରଳ ଶକ୍ତି ଯଦି n**int=x ଅନ୍ୟ କ୍ଷେତ୍ରରେ n ର ଶକ୍ତି ଏବଂ ମିଥ୍ୟା ।ଆପଣଙ୍କର କାମ ହେଉଛି ଏକ ଫଳନ ଲେଖିବା ଯାହା ସତ୍ୟ ଫେରାଇଥାଏ ଯଦି ଏକ ସଂଖ୍ୟା x ଏକ ସରଳ # >>> is_simple_power.call(1, 4)
+# true
+# >>> is_simple_power.call(2, 2)
+# true
+# >>> is_simple_power.call(8, 2)
+# true
+# >>> is_simple_power.call(3, 2)
+# false
+# >>> is_simple_power.call(3, 1)
+# false
+# >>> is_simple_power.call(5, 3)
+# false
+def is_simple_power(x, n)
+","def is_simple_power(x, n)
+  return false if x <= 0 || n <= 1
+  return true if x == 1
+
+  power = n
+  while power <= x
+    return true if power == x
+    power *= n
+  end
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_simple_power
+    candidate = method(:is_simple_power)
+    assert_equal(true, candidate.call(16, 2))
+    assert_equal(false, candidate.call(143214, 16))
+    assert_equal(true, candidate.call(4, 2))
+    assert_equal(true, candidate.call(9, 3))
+    assert_equal(true, candidate.call(16, 4))
+    assert_equal(false, candidate.call(24, 2))
+    assert_equal(false, candidate.call(128, 4))
+    assert_equal(false, candidate.call(12, 6))
+    assert_equal(true, candidate.call(1, 1))
+    assert_equal(true, candidate.call(1, 12))
+  end
+end
+"
+HumanEval_77,ory_Orya,rb,"ଉଦାହରଣ:ଟିପ୍ପଣୀ: ଆପଣ ଭାବୁଥିବେ ଇନପୁଟ୍ ସବୁବେଳେ ବୈଧ ।ଯଦି ଏହି ଇନଗେଜର କୌଣସି ସଂଖ୍ୟାର ଘନକ ଅଟେ ।ଗୋଟିଏ ଫଳନ ଲେଖନ୍ତୁ ଯାହା ଏକ ସମ୍ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା a କୁ ନେଇଥାଏ ଏବଂ true କୁ ଫେରାଇଥାଏ ।# >>> iscube.call(1)
+# true
+# >>> iscube.call(2)
+# false
+# >>> iscube.call(-1)
+# true
+# >>> iscube.call(64)
+# true
+# >>> iscube.call(0)
+# true
+# >>> iscube.call(180)
+# false
+def iscube(a)
+","def iscube(a)
+  cube_root = a.abs**(1.0/3)
+  cube_root.round**3 == a
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_iscube
+    candidate = method(:iscube)
+    assert_equal(true, candidate.call(1))
+    assert_equal(false, candidate.call(2))
+    assert_equal(true, candidate.call(-1))
+    assert_equal(true, candidate.call(64))
+    assert_equal(false, candidate.call(180))
+    assert_equal(true, candidate.call(1000))
+    assert_equal(true, candidate.call(0))
+    assert_equal(false, candidate.call(1729))
+  end
+end
+"
+HumanEval_78,ory_Orya,rb,"ଉଦାହରଣ:ଏବଂ A,B,C,D,E,F ଚିହ୍ନ ସବୁ ବେଳେ ବଡ଼ ଅକ୍ଷରରେ ଲେଖା ହୋଇଥାଏ ।ଟିପ୍ପଣୀ: ଆପଣ ଅନୁମାନ କରିପାରନ୍ତି ଯେ ନିବେଶ ସର୍ବଦା ସଠିକ କିମ୍ବା ଖାଲି ବାକ୍ୟଖଣ୍ଡ, ବି (= ଦଶମିକ 11), ଡି (= ଦଶମିକ 13) ।ତେଣୁ ଆପଣଙ୍କୁ ନିମ୍ନଲିଖିତ ଅଙ୍କ ମଧ୍ୟରୁ ଏକ ସଂଖ୍ୟା ନିର୍ଣ୍ଣୟ କରିବାକୁ ହେବ: 2, 3, 5, 7, ମୂଳ ସଂଖ୍ୟା ଗୁଡିକ ହେଉଛି 2, 3, 5, 7, 11, 13, 17,...ହେକ୍ସାଡେସିମାଲ ଅଙ୍କ ହେଉଛି 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F. 1 ରୁ ବଡ, ଯାହାକି ଦୁଇଟି ଛୋଟ ପ୍ରାକୃତିକ ସଂଖ୍ଯାର ଗୁଣନ ନୁହେଁ) ।ଅକ୍ଷର ଗୁଡିକ ଅକ୍ଷର ସଂଖ୍ୟା (ଅକ୍ଷର ସଂଖ୍ୟା, କିମ୍ବା ଏକ ଅକ୍ଷର, ଏକ ପ୍ରାକୃତିକ ସଂଖ୍ୟା ଏକ ହେକ୍ସାଡେସିମାଲ୍ ସଂଖ୍ୟାକୁ ଏକ ଷ୍ଟ୍ରିଙ୍ଗ୍ ଭାବରେ ଗଣନା କରେ ଏବଂ ହେକ୍ସାଡେସିମାଲ୍ ସଂଖ୍ୟା ଗଣନା କରେ ଆପଣଙ୍କୁ ଏକ ଫଳନ ଲେଖିବା ପାଇଁ କୁହାଯାଇଥିଲା ଯାହା ଗ୍ରହଣ କରିଥାଏ ।# >>> hex_key.call(""AB"")
+# 1
+# >>> hex_key.call(""1077E"")
+# 2
+# >>> hex_key.call(""ABED1A33"")
+# 4
+# >>> hex_key.call(""123456789ABCDEF0"")
+# 6
+# >>> hex_key.call(""2020"")
+# 2
+def hex_key(num)
+","def hex_key(num)
+  prime_hex_digits = ['2', '3', '5', '7', 'B', 'D']
+  num.chars.count { |digit| prime_hex_digits.include?(digit) }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_hex_key
+    candidate = method(:hex_key)
+    assert_equal(1, candidate.call(""AB""))
+    assert_equal(2, candidate.call(""1077E""))
+    assert_equal(4, candidate.call(""ABED1A33""))
+    assert_equal(2, candidate.call(""2020""))
+    assert_equal(6, candidate.call(""123456789ABCDEF0""))
+    assert_equal(12, candidate.call(""112233445566778899AABBCCDDEEFF00""))
+  end
+end
+"
+HumanEval_79,ory_Orya,rb,"ଉଦାହରଣ:ଏହି ଅତିରିକ୍ତ ଅକ୍ଷରଗୁଡ଼ିକ ଫର୍ମାଟ ପାଇଁ ସାହାଯ୍ୟକାରୀ ।ଷ୍ଟ୍ରିଙ୍ଗର ଆରମ୍ଭ ଏବଂ ଶେଷରେ ଅତିରିକ୍ତ କିଛି ଅକ୍ଷର 'db' ରହିବ ।ସଂଖ୍ଯା. ଶୃଙ୍ଖଳାରେ ଥିବା ପ୍ରତ୍ୟେକ ଅକ୍ଷର '0' କିମ୍ବା '1' ହେବ.ବାଇନାରୀ ଫର୍ମାଟ. ଫଳନଟି ଏକ ଷ୍ଟ୍ରିଙ୍ଗ ଫେରାଇବ, ଯେଉଁଥିରେ ପ୍ରତ୍ୟେକ ଅକ୍ଷର ଏକ ବାଇନାରୀ କୁ ପ୍ରତିନିଧିତ୍ୱ କରିବ.ଆପଣଙ୍କୁ ଏକ ଦଶମିକ ସଂଖ୍ୟା ଦିଆଯିବ ଏବଂ ଆପଣଙ୍କର କାମ ହେଉଛି ଏହାକୁ  କୁ ପରିବର୍ତ୍ତନ କରିବା# >>> decimal_to_binary.call(15)
+# ""db1111db""
+# >>> decimal_to_binary.call(32)
+# ""db100000db""
+def decimal_to_binary(decimal)
+","def decimal_to_binary(decimal)
+  ""db"" + decimal.to_s(2) + ""db""
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_decimal_to_binary
+    candidate = method(:decimal_to_binary)
+    assert_equal(""db0db"", candidate.call(0))
+    assert_equal(""db100000db"", candidate.call(32))
+    assert_equal(""db1100111db"", candidate.call(103))
+    assert_equal(""db1111db"", candidate.call(15))
+  end
+end
+"
+HumanEval_80,ory_Orya,rb,"ଉଦାହରଣ ସ୍ୱରୂପ: ଗୋଟିଏ ଧାଡ଼ି haprb ହୋଇଥାଏ ଯଦି ଏହାର ଲମ୍ବ ଅତିକମରେ 3 ହୋଇଥାଏ ଏବଂ ପ୍ରତ୍ୟେକ 3ଟି କ୍ରମିକ ଅକ୍ଷର ଅଲଗା ହୋଇଥାଏ ଆପଣଙ୍କର କାମ ହେଉଛି ଯାଞ୍ଚ କରିବା କି ଏହି ଷ୍ଟ୍ରିଙ୍ଗଟି ଠିକ ଅଛି କି ନାହିଁ ।ଆପଣଙ୍କୁ ଗୋଟିଏ string s ଦିଆଗଲା.# >>> is_happy.call(""a"")
+# false
+# >>> is_happy.call(""aa"")
+# false
+# >>> is_happy.call(""abcd"")
+# true
+# >>> is_happy.call(""aabb"")
+# false
+# >>> is_happy.call(""adb"")
+# true
+# >>> is_happy.call(""xyy"")
+# false
+def is_happy(s)
+","def is_happy(s)
+  return false if s.length < 3
+  
+  (0..s.length - 3).each do |i|
+    return false if s[i] == s[i + 1] || s[i] == s[i + 2] || s[i + 1] == s[i + 2]
+  end
+  
+  true
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_happy
+    candidate = method(:is_happy)
+    assert_equal(false, candidate.call(""a""))
+    assert_equal(false, candidate.call(""aa""))
+    assert_equal(true, candidate.call(""abcd""))
+    assert_equal(false, candidate.call(""aabb""))
+    assert_equal(true, candidate.call(""adb""))
+    assert_equal(false, candidate.call(""xyy""))
+    assert_equal(true, candidate.call(""iopaxpoi""))
+    assert_equal(false, candidate.call(""iopaxioi""))
+  end
+end
+"
+HumanEval_81,ory_Orya,rb,"ଉଦାହରଣ:୦.୦ ଇ > ୦.୦ ଡି- > ୦.୭ ଡି > ୧.୦ ଡି+ > ୧.୩ ସି- > ୧.୭ ଡିଗ୍ରୀ ସେଲସିୟସ> ୨.୦ ସି+ > 2.3 ବି- > ୨.୭ ବି > 3.0 ବି+ > 3.3 A- > ୩.୭ ଏ 4.0 ଏ+ GPA. ଅକ୍ଷର ଗ୍ରେଡ୍.ଏକ ଫଳନ ଯାହା ନିମ୍ନଲିଖିତ ସାରଣୀ ବ୍ୟବହାର କରି ଅକ୍ଷର ମାନର ଏକ ସରଳୀକୃତ ଶୃଙ୍ଖଳାକୁ ବାହାର କରିପାରିବ: ସେ ଆପଣଙ୍କୁ କିଛି ଛାତ୍ରଙ୍କ ପାଇଁ ଗ୍ରେଡ ରେଟ୍ ଦେଇଛନ୍ତି ଏବଂ ଆପଣଙ୍କୁ ଲେଖିବାକୁ ପଡିବ ।କେବଳ ଗୋଟିଏ ସମସ୍ୟା ହେଉଛି, ସେ ଗ୍ରେଡିଂ ପାଇଁ ବ୍ୟବହାର କରୁଥିବା କୋଡ୍ ହଜିଯାଇଛି ।ଶିକ୍ଷୟତ୍ରୀମାନେ ନିଜସ୍ୱ ଗ୍ରେଡିଂ ଆଲଗୋରିଦମ ପ୍ରସ୍ତୁତ କରୁଛନ୍ତି ।ସେମିଷ୍ଟରର ଶେଷ ସପ୍ତାହରେ ଶିକ୍ଷକମାନଙ୍କୁ ମାର୍କ ଦେବାକୁ ହେବ ।# >>> grade_equation.call([4.0, 3, 1.7, 2, 3.5])
+# [""A+"", ""B"", ""C-"", ""C"", ""A-""]
+def numerical_letter_grade(grades)
+","def numerical_letter_grade(grades)
+  grades.map do |gpa|
+    case 
+    when gpa == 4.0
+      ""A+""
+    when gpa > 3.7
+      ""A""
+    when gpa > 3.3
+      ""A-""
+    when gpa > 3.0
+      ""B+""
+    when gpa > 2.7
+      ""B""
+    when gpa > 2.3
+      ""B-""
+    when gpa > 2.0
+      ""C+""
+    when gpa > 1.7
+      ""C""
+    when gpa > 1.3
+      ""C-""
+    when gpa > 1.0
+      ""D+""
+    when gpa > 0.7
+      ""D""
+    when gpa > 0.0
+      ""D-""
+    else
+      ""E""
+    end
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_numerical_letter_grade
+    candidate = method(:numerical_letter_grade)
+    assert_equal([""A+"", ""B"", ""C-"", ""C"", ""A-""], candidate.call([4.0, 3, 1.7, 2, 3.5]))
+    assert_equal([""D+""], candidate.call([1.2]))
+    assert_equal([""D-""], candidate.call([0.5]))
+    assert_equal([""E""], candidate.call([0.0]))
+    assert_equal([""D"", ""D-"", ""C-"", ""B"", ""B+""], candidate.call([1.0, 0.3, 1.5, 2.8, 3.3]))
+    assert_equal([""E"", ""D-""], candidate.call([0.0, 0.7]))
+  end
+end
+"
+HumanEval_82,ory_Orya,rb,"ଉଦାହରଣ length ଏକ ଅଶୂନ୍ୟ ସଂଖ୍ୟା କିମ୍ବା ଅନ୍ୟଥା ମିଥ୍ୟା ଏକ ଫଳନ ଲେଖନ୍ତୁ ଯାହା ଏକ ଷ୍ଟ୍ରିଙ୍ଗ ନେଇଥାଏ ଏବଂ ସତ୍ୟ ଫେରାଇଥାଏ ଯଦି ଷ୍ଟ୍ରିଙ୍ଗ # >>> prime_length.call(""Hello"")
+# true
+# >>> prime_length.call(""abcdcba"")
+# true
+# >>> prime_length.call(""kittens"")
+# true
+# >>> prime_length.call(""orange"")
+# false
+def prime_length(string)
+","def prime_length(string)
+  length = string.length
+  return false if length < 2
+
+  (2..Math.sqrt(length)).each do |i|
+    return false if length % i == 0
+  end
+
+  true
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_prime_length
+    candidate = method(:prime_length)
+    assert_equal(true, candidate.call(""Hello""))
+    assert_equal(true, candidate.call(""abcdcba""))
+    assert_equal(true, candidate.call(""kittens""))
+    assert_equal(false, candidate.call(""orange""))
+    assert_equal(true, candidate.call(""wow""))
+    assert_equal(true, candidate.call(""world""))
+    assert_equal(true, candidate.call(""MadaM""))
+    assert_equal(true, candidate.call(""Wow""))
+    assert_equal(false, candidate.call(""""))
+    assert_equal(true, candidate.call(""HI""))
+    assert_equal(true, candidate.call(""go""))
+    assert_equal(false, candidate.call(""gogo""))
+    assert_equal(false, candidate.call(""aaaaaaaaaaaaaaa""))
+    assert_equal(true, candidate.call(""Madam""))
+    assert_equal(false, candidate.call(""M""))
+    assert_equal(false, candidate.call(""0""))
+  end
+end
+"
+HumanEval_83,ory_Orya,rb,"ସକାରାତ୍ମକ ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା ଯାହା 1 ରୁ ଆରମ୍ଭ କିମ୍ବା ଶେଷ ହୁଏ ।ଏକ ସକାରାତ୍ମକ ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା n ଦିଆଗଲା, n-ଅଙ୍କ ବିଶିଷ୍ଟ ସଂଖ୍ୟାର ଗଣନା ଫେରାଇଦେବେ def starts_one_ends(n)
+","def starts_one_ends(n)
+  return 0 if n <= 0
+
+  # Count numbers starting with 1
+  start_with_1 = 9 ** (n - 1)
+
+  # Count numbers ending with 1
+  end_with_1 = 9 ** (n - 1)
+
+  # Adjust for double counting the number that both starts and ends with 1
+  both_start_and_end_with_1 = 9 ** (n - 2) if n > 1
+  
+  start_with_1 + end_with_1 - (both_start_and_end_with_1 || 0)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_starts_one_ends
+    candidate = method(:starts_one_ends)
+    assert_equal(1, candidate.call(1))
+    assert_equal(18, candidate.call(2))
+    assert_equal(180, candidate.call(3))
+    assert_equal(1800, candidate.call(4))
+    assert_equal(18000, candidate.call(5))
+  end
+end
+"
+HumanEval_84,ory_Orya,rb,"ଉଦାହରଣ ଏକ ସକାରାତ୍ମକ ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା N ଦିଆଗଲା, ଏହାର ଅଙ୍କଗୁଡ଼ିକର ସମୁଦାୟ ସମୁଦାୟକୁ ବାଇନାରୀରେ ଫେରାଇଦିଅନ୍ତୁ. # >>> solve.call(1000)
+# ""1""
+# >>> solve.call(150)
+# ""110""
+# >>> solve.call(147)
+# ""1100""
+# Variables:
+# @N integer
+# Constraints: 0 ≤ N ≤ 10000.
+# Output:
+# a string of binary number
+def solve(n)
+","def solve(n)
+  sum_of_digits = n.to_s.chars.map(&:to_i).sum
+  sum_of_digits.to_s(2)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_solve
+    candidate = method(:solve)
+    assert_equal(""1"", candidate.call(1000))
+    assert_equal(""110"", candidate.call(150))
+    assert_equal(""1100"", candidate.call(147))
+    assert_equal(""1001"", candidate.call(333))
+    assert_equal(""10010"", candidate.call(963))
+  end
+end
+"
+HumanEval_85,ory_Orya,rb,"ଉଦାହରଣ:ଏକ ଅସରନ୍ତି ସମୁଦାୟ ସଂଖ୍ୟାକୁ ଦେଇ lst. ଅଙ୍କକୋଷରେ ଥିବା ଯୁଗ୍ମ ଉପାଦାନଗୁଡ଼ିକୁ ଯୋଗ କରନ୍ତୁ.. # >>> add.call([4, 2, 6, 7])
+# 2
+def add(lst)
+","def add(lst)
+  lst.each_with_index.select { |num, index| index.odd? && num.even? }.map(&:first).sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_add
+    candidate = method(:add)
+    assert_equal(88, candidate.call([4, 88]))
+    assert_equal(122, candidate.call([4, 5, 6, 7, 2, 122]))
+    assert_equal(0, candidate.call([4, 0, 6, 7]))
+    assert_equal(12, candidate.call([4, 4, 6, 8]))
+  end
+end
+"
+HumanEval_86,ory_Orya,rb,"ଉଦାହରଣ ସ୍ୱରୂପ: ଟିପ୍ପଣୀ: ଆପଣ ବାକ୍ୟର କ୍ରମରେ ଏବଂ ବାକ୍ୟରେ ଖାଲି ସ୍ଥାନକୁ ରଖିବା ଉଚିତ ।ଏସସିଆଇ ମୂଲ୍ୟ ଆଧାରରେ କ୍ରମାନୁସାରେ ।ଏକ ନୂତନ ଶବ୍ଦ ସହିତ ବଦଳାଯିବ ଯେଉଁଠାରେ ସମସ୍ତ ଅକ୍ଷର ""ଷ୍ଟ୍ରିଙ୍ଗର ଅର୍ଡରଡ ଭର୍ସନ, ହେଉଛି ଏକ ଷ୍ଟ୍ରିଙ୍ଗ ଯେଉଁଠାରେ ସମସ୍ତ ଶବ୍ଦ (ସ୍ପେସ ଦ୍ୱାରା ପୃଥକ) ଏକ ଫଳନ ଲେଖନ୍ତୁ ଯାହା ଏକ ଷ୍ଟ୍ରିଙ୍ଗ ନେଇଥାଏ ଏବଂ ଏହାର ଏକ ଅର୍ଡର ହୋଇଥିବା ସଂସ୍କରଣ ଫେରାଇଥାଏ।# >>> anti_shuffle.call(""Hi"")
+# ""Hi""
+# >>> anti_shuffle.call(""hello"")
+# ""ehllo""
+# >>> anti_shuffle.call(""Hello World!!!"")
+# ""Hello !!!Wdlor""
+def anti_shuffle(s)
+","def anti_shuffle(s)
+  s.split(/(\s+)/).map { |word| word.chars.sort.join }.join
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_anti_shuffle
+    candidate = method(:anti_shuffle)
+    assert_equal(""Hi"", candidate.call(""Hi""))
+    assert_equal(""ehllo"", candidate.call(""hello""))
+    assert_equal(""bemnru"", candidate.call(""number""))
+    assert_equal(""abcd"", candidate.call(""abcd""))
+    assert_equal(""Hello !!!Wdlor"", candidate.call(""Hello World!!!""))
+    assert_equal("""", candidate.call(""""))
+    assert_equal("".Hi My aemn is Meirst .Rboot How aer ?ouy"", candidate.call(""Hi. My name is Mister Robot. How are you?""))
+  end
+end
+"
+HumanEval_87,ory_Orya,rb,"ଉଦାହରଣ:ଏହା ସହିତ, ଧାଡ଼ିର କୋଅର୍ଡିନେଟଗୁଡ଼ିକୁ କ୍ରମବର୍ଦ୍ଧିଷ୍ଣୁ କ୍ରମରେ ସ୍ତମ୍ଭ ଅନୁସାରେ ସର୍ଟ କରନ୍ତୁ.ପ୍ରଥମେ କୋର୍ଡିନେଟକୁ କ୍ରମାନୁସାରେ ଧାଡ଼ି ଅନୁସାରେ ସର୍ଟ କରନ୍ତୁ ।ପ୍ରତ୍ୟେକ ଆରେ ହେଉଛି ଏକ କୋର୍ଡିନେଟ - (ଶୃଙ୍ଖଳା, ସ୍ତମ୍ଭ), 0 ରୁ ଆରମ୍ଭ ।ଏବଂ arrays ର arrays, [(x1, y1), (x2, y2) ...] କୁ ଫେରାଇଥାଏ ଯେପରିକି lst, ଏବଂ ସମ୍ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା x ଦିଆଗଲା, ଆରେରେ ସମ୍ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା x ଖୋଜନ୍ତୁ, ପ୍ରତ୍ୟେକ ଧାଡ଼ିରେ ଭିନ୍ନ ଭିନ୍ନ ସଂଖ୍ୟକ ସ୍ତମ୍ଭ ରହିପାରେ ।ଯାହା ମାଟ୍ରିକ୍ସ ସହିତ ସମାନ, କିନ୍ତୁ ମାଟ୍ରିକ୍ସ ପରି ନୁହେଁ,ଆପଣଙ୍କୁ ଏକ 2D ତଥ୍ୟ ଦିଆଯାଉଛି, ଏକ ନେଷ୍ଟେଡ୍ ଆରେ ଭାବରେ, # >>> get_row.call([[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 1, 6], [1, 2, 3, 4, 5, 1]], 1)
+# [[0, 0], [1, 4], [1, 0], [2, 5], [2, 0]]
+# >>> get_row.call([], 1)
+# []
+# >>> get_row.call([[], [1], [1, 2, 3]], 3)
+# [[2, 2]]
+def get_row(lst, x)
+","def get_row(lst, x)
+  result = []
+
+  lst.each_with_index do |row, i|
+    row.each_with_index do |value, j|
+      result << [i, j] if value == x
+    end
+  end
+
+  result.sort_by { |coord| [coord[0], -coord[1]] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_get_row
+    candidate = method(:get_row)
+    assert_equal([[0, 0], [1, 4], [1, 0], [2, 5], [2, 0]], candidate.call([[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 1, 6], [1, 2, 3, 4, 5, 1]], 1))
+    assert_equal([[0, 1], [1, 1], [2, 1], [3, 1], [4, 1], [5, 1]], candidate.call([[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6]], 2))
+    assert_equal([[0, 0], [1, 0], [2, 1], [2, 0], [3, 2], [3, 0], [4, 3], [4, 0], [5, 4], [5, 0], [6, 5], [6, 0]], candidate.call([[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 1, 3, 4, 5, 6], [1, 2, 1, 4, 5, 6], [1, 2, 3, 1, 5, 6], [1, 2, 3, 4, 1, 6], [1, 2, 3, 4, 5, 1]], 1))
+    assert_equal([], candidate.call([], 1))
+    assert_equal([], candidate.call([[1]], 2))
+    assert_equal([[2, 2]], candidate.call([[], [1], [1, 2, 3]], 3))
+  end
+end
+"
+HumanEval_88,ory_Orya,rb,"ଉଦାହରଣ:* ଦିଆଯାଇଥିବା ଆରେକୁ ପରିବର୍ତ୍ତନ କରନ୍ତୁ ନାହିଁ. ନୋଟ: ଅଥବା ଏହାକୁ କ୍ରମାନୁସାରେ ସର୍ଟ କରନ୍ତୁ ଯଦି ସମୁଦାୟ (ପ୍ରଥମ ଇଣ୍ଡେକ୍ସ ମୂଲ୍ୟ, ଶେଷ ଇଣ୍ଡେକ୍ସ ମୂଲ୍ୟ) ଯୁଗ୍ମ ହୋଇଥାଏ ।ଆପଣ ଦିଆଯାଇଥିବା ଆରେକୁ ଉର୍ଦ୍ଧ୍ୱଗାମୀ କ୍ରମରେ ସର୍ଟ କରିବେ ଯଦି ସମୁଦାୟ (ପ୍ରଥମ ଇଣ୍ଡେକ୍ସ ମୂଲ୍ୟ, ଶେଷ ଇଣ୍ଡେକ୍ସ ମୂଲ୍ୟ) ଅଙ୍କ ବିଶିଷ୍ଟ, ଅଣ-ନକାରାତ୍ମକ ସମ୍ପୂର୍ଣ୍ଣ ସଂଖ୍ୟାଗୁଡ଼ିକର ଏକ ସରଳୀକରଣ ଦିଆଯାଇଥାଏ, ସର୍ଟ କରିବା ପରେ ଦିଆଯାଇଥିବା ସରଳୀକରଣର ଏକ କୋର୍ବ ଫେରାଇଥାଏ, # >>> sort_array.call([])
+# []
+# >>> sort_array.call([5])
+# [5]
+# >>> sort_array.call([2, 4, 3, 0, 1, 5])
+# [0, 1, 2, 3, 4, 5]
+# >>> sort_array.call([2, 4, 3, 0, 1, 5, 6])
+# [6, 5, 4, 3, 2, 1, 0]
+def sort_array(array)
+","def sort_array(array)
+  return array if array.empty? || array.size == 1
+
+  if (array.first + array.last).odd?
+    array.sort
+  else
+    array.sort.reverse
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sort_array
+    candidate = method(:sort_array)
+    assert_equal([], candidate.call([]))
+    assert_equal([5], candidate.call([5]))
+    assert_equal([0, 1, 2, 3, 4, 5], candidate.call([2, 4, 3, 0, 1, 5]))
+    assert_equal([6, 5, 4, 3, 2, 1, 0], candidate.call([2, 4, 3, 0, 1, 5, 6]))
+    assert_equal([1, 2], candidate.call([2, 1]))
+    assert_equal([0, 11, 15, 32, 42, 87], candidate.call([15, 42, 87, 32, 11, 0]))
+    assert_equal([23, 21, 14, 11], candidate.call([21, 14, 23, 11]))
+  end
+end
+"
+HumanEval_89,ory_Orya,rb,"ଉଦାହରଣ ସ୍ୱରୂପ: ଦୁଇଗୁଣିତ କରି ଦୁଇ ସ୍ଥାନକୁ ଘୁଞ୍ଚାଇବେ ।ଅକ୍ଷରଗୁଡ଼ିକର ଆକାର ଏପରି ଭାବରେ ଘୁଞ୍ଚାଯିବା ଉଚିତ ଯେ ଅକ୍ଷରଗୁଡ଼ିକ ଆଲଫାବେଟକୁ ଘୂରାଇ ଏକ ଏନକ୍ରିପ୍ଟ ହୋଇଥିବା ଷ୍ଟ୍ରିଙ୍ଗ ଫେରାଇଥାଏ.ଏକ ଫଳନ ଏନକ୍ରିପ୍ଟ ସୃଷ୍ଟି କରନ୍ତୁ ଯାହାକି ଏକ ବାକ୍ୟଖଣ୍ଡକୁ ଏକ ତର୍କ ଭାବରେ ଗ୍ରହଣ କରିଥାଏ ଏବଂ # >>> encrypt.call(""hi"")
+# ""lm""
+# >>> encrypt.call(""asdfghjkl"")
+# ""ewhjklnop""
+# >>> encrypt.call(""gf"")
+# ""kj""
+# >>> encrypt.call(""et"")
+# ""ix""
+def encrypt(s)
+","def encrypt(s)
+  s.chars.map do |char|
+    if char =~ /[a-z]/
+      ((char.ord - 'a'.ord + 4) % 26 + 'a'.ord).chr
+    elsif char =~ /[A-Z]/
+      ((char.ord - 'A'.ord + 4) % 26 + 'A'.ord).chr
+    else
+      char
+    end
+  end.join
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_encrypt
+    candidate = method(:encrypt)
+    assert_equal(""lm"", candidate.call(""hi""))
+    assert_equal(""ewhjklnop"", candidate.call(""asdfghjkl""))
+    assert_equal(""kj"", candidate.call(""gf""))
+    assert_equal(""ix"", candidate.call(""et""))
+    assert_equal(""jeiajeaijeiak"", candidate.call(""faewfawefaewg""))
+    assert_equal(""lippsqcjvmirh"", candidate.call(""hellomyfriend""))
+    assert_equal(""hbdhpqrmpjylqmpyjlpmlyjrqpmqryjlpmqryjljygyjl"", candidate.call(""dxzdlmnilfuhmilufhlihufnmlimnufhlimnufhfucufh""))
+    assert_equal(""e"", candidate.call(""a""))
+  end
+end
+"
+HumanEval_90,ory_Orya,rb,"ଯଦି ଏପରି କୌଣସି ଉପାଦାନ ନଥାଏ ତେବେ ଶୂନକୁ ଫେରାଇଥାଏ ।ଏକ ଫଙ୍କସନ next_smallest ଲେଖନ୍ତୁ ଯାହା ଆରେର ଦ୍ବିତୀୟ କ୍ଷୁଦ୍ରତମ ଉପାଦାନକୁ ଫେରାଇଥାଏ ।ଆପଣଙ୍କୁ ଏକ ସଂଖ୍ଯା ନିର୍ଣ୍ଣଯକ ଦିଆୟାଇଛି.# >>> next_smallest.call([1, 2, 3, 4, 5])
+# 2
+# >>> next_smallest.call([5, 1, 4, 3, 2])
+# 2
+# >>> next_smallest.call([])
+# nil
+# >>> next_smallest.call([1, 1])
+# nil
+def next_smallest(lst)
+","def next_smallest(lst)
+  unique_sorted = lst.uniq.sort
+  unique_sorted.length >= 2 ? unique_sorted[1] : nil
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_next_smallest
+    candidate = method(:next_smallest)
+    assert_equal(2, candidate.call([1, 2, 3, 4, 5]))
+    assert_equal(2, candidate.call([5, 1, 4, 3, 2]))
+    assert_equal(nil, candidate.call([]))
+    assert_equal(nil, candidate.call([1, 1]))
+    assert_equal(1, candidate.call([1, 1, 1, 1, 0]))
+    assert_equal(nil, candidate.call([1, 1]))
+    assert_equal(-35, candidate.call([-35, 34, 12, -45]))
+  end
+end
+"
+HumanEval_91,ory_Orya,rb,"ଉଦାହରଣ ସ୍ୱରୂପ: ବାକ୍ୟ ଗୁଡିକରେ '', '?' କିମ୍ବା '!' ଲଗା ଯାଇଥାଏ.ଏକ ବିରକ୍ତି ହେଉଛି ଏକ ବାକ୍ୟ ଯାହା ""ମୁଁ"" ଶବ୍ଦ ସହିତ ଆରମ୍ଭ ହୁଏ ।ଆପଣଙ୍କୁ ଏକ ଶୃଙ୍ଖଳାର ଶବ୍ଦ ଦିଆଯିବ, ଏବଂ ଆପଣଙ୍କର କାମ ହେଉଛି ସଂଖ୍ୟା ଗଣନା କରିବା # >>> is_bored.call(""Hello world"")
+# 0
+# >>> is_bored.call(""The sky is blue. The sun is shining. I love this weather"")
+# 1
+def is_bored(s)
+","def is_bored(s)
+  sentences = s.split(/(?<=[.?!])/)
+  sentences.count { |sentence| sentence.strip.start_with?('I') }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_bored
+    candidate = method(:is_bored)
+    assert_equal(0, candidate.call(""Hello world""))
+    assert_equal(0, candidate.call(""Is the sky blue?""))
+    assert_equal(1, candidate.call(""I love It !""))
+    assert_equal(0, candidate.call(""bIt""))
+    assert_equal(2, candidate.call(""I feel good today. I will be productive. will kill It""))
+    assert_equal(0, candidate.call(""You and I are going for a walk""))
+  end
+end
+"
+HumanEval_92,ory_Orya,rb,"ଉଦାହରଣ ଅନ୍ୟ କୌଣସି କ୍ଷେତ୍ରରେ ମିଥ୍ୟା ଫେରାଇଥାଏ ।ଯଦି ଗୋଟିଏ ସଂଖ୍ୟା ଅନ୍ୟ ଦୁଇଟି ସଂଖ୍ୟାର ସମୁଦାୟ ସହିତ ସମାନ ଏବଂ ସମସ୍ତ ସଂଖ୍ୟା ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା ହୋଇଥାଏ ତେବେ ଏହା ସତ୍ୟ ହୋଇଥାଏ ।ଏକ ଫଳନ ସୃଷ୍ଟି କରନ୍ତୁ ଯାହା 3ଟି ସଂଖ୍ୟା ଗ୍ରହଣ କରେ.# >>> any_int.call(5, 2, 7)
+# true
+# >>> any_int.call(3, 2, 2)
+# false
+# >>> any_int.call(3, -2, 1)
+# true
+# >>> any_int.call(3.6, -2.2, 2)
+# false
+def any_int(x, y, z)
+","def any_int(x, y, z)
+  if [x, y, z].all? { |n| n.is_a?(Integer) }
+    x == y + z || y == x + z || z == x + y
+  else
+    false
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_any_int
+    candidate = method(:any_int)
+    assert_equal(true, candidate.call(2, 3, 1))
+    assert_equal(false, candidate.call(2.5, 2, 3))
+    assert_equal(false, candidate.call(1.5, 5, 3.5))
+    assert_equal(false, candidate.call(2, 6, 2))
+    assert_equal(true, candidate.call(4, 2, 2))
+    assert_equal(false, candidate.call(2.2, 2.2, 2.2))
+    assert_equal(true, candidate.call(-4, 6, 2))
+    assert_equal(true, candidate.call(2, 1, 1))
+    assert_equal(true, candidate.call(3, 4, 7))
+    assert_equal(false, candidate.call(3.0, 4, 7))
+  end
+end
+"
+HumanEval_93,ory_Orya,rb,"ଉଦାହରଣ:କେବଳ ଅକ୍ଷର ମାନି ନିଅନ୍ତୁ ।ଇଂରାଜୀ ଅକ୍ଷର ଅକ୍ଷରରେ ସ୍ୱର ।ସେହି ଅକ୍ଷର ସହିତ ବାର୍ତ୍ତା ଯାହା 2 ଟି ସ୍ଥାନ ପୂର୍ବରୁ ଦେଖାଯାଏ _ଏହିପରି ଭାବରେ ଏହା ସମସ୍ତ ଅକ୍ଷରର କେସ୍ ବଦଳାଇଥାଏ,  ରେ ସମସ୍ତ ସ୍ୱର ବଦଳାଇଥାଏଏକ ଫଳନ ଲେଖନ୍ତୁ ଯାହା ଏକ ସନ୍ଦେଶ ନେଇଥାଏ, ଏବଂ ଏପରି ଏକ # >>> encode.call(""test"")
+# ""TGST""
+# >>> encode.call(""This is a message"")
+# ""tHKS KS C MGSSCGG""
+def encode(message)
+","def encode(message)
+  vowels = 'aeiou'
+  swap_vowels = {'a' => 'c', 'e' => 'g', 'i' => 'k', 'o' => 'q', 'u' => 'w'}
+  
+  encoded_message = message.chars.map do |char|
+    if vowels.include?(char.downcase)
+      new_char = swap_vowels[char.downcase]
+      char == char.upcase ? new_char.upcase : new_char.downcase
+    else
+      char == char.upcase ? char.downcase : char.upcase
+    end
+  end
+
+  encoded_message.join
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_encode
+    candidate = method(:encode)
+    assert_equal(""tgst"", candidate.call(""TEST""))
+    assert_equal(""mWDCSKR"", candidate.call(""Mudasir""))
+    assert_equal(""ygs"", candidate.call(""YES""))
+    assert_equal(""tHKS KS C MGSSCGG"", candidate.call(""This is a message""))
+    assert_equal(""k dQnT kNqW wHcT Tq wRkTg"", candidate.call(""I DoNt KnOw WhAt tO WrItE""))
+  end
+end
+"
+HumanEval_94,ory_Orya,rb,"ଉଦାହରଣ:ଆପଣଙ୍କୁ ସବୁଠାରୁ ବଡ ଅକ୍ଷର ମୂଲ୍ୟ ଖୋଜିବାକୁ ହେବ ଏବଂ ଏହାର ଅଙ୍କଗୁଡିକର ସମୁଦାୟ ଫେରାଇବାକୁ ହେବ.ଆପଣଙ୍କୁ ଏକ ସଂଖ୍ଯା ନିର୍ଣ୍ଣଯକ ଦିଆୟାଇଛି.# >>> skjkasdkd.call([0, 3, 2, 1, 3, 5, 7, 4, 5, 5, 5, 2, 181, 32, 4, 32, 3, 2, 32, 324, 4, 3])
+# 10
+# >>> skjkasdkd.call([1, 0, 1, 8, 2, 4597, 2, 1, 3, 40, 1, 2, 1, 2, 4, 2, 5, 1])
+# 25
+# >>> skjkasdkd.call([1, 3, 1, 32, 5107, 34, 83278, 109, 163, 23, 2323, 32, 30, 1, 9, 3])
+# 13
+# >>> skjkasdkd.call([0, 724, 32, 71, 99, 32, 6, 0, 5, 91, 83, 0, 5, 6])
+# 11
+# >>> skjkasdkd.call([0, 81, 12, 3, 1, 21])
+# 3
+# >>> skjkasdkd.call([0, 8, 1, 2, 1, 7])
+# 7
+def skjkasdkd(lst)
+","def skjkasdkd(lst)
+  require 'prime'
+
+  # Find the largest prime number in the array
+  largest_prime = lst.select { |num| Prime.prime?(num) }.max
+  
+  # Return 0 if no prime number is found
+  return 0 if largest_prime.nil?
+
+  # Calculate the sum of digits of the largest prime number
+  largest_prime.to_s.chars.map(&:to_i).sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_skjkasdkd
+    candidate = method(:skjkasdkd)
+    assert_equal(10, candidate.call([0, 3, 2, 1, 3, 5, 7, 4, 5, 5, 5, 2, 181, 32, 4, 32, 3, 2, 32, 324, 4, 3]))
+    assert_equal(25, candidate.call([1, 0, 1, 8, 2, 4597, 2, 1, 3, 40, 1, 2, 1, 2, 4, 2, 5, 1]))
+    assert_equal(13, candidate.call([1, 3, 1, 32, 5107, 34, 83278, 109, 163, 23, 2323, 32, 30, 1, 9, 3]))
+    assert_equal(11, candidate.call([0, 724, 32, 71, 99, 32, 6, 0, 5, 91, 83, 0, 5, 6]))
+    assert_equal(3, candidate.call([0, 81, 12, 3, 1, 21]))
+    assert_equal(7, candidate.call([0, 8, 1, 2, 1, 7]))
+    assert_equal(19, candidate.call([8191]))
+    assert_equal(19, candidate.call([8191, 123456, 127, 7]))
+    assert_equal(10, candidate.call([127, 97, 8192]))
+  end
+end
+"
+HumanEval_95,ory_Orya,rb,"ଉଦାହରଣ:ଫଳନଟି false ଫେରାଇବ ଯଦି ଦିଆଯାଇଥିବା ହ୍ୟାସଟି ଖାଲି ଥାଏ ।case କିମ୍ବା ସମସ୍ତ କିଗୁଡ଼ିକ ବଡ଼ ଅକ୍ଷରରେ ଥିବା ବାକ୍ୟଖଣ୍ଡ, ନଚେତ୍ false ଫେରାଇଥାଏ.ଏକ ହ୍ୟାସ ଦିଆଯାଇଥିବା, ଯଦି ସମସ୍ତ କି ଗୁଡିକ lower  ରେ ଥିବା string ହୋଇଥାଏ ତେବେ true କୁ ଫେରାଇଥାଏ# >>> check_dict_case.call({""a"" => ""apple"", ""b"" => ""banana""})
+# true
+# >>> check_dict_case.call({""a"" => ""apple"", ""A"" => ""banana"", ""B"" => ""banana""})
+# false
+# >>> check_dict_case.call({""a"" => ""apple"", 8 => ""banana"", ""a"" => ""apple""})
+# false
+# >>> check_dict_case.call({""Name"" => ""John"", ""Age"" => ""36"", ""City"" => ""Houston""})
+# false
+# >>> check_dict_case.call({""STATE"" => ""NC"", ""ZIP"" => ""12345""})
+# true
+def check_dict_case(dict)
+","def check_dict_case(dict)
+  return false if dict.empty?
+
+  lowercase_keys = dict.keys.all? { |key| key.is_a?(String) && key == key.downcase }
+  uppercase_keys = dict.keys.all? { |key| key.is_a?(String) && key == key.upcase }
+
+  lowercase_keys || uppercase_keys
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_check_dict_case
+    candidate = method(:check_dict_case)
+    assert_equal(true, candidate.call({""p"" => ""pineapple"", ""b"" => ""banana""}))
+    assert_equal(false, candidate.call({""p"" => ""pineapple"", ""A"" => ""banana"", ""B"" => ""banana""}))
+    assert_equal(false, candidate.call({""p"" => ""pineapple"", ""5"" => ""banana"", ""a"" => ""apple""}))
+    assert_equal(false, candidate.call({""Name"" => ""John"", ""Age"" => ""36"", ""City"" => ""Houston""}))
+    assert_equal(true, candidate.call({""STATE"" => ""NC"", ""ZIP"" => ""12345""}))
+    assert_equal(true, candidate.call({""fruit"" => ""Orange"", ""taste"" => ""Sweet""}))
+    assert_equal(false, candidate.call({}))
+  end
+end
+"
+HumanEval_96,ory_Orya,rb,"ଉଦାହରଣ ସ୍ୱରୂପ: ଅଶୂନ୍ୟ ସଂଖ୍ୟା ଏବଂ n ରୁ ଛୋଟ ।ଗୋଟିଏ ଫଳନକୁ କାର୍ଯ୍ୟକାରୀ କରନ୍ତୁ ଯାହାକି ଏକ ନନ୍-ନଗେଟିଭ୍ ଇଣ୍ଟେଜର ନେଇଥାଏ ଏବଂ ପ୍ରଥମ n ର ଏକ ଆରେ ଫେରାଇଥାଏ # >>> count_up_to.call(5)
+# [2, 3]
+# >>> count_up_to.call(11)
+# [2, 3, 5, 7]
+# >>> count_up_to.call(0)
+# []
+# >>> count_up_to.call(20)
+# [2, 3, 5, 7, 11, 13, 17, 19]
+# >>> count_up_to.call(1)
+# []
+# >>> count_up_to.call(18)
+# [2, 3, 5, 7, 11, 13, 17]
+def count_up_to(n)
+","def count_up_to(n)
+  return [] if n <= 2
+  primes = []
+  (2...n).each do |num|
+    is_prime = true
+    (2..Math.sqrt(num)).each do |i|
+      if num % i == 0
+        is_prime = false
+        break
+      end
+    end
+    primes << num if is_prime
+  end
+  primes
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_count_up_to
+    candidate = method(:count_up_to)
+    assert_equal([2, 3], candidate.call(5))
+    assert_equal([2, 3, 5], candidate.call(6))
+    assert_equal([2, 3, 5], candidate.call(7))
+    assert_equal([2, 3, 5, 7], candidate.call(10))
+    assert_equal([], candidate.call(0))
+    assert_equal([2, 3, 5, 7, 11, 13, 17, 19], candidate.call(22))
+    assert_equal([], candidate.call(1))
+    assert_equal([2, 3, 5, 7, 11, 13, 17], candidate.call(18))
+    assert_equal([2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43], candidate.call(47))
+    assert_equal([2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97], candidate.call(101))
+  end
+end
+"
+HumanEval_97,ory_Orya,rb,"ଉଦାହରଣ:ଧରନ୍ତୁ ଯେ ଇନପୁଟ୍ ସର୍ବଦା ବୈଧ ଅଟେ ।ସେମାନଙ୍କର ଏକକ ଅଙ୍କ ଗୁଡ଼ିକର ଗୁଣନ ।ଫଳନକୁ ପୂର୍ଣ୍ଣ କରନ୍ତୁ ଯାହାକି ଦୁଇଟି ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା ନେଇଥାଏ ଏବଂ ଫେରାଇଥାଏ # >>> multiply.call(148, 412)
+# 16
+# >>> multiply.call(19, 28)
+# 72
+# >>> multiply.call(2020, 1851)
+# 0
+# >>> multiply.call(14, -15)
+# 20
+def multiply(a, b)
+","def multiply(a, b)
+  a_unit_digit = a.abs % 10
+  b_unit_digit = b.abs % 10
+  a_unit_digit * b_unit_digit
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_multiply
+    candidate = method(:multiply)
+    assert_equal(16, candidate.call(148, 412))
+    assert_equal(72, candidate.call(19, 28))
+    assert_equal(0, candidate.call(2020, 1851))
+    assert_equal(20, candidate.call(14, -15))
+    assert_equal(42, candidate.call(76, 67))
+    assert_equal(49, candidate.call(17, 27))
+    assert_equal(0, candidate.call(0, 1))
+    assert_equal(0, candidate.call(0, 0))
+  end
+end
+"
+HumanEval_98,ory_Orya,rb,"ଉଦାହରଣ ସ୍ୱରୂପ: ଗୋଟିଏ ଧାଡ଼ି s ଦିଆଗଲା, ସମ ସୂଚକାଙ୍କରେ ଥିବା ବଡ଼ ଅକ୍ଷର ସ୍ୱରଗୁଡ଼ିକର ସଂଖ୍ୟା ଗଣନା କରନ୍ତୁ ।# >>> count_upper.call(""aBCdEf"")
+# 1
+# >>> count_upper.call(""abcdefg"")
+# 0
+# >>> count_upper.call(""dBBE"")
+# 0
+def count_upper(s)
+","def count_upper(s)
+  vowels = ['A', 'E', 'I', 'O', 'U']
+  count = 0
+
+  s.chars.each_with_index do |char, index|
+    if index.even? && vowels.include?(char)
+      count += 1
+    end
+  end
+
+  count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_count_upper
+    candidate = method(:count_upper)
+    assert_equal(1, candidate.call(""aBCdEf""))
+    assert_equal(0, candidate.call(""abcdefg""))
+    assert_equal(0, candidate.call(""dBBE""))
+    assert_equal(0, candidate.call(""B""))
+    assert_equal(1, candidate.call(""U""))
+    assert_equal(0, candidate.call(""""))
+    assert_equal(2, candidate.call(""EEEE""))
+  end
+end
+"
+HumanEval_99,ory_Orya,rb,"ଉଦାହରଣ ଦୁଇଟି ପୂର୍ଣ୍ଣ ସଂଖ୍ୟାରୁ, ଏହାକୁ ଶୂନରୁ ଦୂର କରି ଘୋଡ଼ାଇ ଦିଅନ୍ତୁ.ଏବଂ ଏହା ନିକଟତମ ପୂର୍ଣ୍ଣ ସଂଖ୍ୟାକୁ ଫେରାଇଥାଏ. ଯଦି ସଂଖ୍ୟା ସମାନ ଦୂରତା ଏକ ଫଳନ ସୃଷ୍ଟି କରନ୍ତୁ ଯାହାକି ଏକ ସଂଖ୍ୟାକୁ ପ୍ରତିନିଧିତ୍ୱ କରୁଥିବା ଏକ ମୂଲ୍ୟ (ଷ୍ଟ୍ରିଙ୍ଗ) ଗ୍ରହଣ କରିଥାଏ ।# >>> closest_integer.call(""10"")
+# 10
+# >>> closest_integer.call(""15.3"")
+# 15
+# Note:
+# Rounding away from zero means that if the given number is equidistant
+# from two integers, the one you should return is the one that is the
+# farthest from zero. For example closest_integer(""14.5"") should
+# return 15 and closest_integer(""-14.5"") should return -15.
+def closest_integer(value)
+","def closest_integer(value)
+  number = value.to_f
+  if number > 0
+    (number + 0.5).floor
+  else
+    (number - 0.5).ceil
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_closest_integer
+    candidate = method(:closest_integer)
+    assert_equal(10, candidate.call(""10""))
+    assert_equal(15, candidate.call(""14.5""))
+    assert_equal(-16, candidate.call(""-15.5""))
+    assert_equal(15, candidate.call(""15.3""))
+    assert_equal(0, candidate.call(""0""))
+  end
+end
+"
+HumanEval_100,ory_Orya,rb,"ଉଦାହରଣ:i ହେଉଛି ସ୍ତରରେ ପଥର ସଂଖ୍ୟା (i+1) ।ଗୋଟିଏ ଧାଡ଼ିରେ ପ୍ରତ୍ୟେକ ସ୍ତରରେ ପଥର ସଂଖ୍ୟା ଫେରାଇଥାଏ, ଯେଉଁଠାରେ ସୂଚକାଙ୍କରେ ଉପାଦାନ - ପରବର୍ତ୍ତୀ ଯୁଗ୍ମ ସଂଖ୍ୟା ଯଦି n ଯୁଗ୍ମ ଅଟେ ।- ପରବର୍ତ୍ତୀ ଅଙ୍କ ଯଦି n ଅଙ୍କ ଅଙ୍କ ଅଟେ ।ପରବର୍ତ୍ତୀ ସ୍ତରରେ ପଥରର ସଂଖ୍ୟା ହେଉଛି: ପ୍ରଥମ ସ୍ତରରେ n ପଥର ଅଛି ।ଏକ ସକାରାତ୍ମକ ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା n ଦିଆଗଲା, ଆପଣଙ୍କୁ ପଥରର n ସ୍ତରର ଏକ ଗଦା ତିଆରି କରିବାକୁ ହେବ ।# >>> make_a_pile.call(3)
+# [3, 5, 7]
+def make_a_pile(n)
+","def make_a_pile(n)
+  result = []
+  current_stones = n
+  n.times do
+    result << current_stones
+    current_stones += 2
+  end
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_make_a_pile
+    candidate = method(:make_a_pile)
+    assert_equal([3, 5, 7], candidate.call(3))
+    assert_equal([4, 6, 8, 10], candidate.call(4))
+    assert_equal([5, 7, 9, 11, 13], candidate.call(5))
+    assert_equal([6, 8, 10, 12, 14, 16], candidate.call(6))
+    assert_equal([8, 10, 12, 14, 16, 18, 20, 22], candidate.call(8))
+  end
+end
+"
+HumanEval_101,ory_Orya,rb,"ଉଦାହରଣ ସ୍ୱରୂପ: ଶବ୍ଦକୁ ବାକ୍ୟରେ ବିଭକ୍ତ କରିବା ଏବଂ ଶବ୍ଦଗୁଡ଼ିକର ଏକ ସରଳୀକରଣ ଫେରାଇବ.ଆପଣଙ୍କୁ ଏକ ଶବ୍ଦ ଶୃଙ୍ଖଳ ଦିଆଯିବ, ଯାହାକୁ କମା କିମ୍ବା ସ୍ପେସ୍ ଦ୍ୱାରା ପୃଥକ କରାଯିବ । ଆପଣଙ୍କ କାମ ହେଉଛି # >>> words_string.call(""Hi, my name is John"")
+# [""Hi"", ""my"", ""name"", ""is"", ""John""]
+# >>> words_string.call(""One, two, three, four, five, six"")
+# [""One"", ""two"", ""three"", ""four"", ""five"", ""six""]
+def words_string(s)
+","def words_string(s)
+  s.split(/[\s,]+/)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_words_string
+    candidate = method(:words_string)
+    assert_equal([""Hi"", ""my"", ""name"", ""is"", ""John""], candidate.call(""Hi, my name is John""))
+    assert_equal([""One"", ""two"", ""three"", ""four"", ""five"", ""six""], candidate.call(""One, two, three, four, five, six""))
+    assert_equal([""Hi"", ""my"", ""name""], candidate.call(""Hi, my name""))
+    assert_equal([""One"", ""two"", ""three"", ""four"", ""five"", ""six""], candidate.call(""One,, two, three, four, five, six,""))
+    assert_equal([], candidate.call(""""))
+    assert_equal([""ahmed"", ""gamal""], candidate.call(""ahmed     , gamal""))
+  end
+end
+"
+HumanEval_102,ory_Orya,rb,"ଉଦାହରଣ ସ୍ୱରୂପ: ଯଦି ସେପରି କୌଣସି ସଂଖ୍ୟା ନାହିଁ, ତେବେ ଫଳନ -1 ଫେରାଇବ _ସବୁଠାରୁ ବଡ ଯୁଗ୍ମ ସଂଖ୍ଯା ଯାହା [x, y] ଅନ୍ତର୍ଭୁକ୍ତ ରେ ଅଛି. ଯଦି ଏହି ଫଙ୍କସନ ଦୁଇଟି ସକାରାତ୍ମକ ସଂଖ୍ୟା x ଓ y କୁ ନେଇଥାଏ ଏବଂ  କୁ ଫେରାଇଥାଏ# >>> choose_num.call(12, 15)
+# 14
+# >>> choose_num.call(13, 12)
+# -1
+def choose_num(x, y)
+","def choose_num(x, y)
+  return -1 if x > y
+  # Start looking from the largest number
+  max_even = y.even? ? y : y - 1
+  # Iterate downwards to find the biggest even number
+  max_even.downto(x) do |n|
+    return n if n.even?
+  end
+  -1
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_choose_num
+    candidate = method(:choose_num)
+    assert_equal(14, candidate.call(12, 15))
+    assert_equal(-1, candidate.call(13, 12))
+    assert_equal(12354, candidate.call(33, 12354))
+    assert_equal(-1, candidate.call(5234, 5233))
+    assert_equal(28, candidate.call(6, 29))
+    assert_equal(-1, candidate.call(27, 10))
+    assert_equal(-1, candidate.call(7, 7))
+    assert_equal(546, candidate.call(546, 546))
+  end
+end
+"
+HumanEval_103,ory_Orya,rb,"ଉଦାହରଣ:ଯଦି n, m ଠାରୁ ବଡ଼, ତେବେ -1 ଫେରାଇବ.ଉତ୍ତରକୁ ନିକଟତମ ସମ୍ପୂର୍ଣ୍ଣ ସଂଖ୍ୟାକୁ ଘୋଡ଼ାଇ ଏହାକୁ ବାଇନାରୀକୁ ପରିବର୍ତ୍ତନ କରନ୍ତୁ.n ରୁ m ପର୍ଯ୍ୟନ୍ତ (n ଓ m କୁ ମିଶାଇ) ସମ୍ପୂର୍ଣ୍ଣ ସଂଖ୍ୟାର ହାରାହାରି ।ଆପଣଙ୍କୁ ଦୁଇଟି ସକାରାତ୍ମକ ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା n ଏବଂ m ଦିଆ ଯାଇଛି, ଏବଂ ଆପଣଙ୍କର କାମ ହେଉଛି # >>> rounded_avg.call(1, 5)
+# ""0b11""
+# >>> rounded_avg.call(7, 5)
+# -1
+# >>> rounded_avg.call(10, 20)
+# ""0b1111""
+# >>> rounded_avg.call(20, 33)
+# ""0b11010""
+def rounded_avg(n, m)
+","def rounded_avg(n, m)
+  return -1 if n > m
+
+  sum = (n..m).reduce(:+)
+  count = m - n + 1
+  average = (sum.to_f / count).round
+  ""0b"" + average.to_i.to_s(2)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_rounded_avg
+    candidate = method(:rounded_avg)
+    assert_equal(""0b11"", candidate.call(1, 5))
+    assert_equal(""0b1010"", candidate.call(7, 13))
+    assert_equal(""0b1111001010"", candidate.call(964, 977))
+    assert_equal(""0b1111100100"", candidate.call(996, 997))
+    assert_equal(""0b1011000010"", candidate.call(560, 851))
+    assert_equal(""0b101101110"", candidate.call(185, 546))
+    assert_equal(""0b110101101"", candidate.call(362, 496))
+    assert_equal(""0b1001110010"", candidate.call(350, 902))
+    assert_equal(""0b11010111"", candidate.call(197, 233))
+    assert_equal(-1, candidate.call(7, 5))
+    assert_equal(-1, candidate.call(5, 1))
+    assert_equal(""0b101"", candidate.call(5, 5))
+  end
+end
+"
+HumanEval_104,ory_Orya,rb,"ଉଦାହରଣ ସ୍ୱରୂପ: ଟିପ୍ପଣୀ: ଫେରାଇଥିବା ଆରେକୁ ବୃଦ୍ଧି କ୍ରମରେ ସର୍ଟ କରାଯିବା ଉଚିତ ।ସେହି ଉପାଦାନ ଯାହା ପାଖରେ କୌଣସି ଯୁଗ୍ମ ଅଙ୍କ ନଥାଏ ।ଧନାତ୍ମକ ପୂର୍ଣ୍ଣ ସଂଖ୍ଯା x ର ଏକ ସରଳୀକୃତ ସରଳୀକୃତ ସମୁଦାୟ # >>> unique_digits.call([15, 33, 1422, 1])
+# [1, 15, 33]
+# >>> unique_digits.call([152, 323, 1422, 10])
+# []
+def unique_digits(x)
+","def unique_digits(x)
+  x.select { |num| num.to_s.chars.none? { |digit| digit.to_i.even? } }.sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_unique_digits
+    candidate = method(:unique_digits)
+    assert_equal([1, 15, 33], candidate.call([15, 33, 1422, 1]))
+    assert_equal([], candidate.call([152, 323, 1422, 10]))
+    assert_equal([111, 151], candidate.call([12345, 2033, 111, 151]))
+    assert_equal([31, 135], candidate.call([135, 103, 31]))
+  end
+end
+"
+HumanEval_105,ory_Orya,rb,"ଉଦାହରଣ ସ୍ୱରୂପ: ଏକ, ଦୁଇ, ତିନି, ଚାରି, ପାଞ୍ଚ, ଛଅ, ସାତ, ଆଠ, ନଅ ।ଫଳାଫଳ ଆରେକୁ ଓଲଟାଇ, ଏବଂ ତାପରେ ପ୍ରତ୍ୟେକ ଅଙ୍କକୁ ଏହାର ଅନୁରୂପ ନାମ ସହିତ  ରୁ ବଦଳାନ୍ତୁ1 ରୁ 9 ସମେତ ଥିବା ସଂଖ୍ଯାଗୁଡିକୁ ସର୍ଟ କର,# >>> by_length.call([2, 1, 1, 4, 5, 8, 2, 3])
+# [""Eight"", ""Five"", ""Four"", ""Three"", ""Two"", ""Two"", ""One"", ""One""]
+# If the array is empty, return an empty array:
+# >>> by_length.call([])
+# []
+# If the array has any strange number ignore it:
+# >>> by_length.call([1, -1, 55])
+# [""One""]
+def by_length(arr)
+","def by_length(arr)
+  number_names = {
+    1 => ""One"",
+    2 => ""Two"",
+    3 => ""Three"",
+    4 => ""Four"",
+    5 => ""Five"",
+    6 => ""Six"",
+    7 => ""Seven"",
+    8 => ""Eight"",
+    9 => ""Nine""
+  }
+
+  filtered_sorted_reversed = arr.select { |x| x.between?(1, 9) }.sort.reverse
+  filtered_sorted_reversed.map { |num| number_names[num] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_by_length
+    candidate = method(:by_length)
+    assert_equal([""Eight"", ""Five"", ""Four"", ""Three"", ""Two"", ""Two"", ""One"", ""One""], candidate.call([2, 1, 1, 4, 5, 8, 2, 3]))
+    assert_equal([], candidate.call([]))
+    assert_equal([""One""], candidate.call([1, -1, 55]))
+    assert_equal([""Three"", ""Two"", ""One""], candidate.call([1, -1, 3, 2]))
+    assert_equal([""Nine"", ""Eight"", ""Four""], candidate.call([9, 4, 8]))
+  end
+end
+"
+HumanEval_106,ory_Orya,rb,"ଉଦାହରଣ:i ର ଉପାଦାନ ହେଉଛି 1 ରୁ i ପର୍ଯ୍ୟନ୍ତ ସଂଖ୍ୟାର ଗୁଣନ (1 * 2 * ... * i) ।i 1 ରୁ ଆରମ୍ଭ ହୋଇଥାଏ ।କିମ୍ବା 1ରୁ i ପର୍ଯ୍ୟନ୍ତ ସଂଖ୍ୟା ସମୂହ ।ଏବଂ n ଆକାରର ଏକ ସରଳୀକୃତ ସୂଚକ ଫେରାଇଥାଏ, ଯେପରିକି ସୂଚକ i ରେ ଥିବା ଉପାଦାନର ମୂଲ୍ୟ i ର କାରକ ଅଟେ ଯଦି i ଯୁଗ୍ମ କାର୍ଯ୍ୟକାରିତା f କୁ କାର୍ଯ୍ୟକାରୀ କର ଯାହା n କୁ ଏକ ପାରାମିଟର ଭାବରେ ଗ୍ରହଣ କରେ, # >>> f.call(5)
+# [1, 2, 6, 24, 15]
+def f(n)
+","def f(n)
+  (1..n).map do |i|
+    if i.even?
+      (1..i).inject(:*) || 1
+    else
+      (1..i).inject(:+)
+    end
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_f
+    candidate = method(:f)
+    assert_equal([1, 2, 6, 24, 15], candidate.call(5))
+    assert_equal([1, 2, 6, 24, 15, 720, 28], candidate.call(7))
+    assert_equal([1], candidate.call(1))
+    assert_equal([1, 2, 6], candidate.call(3))
+  end
+end
+"
+HumanEval_107,ory_Orya,rb,"ଉଦାହରଣ 1: ସମୁଦାୟ {1, n} ପରିସର ମଧ୍ୟରେ ଥିବା ସମ୍ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା ପାଲିଣ୍ଡ୍ରୋମ ।ଏକ ସକାରାତ୍ମକ ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା n ଦିଆଗଲା, ଏକ ସରଳୀକରଣ ଫେରାଇ ନିଅନ୍ତୁ ଯେଉଁଥିରେ ଯୁଗ୍ମ ଏବଂ ଅଙ୍କ ସଂଖ୍ୟା ଅଛି # >>> even_odd_palindrome.call(3)
+# [1, 2]
+# Explanation:
+# Integer palindrome are 1, 2, 3. one of them is even, and two of them are odd.
+# Example 2:
+# >>> even_odd_palindrome.call(12)
+# [4, 6]
+# Explanation:
+# Integer palindrome are 1, 2, 3, 4, 5, 6, 7, 8, 9, 11. four of them are even, and 6 of them are odd.
+# Note:
+# 1. 1 <= n <= 10^3
+# 2. returned array has the number of even and odd integer palindromes respectively.
+def even_odd_palindrome(n)
+","def even_odd_palindrome(n)
+  even_count = 0
+  odd_count = 0
+
+  (1..n).each do |num|
+    if num.to_s == num.to_s.reverse
+      if num.even?
+        even_count += 1
+      else
+        odd_count += 1
+      end
+    end
+  end
+
+  [even_count, odd_count]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_even_odd_palindrome
+    candidate = method(:even_odd_palindrome)
+    assert_equal([8, 13], candidate.call(123))
+    assert_equal([4, 6], candidate.call(12))
+    assert_equal([1, 2], candidate.call(3))
+    assert_equal([6, 8], candidate.call(63))
+    assert_equal([5, 6], candidate.call(25))
+    assert_equal([4, 6], candidate.call(19))
+    assert_equal([4, 5], candidate.call(9))
+    assert_equal([0, 1], candidate.call(1))
+  end
+end
+"
+HumanEval_108,ory_Orya,rb,"ଉଦାହରଣ ସ୍ୱରୂପ -123ର ଅଙ୍କ -1, 2 ଏବଂ 3ରେ ହସ୍ତାକ୍ଷର ରହିଛି ।ଯଦି କୌଣସି ସଂଖ୍ୟା ହେଉଛି ନକାରାତ୍ମକ, ତେବେ ତାର ପ୍ରଥମ ଅଙ୍କ ନକାରାତ୍ମକ ହେବ:ଯେଉଁ ତତ୍ତ୍ବଗୁଡ଼ିକର ଅଙ୍କ ସମୂହ 0ରୁ ଅଧିକ ହୋଇଥାଏ ।ଏକ ଫଙ୍କସନ୍ count_nums ଲେଖନ୍ତୁ ଯାହା ଏକ ସମ୍ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା ଧାରା ନେଇଥାଏ ଏବଂ ଫେରାଇଥାଏ # >>> count_nums.call([])
+# 0
+# >>> count_nums.call([-1, 11, -11])
+# 1
+# >>> count_nums.call([1, 1, 2])
+# 3
+def count_nums(arr)
+","def count_nums(arr)
+  arr.count do |num|
+    num.to_s.chars.map(&:to_i).sum > 0
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_count_nums
+    candidate = method(:count_nums)
+    assert_equal(0, candidate.call([]))
+    assert_equal(0, candidate.call([-1, -2, 0]))
+    assert_equal(6, candidate.call([1, 1, 2, -2, 3, 4, 5]))
+    assert_equal(5, candidate.call([1, 6, 9, -6, 0, 1, 5]))
+    assert_equal(4, candidate.call([1, 100, 98, -7, 1, -1]))
+    assert_equal(5, candidate.call([12, 23, 34, -45, -56, 0]))
+    assert_equal(1, candidate.call([0, 1]))
+    assert_equal(1, candidate.call([1]))
+  end
+end
+"
+HumanEval_109,ory_Orya,rb,"ଉଦାହରଣ ସ୍ୱରୂପ: ଟିପ୍ପଣୀ: ଦିଆଯାଇଥିବା ଆରେରେ ଅନନ୍ୟ ଉପାଦାନ ଥିବା ସୁନିଶ୍ଚିତ ।ଯଦି ଦିଆଯାଇଥିବା ସରଳୀକୃତ ଶୂନ୍ୟ ହୋଇଥାଏ ତେବେ true କୁ ଫେରାଇଥାଏ.ତାପରେ true କୁ ଫେରାଇଦିଅନ୍ତୁ ନଚେତ୍ false କୁ ଫେରାଇଦିଅନ୍ତୁ.ଉପରୋକ୍ତ କାର୍ଯ୍ୟ କରି ସର୍ଟ କରାଯାଇଥିବା ଆରେ ପାଇବା ସମ୍ଭବ ହେଲେ ମାର୍ଜିନରେ ପ୍ରାରମ୍ଭିକ ସ୍ଥିତି ଅର୍ଥାତ୍ ୦ମ ସୂଚକାଙ୍କ ।ସଠିକ ଦିଗରେ ସ୍ଥିତି. ଆରେର ଶେଷ ଉପାଦାନକୁ ସ୍ଥାନାନ୍ତରିତ କରାଯିବ ଗୋଟିଏ ଡାହାଣକୁ ଘୁଞ୍ଚିବା କାର୍ଯ୍ୟ ଅର୍ଥାତ୍ ଆରେର ସମସ୍ତ ଉପାଦାନକୁ ଗୋଟିଏ ଘୁଞ୍ଚାଇବା ।ଆପଣ ଯେତେଥର ଚାହିଁବେ ଡାହାଣକୁ ଘୁଞ୍ଚାଇ ପାରିବେ ।ନିମ୍ନଲିଖିତ କାର୍ଯ୍ୟଟିକୁ ଦିଆଯାଇଥିବା ଆରେରେ କର:  କରି ଏକ ଆରେକୁ ଅଣ-କ୍ରମବର୍ଦ୍ଧକ କ୍ରମରେ ସର୍ଟ କରିବା ସମ୍ଭବ ଅଟେ ।ଆରେରେ ଥିବା ସଂଖ୍ୟାଗୁଡ଼ିକ ଆକସ୍ମିକ ଭାବରେ ସଜାଡ଼ାଯିବ । ଆପଣଙ୍କର କାର୍ଯ୍ୟ ହେଉଛି ନିର୍ଣ୍ଣୟ କରିବା ଆମର N ସଂଖ୍ୟକ ପୂର୍ଣ୍ଣ ସଂଖ୍ୟାର ଏକ 'arr' ଅଛି arr[1], arr[2], ..., arr[N] ।# >>> move_one_ball.call([3, 4, 5, 1, 2])
+# true
+# Explanation: By performin 2 right shift operations, non-decreasing order can
+# be achieved for the given array.
+# >>> move_one_ball.call([3, 5, 4, 1, 2])
+# false
+# Explanation:It is not possible to get non-decreasing order for the given
+# array by performing any number of right shift operations.
+def move_one_ball(arr)
+","def move_one_ball(arr)
+  return true if arr.empty?
+
+  n = arr.size
+  count_rotation_point = 0
+  rotation_index = -1
+
+  (0...n).each do |i|
+    next_index = (i + 1) % n
+    if arr[i] > arr[next_index]
+      count_rotation_point += 1
+      rotation_index = next_index
+    end
+  end
+
+  count_rotation_point <= 1
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_move_one_ball
+    candidate = method(:move_one_ball)
+    assert_equal(true, candidate.call([3, 4, 5, 1, 2]))
+    assert_equal(true, candidate.call([3, 5, 10, 1, 2]))
+    assert_equal(false, candidate.call([4, 3, 1, 2]))
+    assert_equal(false, candidate.call([3, 5, 4, 1, 2]))
+    assert_equal(true, candidate.call([]))
+  end
+end
+"
+HumanEval_110,ory_Orya,rb,"ଉଦାହରଣ ସ୍ୱରୂପ: ଅନ୍ୟଥା, ""ନା""କୁ ଫେରାଇଦେବେlst1 ର ସମସ୍ତ ଉପାଦାନ ସମ ସମ ହେବା ପାଇଁ, ""YES"" କୁ ଫେରାଇଦିଅନ୍ତୁ.ଯଦି ଏହା ସମ୍ଭବ lst1 ଏବଂ lst2 ମଧ୍ୟରେ ଉପାଦାନଗୁଡିକର ବିନିମୟ କରିବା ପାଇଁ lst1 ଏବଂ lst2 ମଧ୍ୟରେ ବିନିମୟ ହୋଇଥିବା ଉପାଦାନର ସଂଖ୍ୟାରେ କୌଣସି ସୀମା ନାହିଁ ।lst1 କୁ କେବଳ ଯୁଗ୍ମ ସଂଖ୍ୟାର ଏକ ସରଳୀକରଣ କରିବା ପାଇଁ _ଏବଂ ଏହା ନିର୍ଣ୍ଣୟ କରେ ଯେ କଣ ଏକ୍ସଚେଞ୍ଜ ଅଫ୍ ଇଲେକ୍ଟ୍ରନ୍ସ୍ ସମ୍ଭବ କି ନୁହେଁ ।ଏହି ସମସ୍ୟା ରେ, ଆପଣ ଏକ ଫଙ୍କସନ କୁ କାର୍ଯ୍ୟକାରୀ କରିବେ ଯାହା ଦୁଇଟା ସଂଖ୍ୟା ର ଆରେ କୁ ନେଇଥାଏ, # >>> exchange.call([1, 2, 3, 4], [1, 2, 3, 4])
+# ""YES""
+# >>> exchange.call([1, 2, 3, 4], [1, 5, 3, 4])
+# ""NO""
+# It is assumed that the input arrays will be non-empty.
+def exchange(lst1, lst2)
+","def exchange(lst1, lst2)
+  # Check if lst1 already consists solely of even numbers
+  return ""YES"" if lst1.all?(&:even?)
+
+  # Check if there are at least as many even numbers in lst2
+  # as there are odd numbers in lst1
+  odd_count_lst1 = lst1.count(&:odd?)
+  even_count_lst2 = lst2.count(&:even?)
+
+  odd_count_lst1 <= even_count_lst2 ? ""YES"" : ""NO""
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_exchange
+    candidate = method(:exchange)
+    assert_equal(""YES"", candidate.call([1, 2, 3, 4], [1, 2, 3, 4]))
+    assert_equal(""NO"", candidate.call([1, 2, 3, 4], [1, 5, 3, 4]))
+    assert_equal(""YES"", candidate.call([1, 2, 3, 4], [2, 1, 4, 3]))
+    assert_equal(""YES"", candidate.call([5, 7, 3], [2, 6, 4]))
+    assert_equal(""NO"", candidate.call([5, 7, 3], [2, 6, 3]))
+    assert_equal(""NO"", candidate.call([3, 2, 6, 1, 8, 9], [3, 5, 5, 1, 1, 1]))
+    assert_equal(""YES"", candidate.call([100, 200], [200, 200]))
+  end
+end
+"
+HumanEval_111,ory_Orya,rb,"ଉଦାହରଣ:ଯଦି ଏକାଧିକ ଅକ୍ଷର ସମାନ ଭାବରେ ଦେଖାଯାଏ, ତେବେ ସେଗୁଡ଼ିକୁ ଫେରାଇ ଦିଅନ୍ତୁ ।ଏହି ଅକ୍ଷରଟି ସବୁଠାରୁ ଅଧିକ ଥର ପୁନରାବୃତ୍ତି ହୋଇଥାଏ ଏବଂ ଏଥିରେ ସେହି ଅକ୍ଷରର ସଂଖ୍ୟା ଥାଏ ।ଏକ ସ୍ପେସ୍ ପୃଥକ ଛୋଟ ଅକ୍ଷରକୁ ପ୍ରତିନିଧିତ୍ୱ କରୁଥିବା ଏକ ଷ୍ଟ୍ରିଙ୍ଗ ଦିଆଯାଇଥିବା ହେଶ୍ ଫେରାଇଥାଏ # >>> histogram.call(""a b c"")
+# {""a"" => 1, ""b"" => 1, ""c"" => 1}
+# >>> histogram.call(""a b b a"")
+# {""a"" => 2, ""b"" => 2}
+# >>> histogram.call(""a b c a b"")
+# {""a"" => 2, ""b"" => 2}
+# >>> histogram.call(""b b b b a"")
+# {""b"" => 4}
+# >>> histogram.call("""")
+# {}
+def histogram(test)
+","def histogram(test)
+  return {} if test.empty?
+
+  count = Hash.new(0)
+
+  test.split.each do |char|
+    count[char] += 1
+  end
+
+  max_count = count.values.max
+  count.select { |_, value| value == max_count }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_histogram
+    candidate = method(:histogram)
+    assert_equal({""a"" => 2, ""b"" => 2}, candidate.call(""a b b a""))
+    assert_equal({""a"" => 2, ""b"" => 2}, candidate.call(""a b c a b""))
+    assert_equal({""a"" => 1, ""b"" => 1, ""c"" => 1, ""d"" => 1, ""g"" => 1}, candidate.call(""a b c d g""))
+    assert_equal({""r"" => 1, ""t"" => 1, ""g"" => 1}, candidate.call(""r t g""))
+    assert_equal({""b"" => 4}, candidate.call(""b b b b a""))
+    assert_equal({""r"" => 1, ""t"" => 1, ""g"" => 1}, candidate.call(""r t g""))
+    assert_equal({}, candidate.call(""""))
+    assert_equal({""a"" => 1}, candidate.call(""a""))
+  end
+end
+"
+HumanEval_112,ory_Orya,rb,"ଉଦାହରଣ ଆପଣ ଗୋଟିଏ ଆରେ ଫେରାଇବେ ଯେଉଁଥିରେ ପରିଣାମ ଷ୍ଟ୍ରିଙ୍ଗ ଏବଂ ଯାଞ୍ଚ ପାଇଁ ସତ୍ୟ/ମିଥ୍ୟା ଅଛି.ଗୋଟିଏ ଧାଡ଼ିକୁ ପାଲିଣ୍ଡ୍ରୋମ କୁହାଯାଏ ଯଦି ଏହା ପଛକୁ ଆଗକୁ ସମାନ ଭାବରେ ପଢ଼ାଯାଏ ।ତାପରେ ଯାଞ୍ଚ କରନ୍ତୁ ଯେ ଫଳାଫଳ ଶୃଙ୍ଖଳଟି ପାଲିଣ୍ଡ୍ରୋମ ଅଟେ କି ନାହିଁ ।ଆମକୁ ଦୁଇଟି ଷ୍ଟ୍ରିଙ୍ଗ s ଏବଂ c ଦିଆଯାଇଛି, ଆପଣଙ୍କୁ s ରେ ଥିବା ସମସ୍ତ ଅକ୍ଷରକୁ କାଢ଼ିବାକୁ ହେବ ଯାହା c ରେ ଥିବା କୌଣସି ଅକ୍ଷର ସହିତ ସମାନ କାର୍ଯ୍ୟ # >>> reverse_delete.call(""abcde"", ""ae"")
+# [""bcd"", false]
+# >>> reverse_delete.call(""abcdef"", ""b"")
+# [""acdef"", false]
+# >>> reverse_delete.call(""abcdedcba"", ""ab"")
+# [""cdedc"", true]
+def reverse_delete(s, c)
+","def reverse_delete(s, c)
+  # Remove all characters in c from s
+  filtered_string = s.delete(c)
+  
+  # Check if the filtered string is a palindrome
+  is_palindrome = filtered_string == filtered_string.reverse
+  
+  # Return the result array
+  [filtered_string, is_palindrome]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_reverse_delete
+    candidate = method(:reverse_delete)
+    assert_equal([""bcd"", false], candidate.call(""abcde"", ""ae""))
+    assert_equal([""acdef"", false], candidate.call(""abcdef"", ""b""))
+    assert_equal([""cdedc"", true], candidate.call(""abcdedcba"", ""ab""))
+    assert_equal([""dik"", false], candidate.call(""dwik"", ""w""))
+    assert_equal(["""", true], candidate.call(""a"", ""a""))
+    assert_equal([""abcdedcba"", true], candidate.call(""abcdedcba"", """"))
+    assert_equal([""abcdedcba"", true], candidate.call(""abcdedcba"", ""v""))
+    assert_equal([""abba"", true], candidate.call(""vabba"", ""v""))
+    assert_equal(["""", true], candidate.call(""mamma"", ""mia""))
+  end
+end
+"
+HumanEval_113,ory_Orya,rb," ଇନପୁଟ୍ର i'th ଷ୍ଟ୍ରିଙ୍ଗରେ ଅଜଣା ଅଙ୍କ ଅଛି"" ଯେଉଁଠାରେ ସମସ୍ତ 'i' କୁ ସଂଖ୍ୟା  ଦ୍ୱାରା ବଦଳାଯିବା ଉଚିତଆଉଟପୁଟର ପ୍ରତ୍ୟେକ ଉପାଦାନ i, ରେ ଥିବା ଅଜଣା ଉପାଦାନର ସଂଖ୍ୟା ହେବା ଉଚିତ ।ଗୋଟିଏ ଧାଡ଼ିର ଏକ ସରଳୀକରଣ ଦିଆଗଲା, ଯେଉଁଠାରେ ପ୍ରତ୍ୟେକ ସରଳୀକରଣ କେବଳ ଅଙ୍କଗୁଡ଼ିକର ସମଷ୍ଟି, ଏକ ସରଳୀକରଣ ଫେରାଇଥାଏ.# >>> odd_count.call([""1234567""])
+# [""the number of odd elements 4n the str4ng 4 of the 4nput.""]
+# >>> odd_count.call([""3"", ""11111111""])
+# [""the number of odd elements 1n the str1ng 1 of the 1nput."", ""the number of odd elements 8n the str8ng 8 of the 8nput.""]
+def odd_count(lst)
+","def odd_count(lst)
+  lst.map do |num_str|
+    count = num_str.count('13579')
+    ""the number of odd elements #{count}n the str#{count}ng #{count} of the #{count}nput.""
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_odd_count
+    candidate = method(:odd_count)
+    assert_equal([""the number of odd elements 4n the str4ng 4 of the 4nput.""], candidate.call([""1234567""]))
+    assert_equal([""the number of odd elements 1n the str1ng 1 of the 1nput."", ""the number of odd elements 8n the str8ng 8 of the 8nput.""], candidate.call([""3"", ""11111111""]))
+    assert_equal([""the number of odd elements 2n the str2ng 2 of the 2nput."", ""the number of odd elements 3n the str3ng 3 of the 3nput."", ""the number of odd elements 2n the str2ng 2 of the 2nput.""], candidate.call([""271"", ""137"", ""314""]))
+  end
+end
+"
+HumanEval_114,ory_Orya,rb,"ଉଦାହରଣ ା ା ା ା ାଏକ ସମୁଦାୟ ସଂଖ୍ୟା n ର ଏକ ସରଳୀକରଣ ଦିଆଯାଇ, କୌଣସି ଅଣ-ଖାଲି ଉପ-ସାରୀର ସର୍ବନିମ୍ନ ସମୁଦାୟକୁ ଖୋଜନ୍ତୁ # >>> minSubArraySum.call([2, 3, 4, 1, 2, 4])
+# 1
+# >>> minSubArraySum.call([-1, -2, -3])
+# -6
+def minSubArraySum(nums)
+","def minSubArraySum(nums)
+  min_sum = nums[0]
+  current_sum = 0
+  nums.each do |num|
+    if current_sum > 0
+      current_sum = num
+    else
+      current_sum += num
+    end
+    min_sum = [min_sum, current_sum].min
+  end
+  min_sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_minSubArraySum
+    candidate = method(:minSubArraySum)
+    assert_equal(1, candidate.call([2, 3, 4, 1, 2, 4]))
+    assert_equal(-6, candidate.call([-1, -2, -3]))
+    assert_equal(-14, candidate.call([-1, -2, -3, 2, -10]))
+    assert_equal(-9999999999999999, candidate.call([-9999999999999999]))
+    assert_equal(0, candidate.call([0, 10, 20, 1000000]))
+    assert_equal(-6, candidate.call([-1, -2, -3, 10, -5]))
+    assert_equal(-6, candidate.call([100, -1, -2, -3, 10, -5]))
+    assert_equal(3, candidate.call([10, 11, 13, 8, 3, 4]))
+    assert_equal(-33, candidate.call([100, -33, 32, -1, 0, -2]))
+    assert_equal(-10, candidate.call([-10]))
+    assert_equal(7, candidate.call([7]))
+    assert_equal(-1, candidate.call([1, -1]))
+  end
+end
+"
+HumanEval_115,ory_Orya,rb,"ଉଦାହରଣ 1: ଆପଣ କେତେଥର ବାଲ୍ଟିକୁ ତଳକୁ ଆଣିବାକୁ ଚାହୁଁଛନ୍ତି ତାହା ଲେଖନ୍ତୁ ।ଆପଣଙ୍କ କାମ ହେଉଛି କୂଅକୁ ଖାଲି କରିବା ପାଇଁ ଡବା ବ୍ୟବହାର କରିବା ।ଏବଂ ସମସ୍ତ ବାଲ୍ଟିରେ ସମାନ କ୍ଷମତା ରହିଛି ।ପ୍ରତ୍ୟେକ କୂଅରେ ଏକ ବାଡ଼ୀ ରହିଛି, ଯାହାଦ୍ୱାରା ପାଣି ବାହାର କରାଯାଇପାରିବ ।ଏବଂ ପ୍ରତ୍ୟେକ 1 ଗୋଟିଏ ଧାଡ଼ିରେ ଗୋଟିଏ ଜଳ ଏକକକୁ ପ୍ରତିନିଧିତ୍ୱ କରେ ।ଆପଣଙ୍କୁ ଏକ ଚତୁର୍ଭୁଜ ଗ୍ରୀଡ ଦିଆଯାଉଛି, ପ୍ରତ୍ୟେକ ଧାଡି ଗୋଟିଏ କୂଅକୁ ପ୍ରତିନିଧିତ୍ୱ କରେ ।# >>> max_fill.call([[0, 0, 1, 0], [0, 1, 0, 0], [1, 1, 1, 1]], 1)
+# 6
+# Example 2:
+# >>> max_fill.call([[0, 0, 1, 1], [0, 0, 0, 0], [1, 1, 1, 1], [0, 1, 1, 1]], 2)
+# 5
+# Example 3:
+# >>> max_fill.call([[0, 0, 0], [0, 0, 0]], 5)
+# 0
+# Constraints:
+# * all wells have the same length
+# * 1 <= grid.length <= 10^2
+# * 1 <= grid[:,1].length <= 10^2
+# * grid[i][j] -> 0 | 1
+# * 1 <= capacity <= 10
+def max_fill(grid, capacity)
+","def max_fill(grid, capacity)
+  total_water_units = grid.flatten.sum
+  (total_water_units.to_f / capacity).ceil
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_max_fill
+    candidate = method(:max_fill)
+    assert_equal(6, candidate.call([[0, 0, 1, 0], [0, 1, 0, 0], [1, 1, 1, 1]], 1))
+    assert_equal(5, candidate.call([[0, 0, 1, 1], [0, 0, 0, 0], [1, 1, 1, 1], [0, 1, 1, 1]], 2))
+    assert_equal(0, candidate.call([[0, 0, 0], [0, 0, 0]], 5))
+    assert_equal(4, candidate.call([[1, 1, 1, 1], [1, 1, 1, 1]], 2))
+    assert_equal(2, candidate.call([[1, 1, 1, 1], [1, 1, 1, 1]], 9))
+  end
+end
+"
+HumanEval_116,ory_Orya,rb,"ଏହାକୁ ନିମ୍ନଲିଖିତ ଢଙ୍ଗରେ କାର୍ଯ୍ୟକାରୀ କରାଯିବା ଉଚିତ:ସମାନ ସଂଖ୍ୟକ ଏକକ ପାଇଁ, ଦଶମିକ ମୂଲ୍ୟ ଆଧାରରେ ସର୍ଟ କରନ୍ତୁ.ଏକକଗୁଡ଼ିକର ସଂଖ୍ୟା ସେମାନଙ୍କର ବାଇନାରୀ ପ୍ରତିନିଧିତ୍ୱରେ ବୃଦ୍ଧି କ୍ରମରେ _ଏହି କଟା ରେ, ଆପଣଙ୍କୁ ଏକ ନନ୍-ନେଗେଟିଭ୍ ଇଣ୍ଟେଜର ଆରେକୁ ସର୍ଟ କରିବାକୁ ହେବ # >>> sort_array.call([1, 5, 2, 3, 4])
+# [1, 2, 3, 4, 5]
+# >>> sort_array.call([-2, -3, -4, -5, -6])
+# [-6, -5, -4, -3, -2]
+# >>> sort_array.call([1, 0, 2, 3, 4])
+# [0, 1, 2, 3, 4]
+def sort_array(arr)
+","def sort_array(arr)
+  arr.sort_by { |n| [n.to_s(2).count('1'), n] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sort_array
+    candidate = method(:sort_array)
+    assert_equal([1, 2, 4, 3, 5], candidate.call([1, 5, 2, 3, 4]))
+    assert_equal([-4, -2, -6, -5, -3], candidate.call([-2, -3, -4, -5, -6]))
+    assert_equal([0, 1, 2, 4, 3], candidate.call([1, 0, 2, 3, 4]))
+    assert_equal([], candidate.call([]))
+    assert_equal([2, 2, 4, 4, 3, 3, 5, 5, 5, 7, 77], candidate.call([2, 5, 77, 4, 5, 3, 5, 7, 2, 3, 4]))
+    assert_equal([32, 3, 5, 6, 12, 44], candidate.call([3, 6, 44, 12, 32, 5]))
+    assert_equal([2, 4, 8, 16, 32], candidate.call([2, 4, 8, 16, 32]))
+    assert_equal([2, 4, 8, 16, 32], candidate.call([2, 4, 8, 16, 32]))
+  end
+end
+"
+HumanEval_117,ory_Orya,rb,"ଉଦାହରଣ:ଟିପ୍ପଣୀ: ଆପଣ ଧରିନେବେ ଯେ ଇନପୁଟ୍ ଷ୍ଟ୍ରିଙ୍ଗରେ କେବଳ ଅକ୍ଷର ଏବଂ ସ୍ପେସ୍ ଅଛି ।ଯଦି string s ଖାଲି ହୋଇଥାଏ ତେବେ ଫଳନଟି ଏକ ଖାଲି ଆରେ ଫେରାଇଥାଏ.n ବ୍ୟଞ୍ଜନ, ଏହି ଶବ୍ଦଗୁଡ଼ିକର କ୍ରମରେ s ବାକ୍ୟଖଣ୍ଡରେ ଦେଖାଯାଏ ।ଗୋଟିଏ ଫଳନ ଯାହା s ସଂଖ୍ୟକ ବାକ୍ୟଖଣ୍ଡରୁ ସମସ୍ତ ଶବ୍ଦକୁ ଏକ ସରଳୀକୃତ ସୂଚକ ଭାବରେ ଫେରାଇଥାଏ ।ଗୋଟିଏ ଧାଡ଼ି s ଏବଂ ଗୋଟିଏ ପ୍ରାକୃତିକ ସଂଖ୍ୟା n ଦିଆଗଲା, ଆପଣଙ୍କୁ କାର୍ଯ୍ୟକାରୀ କରିବା ପାଇଁ କୁହାଯାଇଛି # >>> select_words.call(""Mary had a little lamb"", 4)
+# [""little""]
+# >>> select_words.call(""Mary had a little lamb"", 3)
+# [""Mary"", ""lamb""]
+# >>> select_words.call(""simple white space"", 2)
+# []
+# >>> select_words.call(""Hello world"", 4)
+# [""world""]
+# >>> select_words.call(""Uncle sam"", 3)
+# [""Uncle""]
+def select_words(s, n)
+","def select_words(s, n)
+  vowels = ""aeiouAEIOU""
+  words = s.split
+  words.select do |word|
+    consonant_count = word.chars.count { |char| !vowels.include?(char) }
+    consonant_count == n
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_select_words
+    candidate = method(:select_words)
+    assert_equal([""little""], candidate.call(""Mary had a little lamb"", 4))
+    assert_equal([""Mary"", ""lamb""], candidate.call(""Mary had a little lamb"", 3))
+    assert_equal([], candidate.call(""simple white space"", 2))
+    assert_equal([""world""], candidate.call(""Hello world"", 4))
+    assert_equal([""Uncle""], candidate.call(""Uncle sam"", 3))
+    assert_equal([], candidate.call("""", 4))
+    assert_equal([""b"", ""c"", ""d"", ""f""], candidate.call(""a b c d e f"", 1))
+  end
+end
+"
+HumanEval_118,ory_Orya,rb,"ଉଦାହରଣ:ଆପଣ ଭାବୁଥିବେ ଯେ ଦିଆଯାଇଥିବା ଷ୍ଟ୍ରିଙ୍ଗରେ କେବଳ ଇଂରାଜୀ ଅକ୍ଷର ଅଛି.ଉପରୋକ୍ତ ସର୍ତ୍ତ ପୂରଣ କରୁଥିବା କୌଣସି ସ୍ୱରବର୍ଣ୍ଣ ଖୋଜନ୍ତୁ ।ଆରମ୍ଭ ଏବଂ ସମାପ୍ତିରେ ସ୍ୱରଗୁଡ଼ିକ ଗଣନା କରାଯାଏ ନାହିଁ. ଯଦି ଆପଣ ନକରିଛନ୍ତି ତେବେ ଖାଲି ଷ୍ଟ୍ରିଙ୍ଗ୍ ଫେରାନ୍ତୁ ଦୁଇଟି ବର୍ଣ୍ଣମାଳା ଶବ୍ଦଟିର ଡାହାଣ ପାର୍ଶ୍ବରୁ (ମୌଳିକ ବର୍ଣ୍ଣମାଳା ସମ୍ବେଦନଶୀଳ) ।ଆପଣଙ୍କୁ ଗୋଟିଏ ଶବ୍ଦ ଦିଆଯାଉଛି, ଆପଣଙ୍କ କାମ ହେଉଛି, ସେହି ଶବ୍ଦ ମଧ୍ୟରେ ଥିବା ନିକଟତମ ସ୍ୱର ଚିହ୍ନକୁ ଖୋଜିବା ।# >>> get_closest_vowel.call(""yogurt"")
+# ""u""
+# >>> get_closest_vowel.call(""FULL"")
+# ""U""
+# >>> get_closest_vowel.call(""quick"")
+# """"
+# >>> get_closest_vowel.call(""ab"")
+# """"
+def get_closest_vowel(word)
+","def get_closest_vowel(word)
+  vowels = ""aeiouAEIOU""
+  (1...word.length - 1).reverse_each do |i|
+    if vowels.include?(word[i]) && !vowels.include?(word[i - 1]) && !vowels.include?(word[i + 1])
+      return word[i]
+    end
+  end
+  return """"
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_get_closest_vowel
+    candidate = method(:get_closest_vowel)
+    assert_equal(""u"", candidate.call(""yogurt""))
+    assert_equal(""u"", candidate.call(""full""))
+    assert_equal("""", candidate.call(""easy""))
+    assert_equal("""", candidate.call(""eAsy""))
+    assert_equal("""", candidate.call(""ali""))
+    assert_equal(""a"", candidate.call(""bad""))
+    assert_equal(""o"", candidate.call(""most""))
+    assert_equal("""", candidate.call(""ab""))
+    assert_equal("""", candidate.call(""ba""))
+    assert_equal("""", candidate.call(""quick""))
+    assert_equal(""i"", candidate.call(""anime""))
+    assert_equal("""", candidate.call(""Asia""))
+    assert_equal(""o"", candidate.call(""Above""))
+  end
+end
+"
+HumanEval_119,ory_Orya,rb,"ଉଦାହରଣ:'ହଁ' ଫେରାଇଦିଅନ୍ତୁ ଯଦି ଭଲ ଷ୍ଟ୍ରିଙ୍ଗ ତିଆରି କରିବାର କୌଣସି ଉପାୟ ଅଛି, ଏବଂ ଅନ୍ୟଥା 'ନା' ଫେରାଇଦିଅନ୍ତୁ."" (()) "" ନୁହେଁ ।ସନ୍ତୁଳିତ. ଉଦାହରଣ ସ୍ୱରୂପ: '(((() ' ବାକ୍ୟଖଣ୍ଡ ଭଲ, ଯେତେବେଳେ କି  ବାକ୍ୟଖଣ୍ଡ ଗୋଟିଏ ଧାଡ଼ି S କୁ ଭଲ ବୋଲି ବିବେଚନା କରାଯାଏ ଯଦି ଏବଂ କେବଳ ଯଦି S ରେ ଥିବା ସମସ୍ତ ବନ୍ଧନୀ କିଛି କ୍ରମ, ଯେ ଫଳସ୍ୱରୂପ ବାକ୍ୟଖଣ୍ଡ ଭଲ ହେବ.ଆପଣଙ୍କର କାମ ହେଉଛି ଯାଞ୍ଚ କରିବା ଏହା ସମ୍ଭବ କି ଦୁଇଟି ଷ୍ଟ୍ରିଙ୍ଗକୁ ଯୋଡିବା ସମ୍ଭବ କି ନୁହେଁ କେବଳ "" (~) "" କିମ୍ବା "" (~) "" କୁଣ୍ଡଳୀରେ ଲେଖାଥିବା ବାକ୍ୟ ।ଆପଣଙ୍କୁ ଦୁଇଟି ଷ୍ଟ୍ରିଙ୍ଗର ଏକ ଆରେ ଦିଆଗଲା, ଦୁଇଟି ଷ୍ଟ୍ରିଙ୍ଗରେ ଖୋଲା ଅଛି # >>> match_parens.call([""()("", "")""])
+# ""Yes""
+# >>> match_parens.call(["")"", "")""])
+# ""No""
+def match_parens(lst)
+","def match_parens(lst)
+  a, b = lst
+
+  # Define a helper method to check if a string is balanced
+  def balanced?(s)
+    count = 0
+    s.each_char do |c|
+      count += 1 if c == '('
+      count -= 1 if c == ')'
+      return false if count < 0
+    end
+    count == 0
+  end
+
+  # Check if either concatenation forms a good string
+  if balanced?(a + b) || balanced?(b + a)
+    ""Yes""
+  else
+    ""No""
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_match_parens
+    candidate = method(:match_parens)
+    assert_equal(""Yes"", candidate.call([""()("", "")""]))
+    assert_equal(""No"", candidate.call(["")"", "")""]))
+    assert_equal(""No"", candidate.call([""(()(())"", ""())())""]))
+    assert_equal(""Yes"", candidate.call(["")())"", ""(()()(""]))
+    assert_equal(""Yes"", candidate.call([""(())))"", ""(()())((""]))
+    assert_equal(""No"", candidate.call([""()"", ""())""]))
+    assert_equal(""Yes"", candidate.call([""(()("", ""()))()""]))
+    assert_equal(""No"", candidate.call([""(((("", ""((())""]))
+    assert_equal(""No"", candidate.call(["")(()"", ""(()(""]))
+    assert_equal(""No"", candidate.call(["")("", "")(""]))
+    assert_equal(""Yes"", candidate.call([""("", "")""]))
+    assert_equal(""Yes"", candidate.call(["")"", ""(""]))
+  end
+end
+"
+HumanEval_120,ory_Orya,rb,"ଉଦାହରଣ 1: ଲମ୍ବ k ର ସର୍ବାଧିକ k ସଂଖ୍ୟା ସହିତ arr ରେ _ଏକ ଧନାତ୍ମକ ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା k ସହିତ ଏକ ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା arr ଦିଆଗଲା, ଏକ ସର୍ଟ ହୋଇଥିବା ଆରେ ଫେରାଇଥାଏ # >>> maximum.call([-3, -4, 5], 3)
+# [-4, -3, 5]
+# Example 2:
+# >>> maximum.call([4, -4, 4], 2)
+# [4, 4]
+# Example 3:
+# >>> maximum.call([-3, 2, 1, 2, -1, -2, 1], 1)
+# [2]
+# Note:
+# 1. The length of the array will be in the range of [1, 1000].
+# 2. The elements in the array will be in the range of [-1000, 1000].
+# 3. 0 <= k <= len(arr)
+def maximum(arr, k)
+","def maximum(arr, k)
+  arr.sort.last(k).sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_maximum
+    candidate = method(:maximum)
+    assert_equal([-4, -3, 5], candidate.call([-3, -4, 5], 3))
+    assert_equal([4, 4], candidate.call([4, -4, 4], 2))
+    assert_equal([2], candidate.call([-3, 2, 1, 2, -1, -2, 1], 1))
+    assert_equal([2, 20, 123], candidate.call([123, -123, 20, 0, 1, 2, -3], 3))
+    assert_equal([0, 1, 2, 20], candidate.call([-123, 20, 0, 1, 2, -3], 4))
+    assert_equal([-13, -8, 0, 0, 3, 5, 15], candidate.call([5, 15, 0, 3, -13, -8, 0], 7))
+    assert_equal([3, 5], candidate.call([-1, 0, 2, 5, 3, -10], 2))
+    assert_equal([5], candidate.call([1, 0, 5, -7], 1))
+    assert_equal([-4, 4], candidate.call([4, -4], 2))
+    assert_equal([-10, 10], candidate.call([-10, 10], 2))
+    assert_equal([], candidate.call([1, 2, 3, -23, 243, -400, 0], 0))
+  end
+end
+"
+HumanEval_121,ory_Orya,rb,"ଉଦାହରଣ ଏକ ଅଣ-ଖାଲି ସଂଖ୍ୟାର ଧାରା ଦେଇ, ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ ସମ# >>> solution.call([5, 8, 7, 1])
+# 12
+# >>> solution.call([3, 3, 3, 3, 3])
+# 9
+# >>> solution.call([30, 13, 24, 321])
+# 0
+def solution(lst)
+","def solution(lst)
+  lst.each_with_index.reduce(0) do |sum, (val, idx)|
+    (idx.even? && val.odd?) ? sum + val : sum
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_solution
+    candidate = method(:solution)
+    assert_equal(12, candidate.call([5, 8, 7, 1]))
+    assert_equal(9, candidate.call([3, 3, 3, 3, 3]))
+    assert_equal(0, candidate.call([30, 13, 24, 321]))
+    assert_equal(5, candidate.call([5, 9]))
+    assert_equal(0, candidate.call([2, 4, 8]))
+    assert_equal(23, candidate.call([30, 13, 23, 32]))
+    assert_equal(3, candidate.call([3, 13, 2, 9]))
+  end
+end
+"
+HumanEval_122,ory_Orya,rb,"ଉଦାହରଣ:ଏହା ହେଉଛି ସେହି ଉପାଦାନର ସମଷ୍ଟି ଯାହାର ପ୍ରଥମ k ଉପାଦାନର ସଂଖ୍ୟାରୁ ସର୍ବାଧିକ ଦୁଇଟି ଅଙ୍କ ଅଛି ।ଏକ ଅସରନ୍ତି ସମୁଦାୟ ସଂଖ୍ୟା arr ଏବଂ ଏକ ସମୁଦାୟ ସଂଖ୍ୟା k ଦିଆଗଲା, ଫେରାଇ # >>> add_elements.call([111, 21, 3, 4000, 5, 6, 7, 8, 9], 4)
+# 24
+# Constraints:
+# 1. 1 <= len(arr) <= 100
+# 2. 1 <= k <= len(arr)
+def add_elements(arr, k)
+","def add_elements(arr, k)
+  arr.first(k).select { |num| num.abs.to_s.length <= 2 }.sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_add_elements
+    candidate = method(:add_elements)
+    assert_equal(-4, candidate.call([1, -2, -3, 41, 57, 76, 87, 88, 99], 3))
+    assert_equal(0, candidate.call([111, 121, 3, 4000, 5, 6], 2))
+    assert_equal(125, candidate.call([11, 21, 3, 90, 5, 6, 7, 8, 9], 4))
+    assert_equal(24, candidate.call([111, 21, 3, 4000, 5, 6, 7, 8, 9], 4))
+    assert_equal(1, candidate.call([1], 1))
+  end
+end
+"
+HumanEval_123,ory_Orya,rb,"get_odd_collatz(5) ଫେରାଇଥାଏ [1, 5] # 5 ପାଇଁ କୋଲାଟଜ କ୍ରମ ହେଉଛି [5, 16, 8, 4, 2, 1], ତେଣୁ ଅଜଣା ସଂଖ୍ୟାଗୁଡ଼ିକ ହେଉଛି କେବଳ 1, ଏବଂ 5 । ଉଦାହରଣ ସ୍ୱରୂପ: 2. ଫେରସ୍ତ ହୋଇଥିବା ଆରେକୁ ବୃଦ୍ଧି କ୍ରମରେ ସର୍ଟ କରାଯାଇଛି ।1. କୋଲାଟଜ (୧) ହେଉଛି [1] ।ନୋଟ: ଅନୁମାନ ହେଉଛି ଯେ n ର କୌଣସି ମୂଲ୍ୟ ନଥାଇ ମଧ୍ୟ, କ୍ରମ ସର୍ବଦା 1 କୁ ପହଞ୍ଚିବ.ପୂର୍ବବର୍ତ୍ତୀ ବାକ୍ୟଟି ଅଙ୍କକୋଷୀୟ ହେଲେ ପରବର୍ତ୍ତୀ ବାକ୍ୟଟି ପୂର୍ବବର୍ତ୍ତୀ ବାକ୍ୟର 3 ଗୁଣନ ହେବପୂର୍ବବର୍ତ୍ତୀ ବାକ୍ୟଟି ଏହିପରି: ଯଦି ପୂର୍ବବର୍ତ୍ତୀ ବାକ୍ୟଟି ଯୁଗ୍ମ, ତେବେ ପରବର୍ତ୍ତୀ ବାକ୍ୟଟି  ର ଅଧା ହେବନିମ୍ନଲିଖିତ ଭାବରେ: ଯେକୌଣସି ସକାରାତ୍ମକ ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା n ରୁ ଆରମ୍ଭ କରନ୍ତୁ । ତାପରେ ପ୍ରତ୍ୟେକ ବାକ୍ୟ  ରୁ ପ୍ରାପ୍ତ ହୁଏ ।କୋଲାଟଜ ଅନୁମାନ ହେଉଛି ଗଣିତରେ ଏକ ଅନୁମାନ ଯାହାକି ଏକ ନିର୍ଦ୍ଦିଷ୍ଟ କ୍ରମ ସମ୍ବନ୍ଧରେ ଏକ ସକାରାତ୍ମକ ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା n ଦିଆଗଲା, ଏକ ସର୍ଟ ଆରେ ଫେରାଇଥାଏ ଯେଉଁଥିରେ କୋଲାଟଜ କ୍ରମରେ ଅଜଣା ସଂଖ୍ୟା ଥାଏ ।# >>> get_odd_collatz.call(5)
+# [1, 5]
+def get_odd_collatz(n)
+","def get_odd_collatz(n)
+  collatz_sequence = []
+  while n != 1
+    collatz_sequence << n if n.odd?
+    if n.even?
+      n = n / 2
+    else
+      n = 3 * n + 1
+    end
+  end
+  collatz_sequence << 1 if n == 1
+
+  collatz_sequence.sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_get_odd_collatz
+    candidate = method(:get_odd_collatz)
+    assert_equal([1, 5, 7, 11, 13, 17], candidate.call(14))
+    assert_equal([1, 5], candidate.call(5))
+    assert_equal([1, 3, 5], candidate.call(12))
+    assert_equal([1], candidate.call(1))
+  end
+end
+"
+HumanEval_124,ory_Orya,rb,"4. ତାରିଖକୁ ଏମ୍ଏମ୍-ଡିଡି-ୟେୟେୟେ ଫର୍ମାଟରେ ଲେଖିବା ଉଚିତ ।3. ମାସର ସଂଖ୍ୟା 1 ରୁ କମ କିମ୍ବା 12 ରୁ ଅଧିକ ହେବା ଉଚିତ ନୁହେଁ ।ମାସ 1,3,5,7,8,10,12 ପାଇଁ ଦିନ ସଂଖ୍ୟା 1 ରୁ କମ କିମ୍ବା 31 ଦିନରୁ ଅଧିକ ନୁହେଁ ଏବଂ ମାସ 4,6,9,11 ପାଇଁ ଦିନ ସଂଖ୍ୟା 1 ରୁ କମ କିମ୍ବା 30 ଦିନରୁ ଅଧିକ ନୁହେଁ ଏବଂ ମାସ 2 ପାଇଁ ଦିନ ସଂଖ୍ୟା 1 ରୁ କମ୍ କିମ୍ବା 29 ଦିନରୁ ଅଧିକ ନୁହେଁ ।1. ତାରିଖ ଶୃଙ୍ଖଳ ଖାଲି ନୁହେଁ ।ନିମ୍ନଲିଖିତ ସମସ୍ତ ନିୟମ ପୂରଣ ହେଲେ ତାରିଖ ବୈଧ ହେବ:ଯଦି ତାରିଖଟି ବୈଧ, ତେବେ ଏହା ସତ୍ୟ ଫେରାଇଥାଏ ଅନ୍ୟଥା ମିଥ୍ୟା ।ଆପଣଙ୍କୁ ଏକ ଫଙ୍କସନ ଲେଖିବାକୁ ହେବ ଯାହା ଦିଆଯାଇଥିବା ତାରିଖ ଷ୍ଟ୍ରିଙ୍ଗକୁ ବୈଧ କରିଥାଏ ଏବଂ # >>> valid_date.call(""03-11-2000"")
+# true
+# >>> valid_date.call(""15-01-2012"")
+# false
+# >>> valid_date.call(""04-0-2040"")
+# false
+# >>> valid_date.call(""06-04-2020"")
+# true
+# >>> valid_date.call(""06/04/2020"")
+# false
+def valid_date(date)
+","def valid_date(date)
+  return false if date.nil? || date.empty?
+  
+  # Check if the date format is correct
+  match = date.match(/^(\d{2})-(\d{2})-(\d{4})$/)
+  return false unless match
+  
+  month, day, year = match.captures.map(&:to_i)
+  
+  # Check if month is valid
+  return false if month < 1 || month > 12
+  
+  # Check if day is valid according to the month
+  case month
+  when 1, 3, 5, 7, 8, 10, 12
+    return day >= 1 && day <= 31
+  when 4, 6, 9, 11
+    return day >= 1 && day <= 30
+  when 2
+    return day >= 1 && day <= 29
+  else
+    return false
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_valid_date
+    candidate = method(:valid_date)
+    assert_equal(true, candidate.call(""03-11-2000""))
+    assert_equal(false, candidate.call(""15-01-2012""))
+    assert_equal(false, candidate.call(""04-0-2040""))
+    assert_equal(true, candidate.call(""06-04-2020""))
+    assert_equal(true, candidate.call(""01-01-2007""))
+    assert_equal(false, candidate.call(""03-32-2011""))
+    assert_equal(false, candidate.call(""""))
+    assert_equal(false, candidate.call(""04-31-3000""))
+    assert_equal(true, candidate.call(""06-06-2005""))
+    assert_equal(false, candidate.call(""21-31-2000""))
+    assert_equal(true, candidate.call(""04-12-2003""))
+    assert_equal(false, candidate.call(""04122003""))
+    assert_equal(false, candidate.call(""20030412""))
+    assert_equal(false, candidate.call(""2003-04""))
+    assert_equal(false, candidate.call(""2003-04-12""))
+    assert_equal(false, candidate.call(""04-2003""))
+  end
+end
+"
+HumanEval_125,ory_Orya,rb,"ଉଦାହରଣ ଅକ୍ଷର, ଅକ୍ଷର (a) = 0, ଅକ୍ଷର (b) = 1, ... ଅକ୍ଷର (z) = 25 ଯଦି କୌଣସି କମାସ୍ ନଥାଏ ତେବେ ଆପଣଙ୍କୁ ଅଙ୍କରେ ଛୋଟ ଅକ୍ଷର ସଂଖ୍ୟାକୁ ଅଙ୍କ କ୍ରମ ଅନୁସାରେ ଫେରାଇଦେବା ଉଚିତ ।ଶବ୍ଦଗୁଡ଼ିକର ଏକ ଧାଡ଼ି ଦିଆଯାଇ, ଯଦି ଆପଣ ଚାହୁଁଥିବା ପାଠରେ କୌଣସି ଶ୍ବେତସ୍ଥାନ ନଥାଏ, ତେବେ ଶ୍ବେତସ୍ଥାନରେ ବିଭକ୍ତ ଶବ୍ଦଗୁଡ଼ିକର ଏକ ସରଳୀକରଣ ଫେରାଇବ # >>> split_words.call(""Hello world!"")
+# [""Hello"", ""world!""]
+# >>> split_words.call(""Hello,world!"")
+# [""Hello"", ""world!""]
+# >>> split_words.call(""abcdef"")
+# 3
+def split_words(txt)
+","def split_words(txt)
+  if txt.include?(' ')
+    return txt.split(' ')
+  elsif txt.include?(',')
+    return txt.split(',')
+  else
+    odd_count = txt.chars.count { |char| ('a'..'z').include?(char) && (char.ord - 'a'.ord).odd? }
+    return odd_count
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_split_words
+    candidate = method(:split_words)
+    assert_equal([""Hello"", ""world!""], candidate.call(""Hello world!""))
+    assert_equal([""Hello"", ""world!""], candidate.call(""Hello,world!""))
+    assert_equal([""Hello"", ""world,!""], candidate.call(""Hello world,!""))
+    assert_equal([""Hello,Hello,world"", ""!""], candidate.call(""Hello,Hello,world !""))
+    assert_equal(3, candidate.call(""abcdef""))
+    assert_equal(2, candidate.call(""aaabb""))
+    assert_equal(1, candidate.call(""aaaBb""))
+    assert_equal(0, candidate.call(""""))
+  end
+end
+"
+HumanEval_126,ory_Orya,rb,"ଉଦାହରଣ ସଂଖ୍ୟା, ମିଥ୍ୟା ଫେରାଇବ. କୌଣସି ନକାରାତ୍ମକ ସଂଖ୍ୟା ଗ୍ରହଣ କର ନାହିଁ ଏବଂ କେବଳ ସମ୍ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା ଗ୍ରହଣ କର ।ଯଦି ଆରେରେ ସମାନର 1 ରୁ ଅଧିକ ଡୁପ୍ଲିକେଟ୍ ଅଛି ଏକ ସଂଖ୍ୟାର ଧାରାକୁ ଦେଇ, ସେମାନେ ସର୍ଟ ହୋଇଥାଉ କି ନଥାଉ, ଫେରାଇଥାଏ # >>> is_sorted.call([5])
+# true
+# >>> is_sorted.call([1, 2, 3, 4, 5])
+# true
+# >>> is_sorted.call([1, 3, 2, 4, 5])
+# false
+# >>> is_sorted.call([1, 2, 3, 4, 5, 6])
+# true
+# >>> is_sorted.call([1, 2, 3, 4, 5, 6, 7])
+# true
+# >>> is_sorted.call([1, 3, 2, 4, 5, 6, 7])
+# false
+# >>> is_sorted.call([1, 2, 2, 3, 3, 4])
+# true
+# >>> is_sorted.call([1, 2, 2, 2, 3, 4])
+# false
+def is_sorted(lst)
+","def is_sorted(lst)
+  lst.each_cons(2).with_index do |(a, b), index|
+    return false if a > b
+    return false if index < lst.length - 2 && a == b && lst[index + 2] == b
+  end
+  true
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_sorted
+    candidate = method(:is_sorted)
+    assert_equal(true, candidate.call([5]))
+    assert_equal(true, candidate.call([1, 2, 3, 4, 5]))
+    assert_equal(false, candidate.call([1, 3, 2, 4, 5]))
+    assert_equal(true, candidate.call([1, 2, 3, 4, 5, 6]))
+    assert_equal(true, candidate.call([1, 2, 3, 4, 5, 6, 7]))
+    assert_equal(false, candidate.call([1, 3, 2, 4, 5, 6, 7]))
+    assert_equal(true, candidate.call([]))
+    assert_equal(true, candidate.call([1]))
+    assert_equal(false, candidate.call([3, 2, 1]))
+    assert_equal(false, candidate.call([1, 2, 2, 2, 3, 4]))
+    assert_equal(false, candidate.call([1, 2, 3, 3, 3, 4]))
+    assert_equal(true, candidate.call([1, 2, 2, 3, 3, 4]))
+    assert_equal(true, candidate.call([1, 2, 3, 4]))
+  end
+end
+"
+HumanEval_127,ory_Orya,rb,"[ଇନପୁଟ୍/ଆଉଟପୁଟ୍] ନମୁନା: ଯଦି ଦୁଇଟି ଅନ୍ତରାଳ ପରସ୍ପର ସହିତ ମିଶି ନଥାଏ, ତେବେ ""ନା"" ଫେରାଇଦେବେ.ଅନ୍ୟଥା, ""ନା"" ଫେରାଇଦେବେଯଦି ସଂଯୋଗର ଲମ୍ବ ଏକ ଅଶୂନ୍ୟ ସଂଖ୍ୟା, ତେବେ ""YES"" ଫେରାଇଦେବେ, ଯାହାର ଲମ୍ବ 1 ଅଟେ, ଯାହାକି ଏକ ଅଶୂନ୍ୟ ସଂଖ୍ୟା ନୁହେଁ.ଉଦାହରଣ ସ୍ୱରୂପ, ଅନ୍ତରାଳ (1, 3), (2, 4) ର ଅନ୍ତର ହେଉଛି (2, 3) ଅନ୍ତରାଳ ଏକ ଅଶୂନ୍ୟ ସଂଖ୍ୟା ।ଆପଣଙ୍କର କାମ ହେଉଛି ନିର୍ଣ୍ଣୟ କରିବା ଯେ ଏହି ଦୁଇଟିର ସଂଯୋଗର ଲମ୍ବ ପ୍ରତ୍ୟେକ ଅନ୍ତରାଳ ପାଇଁ, ଏହା ଧରାଯାଏ ଯେ ଏହାର ଆରମ୍ଭ ଏହାର ଶେଷ ଠାରୁ କମ୍ କିମ୍ବା ସମାନ ।ଆରମ୍ଭ ଓ ସମାପ୍ତି ଉଭୟକୁ ଅନ୍ତର୍ଭୁକ୍ତ କରେ ।ଏହି ଅନ୍ତରାଳ ବନ୍ଦ ଅର୍ଥାତ୍ ଅନ୍ତରାଳ (ଆରମ୍ଭ, ଶେଷ) ଯେଉଁଠାରେ ପ୍ରତ୍ୟେକ ଅନ୍ତରାଳ ହେଉଛି ଏକ ଯୋଡି ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା । ଉଦାହରଣ ସ୍ୱରୂପ, ଅନ୍ତରାଳ = (ଆରମ୍ଭ, ଶେଷ) = (1, 2) ।ଆପଣଙ୍କୁ ଦୁଇଟି ଅନ୍ତରାଳ ଦିଆଯାଉଛି, # >>> intersection.call([1, 2], [2, 3])
+# ""NO""
+# >>> intersection.call([-1, 1], [0, 4])
+# ""NO""
+# >>> intersection.call([-3, -1], [-5, 5])
+# ""YES""
+def intersection(interval1, interval2)
+","def intersection(interval1, interval2)
+  start1, end1 = interval1
+  start2, end2 = interval2
+
+  intersection_start = [start1, start2].max
+  intersection_end = [end1, end2].min
+
+  if intersection_start > intersection_end
+    return ""NO""
+  end
+
+  intersection_length = intersection_end - intersection_start + 1
+
+  return ""YES"" if prime?(intersection_length)
+
+  ""NO""
+end
+
+def prime?(n)
+  return false if n <= 1
+  return true if n == 2 || n == 3
+
+  (2..Math.sqrt(n).to_i).each do |i|
+    return false if n % i == 0
+  end
+
+  true
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_intersection
+    candidate = method(:intersection)
+    assert_equal(""NO"", candidate.call([1, 2], [2, 3]))
+    assert_equal(""NO"", candidate.call([-1, 1], [0, 4]))
+    assert_equal(""YES"", candidate.call([-3, -1], [-5, 5]))
+    assert_equal(""YES"", candidate.call([-2, 2], [-4, 0]))
+    assert_equal(""NO"", candidate.call([-11, 2], [-1, -1]))
+    assert_equal(""NO"", candidate.call([1, 2], [3, 5]))
+    assert_equal(""NO"", candidate.call([1, 2], [1, 2]))
+    assert_equal(""NO"", candidate.call([-2, -2], [-3, -2]))
+  end
+end
+"
+HumanEval_128,ory_Orya,rb,"ଉଦାହରଣ:ଟିପ୍ପଣୀ: ଖାଲି arr ପାଇଁ ଶୂନ୍ୟ ଫେରାଇଥାଏ ପ୍ରତ୍ୟେକ ସଂଖ୍ୟାର ଆରେରେ, 1, -1 କିମ୍ବା 0 ଦ୍ୱାରା ପ୍ରତିନିଧିତ୍ୱ କରାଯାଇଛି ।ସଂପୂର୍ଣ୍ଣ ସଂଖ୍ୟାର ପରିମାଣର ସମୁଦାୟ ଗୁଣିତ ସମସ୍ତ ଚିହ୍ନର ଗୁଣନ ଦ୍ବାରା ଆପଣଙ୍କୁ ଏକ ସଂଖ୍ଯା ନିର୍ଣ୍ଣୟକ ଦିଆଗଲା ଏବଂ ଆପଣଙ୍କୁ ଫେରିବାକୁ ପଡିବ# >>> prod_signs.call([1, 2, 2, -4])
+# 9
+# >>> prod_signs.call([0, 1])
+# 0
+# >>> prod_signs.call([])
+# nil
+def prod_signs(arr)
+","def prod_signs(arr)
+  return nil if arr.empty?
+  
+  product_signs = arr.reduce(1) { |prod, num| prod * num <=> 0 }
+  sum_magnitudes = arr.map(&:abs).sum
+  
+  product_signs * sum_magnitudes
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_prod_signs
+    candidate = method(:prod_signs)
+    assert_equal(-9, candidate.call([1, 2, 2, -4]))
+    assert_equal(0, candidate.call([0, 1]))
+    assert_equal(-10, candidate.call([1, 1, 1, 2, 3, -1, 1]))
+    assert_equal(nil, candidate.call([]))
+    assert_equal(20, candidate.call([2, 4, 1, 2, -1, -1, 9]))
+    assert_equal(4, candidate.call([-1, 1, -1, 1]))
+    assert_equal(-4, candidate.call([-1, 1, 1, 1]))
+    assert_equal(0, candidate.call([-1, 1, 1, 0]))
+  end
+end
+"
+HumanEval_129,ory_Orya,rb,"ଉଦାହରଣ:ସର୍ବନିମ୍ନ ପଥ ଦେଇ ଯାଉଥିବା କୋଷଗୁଡ଼ିକ ଉପରେ ମୂଲ୍ୟଗୁଡ଼ିକର ଏକ ଅର୍ଡରଯୁକ୍ତ ଆରେ ଫେରାଇଥାଏ।ଏହାର ଉତ୍ତର ନିଶ୍ଚିତ ଭାବେ ଅନନ୍ୟ ।lst_A[j] = lst_B[j]  ଏହା ହେଉଛିଯେପରିକି lst_A[i] < lst_B[i] ଏବଂ ଯେକୌଣସି j (1 <= j < i) ପାଇଁ ଆମର lst_B ଠାରୁ, ଅନ୍ୟ ଶବ୍ଦରେ, ସେଠାରେ ଏକ ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା ସୂଚକାଙ୍କ i (1 <= i <= k)  ଅଛି(ଆମେ ସେମାନଙ୍କୁ lst_A ଏବଂ lst_B କହିବା), lst_A ଶବ୍ଦକୋଷିକ ଦୃଷ୍ଟିରୁ କମ୍ ।A ଏବଂ B କୁ ଯାଇଥିବା ସେଲ୍ ଗୁଡିକରେ ଥିବା ମୂଲ୍ୟର ଅର୍ଡର ଆରେ ତିଆରି କରିବା ପରେ ଏକ ପଥ A (ଲମ୍ବ k) କୁ ପଥ B (ଲମ୍ବ k) ଠାରୁ ଛୋଟ ବୋଲି ଧରାଯାଏ ଯଦି ଆପଣ ଗ୍ରୀଡରୁ ବାହାରକୁ ଯାଇପାରିବେ ନାହିଁ ।ଏହା ନିଶ୍ଚିତ ଭାବେ ଭିନ୍ନ) ।ଦୟାକରି ଧ୍ୟାନ ଦିଅନ୍ତୁ ଯେ k ଲମ୍ବ ପଥ ଅର୍ଥାତ୍ k ଟି ସେଲ୍ ପରିଦର୍ଶନ କରିବା (ନକଲି ନୁହେଁ)ଅନ୍ୟ ଶବ୍ଦରେ, ଆପଣ ସେହି କୋଷକୁ ଯାଇପାରିବେ ଯାହା ଆପଣଙ୍କ ସହିତ ଏକ କଡ଼କୁ ଭାଗ କରେ ।ଯେକୌଣସି କୋଷରୁ, ଏବଂ ପ୍ରତ୍ୟେକ ପାଦରେ ଆପଣ ଯେକୌଣସି ପଡୋଶୀ କୋଷକୁ ଯାଇପାରିବେ, ଆପଣଙ୍କୁ ଗ୍ରୀଡରେ k ଲମ୍ବର ସର୍ବନିମ୍ନ ପଥ ଖୋଜିବାକୁ ପଡିବ । ଆପଣ ଆରମ୍ଭ କରିପାରିବେ ଗ୍ରୀଡର କୋଷଗୁଡ଼ିକରେ ସମେତ ଠିକ ଗୋଟିଏ ଥର ଦେଖାଯାଏ ।ଗ୍ରୀଡର ପ୍ରତ୍ୟେକ କୋଷରେ ଏକ ମୂଲ୍ୟ ଅଛି । [୧, N * N] ରେ ଥିବା ପ୍ରତ୍ୟେକ ସମ୍ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା N ଧାଡି ଏବଂ N ସ୍ତମ୍ଭ (N >= 2) ଏବଂ ଏକ ସକାରାତ୍ମକ ସମ୍ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା k,  ସହିତ ଏକ ଗ୍ରୀଡ୍ ଦିଆଗଲା ।# >>> minPath.call([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 3)
+# [1, 2, 1]
+# >>> minPath.call([[5, 9, 3], [4, 1, 6], [7, 8, 2]], 1)
+# [1]
+def minPath(grid, k)
+","def minPath(grid, k)
+  n = grid.size
+  directions = [[-1, 0], [1, 0], [0, -1], [0, 1]]
+  min_path = nil
+
+  n.times do |i|
+    n.times do |j|
+      queue = [[[i, j], [grid[i][j]]]]
+      until queue.empty?
+        position, path = queue.shift
+        if path.size == k
+          min_path = path if min_path.nil? || path < min_path
+          next
+        end
+        directions.each do |dx, dy|
+          x, y = position[0] + dx, position[1] + dy
+          if x.between?(0, n-1) && y.between?(0, n-1)
+            queue.push([[x, y], path + [grid[x][y]]])
+          end
+        end
+      end
+    end
+  end
+  min_path
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_minPath
+    candidate = method(:minPath)
+    assert_equal([1, 2, 1], candidate.call([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 3))
+    assert_equal([1], candidate.call([[5, 9, 3], [4, 1, 6], [7, 8, 2]], 1))
+    assert_equal([1, 2, 1, 2], candidate.call([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]], 4))
+    assert_equal([1, 10, 1, 10, 1, 10, 1], candidate.call([[6, 4, 13, 10], [5, 7, 12, 1], [3, 16, 11, 15], [8, 14, 9, 2]], 7))
+    assert_equal([1, 7, 1, 7, 1], candidate.call([[8, 14, 9, 2], [6, 4, 13, 15], [5, 7, 1, 12], [3, 10, 11, 16]], 5))
+    assert_equal([1, 6, 1, 6, 1, 6, 1, 6, 1], candidate.call([[11, 8, 7, 2], [5, 16, 14, 4], [9, 3, 15, 6], [12, 13, 10, 1]], 9))
+    assert_equal([1, 6, 1, 6, 1, 6, 1, 6, 1, 6, 1, 6], candidate.call([[12, 13, 10, 1], [9, 3, 15, 6], [5, 16, 14, 4], [11, 8, 7, 2]], 12))
+    assert_equal([1, 3, 1, 3, 1, 3, 1, 3], candidate.call([[2, 7, 4], [3, 1, 5], [6, 8, 9]], 8))
+    assert_equal([1, 5, 1, 5, 1, 5, 1, 5], candidate.call([[6, 1, 5], [3, 8, 9], [2, 7, 4]], 8))
+    assert_equal([1, 2, 1, 2, 1, 2, 1, 2, 1, 2], candidate.call([[1, 2], [3, 4]], 10))
+    assert_equal([1, 3, 1, 3, 1, 3, 1, 3, 1, 3], candidate.call([[1, 3], [3, 2]], 10))
+  end
+end
+"
+HumanEval_130,ory_Orya,rb,"ଉଦାହରଣ:ପ୍ରଥମ n + 1 ସଂଖ୍ୟାଗୁଡିକର ତ୍ରିବୋନାସୀ କ୍ରମ ।ଆପଣଙ୍କୁ ଏକ ନନ୍-ନଗେଟିଭ୍ ଇଣ୍ଟେଜର ନମ୍ବର n ଦିଆ ଯାଇଛି, ଆପଣଙ୍କୁ a ର ଏକ ଆରେ ରିଟର୍ନ କରିବାକୁ ହେବ = 2 + 3 + 3 = 8 ତ୍ରିଶୂଳ (3) = ତ୍ରିଶୂଳ (2) + ତ୍ରିଶୂଳ (1) + ତ୍ରିଶୂଳ (4)ତ୍ରିଶୂଳ (4) = 3 ତ୍ରିଶୂନ୍ୟ 2 = 1 + (2 / 2) = 2 ଉଦାହରଣ ସ୍ୱରୂପ: ତ୍ରିଗୁଣ (n) = ତ୍ରିଗୁଣ (n - 1) + ତ୍ରିଗୁଣ (n - 2) + ତ୍ରିଗୁଣ (n + 1), ଯଦି n ଅଙ୍କ ଅଙ୍କ ଅଙ୍କ ।tri (n) = 1 + n / 2, ଯଦି n ଯୁଗ୍ମ ହୋଇଥାଏ ।ତ୍ରିଶୂଳ (୧) = ୩ଟ୍ରିବୋନାସ୍କି କ୍ରମାଙ୍କ ନିମ୍ନଲିଖିତ ପୁନଃ ଘଟଣାର ପରିଭାଷା ରହିଛି:କିନ୍ତୁ ଲୋକମାନେ ଯାହା ଜାଣି ନାହାନ୍ତି ତାହା ହେଉଛି ଟ୍ରିବୋନାସ୍କି କ୍ରମାଙ୍କ ।ସମସ୍ତେ ଫିବୋନାସୀ କ୍ରମାଙ୍କ ଜାଣନ୍ତି, ଏହାକୁ ଗଭୀର ଭାବରେ ଅଧ୍ୟୟନ କରିଥିଲେ ଗଣିତଜ୍ଞମାନେ # >>> tri.call(3)
+# [1, 3, 2, 8]
+def tri(n)
+","def tri(n)
+  sequence = [1, 3]
+  
+  (2..n).each do |i|
+    if i.even?
+      sequence[i] = 1 + i / 2
+    else
+      sequence[i] = sequence[i - 1] + sequence[i - 2] + sequence[i + 1] rescue 0
+    end
+  end
+  
+  sequence[0..n]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_tri
+    candidate = method(:tri)
+    assert_equal([1, 3, 2, 8], candidate.call(3))
+    assert_equal([1, 3, 2, 8, 3], candidate.call(4))
+    assert_equal([1, 3, 2, 8, 3, 15], candidate.call(5))
+    assert_equal([1, 3, 2, 8, 3, 15, 4], candidate.call(6))
+    assert_equal([1, 3, 2, 8, 3, 15, 4, 24], candidate.call(7))
+    assert_equal([1, 3, 2, 8, 3, 15, 4, 24, 5], candidate.call(8))
+    assert_equal([1, 3, 2, 8, 3, 15, 4, 24, 5, 35], candidate.call(9))
+    assert_equal([1, 3, 2, 8, 3, 15, 4, 24, 5, 35, 6, 48, 7, 63, 8, 80, 9, 99, 10, 120, 11], candidate.call(20))
+    assert_equal([1], candidate.call(0))
+    assert_equal([1, 3], candidate.call(1))
+  end
+end
+"
+HumanEval_131,ory_Orya,rb,"ଉଦାହରଣ ସ୍ୱରୂପ: 0 ଫେରାଇଥାଏ ଯଦି ସମସ୍ତ ଅଙ୍କ ଯୁଗ୍ମ ହୋଇଥାଏ.ଏକ ସକାରାତ୍ମକ ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା n ଦିଆଗଲା, ସେହି ଅଙ୍କଗୁଡ଼ିକର ଗୁଣନକୁ ଫେରାଇଦେବେ.# >>> digits.call(1)
+# 1
+# >>> digits.call(4)
+# 0
+# >>> digits.call(235)
+# 15
+def digits(n)
+","def digits(n)
+  odd_digits = n.to_s.chars.map(&:to_i).select { |digit| digit.odd? }
+  return 0 if odd_digits.empty?
+  odd_digits.reduce(:*)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_digits
+    candidate = method(:digits)
+    assert_equal(5, candidate.call(5))
+    assert_equal(5, candidate.call(54))
+    assert_equal(1, candidate.call(120))
+    assert_equal(5, candidate.call(5014))
+    assert_equal(315, candidate.call(98765))
+    assert_equal(2625, candidate.call(5576543))
+    assert_equal(0, candidate.call(2468))
+  end
+end
+"
+HumanEval_132,ory_Orya,rb,"ଯେଉଁଠାରେ ଅତି କମରେ ଗୋଟିଏ ବ୍ରାଙ୍କେଟ ଉପସର୍ଗରେ ନେଷ୍ଟ ହୋଇଛି ।ଫଳନଟି true ଫେରାଇବ ଯଦି ଏବଂ କେବଳ ଯଦି ବ୍ରାଙ୍କେଟ୍ସର ଏକ ବୈଧ ଉପକ୍ରମ ଅଛି ଏକ ଫଳନ ସୃଷ୍ଟି କରନ୍ତୁ ଯାହା କେବଳ ବର୍ଗ ବନ୍ଧନୀ ଥିବା ଏକ ଷ୍ଟ୍ରିଙ୍ଗକୁ ଇନପୁଟ୍ ଭାବରେ ଗ୍ରହଣ କରେ.# >>> is_nested.call(""[[]]"")
+# true
+# >>> is_nested.call(""[]]]]]]][[[[[]"")
+# false
+# >>> is_nested.call(""[][]"")
+# false
+# >>> is_nested.call(""[]"")
+# false
+# >>> is_nested.call(""[[][]]"")
+# true
+# >>> is_nested.call(""[[]][["")
+# true
+def is_nested(string)
+","def is_nested(string)
+  stack = []
+  has_nested = false
+
+  string.each_char do |char|
+    if char == '['
+      stack.push(char)
+    elsif char == ']'
+      if stack.empty?
+        return false
+      end
+      stack.pop
+      has_nested = true if stack.any?
+    end
+  end
+
+  has_nested
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_nested
+    candidate = method(:is_nested)
+    assert_equal(true, candidate.call(""[[]]""))
+    assert_equal(false, candidate.call(""[]]]]]]][[[[[]""))
+    assert_equal(false, candidate.call(""[][]""))
+    assert_equal(false, candidate.call(""[]""))
+    assert_equal(true, candidate.call(""[[[[]]]]""))
+    assert_equal(false, candidate.call(""[]]]]]]]]]]""))
+    assert_equal(true, candidate.call(""[][][[]]""))
+    assert_equal(false, candidate.call(""[[]""))
+    assert_equal(false, candidate.call(""[]]""))
+    assert_equal(true, candidate.call(""[[]][[""))
+    assert_equal(true, candidate.call(""[[][]]""))
+    assert_equal(false, candidate.call(""""))
+    assert_equal(false, candidate.call(""[[[[[[[[""))
+    assert_equal(false, candidate.call(""]]]]]]]]""))
+  end
+end
+"
+HumanEval_133,ory_Orya,rb,"ଉଦାହରଣ:ପ୍ରତ୍ୟେକ ଉପାଦାନକୁ ପ୍ରଥମେ ଉପର int{} (ସୀମା) କୁ ଘୋଡାଇ ଦିଅନ୍ତୁ ।ଆପଣଙ୍କୁ ଦିଆଯାଇଥିବା ଆରେରେ ଥିବା ବର୍ଗର ସଂଖ୍ୟାର ସମୁଦାୟ ଫେରାଇବାକୁ ହେବ, ଆପଣଙ୍କୁ ଏକ ସଂଖ୍ୟାର ଏକ ସରଳୀକୃତ ଧାରା ଦିଆଯାଏ ।# >>> lst.call([1.0, 2.0, 3.0])
+# 14
+# >>> lst.call([1.0, 4.0, 9.0])
+# 98
+# >>> lst.call([1.0, 3.0, 5.0, 7.0])
+# 84
+# >>> lst.call([1.4, 4.2, 0.0])
+# 29
+# >>> lst.call([-2.4, 1.0, 1.0])
+# 6
+def sum_squares(lst)
+","def sum_squares(lst)
+  lst.map { |num| (num.ceil)**2 }.sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sum_squares
+    candidate = method(:sum_squares)
+    assert_equal(14, candidate.call([1.0, 2.0, 3.0]))
+    assert_equal(14, candidate.call([1.0, 2.0, 3.0]))
+    assert_equal(84, candidate.call([1.0, 3.0, 5.0, 7.0]))
+    assert_equal(29, candidate.call([1.4, 4.2, 0.0]))
+    assert_equal(6, candidate.call([-2.4, 1.0, 1.0]))
+    assert_equal(10230, candidate.call([100.0, 1.0, 15.0, 2.0]))
+    assert_equal(200000000, candidate.call([10000.0, 10000.0]))
+    assert_equal(75, candidate.call([-1.4, 4.6, 6.3]))
+    assert_equal(1086, candidate.call([-1.4, 17.9, 18.9, 19.9]))
+    assert_equal(0, candidate.call([0.0]))
+    assert_equal(1, candidate.call([-1.0]))
+    assert_equal(2, candidate.call([-1.0, 1.0, 0.0]))
+  end
+end
+"
+HumanEval_134,ory_Orya,rb,"ଉଦାହରଣ:ନୋଟ: ""ୱାର୍ଡ"" ହେଉଛି ସ୍ପେସ୍ ଦ୍ୱାରା ପୃଥକ ହୋଇଥିବା ଅକ୍ଷରମାନଙ୍କର ଏକ ଗୋଷ୍ଠୀ ।ଏକ ଶବ୍ଦର ଅଂଶ, ଏବଂ ଅନ୍ୟଥା ମିଥ୍ୟା ।ଏକ ନିର୍ଦ୍ଦିଷ୍ଟ ଷ୍ଟ୍ରିଙ୍ଗର ଏକ ଆଲଫାବେଟିକ ଅକ୍ଷର ଅଟେ ଏବଂ ନୁହେଁ ଗୋଟିଏ ଫଳନ ସୃଷ୍ଟି କରନ୍ତୁ ଯାହାକି true କୁ ଫେରାଇଥାଏ ଯଦି ଶେଷ ଅକ୍ଷର # >>> check_if_last_char_is_a_letter.call(""apple pie"")
+# false
+# >>> check_if_last_char_is_a_letter.call(""apple pi e"")
+# true
+# >>> check_if_last_char_is_a_letter.call(""apple pi e "")
+# false
+# >>> check_if_last_char_is_a_letter.call("""")
+# false
+def check_if_last_char_is_a_letter(txt)
+","check_if_last_char_is_a_letter = ->(txt) {
+  return false if txt.strip.empty?
+  words = txt.strip.split(' ')
+  last_word = words.last
+  return false if last_word.empty?
+  last_char = last_word[-1]
+
+  last_char =~ /[a-zA-Z]/ && (words.size == 1 || txt[txt.rindex(last_char) - 1] == ' ')
+}","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_check_if_last_char_is_a_letter
+    candidate = method(:check_if_last_char_is_a_letter)
+    assert_equal(false, candidate.call(""apple""))
+    assert_equal(true, candidate.call(""apple pi e""))
+    assert_equal(false, candidate.call(""eeeee""))
+    assert_equal(true, candidate.call(""A""))
+    assert_equal(false, candidate.call(""Pumpkin pie ""))
+    assert_equal(false, candidate.call(""Pumpkin pie 1""))
+    assert_equal(false, candidate.call(""""))
+    assert_equal(false, candidate.call(""eeeee e ""))
+    assert_equal(false, candidate.call(""apple pie""))
+    assert_equal(false, candidate.call(""apple pi e ""))
+  end
+end
+"
+HumanEval_135,ory_Orya,rb,"ଉଦାହରଣ:ଦୋହରା ଯାଇଥିବା ମୂଲ୍ୟ ।ଏପରି କୌଣସି ଉପାଦାନ ନାହିଁ ତେବେ ଫେରାଇଦିଅନ୍ତୁ -1. ଦିଆଯାଇଥିବା ଧାଡ଼ିରେ ରହିବ ନାହିଁ ଏହାଠାରୁ ଅଧିକ କିମ୍ବା ସମାନ ନୁହେଁ, ଏହାଠାରୁ ତୁରନ୍ତ ପୂର୍ବବର୍ତ୍ତୀ ଉପାଦାନ ସହିତ ସମାନ ନୁହେଁ ।ଗୋଟିଏ ଫଳନ ସୃଷ୍ଟି କରନ୍ତୁ ଯାହାକି ଏକ ଉପାଦାନର ସର୍ବ ବୃହତ ସୂଚକାଙ୍କ ଫେରାଇଥାଏ ଯାହା # >>> can_arrange.call([1, 2, 4, 3, 5])
+# 3
+# >>> can_arrange.call([1, 2, 3])
+# -1
+def can_arrange(arr)
+","def can_arrange(arr)
+  (1...arr.length).reverse_each do |i|
+    return i if arr[i] < arr[i - 1]
+  end
+  -1
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_can_arrange
+    candidate = method(:can_arrange)
+    assert_equal(3, candidate.call([1, 2, 4, 3, 5]))
+    assert_equal(-1, candidate.call([1, 2, 4, 5]))
+    assert_equal(2, candidate.call([1, 4, 2, 5, 6, 7, 8, 9, 10]))
+    assert_equal(4, candidate.call([4, 8, 5, 7, 3]))
+    assert_equal(-1, candidate.call([]))
+  end
+end
+"
+HumanEval_136,ory_Orya,rb,"ଉଦାହରଣ:ଯଦି କୌଣସି ନକାରାତ୍ମକ କିମ୍ବା ସକାରାତ୍ମକ ସମ୍ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା ନଥାଏ, ତେବେ ସେଗୁଡ଼ିକୁ ଶୂନ ଭାବରେ ଫେରାଇଦେବେ. ଧନାତ୍ମକ ସଂଖ୍ଯାମାନଙ୍କର ଏକ ମାର୍ଜିତସବୁଠାରୁ ବଡ ନକାରାତ୍ମକ ସଂଖ୍ଯା, ଏବଂ 'b' ହେଉଛି ସବୁଠାରୁ ଛୋଟଏକ ଫଳନ ସୃଷ୍ଟି କରନ୍ତୁ ଯାହାକି ଏକ (a, b) ଧାରା ଫେରାଇଥାଏ, ଯେଉଁଠାରେ 'a' ହେଉଛି # >>> largest_smallest_integers.call([2, 4, 1, 3, 5, 7])
+# [nil, 1]
+# >>> largest_smallest_integers.call([])
+# [nil, nil]
+# >>> largest_smallest_integers.call([0])
+# [nil, nil]
+def largest_smallest_integers(lst)
+","def largest_smallest_integers(lst)
+  largest_negative = nil
+  smallest_positive = nil
+  
+  lst.each do |num|
+    if num < 0
+      largest_negative = num if largest_negative.nil? || num > largest_negative
+    elsif num > 0
+      smallest_positive = num if smallest_positive.nil? || num < smallest_positive
+    end
+  end
+  
+  [largest_negative, smallest_positive]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_largest_smallest_integers
+    candidate = method(:largest_smallest_integers)
+    assert_equal([nil, 1], candidate.call([2, 4, 1, 3, 5, 7]))
+    assert_equal([nil, 1], candidate.call([2, 4, 1, 3, 5, 7, 0]))
+    assert_equal([-2, 1], candidate.call([1, 3, 2, 4, 5, 6, -2]))
+    assert_equal([-7, 2], candidate.call([4, 5, 3, 6, 2, 7, -7]))
+    assert_equal([-9, 2], candidate.call([7, 3, 8, 4, 9, 2, 5, -9]))
+    assert_equal([nil, nil], candidate.call([]))
+    assert_equal([nil, nil], candidate.call([0]))
+    assert_equal([-1, nil], candidate.call([-1, -3, -5, -6]))
+    assert_equal([-1, nil], candidate.call([-1, -3, -5, -6, 0]))
+    assert_equal([-3, 1], candidate.call([-6, -4, -4, -3, 1]))
+    assert_equal([-3, 1], candidate.call([-6, -4, -4, -3, -100, 1]))
+  end
+end
+"
+HumanEval_137,ory_Orya,rb,"ନୋଟ: ଯଦି କୌଣସି ବାସ୍ତବ ସଂଖ୍ୟାକୁ ଏକ ଷ୍ଟ୍ରିଙ୍ଗ ଭାବରେ ଦର୍ଶାଯାଏ, ତେବେ ଫ୍ଲୋଟିଂ ପଏଣ୍ଟଟି . କିମ୍ବା ,  ହୋଇପାରେ ।ଯଦି ମୂଲ୍ୟ ସମାନ ହୁଏ ତେବେ ଶୂନକୁ ଫେରାଇଥାଏ ।ପ୍ରକୃତ ସଂଖ୍ୟା, ଏବଂ ଏହାର ଦିଆଯାଇଥିବା ପରିବର୍ତ୍ତନଶୀଳ ପ୍ରକାରରେ ବଡ଼ ପରିବର୍ତ୍ତନଶୀଳକୁ ଫେରାଇଥାଏ ।ଏକ ଫଳନ ସୃଷ୍ଟି କରନ୍ତୁ ଯାହା ସମ୍ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା, ଫ୍ଲୋଟ୍, କିମ୍ବା ଙ୍କୁ ପ୍ରତିନିଧିତ୍ୱ କରୁଥିବା ଷ୍ଟ୍ରିଙ୍ଗ ଗ୍ରହଣ କରେ# >>> compare_one.call(1, 2.5)
+# 2.5
+# >>> compare_one.call(1, ""2,3"")
+# ""2,3""
+# >>> compare_one.call(""5,1"", ""6"")
+# ""6""
+# >>> compare_one.call(""1"", 1)
+# nil
+def compare_one(a, b)
+","def compare_one(a, b)
+  a = a.to_s.tr(',', '.').to_f if a.is_a?(String) && a.include?(',')
+  b = b.to_s.tr(',', '.').to_f if b.is_a?(String) && b.include?(',')
+
+  if a.is_a?(String) && b.is_a?(String)
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Float) && b.is_a?(Float)
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Integer) && b.is_a?(Integer)
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Integer) && b.is_a?(Float)
+    a = a.to_f
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Float) && b.is_a?(Integer)
+    b = b.to_f
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(String) && b.is_a?(Float)
+    b = b.to_s # Only supporting variable type comparison, retain original types
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Float) && b.is_a?(String)
+    a = a.to_s # Only supporting variable type comparison, retain original types
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(String) && b.is_a?(Integer)
+    return nil if a == b
+    return a > b ? a : b
+  elsif a.is_a?(Integer) && b.is_a?(String)
+    return nil if a == b
+    return a > b ? a : b
+  else
+    return nil
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_compare_one
+    candidate = method(:compare_one)
+    assert_equal(2, candidate.call(1, 2))
+    assert_equal(2.5, candidate.call(1, 2.5))
+    assert_equal(3, candidate.call(2, 3))
+    assert_equal(6, candidate.call(5, 6))
+    assert_equal(""2,3"", candidate.call(1, ""2,3""))
+    assert_equal(""6"", candidate.call(""5,1"", ""6""))
+    assert_equal(""2"", candidate.call(""1"", ""2""))
+    assert_equal(nil, candidate.call(""1"", 1))
+  end
+end
+"
+HumanEval_138,ory_Orya,rb,"ଉଦାହରଣ ନିର୍ଦ୍ଦିଷ୍ଟ ସଂଖ୍ୟା n କୁ ସଠିକ ଭାବରେ 4 ଟି ସକାରାତ୍ମକ ଯୁଗ୍ମ ସଂଖ୍ୟାର ସମଷ୍ଟି ଭାବରେ ଲେଖାଯାଇପାରିବ କି ନାହିଁ ଆକଳନ କରନ୍ତୁ # >>> is_equal_to_sum_even.call(4)
+# false
+# >>> is_equal_to_sum_even.call(6)
+# false
+# >>> is_equal_to_sum_even.call(8)
+# true
+def is_equal_to_sum_even(n)
+","def is_equal_to_sum_even(n)
+  return false if n < 8
+  n.even?
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_is_equal_to_sum_even
+    candidate = method(:is_equal_to_sum_even)
+    assert_equal(false, candidate.call(4))
+    assert_equal(false, candidate.call(6))
+    assert_equal(true, candidate.call(8))
+    assert_equal(true, candidate.call(10))
+    assert_equal(false, candidate.call(11))
+    assert_equal(true, candidate.call(12))
+    assert_equal(false, candidate.call(13))
+    assert_equal(true, candidate.call(16))
+  end
+end
+"
+HumanEval_139,ory_Orya,rb,"ଉଦାହରଣ ସ୍ୱରୂପ: ଯେଉଁଠାରେ n > 0 ବ୍ରାଜିଲୀୟ_କାରକୀୟ (n) = n! * (n-1)! * (n-2)! * ... * 1! ବ୍ରାଜିଲୀୟ କାରକକୁ ନିମ୍ନଲିଖିତ ଭାବରେ ବ୍ୟାଖ୍ୟା କରାଯାଇଛି: # >>> special_factorial.call(4)
+# 288
+# The function will receive an integer as input and should return the special
+# factorial of this integer.
+def special_factorial(n)
+","def special_factorial(n)
+  return 1 if n <= 1
+  (1..n).inject(1) { |product, i| product * factorial(i) }
+end
+
+def factorial(num)
+  return 1 if num <= 1
+  (2..num).inject(1, :*)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_special_factorial
+    candidate = method(:special_factorial)
+    assert_equal(288, candidate.call(4))
+    assert_equal(34560, candidate.call(5))
+    assert_equal(125411328000, candidate.call(7))
+    assert_equal(1, candidate.call(1))
+  end
+end
+"
+HumanEval_140,ory_Orya,rb,"ତାପରେ ସମସ୍ତ କ୍ରମିକ ସ୍ପେସକୁ -  ସହିତ ବଦଳାନ୍ତୁଏବଂ ଯଦି ଗୋଟିଏ ଷ୍ଟ୍ରିଙ୍ଗରେ ଦୁଇରୁ ଅଧିକ କ୍ରମିକ ସ୍ପେସ୍ ଥାଏ, ଏକ ପାଠ୍ୟ ଧାଡ଼ି ଦିଆଯାଇଥିବା, ଏହାର ସମସ୍ତ ସ୍ପେସ୍ ଅଣ୍ଡରସ୍କୋର ସହିତ ବଦଳାନ୍ତୁ, # >>> fix_spaces.call("" Example"")
+# ""Example""
+# >>> fix_spaces.call("" Example 1"")
+# ""Example_1""
+# >>> fix_spaces.call("" Example 2"")
+# ""_Example_2""
+# >>> fix_spaces.call("" Example 3"")
+# ""_Example-3""
+def fix_spaces(text)
+","def fix_spaces(text)
+  text.strip.gsub(/\s{3,}/, '-').gsub(' ', '_')
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_fix_spaces
+    candidate = method(:fix_spaces)
+    assert_equal(""Example"", candidate.call(""Example""))
+    assert_equal(""Mudasir_Hanif_"", candidate.call(""Mudasir Hanif ""))
+    assert_equal(""Yellow_Yellow__Dirty__Fellow"", candidate.call(""Yellow Yellow  Dirty  Fellow""))
+    assert_equal(""Exa-mple"", candidate.call(""Exa   mple""))
+    assert_equal(""-Exa_1_2_2_mple"", candidate.call(""   Exa 1 2 2 mple""))
+  end
+end
+"
+HumanEval_141,ory_Orya,rb,"ଉଦାହରଣ:- ବିନ୍ଦୁ ପରେ ଥିବା ସବଷ୍ଟ୍ରିଙ୍ଗଟି ଏହି ମଧ୍ୟରୁ ଗୋଟିଏ ହେବା ଉଚିତ: ['txt', 'exe', 'dll'] ଲାଟିନ ଅକ୍ଷର (ଏ-ଜେଡ ଏବଂ ଏ-ଜେଡ) ।- ଡଟ୍ ପୂର୍ବରୁ ଥିବା ସବଷ୍ଟ୍ରିଙ୍ଗ ଖାଲି ହେବା ଉଚିତ ନୁହେଁ, ଏବଂ ଏହା  ଠାରୁ ଏକ ଅକ୍ଷର ସହିତ ଆରମ୍ଭ ହୋଇଥାଏ- ଫାଇଲ ନାମରେ ଗୋଟିଏ ବିନ୍ଦୁ ଅଛି '.' - ଫାଇଲ ନାମରେ ତିନିରୁ ଅଧିକ ଅଙ୍କ ('0'-'9') ରହିବା ଉଚିତ ନୁହେଁ ।ପୂରଣ ହୋଇଛି:ଏକ ଫାଇଲ ନାମ ବୈଧ ବୋଲି ବିବେଚନା କରାଯାଏ ଯଦି ଏବଂ କେବଳ ଯଦି ନିମ୍ନଲିଖିତ ସମସ୍ତ ସର୍ତ୍ତ ପୂରଣ ହୁଏ _'ହଁ' ଯଦି ଫାଇଲ ନାମ ବୈଧ, ଏବଂ ଅନ୍ୟଥା 'ନା' ଫେରାଇଥାଏ.ଏକ ଫଳନ ସୃଷ୍ଟି କରନ୍ତୁ ଯାହାକି ଏକ ଫାଇଲ ନାମକୁ ପ୍ରତିନିଧିତ୍ୱ କରୁଥିବା ଏକ ଷ୍ଟ୍ରିଙ୍ଗ ନେଇଥାଏ, ଏବଂ ଫେରାଇଥାଏ # >>> file_name_check.call(""example.txt"")
+# ""Yes""
+# >>> file_name_check.call(""1example.dll"")
+# ""No""
+def file_name_check(file_name)
+","def file_name_check(file_name)
+  # Check if there's exactly one dot in the filename
+  return 'No' unless file_name.count('.') == 1
+  
+  # Split the filename into the name and extension
+  name, extension = file_name.split('.')
+  
+  # Check if the name part starts with a letter
+  return 'No' if name.empty? || !name[0].match?(/[a-zA-Z]/)
+  
+  # Check if the extension is valid
+  return 'No' unless ['txt', 'exe', 'dll'].include?(extension)
+  
+  # Count digits in the file name
+  digit_count = file_name.count(""0-9"")
+  
+  # Check if digits are more than three
+  return 'No' if digit_count > 3
+  
+  'Yes'
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_file_name_check
+    candidate = method(:file_name_check)
+    assert_equal(""Yes"", candidate.call(""example.txt""))
+    assert_equal(""No"", candidate.call(""1example.dll""))
+    assert_equal(""No"", candidate.call(""s1sdf3.asd""))
+    assert_equal(""Yes"", candidate.call(""K.dll""))
+    assert_equal(""Yes"", candidate.call(""MY16FILE3.exe""))
+    assert_equal(""No"", candidate.call(""His12FILE94.exe""))
+    assert_equal(""No"", candidate.call(""_Y.txt""))
+    assert_equal(""No"", candidate.call(""?aREYA.exe""))
+    assert_equal(""No"", candidate.call(""/this_is_valid.dll""))
+    assert_equal(""No"", candidate.call(""this_is_valid.wow""))
+    assert_equal(""Yes"", candidate.call(""this_is_valid.txt""))
+    assert_equal(""No"", candidate.call(""this_is_valid.txtexe""))
+    assert_equal(""No"", candidate.call(""#this2_i4s_5valid.ten""))
+    assert_equal(""No"", candidate.call(""@this1_is6_valid.exe""))
+    assert_equal(""No"", candidate.call(""this_is_12valid.6exe4.txt""))
+    assert_equal(""No"", candidate.call(""all.exe.txt""))
+    assert_equal(""Yes"", candidate.call(""I563_No.exe""))
+    assert_equal(""Yes"", candidate.call(""Is3youfault.txt""))
+    assert_equal(""Yes"", candidate.call(""no_one#knows.dll""))
+    assert_equal(""No"", candidate.call(""1I563_Yes3.exe""))
+    assert_equal(""No"", candidate.call(""I563_Yes3.txtt""))
+    assert_equal(""No"", candidate.call(""final..txt""))
+    assert_equal(""No"", candidate.call(""final132""))
+    assert_equal(""No"", candidate.call(""_f4indsartal132.""))
+    assert_equal(""No"", candidate.call("".txt""))
+    assert_equal(""No"", candidate.call(""s.""))
+  end
+end
+"
+HumanEval_142,ory_Orya,rb,"ଉଦାହରଣ:ସେହି ଆରେରେ ଥିବା ଏଣ୍ଟ୍ରିଗୁଡ଼ିକୁ ପରିବର୍ତ୍ତନ କରନ୍ତୁ ଯାହାର ସୂଚକାଙ୍କ 3 କିମ୍ବା 4 ର ଗୁଣନ ନୁହେଁ _ ଫଳନଟି ସମସ୍ତ ଏଣ୍ଟ୍ରିଗୁଡିକର ସମୁଦାୟ ଫେରାଇବ _3 ର ଗୁଣକ ଏବଂ ସଂଖ୍ଯାଟି 3 ର ଗୁଣକ ନୁହେଁ, ଯଦି ତାହାର ସୂଚକାଙ୍କ 4 ର ଗୁଣକ ହୁଏ ତେବେ ଏହା ସଂଖ୍ଯାଟି କୁୟବ କରିବଏହି ଫଳନଟି ଏକ ସମ୍ପୂର୍ଣ୍ଣ ସଂଖ୍ୟାଗୁଡ଼ିକର ଏକ ସରଳୀକରଣ ଗ୍ରହଣ କରିବ । ସରଳୀକରଣରେ ଥିବା ସମସ୍ତ ଏଣ୍ଟ୍ରି ପାଇଁ, ଯଦି ଏହାର ସୂଚକାଙ୍କ a  ହୁଏ ତେବେ ଫଳନଟି ସମ୍ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା ଏଣ୍ଟ୍ରିକୁ ବର୍ଗୀକରଣ କରିବ ।"" # >>> lst
+# [1, 2, 3]
+# >>> lst
+# []
+# >>> lst
+# [-1, -5, 2, -1, -5]
+def sum_squares(lst)
+","def sum_squares(lst)
+  lst.map.with_index do |num, index|
+    if index % 3 == 0
+      num ** 2
+    elsif index % 4 == 0
+      num ** 3
+    else
+      num
+    end
+  end.sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sum_squares
+    candidate = method(:sum_squares)
+    assert_equal(6, candidate.call([1, 2, 3]))
+    assert_equal(14, candidate.call([1, 4, 9]))
+    assert_equal(0, candidate.call([]))
+    assert_equal(9, candidate.call([1, 1, 1, 1, 1, 1, 1, 1, 1]))
+    assert_equal(-3, candidate.call([-1, -1, -1, -1, -1, -1, -1, -1, -1]))
+    assert_equal(0, candidate.call([0]))
+    assert_equal(-126, candidate.call([-1, -5, 2, -1, -5]))
+    assert_equal(3030, candidate.call([-56, -99, 1, 0, -2]))
+    assert_equal(0, candidate.call([-1, 0, 0, 0, 0, 0, 0, 0, -1]))
+    assert_equal(-14196, candidate.call([-16, -9, -2, 36, 36, 26, -20, 25, -40, 20, -4, 12, -26, 35, 37]))
+    assert_equal(-1448, candidate.call([-1, -3, 17, -1, -15, 13, -1, 14, -14, -12, -5, 14, -14, 6, 13, 11, 16, 16, 4, 10]))
+  end
+end
+"
+HumanEval_143,ory_Orya,rb,"ଉଦାହରଣ 1: ନୂତନ ବାକ୍ୟଖଣ୍ଡରେ ଥିବା ଶବ୍ଦଗୁଡ଼ିକର କ୍ରମାଙ୍କ ମୂଳ ବାକ୍ୟଖଣ୍ଡର କ୍ରମାଙ୍କ ସହିତ ସମାନ ହେବା ଉଚିତ ।ଯାହାର ଲମ୍ବ ଅଶୂନ୍ୟ ସଂଖ୍ୟା, ଏବଂ ଆପଣଙ୍କୁ ଏକ ଷ୍ଟ୍ରିଙ୍ଗ ଫେରାଇବାକୁ ହେବ ଯେଉଁଥିରେ ମୂଳ ବାକ୍ୟର ଶବ୍ଦ ଅଛି, ବାକ୍ୟରେ କିଛି ଶବ୍ଦ ଅଛି, ଯାହା ସ୍ପେସ୍ ଦ୍ବାରା ପୃଥକ ହୋଇଛି,ଆପଣଙ୍କୁ ଏକ ବାକ୍ୟକୁ ପ୍ରତିନିଧିତ୍ୱ କରୁଥିବା ଏକ ଷ୍ଟ୍ରିଙ୍ଗ ଦିଆଯାଏ, # >>> words_in_sentence.call(""This is a test"")
+# ""is""
+# Example 2:
+# >>> words_in_sentence.call(""lets go for swimming"")
+# ""go for""
+# Constraints:
+# * 1 <= len(sentence) <= 100
+# * sentence contains only letters
+def words_in_sentence(sentence)
+","def words_in_sentence(sentence)
+  def is_prime?(num)
+    return false if num <= 1
+    (2..Math.sqrt(num)).none? { |i| num % i == 0 }
+  end
+  
+  words = sentence.split("" "")
+  prime_length_words = words.select { |word| is_prime?(word.length) }
+  prime_length_words.join("" "")
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_words_in_sentence
+    candidate = method(:words_in_sentence)
+    assert_equal(""is"", candidate.call(""This is a test""))
+    assert_equal(""go for"", candidate.call(""lets go for swimming""))
+    assert_equal(""there is no place"", candidate.call(""there is no place available here""))
+    assert_equal(""Hi am Hussein"", candidate.call(""Hi I am Hussein""))
+    assert_equal(""go for it"", candidate.call(""go for it""))
+    assert_equal("""", candidate.call(""here""))
+    assert_equal(""is"", candidate.call(""here is""))
+  end
+end
+"
+HumanEval_144,ory_Orya,rb,"ଆପଣ ମାନିପାରିବେ ଯେ x, ଏବଂ n ହେଉଛି ବୈଧ ଖଣ୍ଡ, ଏବଂ ଶୂନ ନାମକର୍ତ୍ତା ଭାବରେ ନାହିଁ.<numerator>/<denominator> ଯେଉଁଠାରେ ଉଭୟ ସଂଖ୍ଯକ ଓ ନାମକ ସକାରାତ୍ମକ ସମ୍ପୂର୍ଣ୍ଣ ସଂଖ୍ଯା ହୋଇଥାଏ ।ଅନ୍ୟଥା, ଉଭୟ x ଏବଂ n, ଏକ ଫ୍ରାକସନ୍ ର ଷ୍ଟ୍ରିଙ୍ଗ୍ ପ୍ରତିନିଧିତ୍ୱ, ଏବଂ ନିମ୍ନଲିଖିତ ଫର୍ମାଟ୍ ଅଛି, x * n. ଯଦି x * n ଏକ ସମ୍ପୂର୍ଣ୍ଣ ସଂଖ୍ୟାକୁ ମୂଲ୍ୟାଙ୍କନ କରେ ଏବଂ false ଆପଣଙ୍କର କାମ ହେଉଛି ଏକ ଫଳନକୁ କାର୍ଯ୍ୟକାରୀ କରିବା ଯାହା ଅଭିବ୍ୟକ୍ତିକୁ ସରଳ କରିବ # >>> simplify.call(""1/5"", ""5/1"")
+# true
+# >>> simplify.call(""1/6"", ""2/1"")
+# false
+# >>> simplify.call(""7/10"", ""10/2"")
+# false
+def simplify(x, n)
+","def simplify(x, n)
+  # Convert x and n to numerators and denominators
+  num_x, den_x = x.split('/').map(&:to_i)
+  num_n, den_n = n.split('/').map(&:to_i)
+
+  # Multiply fractions: (num_x * num_n) / (den_x * den_n)
+  numerator = num_x * num_n
+  denominator = den_x * den_n
+
+  # Check if the result is a whole number
+  numerator % denominator == 0
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_simplify
+    candidate = method(:simplify)
+    assert_equal(true, candidate.call(""1/5"", ""5/1""))
+    assert_equal(false, candidate.call(""1/6"", ""2/1""))
+    assert_equal(true, candidate.call(""5/1"", ""3/1""))
+    assert_equal(false, candidate.call(""7/10"", ""10/2""))
+    assert_equal(true, candidate.call(""2/10"", ""50/10""))
+    assert_equal(true, candidate.call(""7/2"", ""4/2""))
+    assert_equal(true, candidate.call(""11/6"", ""6/1""))
+    assert_equal(false, candidate.call(""2/3"", ""5/2""))
+    assert_equal(false, candidate.call(""5/2"", ""3/5""))
+    assert_equal(true, candidate.call(""2/4"", ""8/4""))
+    assert_equal(true, candidate.call(""2/4"", ""4/2""))
+    assert_equal(true, candidate.call(""1/5"", ""5/1""))
+    assert_equal(false, candidate.call(""1/5"", ""1/5""))
+  end
+end
+"
+HumanEval_145,ory_Orya,rb,"ଉଦାହରଣ ସ୍ୱରୂପ: ମୂଳ ଧାଡ଼ିରେ ଥିବା ସୂଚକାଙ୍କ ଆଧାରରେ ସେମାନଙ୍କୁ କ୍ରମାନୁସାରେ ରଖନ୍ତୁ ।ନୋଟ: ଯଦି ଏକାଧିକ ଆଇଟମ ଅଛି ଯାହାର ଅଙ୍କ ସମୂହ ସମାନ, ତେବେ ଅଙ୍କ ସମୂହ ଅନୁସାରେ କ୍ରମାନୁସାରେ ।ଏକ ଫଳନ ଲେଖନ୍ତୁ ଯାହା ଦିଆଯାଇଥିବା ସମ୍ପୂର୍ଣ୍ଣ ସଂଖ୍ୟାଗୁଡ଼ିକର ସରଳୀକରଣ କରେ ।# >>> order_by_points.call([1, 11, -1, -11, -12])
+# [-1, -11, 1, -12, 11]
+# >>> order_by_points.call([])
+# []
+def order_by_points(nums)
+","def order_by_points(nums)
+  nums.sort_by.with_index do |num, index|
+    [num.to_s.chars.map(&:to_i).sum.abs, index]
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_order_by_points
+    candidate = method(:order_by_points)
+    assert_equal([-1, -11, 1, -12, 11], candidate.call([1, 11, -1, -11, -12]))
+    assert_equal([0, 2, 3, 6, 53, 423, 423, 423, 1234, 145, 37, 46, 56, 463, 3457], candidate.call([1234, 423, 463, 145, 2, 423, 423, 53, 6, 37, 3457, 3, 56, 0, 46]))
+    assert_equal([], candidate.call([]))
+    assert_equal([-3, -32, -98, -11, 1, 2, 43, 54], candidate.call([1, -11, -32, 43, 54, -98, 2, -3]))
+    assert_equal([1, 10, 2, 11, 3, 4, 5, 6, 7, 8, 9], candidate.call([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]))
+    assert_equal([-76, -21, 0, 4, 23, 6, 6], candidate.call([0, 6, 6, -76, -21, 23, 4]))
+  end
+end
+"
+HumanEval_146,ory_Orya,rb,"ଉଦାହରଣ ସ୍ୱରୂପ: ଏକ ସଂଖ୍ୟାର ପ୍ରଥମ ଓ ଶେଷ ଅଙ୍କ ଅଙ୍କ (1, 3, 5, 7, 9) ।10 ରୁ ଅଧିକ ଏବଂ ଉଭୟ ଏକ ଫଳନ ଲେଖନ୍ତୁ ଯାହା ଏକ ସଂଖ୍ୟାର ସରଳୀକୃତକୁ ଇନପୁଟ୍ ଭାବରେ ଗ୍ରହଣ କରେ ଏବଂ ଫେରସ୍ତ କରେ # >>> specialFilter.call([15, -73, 14, -15])
+# 1
+# >>> specialFilter.call([33, -2, -3, 45, 21, 109])
+# 2
+def specialFilter(nums)
+","def specialFilter(nums)
+  nums.count do |num|
+    num > 10 && num.to_s[0].to_i.odd? && num.to_s[-1].to_i.odd?
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_specialFilter
+    candidate = method(:specialFilter)
+    assert_equal(0, candidate.call([5, -2, 1, -5]))
+    assert_equal(1, candidate.call([15, -73, 14, -15]))
+    assert_equal(2, candidate.call([33, -2, -3, 45, 21, 109]))
+    assert_equal(4, candidate.call([43, -12, 93, 125, 121, 109]))
+    assert_equal(3, candidate.call([71, -2, -33, 75, 21, 19]))
+    assert_equal(0, candidate.call([1]))
+    assert_equal(0, candidate.call([]))
+  end
+end
+"
+HumanEval_147,ory_Orya,rb,"ଉଦାହରଣ:ଏବଂ a[i] + a[j] + a[k] ହେଉଛି 3 ର ଗୁଣନ ।a ର ତ୍ରିଗୁଣ ସଂଖ୍ୟା (a[i], a[j], a[k]) କୁ ଫେରାଇଦିଏ ଯେଉଁଠାରେ i < j < k, ପ୍ରତ୍ୟେକ i (1 ≤ i ≤ n) ପାଇଁ, a[i] = i * i - i + 1 ର ମୂଲ୍ୟ ।ଆପଣଙ୍କୁ ଏକ ସକାରାତ୍ମକ ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା n ଦିଆ ଯାଇଛି. ଆପଣଙ୍କୁ ଏକ ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା ସରଳୀକୃତ କରିବା ପାଇଁ ହେବ ଯାହାର ଲମ୍ବ n # >>> get_max_triples.call(5)
+# 1
+# Explanation: 
+# a = [1, 3, 7, 13, 21]
+# The only valid triple is (1, 7, 13).
+def get_max_triples(n)
+","def get_max_triples(n)
+  a = Array.new(n) { |i| (i + 1) * (i + 1) - (i + 1) + 1 }
+  count = 0
+  
+  (0...n).each do |i|
+    (i+1...n).each do |j|
+      (j+1...n).each do |k|
+        count += 1 if (a[i] + a[j] + a[k]) % 3 == 0
+      end
+    end
+  end
+  
+  count
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_get_max_triples
+    candidate = method(:get_max_triples)
+    assert_equal(1, candidate.call(5))
+    assert_equal(4, candidate.call(6))
+    assert_equal(36, candidate.call(10))
+    assert_equal(53361, candidate.call(100))
+  end
+end
+"
+HumanEval_148,ory_Orya,rb,"ଉଦାହରଣ ଗ୍ରହ ନାମ ଠିକ୍ ନୁହେଁ ।ଫଳନଟି ଏକ ଖାଲି ଆରେ ଫେରାଇଥାଏ ଯଦି ଗ୍ରହ1 କିମ୍ବା ଗ୍ରହ2 ସୂର୍ଯ୍ୟର ନିକଟତା ।ଗ୍ରହ ୧ ଓ ଗ୍ରହ ୨ର କକ୍ଷପଥ ମଧ୍ୟରେ ଅବସ୍ଥିତ, ଏହି ଫଳନ ଏକ ଆରେ ଫେରାଇବ ଯେଉଁଥିରେ ସମସ୍ତ ଗ୍ରହ ଅଛି ଯାହାର କକ୍ଷପଥ ହେଉଛି ଏକ ଫଳନ ଲେଖନ୍ତୁ ଯାହା ଦୁଇଟି ଗ୍ରହ ନାମକୁ ""planet1"" ଏବଂ ""planet2"" ପରି ଧାଡ଼ି ଭାବରେ ଗ୍ରହଣ କରେ ।ୟୁରେନସ୍, ନେପଚୁନ ।ମଙ୍ଗଳ ଗ୍ରହ, ପରବର୍ତ୍ତୀ ଗ୍ରହ ହେଉଛି ଶୁକ୍ର, ତାପରେ ପୃଥିବୀ, ମଙ୍ଗଳ, ବୃହସ୍ପତି, ଶନି,ଆମ ସୌରମଣ୍ଡଳରେ ଆଠଟି ଗ୍ରହ ଅଛି: ସୂର୍ଯ୍ୟଙ୍କ ନିକଟତମ ।# >>> bf.call(""Jupiter"", ""Neptune"")
+# [""Saturn"", ""Uranus""]
+# >>> bf.call(""Earth"", ""Mercury"")
+# ""Venus""
+# >>> bf.call(""Mercury"", ""Uranus"")
+# [""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn""]
+def bf(planet1, planet2)
+","def bf(planet1, planet2)
+  planets = [""Mercury"", ""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn"", ""Uranus"", ""Neptune""]
+  
+  idx1 = planets.index(planet1)
+  idx2 = planets.index(planet2)
+  
+  return [] if idx1.nil? || idx2.nil?
+
+  start_idx, end_idx = [idx1, idx2].sort
+  
+  planets[(start_idx + 1)...end_idx]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_bf
+    candidate = method(:bf)
+    assert_equal([""Saturn"", ""Uranus""], candidate.call(""Jupiter"", ""Neptune""))
+    assert_equal([""Venus""], candidate.call(""Earth"", ""Mercury""))
+    assert_equal([""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn""], candidate.call(""Mercury"", ""Uranus""))
+    assert_equal([""Earth"", ""Mars"", ""Jupiter"", ""Saturn"", ""Uranus""], candidate.call(""Neptune"", ""Venus""))
+    assert_equal([], candidate.call(""Earth"", ""Earth""))
+    assert_equal([], candidate.call(""Mars"", ""Earth""))
+    assert_equal([], candidate.call(""Jupiter"", ""Makemake""))
+  end
+end
+"
+HumanEval_149,ory_Orya,rb,"ଉଦାହରଣ ସ୍ୱରୂପ: ଆପଣ ଭାବୁଥିବେ ସବୁ ଶବ୍ଦ ସମାନ ଲମ୍ବର ହେବ ।ଫଳନଟି ଏକ ସର୍ଟ କ୍ରମରେ ଏକ ଶୃଙ୍ଖଳା ଶୃଙ୍ଖଳା ଫେରାଇବ.ଯଦି ଦୁଇଟି ଶବ୍ଦର ଲମ୍ବ ସମାନ, ତେବେ ଆଲଫାବେଟିକ କ୍ରମରେ ସର୍ଟ କରନ୍ତୁ.ସେହି ନିୟମ ଦ୍ୱାରା ସଜାଡ଼ାଯାଇଥିବା ଆରେ ଫେରାଇବ.ଆରେର କ୍ରମାଙ୍କ ପ୍ରତ୍ୟେକ ଶବ୍ଦର ଲମ୍ବ ଅନୁସାରେ ବୃଦ୍ଧି ହେବା ଉଚିତ, ଏବଂ ଆପଣ ଏବଂ ଏଥିରେ ଡୁପ୍ଲିକେଟ୍ ମଧ୍ୟ ରହିପାରେ ।ଏକ ସରଳୀକରଣ ସର୍ବଦା ଏକ ସରଳୀକରଣ ଅଟେ ଏବଂ କେବେ ବି ଏକ ସଂଖ୍ୟାର ସରଳୀକରଣ ନୁହେଁ, ଏବଂ ଫଳାଫଳ ଆରେକୁ ଏକ ସର୍ଟ ହୋଇଥିବା କ୍ରମରେ ଫେରାଇଥାଏ,  ଏହାଠାରୁ ଅଜଣା ଲମ୍ବ ଥିବା ଷ୍ଟ୍ରିଙ୍ଗକୁ ଲିଭାଇଥାଏ,ଏକ ଫଳନ ଲେଖନ୍ତୁ ଯାହା ଏକ ସରଳୀକୃତ ଧାଡ଼ିଗୁଡ଼ିକୁ ଏକ ପାରାମିଟର ଭାବରେ ଗ୍ରହଣ କରିଥାଏ, # >>> list_sort.call([""aa"", ""a"", ""aaa""])
+# [""aa""]
+# >>> list_sort.call([""ab"", ""a"", ""aaa"", ""cd""])
+# [""ab"", ""cd""]
+def sorted_list_sum(lst)
+","def list_sort(arr)
+  arr.select { |s| s.length.even? }
+     .sort_by { |s| [s.length, s] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_sorted_list_sum
+    candidate = method(:sorted_list_sum)
+    assert_equal([""aa""], candidate.call([""aa"", ""a"", ""aaa""]))
+    assert_equal([""AI"", ""asdf"", ""school""], candidate.call([""school"", ""AI"", ""asdf"", ""b""]))
+    assert_equal([], candidate.call([""d"", ""b"", ""c"", ""a""]))
+    assert_equal([""abcd"", ""dcba""], candidate.call([""d"", ""dcba"", ""abcd"", ""a""]))
+    assert_equal([""AI"", ""ai"", ""au""], candidate.call([""AI"", ""ai"", ""au""]))
+    assert_equal([], candidate.call([""a"", ""b"", ""b"", ""c"", ""c"", ""a""]))
+    assert_equal([""cc"", ""dd"", ""aaaa"", ""bbbb""], candidate.call([""aaaa"", ""bbbb"", ""dd"", ""cc""]))
+  end
+end
+"
+HumanEval_150,ory_Orya,rb,"ଉଦାହରଣ:ଏକ ଅଶୂନ୍ୟ ସଂଖ୍ୟା ଏବଂ y ର ମୂଲ୍ୟ ଫେରାଇବ _ଗୋଟିଏ ସରଳ ପ୍ରୋଗ୍ରାମ ଯାହା x ର ମୂଲ୍ୟ ଫେରାଇବ ଯଦି n ହେଉଛି # >>> x_or_y.call(7, 34, 12)
+# 34
+# >>> x_or_y.call(15, 8, 5)
+# 5
+def x_or_y(n, x, y)
+","def x_or_y(n, x, y)
+  require 'prime'
+  n.prime? ? x : y
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_x_or_y
+    candidate = method(:x_or_y)
+    assert_equal(34, candidate.call(7, 34, 12))
+    assert_equal(5, candidate.call(15, 8, 5))
+    assert_equal(33, candidate.call(3, 33, 5212))
+    assert_equal(3, candidate.call(1259, 3, 52))
+    assert_equal(-1, candidate.call(7919, -1, 12))
+    assert_equal(583, candidate.call(3609, 1245, 583))
+    assert_equal(129, candidate.call(91, 56, 129))
+    assert_equal(1234, candidate.call(6, 34, 1234))
+    assert_equal(0, candidate.call(1, 2, 0))
+    assert_equal(2, candidate.call(2, 2, 0))
+  end
+end
+"
+HumanEval_151,ory_Orya,rb,"ସେହି ସଂଖ୍ୟାଗୁଡ଼ିକୁ ଅଣଦେଖା କରନ୍ତୁ ଯାହା ନକାରାତ୍ମକ କିମ୍ବା ସମ୍ପୂର୍ଣ୍ଣ ସଂଖ୍ୟାଗୁଡିକ ନୁହେଁ ।ଏକ ସଂଖ୍ୟାର ସରଳୀକୃତ, ସଂଖ୍ୟାର ବର୍ଗର ସମୁଦାୟକୁ ଫେରାଇଦିଅନ୍ତୁ # >>> double_the_difference.call([1, 3, 2, 0])
+# 10
+# >>> double_the_difference.call([-1, -2, 0])
+# 0
+# >>> double_the_difference.call([9, -2])
+# 81
+# >>> double_the_difference.call([0])
+# 0
+# If the input array is empty, return 0.
+def double_the_difference(lst)
+","def double_the_difference(lst)
+  lst.select { |n| n.is_a?(Integer) && n.odd? && n >= 0 }
+     .map { |n| n ** 2 }
+     .sum
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_double_the_difference
+    candidate = method(:double_the_difference)
+    assert_equal(0, candidate.call([]))
+    assert_equal(25, candidate.call([5.0, 4.0]))
+    assert_equal(0, candidate.call([0.1, 0.2, 0.3]))
+    assert_equal(0, candidate.call([-10.0, -20.0, -30.0]))
+    assert_equal(0, candidate.call([-1.0, -2.0, 8.0]))
+    assert_equal(34, candidate.call([0.2, 3.0, 5.0]))
+    assert_equal(165, candidate.call([-9.0, -7.0, -5.0, -3.0, -1.0, 1.0, 3.0, 5.0, 7.0, 9.0]))
+  end
+end
+"
+HumanEval_152,ory_Orya,rb,"ଉଦାହରଣ: ଯଦି 0 ନ ହୁଏ, ତେବେ ମୂଲ୍ୟାଙ୍କନ ହେଉଛି ଅନୁମାନ ଓ ସ୍କୋର ମଧ୍ୟରେ ଥିବା ଅସୀମ ପାର୍ଥକ୍ୟ ।ସମାନ ଲମ୍ବର ଏକ ଆରେ ଫେରାଇଥାଏ, ପ୍ରତ୍ୟେକ ଅନୁମାନ କେତେ ଦୂର ଥିଲା ତାହା ଦର୍ଶାଇଥାଏ। ଯଦି ସେମାନେ ସଠିକ୍ ଅନୁମାନ କରିଛନ୍ତି, ଆପଣଙ୍କୁ ସମାନ ଲମ୍ବର ଦୁଇଟି ସ୍କୋର ଏବଂ ଅନୁମାନର ଆରେ ଦିଆଯାଏ, ଯେଉଁଠାରେ ପ୍ରତ୍ୟେକ ସୂଚକାଙ୍କ ଏକ ମେଳ ଦେଖାଏ _ଆପଣଙ୍କ କାମ ହେଉଛି ଏହା ଜାଣିବା ଯେ ଜଣେ ବ୍ୟକ୍ତି କେତେଗୁଡ଼ିଏ ମ୍ୟାଚର ଫଳାଫଳକୁ ସଠିକ ଭାବରେ ଅନୁମାନ କରିପାରିଛନ୍ତି କି ନାହିଁ ।ଏହା ନିଶ୍ଚିତ ଭାବେ ଉଲ୍ଲେଖନୀୟ ଏବଂ ତୁଳନାତ୍ମକ ।ଏହି ଘଟଣାଟି ଶେଷରେ ଜଣା ପଡିଛି । ସେହି ମୁହୂର୍ତ୍ତରେ ଆପଣଙ୍କର ଭାବନା ଏବଂ ଚିନ୍ତାଧାରା ହେଉଛି ମୁଁ ଭାବୁଛି ଆମେ ସମସ୍ତେ ସେହି ଅନୁଭବକୁ ମନେ ପକାଉଛୁ ଯେତେବେଳେ ଦୀର୍ଘ ପ୍ରତୀକ୍ଷିତ # >>> compare.call([1, 2, 3, 4, 5, 1], [1, 2, 3, 4, 2, -2])
+# [0, 0, 0, 0, 3, 3]
+# >>> compare.call([0, 5, 0, 0, 0, 4], [4, 1, 1, 0, 0, -2])
+# [4, 4, 1, 0, 0, 6]
+def compare(game, guess)
+","def compare(game, guess)
+  game.zip(guess).map { |score, prediction| (score - prediction).abs }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_compare
+    candidate = method(:compare)
+    assert_equal([0, 0, 0, 0, 3, 3], candidate.call([1, 2, 3, 4, 5, 1], [1, 2, 3, 4, 2, -2]))
+    assert_equal([0, 0, 0, 0, 0, 0], candidate.call([0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]))
+    assert_equal([2, 4, 6], candidate.call([1, 2, 3], [-1, -2, -3]))
+    assert_equal([2, 0, 0, 1], candidate.call([1, 2, 3, 5], [-1, 2, 3, 4]))
+  end
+end
+"
+HumanEval_153,ory_Orya,rb,"ଉଦାହରଣ:(ଏହାର ଶକ୍ତି -୧) ।'Slices.SERVINGSliCes' କୁ ଫେରାଇଥାଏ କାରଣ 'SERVINGSliCes' ହେଉଛି ସବୁଠାରୁ ଶକ୍ତିଶାଳୀ ସଂପ୍ରସାରଣ ['ସର୍ଭିଙ୍ଗ୍ ସିଲିସ୍', 'ଚିଜ୍', 'ଷ୍ଟୁଫେଡ୍'] ତେବେ ଆପଣ ଉଦାହରଣ ସ୍ୱରୂପ, ଯଦି ଆପଣଙ୍କୁ ""Slices"" ଦିଆଯାଏ ତେବେ ଏହା ହେଉଛି ଶ୍ରେଣୀ ଏବଂ  ର ଏକ ସରଳୀକରଣଆରେରେ ପ୍ରଥମେ ଆସୁଥିବା ଗୋଟିଏକୁ ବାଛନ୍ତୁ.ଯଦି ଦୁଇଟି କିମ୍ବା ଅଧିକ ସଂପ୍ରସାରଣ ସମାନ ଶକ୍ତି ସହିତ ଅଛି, ତେବେ ଆପଣ ଶୈଳୀ: ଶ୍ରେଣୀ ନାମ. ଶକ୍ତିଶାଳୀ ଅନୁଲଗ୍ନ ନାମ. ଆପଣଙ୍କୁ ସବୁଠାରୁ ଅଧିକ ଶକ୍ତିଶାଳୀ ସଂପ୍ରସାରଣ ଖୋଜିବାକୁ ହେବ ଏବଂ ଏଥିରେ ଏକ ଷ୍ଟ୍ରିଙ୍ଗ୍ ଫେରାଇବାକୁ ହେବସଂପ୍ରସାରଣର ନାମରେ, ଶକ୍ତି CAP - SM ଫ୍ରାକସନ୍ ଦ୍ୱାରା ଦିଆଯାଇଥାଏ ।ସଂପ୍ରସାରଣର ନାମରେ ଥିବା ଅକ୍ଷର, ଏବଂ SM କୁ ଛୋଟ ଅକ୍ଷର ସଂଖ୍ୟା ଭାବରେ ଗ୍ରହଣ କରନ୍ତୁ ସଂପ୍ରସାରଣର ଶକ୍ତି ନିମ୍ନଲିଖିତ ଅଟେ: CAP କୁ ବଡ଼ ଅକ୍ଷରର ସଂଖ୍ୟା ବୋଲି ଧରିନେବା ସେହି ସମ୍ପ୍ରସାରଣଗୁଡ଼ିକ ଶ୍ରେଣୀକୁ ଅତିରିକ୍ତ ଶ୍ରେଣୀଗୁଡ଼ିକୁ ଲୋଡ୍ କରିବା ପାଇଁ ବ୍ୟବହାର କରାଯିବ ।ଆପଣଙ୍କୁ ଏକ ଶ୍ରେଣୀ ନାମ (ଏକ ବାକ୍ୟଖଣ୍ଡ) ଏବଂ ଏକ ସଂପ୍ରସାରଣର ଏକ ସରଳୀକୃତ ଦିଆଯିବ.# >>> Strongest_Extension.call(""my_class"", [""AA"", ""Be"", ""CC""])
+# ""my_class.AA""
+def Strongest_Extension(class_name, extensions)
+","def Strongest_Extension(class_name, extensions)
+  strongest_extension = extensions.max_by do |extension|
+    cap_count = extension.count('A-Z')
+    sm_count = extension.count('a-z')
+    cap_count - sm_count
+  end
+  ""#{class_name}.#{strongest_extension}""
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_Strongest_Extension
+    candidate = method(:Strongest_Extension)
+    assert_equal(""Watashi.eIGHt8OKe"", candidate.call(""Watashi"", [""tEN"", ""niNE"", ""eIGHt8OKe""]))
+    assert_equal(""Boku123.YEs.WeCaNe"", candidate.call(""Boku123"", [""nani"", ""NazeDa"", ""YEs.WeCaNe"", ""32145tggg""]))
+    assert_equal(""__YESIMHERE.NuLl__"", candidate.call(""__YESIMHERE"", [""t"", ""eMptY"", ""nothing"", ""zeR00"", ""NuLl__"", ""123NoooneB321""]))
+    assert_equal(""K.TAR"", candidate.call(""K"", [""Ta"", ""TAR"", ""t234An"", ""cosSo""]))
+    assert_equal(""__HAHA.123"", candidate.call(""__HAHA"", [""Tab"", ""123"", ""781345"", ""-_-""]))
+    assert_equal(""YameRore.okIWILL123"", candidate.call(""YameRore"", [""HhAas"", ""okIWILL123"", ""WorkOut"", ""Fails"", ""-_-""]))
+    assert_equal(""finNNalLLly.WoW"", candidate.call(""finNNalLLly"", [""Die"", ""NowW"", ""Wow"", ""WoW""]))
+    assert_equal(""_.Bb"", candidate.call(""_"", [""Bb"", ""91245""]))
+    assert_equal(""Sp.671235"", candidate.call(""Sp"", [""671235"", ""Bb""]))
+  end
+end
+"
+HumanEval_154,ory_Orya,rb,"ଆପଣଙ୍କୁ ୨ଟି ଶବ୍ଦ ଦିଆଯାଇଛି. ଆପଣଙ୍କୁ ସତ୍ୟ ଫେରାଇବାକୁ ହେବ ଯଦି ଦ୍ୱିତୀୟ ଶବ୍ଦ କିମ୍ବା ଏହାର କୌଣସି ଘୂର୍ଣ୍ଣନ ପ୍ରଥମ ଶବ୍ଦରେ ଏକ ସବଷ୍ଟ୍ରିଙ୍ଗ୍ # >>> cycpattern_check.call(""abcd"", ""abd"")
+# false
+# >>> cycpattern_check.call(""hello"", ""ell"")
+# true
+# >>> cycpattern_check.call(""whassup"", ""psus"")
+# false
+# >>> cycpattern_check.call(""abab"", ""baa"")
+# true
+# >>> cycpattern_check.call(""efef"", ""eeff"")
+# false
+# >>> cycpattern_check.call(""himenss"", ""simen"")
+# true
+def cycpattern_check(a, b)
+","def cycpattern_check(a, b)
+  (0...b.length).each do |i|
+    rotated_b = b[i..-1] + b[0...i]
+    return true if a.include?(rotated_b)
+  end
+  false
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_cycpattern_check
+    candidate = method(:cycpattern_check)
+    assert_equal(false, candidate.call(""xyzw"", ""xyw""))
+    assert_equal(true, candidate.call(""yello"", ""ell""))
+    assert_equal(false, candidate.call(""whattup"", ""ptut""))
+    assert_equal(true, candidate.call(""efef"", ""fee""))
+    assert_equal(false, candidate.call(""abab"", ""aabb""))
+    assert_equal(true, candidate.call(""winemtt"", ""tinem""))
+  end
+end
+"
+HumanEval_155,ory_Orya,rb,"ଉଦାହରଣ:ଏକ ସମ୍ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା ଦିଆଗଲା, ଏକ ସରଳୀକରଣ ଫେରାଇଥାଏ ଯେଉଁଥିରେ ଯଥାକ୍ରମେ ଯୁଗ୍ମ ଏବଂ ଅଙ୍କ ସଂଖ୍ୟା ଥାଏ ।# >>> even_odd_count.call(-12)
+# [1, 1]
+# >>> even_odd_count.call(123)
+# [1, 2]
+def even_odd_count(num)
+","def even_odd_count(num)
+  num.to_s.chars.map(&:to_i).select { |digit| digit != 0 }.partition(&:even?).map(&:count)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_even_odd_count
+    candidate = method(:even_odd_count)
+    assert_equal([0, 1], candidate.call(7))
+    assert_equal([1, 1], candidate.call(-78))
+    assert_equal([2, 2], candidate.call(3452))
+    assert_equal([3, 3], candidate.call(346211))
+    assert_equal([3, 3], candidate.call(-345821))
+    assert_equal([1, 0], candidate.call(-2))
+    assert_equal([2, 3], candidate.call(-45347))
+    assert_equal([1, 0], candidate.call(0))
+  end
+end
+"
+HumanEval_156,ory_Orya,rb,"ଉଦାହରଣ:ପ୍ରତିବନ୍ଧକ: 1 <= ସଂଖ୍ୟା <= 1000 ଏବଂ ଏହାକୁ ଛୋଟ ଅକ୍ଷରରେ ଲେଖନ୍ତୁ ।ଏକ ସକାରାତ୍ମକ ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା ଦିଆଗଲା, ଏହାର ରୋମାନ୍ ସଂଖ୍ୟା ସମକକ୍ଷକୁ ଏକ ଷ୍ଟ୍ରିଙ୍ଗ ଭାବରେ ପ୍ରାପ୍ତ କରନ୍ତୁ, # >>> int_to_mini_roman.call(19)
+# ""xix""
+# >>> int_to_mini_roman.call(152)
+# ""clii""
+# >>> int_to_mini_roman.call(426)
+# ""cdxxvi""
+def int_to_mini_roman(number)
+","def int_to_mini_roman(number)
+  values = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
+  numerals = ['m', 'cm', 'd', 'cd', 'c', 'xc', 'l', 'xl', 'x', 'ix', 'v', 'iv', 'i']
+
+  result = ''
+  values.each_with_index do |value, index|
+    while number >= value
+      number -= value
+      result += numerals[index]
+    end
+  end
+
+  result
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_int_to_mini_roman
+    candidate = method(:int_to_mini_roman)
+    assert_equal(""xix"", candidate.call(19))
+    assert_equal(""clii"", candidate.call(152))
+    assert_equal(""ccli"", candidate.call(251))
+    assert_equal(""cdxxvi"", candidate.call(426))
+    assert_equal(""d"", candidate.call(500))
+    assert_equal(""i"", candidate.call(1))
+    assert_equal(""iv"", candidate.call(4))
+    assert_equal(""xliii"", candidate.call(43))
+    assert_equal(""xc"", candidate.call(90))
+    assert_equal(""xciv"", candidate.call(94))
+    assert_equal(""dxxxii"", candidate.call(532))
+    assert_equal(""cm"", candidate.call(900))
+    assert_equal(""cmxciv"", candidate.call(994))
+    assert_equal(""m"", candidate.call(1000))
+  end
+end
+"
+HumanEval_157,ory_Orya,rb,"ଉଦାହରଣ:90 ଡିଗ୍ରୀ ।ଏକ ସଠିକ କୋଣ ବିଶିଷ୍ଟ ତ୍ରିଭୁଜ ହେଉଛି ଏକ ତ୍ରିଭୁଜ ଯେଉଁଥିରେ ଗୋଟିଏ କୋଣ ସଠିକ କୋଣ ବା ପାର୍ଶ୍ବଗୁଡ଼ିକ ଏକ ସଠିକ କୋଣ ବିଶିଷ୍ଟ ତ୍ରିଭୁଜ ଗଠନ କରେ, ଅନ୍ୟଥା ଏହା ମିଥ୍ୟା ।ତ୍ରିଭୁଜର ତିନି ପାର୍ଶ୍ବ ର ଲମ୍ବ ଦିଆଗଲା.# >>> right_angle_triangle.call(3, 4, 5)
+# true
+# >>> right_angle_triangle.call(1, 2, 3)
+# false
+def right_angle_triangle(a, b, c)
+","def right_angle_triangle(a, b, c)
+  sides = [a, b, c].sort
+  sides[0]**2 + sides[1]**2 == sides[2]**2
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_right_angle_triangle
+    candidate = method(:right_angle_triangle)
+    assert_equal(true, candidate.call(3, 4, 5))
+    assert_equal(false, candidate.call(1, 2, 3))
+    assert_equal(true, candidate.call(10, 6, 8))
+    assert_equal(false, candidate.call(2, 2, 2))
+    assert_equal(true, candidate.call(7, 24, 25))
+    assert_equal(false, candidate.call(10, 5, 7))
+    assert_equal(true, candidate.call(5, 12, 13))
+    assert_equal(true, candidate.call(15, 8, 17))
+    assert_equal(true, candidate.call(48, 55, 73))
+    assert_equal(false, candidate.call(1, 1, 1))
+    assert_equal(false, candidate.call(2, 2, 10))
+  end
+end
+"
+HumanEval_158,ory_Orya,rb,"ଅକ୍ଷରଗୁଡ଼ିକର ତାଲିକାକୁ ବଦଳାଇ, ଶବ୍ଦକୋଷିକ କ୍ରମରେ ପ୍ରଥମେ ଆସୁଥିବା ଅକ୍ଷରକୁ ଫେରାଇବ ।ଯଦି ଏକାଧିକ ଷ୍ଟ୍ରିଙ୍ଗ୍ ରେ ସର୍ବାଧିକ ସଂଖ୍ୟକ ଅନନ୍ୟ ଅକ୍ଷର ଅଛି ଏହି ଧାଡ଼ିରେ ଭିନ୍ନ ଭିନ୍ନ ଶବ୍ଦ ଅଛି. ସର୍ବାଧିକ ସଂଖ୍ୟକ ସହିତ ଶବ୍ଦକୁ ଫେରାଇଦିଅନ୍ତୁ ଏକ ଫଳନ ଲେଖନ୍ତୁ ଯାହା ଏକ ଶୃଙ୍ଖଳାକୁ ଗ୍ରହଣ କରେ _# >>> find_max.call([""name"", ""of"", ""string""])
+# ""string""
+# >>> find_max.call([""name"", ""enam"", ""game""])
+# ""enam""
+# >>> find_max.call([""aaaaaaa"", ""bb"", ""cc""])
+# ""aaaaaaa""
+def find_max(words)
+","def find_max(words)
+  # Helper function to count unique characters
+  def unique_char_count(word)
+    word.chars.uniq.size
+  end
+
+  words.max_by { |word| [unique_char_count(word), -word] }
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_find_max
+    candidate = method(:find_max)
+    assert_equal(""string"", candidate.call([""name"", ""of"", ""string""]))
+    assert_equal(""enam"", candidate.call([""name"", ""enam"", ""game""]))
+    assert_equal(""aaaaaaa"", candidate.call([""aaaaaaa"", ""bb"", ""cc""]))
+    assert_equal(""abc"", candidate.call([""abc"", ""cba""]))
+    assert_equal(""footbott"", candidate.call([""play"", ""this"", ""game"", ""of"", ""footbott""]))
+    assert_equal(""gonna"", candidate.call([""we"", ""are"", ""gonna"", ""rock""]))
+    assert_equal(""nation"", candidate.call([""we"", ""are"", ""a"", ""mad"", ""nation""]))
+    assert_equal(""this"", candidate.call([""this"", ""is"", ""a"", ""prrk""]))
+    assert_equal(""b"", candidate.call([""b""]))
+    assert_equal(""play"", candidate.call([""play"", ""play"", ""play""]))
+  end
+end
+"
+HumanEval_159,ory_Orya,rb,"ଉଦାହରଣ:ଯଦି ବାକି ଥିବା ଗାଜର ଯଥେଷ୍ଟ ନଥାଏ, ତେବେ ଆପଣ ବାକି ଥିବା ଗାଜର ସବୁ ଖାଇଦେବେ, କିନ୍ତୁ ତଥାପି ଆପଣଙ୍କୁ ଭୋକ ଲାଗିବ ।ଖାଦ୍ୟ ଖାଇବା ପରେ କେତେ ଗାଜର ବାକି ଅଛି ] ଆପଣ ଖାଦ୍ୟ ଖାଇବା ପରେ ଖାଇଥିବା ଗାଜରର ମୋଟ ସଂଖ୍ୟାକୁ ଫେରାଇବେ ।କିନ୍ତୁ ଏବେ ଆପଣଙ୍କୁ ଅଧିକ ଗାଜର ଖାଇବା ଆବଶ୍ୟକ, ଯାହାଦ୍ୱାରା ଆପଣ ଦିନର ଖାଦ୍ୟକୁ ସଂପୂର୍ଣ୍ଣ କରିପାରିବେ ।ତୁମେ ଭୋକିଲା ବିଲେଇ, ଏବଂ ତୁମେ ପୂର୍ବରୁ କିଛି ଗାଜର ଖାଇ ସାରିଛ,# >>> eat.call(5, 6, 10)
+# [11, 4]
+# >>> eat.call(4, 8, 9)
+# [12, 1]
+# >>> eat.call(1, 10, 10)
+# [11, 0]
+# >>> eat.call(2, 11, 5)
+# [7, 0]
+# Variables:
+# @number : integer
+# the number of carrots that you have eaten.
+# @need : integer
+# the number of carrots that you need to eat.
+# @remaining : integer
+# the number of remaining carrots thet exist in stock
+# Constrain:
+# * 0 <= number <= 1000
+# * 0 <= need <= 1000
+# * 0 <= remaining <= 1000
+# Have fun :)
+def eat(number, need, remaining)
+","def eat(number, need, remaining)
+  total_eaten = number + [need, remaining].min
+  carrots_left = [remaining - need, 0].max
+  [total_eaten, carrots_left]
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_eat
+    candidate = method(:eat)
+    assert_equal([11, 4], candidate.call(5, 6, 10))
+    assert_equal([12, 1], candidate.call(4, 8, 9))
+    assert_equal([11, 0], candidate.call(1, 10, 10))
+    assert_equal([7, 0], candidate.call(2, 11, 5))
+    assert_equal([9, 2], candidate.call(4, 5, 7))
+    assert_equal([5, 0], candidate.call(4, 5, 1))
+  end
+end
+"
+HumanEval_160,ory_Orya,rb,"ଅପରେଟର ମାର୍ଜୀରେ ଅତି କମରେ ଗୋଟିଏ ଅପରେଟର ଥାଏ, ଏବଂ ଅପରେଣ୍ଡ ମାର୍ଜୀରେ ଅତି କମରେ ଦୁଇଟି ଅପରେଣ୍ଡ ଥାଏ ।ଅପରେଣ୍ଡ ହେଉଛି ଏକ ନନ୍-ନଗେଟିଭ୍ ଇଣ୍ଟେଜର ଆରେ ।ଅପରେଟର ଆରେର ଲମ୍ବ ଅପରେଣ୍ଡ ଆରେର ଲମ୍ବ ଏକରୁ କମ୍ ।ନୋଟ: => ଫଳ = 9 ଫଳ = 2 + 3 * 4 - 5 ଆରେ = [2, 3, 4, 5] ଅପରେଟର ['+', '*', '-'] ଉଦାହରଣ:ବିସ୍ତାରିତ (**) ମହଲା ବିଭାଜନ ( //) ଗୁଣନ (*) କାଟିବା (- ) ଯୋଗ କରିବା (+) ମୌଳିକ ବୀଜାଣୁ କ୍ରିୟା:expression କୁ ପୁନଃସ୍ଥାପନ କରି expression ର ମୂଲ୍ୟାଙ୍କନକୁ ଫେରାଇଥାଏ.ଦ୍ବିତୀୟ ଧାଡି ହେଉଛି ସମ୍ପୂର୍ଣ୍ଣ ସଂଖ୍ୟାମାନଙ୍କର ଧାଡି ।ଦୁଇଟି ଆରେ ଅପରେଟର ଏବଂ ଅପରେଣ୍ଡ ଦିଆଗଲା। ପ୍ରଥମ ଆରେରେ ମୌଳିକ ଆଲଜେବ୍ରିକ କାର୍ଯ୍ୟ ଅଛି, ଏବଂ def do_algebra(operator, operand)
+","def do_algebra(operator, operand)
+  expression = operand[0].to_s
+  operator.each_with_index do |op, index|
+    if op == '//'
+      expression += ' / ' + operand[index + 1].to_s
+    else
+      expression += ' ' + op + ' ' + operand[index + 1].to_s
+    end
+  end
+  eval(expression)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_do_algebra
+    candidate = method(:do_algebra)
+    assert_equal(37, candidate.call([""**"", ""*"", ""+""], [2, 3, 4, 5]))
+    assert_equal(9, candidate.call([""+"", ""*"", ""-""], [2, 3, 4, 5]))
+    assert_equal(8, candidate.call([""//"", ""*""], [7, 3, 4]))
+  end
+end
+"
+HumanEval_161,ory_Orya,rb,"ଉଦାହରଣ ଫଳନଟି ଫଳାଫଳ ବାକ୍ୟଖଣ୍ଡକୁ ଫେରାଇବ.ଯଦି string ରେ କୌଣସି ଅକ୍ଷର ନଥାଏ, ତେବେ string କୁ ଓଲଟାଇ ଦିଅନ୍ତୁ.ନଚେତ ସେମିତି ରଖ ।ଯଦି s[i] ଏକ ଅକ୍ଷର, ତେବେ ଏହାର କେସକୁ ନିମ୍ନରୁ ଉପର କିମ୍ବା ବାମରୁ ବାମକୁ ଓଲଟାଇ ଦିଅନ୍ତୁ, ଆପଣଙ୍କୁ ଗୋଟିଏ string s ଦିଆଗଲା.# >>> solve.call(""1234"")
+# ""4321""
+# >>> solve.call(""ab"")
+# ""AB""
+# >>> solve.call(""#a@C"")
+# ""#A@c""
+def solve(s)
+","def solve(s)
+  if s =~ /[a-zA-Z]/
+    s.chars.map { |char| char =~ /[a-zA-Z]/ ? char.swapcase : char }.join
+  else
+    s.reverse
+  end
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_solve
+    candidate = method(:solve)
+    assert_equal(""aSdF"", candidate.call(""AsDf""))
+    assert_equal(""4321"", candidate.call(""1234""))
+    assert_equal(""AB"", candidate.call(""ab""))
+    assert_equal(""#A@c"", candidate.call(""#a@C""))
+    assert_equal(""#aSDFw^45"", candidate.call(""#AsdfW^45""))
+    assert_equal(""2@6#"", candidate.call(""#6@2""))
+    assert_equal(""#$A^d"", candidate.call(""#$a^D""))
+    assert_equal(""#CCC"", candidate.call(""#ccc""))
+  end
+end
+"
+HumanEval_162,ory_Orya,rb,"ଯଦି 'text' ଏକ ଖାଲି ଷ୍ଟ୍ରିଙ୍ଗ, ତେବେ nil ଫେରାଇଦେବେ.ଏକ ଷ୍ଟ୍ରିଙ୍ଗ 'ଟେକ୍ସଟ' ଦିଆଗଲା, ଏହାର md5 ହ୍ୟାଶ ସମକକ୍ଷ ଷ୍ଟ୍ରିଙ୍ଗ ଫେରାଇଦେବେ.# >>> string_to_md5.call(""Hello world"")
+# ""3e25960a79dbc69b674cd4ec67a72c62""
+def string_to_md5(text)
+","require 'digest'
+
+def string_to_md5(text)
+  return nil if text.empty?
+  Digest::MD5.hexdigest(text)
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_string_to_md5
+    candidate = method(:string_to_md5)
+    assert_equal(""3e25960a79dbc69b674cd4ec67a72c62"", candidate.call(""Hello world""))
+    assert_equal(nil, candidate.call(""""))
+    assert_equal(""0ef78513b0cb8cef12743f5aeb35f888"", candidate.call(""A B C""))
+    assert_equal(""5f4dcc3b5aa765d61d8327deb882cf99"", candidate.call(""password""))
+  end
+end
+"
+HumanEval_163,ory_Orya,rb,"ଉଦାହରଣ ସ୍ୱରୂପ: ଏବଂ b, କ୍ରମାନୁସାରେ ।ଦୁଇଟି ସକାରାତ୍ମକ ପୂର୍ଣ୍ଣ ସଂଖ୍ୟା a ଏବଂ b ଦିଆଗଲା, a  ମଧ୍ୟରେ ଥିବା ଯୁଗ୍ମ ଅଙ୍କକୁ ଫେରାଇବ# >>> generate_integers.call(2, 8)
+# [2, 4, 6, 8]
+# >>> generate_integers.call(8, 2)
+# [2, 4, 6, 8]
+# >>> generate_integers.call(10, 14)
+# []
+def generate_integers(a, b)
+","def generate_integers(a, b)
+  (a..b).to_a.concat((b..a).to_a).select { |num| num.even? }.uniq.sort
+end","require 'test/unit'
+class TestHumanEval < Test::Unit::TestCase
+  def test_generate_integers
+    candidate = method(:generate_integers)
+    assert_equal([2, 4, 6, 8], candidate.call(2, 10))
+    assert_equal([2, 4, 6, 8], candidate.call(10, 2))
+    assert_equal([2, 4, 6, 8], candidate.call(132, 2))
+    assert_equal([], candidate.call(17, 89))
+  end
+end
+"
