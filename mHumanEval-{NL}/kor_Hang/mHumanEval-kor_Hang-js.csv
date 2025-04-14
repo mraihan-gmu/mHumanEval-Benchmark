@@ -1,0 +1,5642 @@
+task_id,nl,pl,prompt,canonical_solution,tests
+HumanEval_0,kor_Hang,js,"/ 주어진 임계. / 주어진 숫자의 배열에서, 보다 두 개의 숫자가 서로 더 가깝는지 확인합니다.// >>> has_close_elements([1.0, 2.0, 3.0], 0.5)
+// false
+// >>> has_close_elements([1.0, 2.8, 3.0, 4.0, 5.0, 2.0], 0.3)
+// true
+function has_close_elements(numbers, threshold){
+","function has_close_elements(numbers, threshold) {
+    // First, sort the array to ensure we check adjacency for closest elements
+    numbers.sort((a, b) => a - b);
+
+    // Iterate through the sorted list and check differences between successive elements
+    for (let i = 0; i < numbers.length - 1; i++) {
+        if (Math.abs(numbers[i] - numbers[i + 1]) < threshold) {
+            return true;
+        }
+    }
+
+    return false;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = has_close_elements;
+  assert.deepEqual(candidate([1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.3),true);
+  assert.deepEqual(candidate([1.0, 2.0, 3.9, 4.0, 5.0, 2.2], 0.05),false);
+  assert.deepEqual(candidate([1.0, 2.0, 5.9, 4.0, 5.0], 0.95),true);
+  assert.deepEqual(candidate([1.0, 2.0, 5.9, 4.0, 5.0], 0.8),false);
+  assert.deepEqual(candidate([1.0, 2.0, 3.0, 4.0, 5.0, 2.0], 0.1),true);
+  assert.deepEqual(candidate([1.1, 2.2, 3.1, 4.1, 5.1], 1.0),true);
+  assert.deepEqual(candidate([1.1, 2.2, 3.1, 4.1, 5.1], 0.5),false);
+}
+
+test();"
+HumanEval_1,kor_Hang,js,"/ 입력 문자열에 있는 모든 공백을 무시합니다. / 개별 그룹은 균형 잡힌 (각 오픈 브레이크는 적절하게 닫힌) 그리고 서로 안쪽에 둥지를 짓지 않습니다./ 그룹을 별도의 문자열로 분리하고 그 배열을 반환합니다. / 이 함수의 입력값은 둥글게 된 괄호의 여러 그룹을 포함하는 문자열입니다. 당신의 목표는 // >>> separate_paren_groups(""( ) (( )) (( )( ))"")
+// [""()"", ""(())"", ""(()())""]
+function separate_paren_groups(paren_string){
+","function separate_paren_groups(paren_string) {
+    paren_string = paren_string.replace(/\s+/g, ''); // Remove spaces
+    const groups = [];
+    let balance = 0;
+    let currentGroup = '';
+
+    for (let char of paren_string) {
+        currentGroup += char;
+        if (char === '(') {
+            balance++;
+        } else if (char === ')') {
+            balance--;
+        }
+        
+        if (balance === 0) {
+            groups.push(currentGroup);
+            currentGroup = '';
+        }
+    }
+
+    return groups;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = separate_paren_groups;
+  assert.deepEqual(candidate(""(()()) ((())) () ((())()())""),[""(()())"", ""((()))"", ""()"", ""((())()())""]);
+  assert.deepEqual(candidate(""() (()) ((())) (((())))""),[""()"", ""(())"", ""((()))"", ""(((())))""]);
+  assert.deepEqual(candidate(""(()(())((())))""),[""(()(())((())))""]);
+  assert.deepEqual(candidate(""( ) (( )) (( )( ))""),[""()"", ""(())"", ""(()())""]);
+}
+
+test();"
+HumanEval_2,kor_Hang,js,"/ 숫자의 소수점을 반환합니다. / (남은 부분은 항상 1보다 작습니다.)/ 그리고 정수 부분 (주기된 숫자보다 작은 최대 정수) 과 소수점 은 의 양수인 의 수입니다// >>> truncate_number(3.5)
+// 0.5
+function truncate_number(number){
+","function truncate_number(number) {
+    return number - Math.floor(number);
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = truncate_number;
+  assert.deepEqual(candidate(3.5),0.5);
+  assert.deepEqual(candidate(1.25),0.25);
+  assert.deepEqual(candidate(123.0),0.0);
+}
+
+test();"
+HumanEval_3,kor_Hang,js,"/ 이 지점에서 함수는 true를 반환해야 합니다. 그렇지 않으면 false를 반환해야 합니다./ 0 잔액. 당신의 임무는 어떤 시점에서 계좌 잔액이 0 이하로 떨어지는지 감지하는 것입니다. 그리고 / 당신은 은행 계좌에 예금 및 인출 작업의 배열을 주어집니다.// >>> below_zero([1, 2, 3])
+// false
+// >>> below_zero([1, 2, -4, 5])
+// true
+function below_zero(operations){
+","function below_zero(operations) {
+    let balance = 0;
+    for (let i = 0; i < operations.length; i++) {
+        balance += operations[i];
+        if (balance < 0) {
+            return true;
+        }
+    }
+    return false;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = below_zero;
+  assert.deepEqual(candidate([]),false);
+  assert.deepEqual(candidate([1, 2, -3, 1, 2, -3]),false);
+  assert.deepEqual(candidate([1, 2, -4, 5, 6]),true);
+  assert.deepEqual(candidate([1, -1, 2, -2, 5, -5, 4, -4]),false);
+  assert.deepEqual(candidate([1, -1, 2, -2, 5, -5, 4, -5]),true);
+  assert.deepEqual(candidate([1, -2, 2, -2, 5, -5, 4, -4]),true);
+}
+
+test();"
+HumanEval_4,kor_Hang,js,"/ MAD = 평균 ∙ x - x_mean ∙/ 요소와 중심점 (이 경우 평균): / 평균 절대 오차는 각  사이의 평균 절대 차이입니다./ 이 데이터 세트의 평균에 가깝습니다. / 입력 숫자의 배열에 대해, 평균 절대 오차를 계산합니다.// >>> mean_absolute_deviation([1.0, 2.0, 3.0, 4.0])
+// 1.0
+function mean_absolute_deviation(numbers){
+","function mean_absolute_deviation(numbers) {
+    const n = numbers.length;
+    if (n === 0) return 0;
+
+    const mean = numbers.reduce((acc, val) => acc + val, 0) / n;
+    const deviations = numbers.map(num => Math.abs(num - mean));
+    const mad = deviations.reduce((acc, val) => acc + val, 0) / n;
+
+    return mad;
+}
+
+// Example usage:
+console.log(mean_absolute_deviation([1.0, 2.0, 3.0, 4.0])); // Output: 1.0","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = mean_absolute_deviation;
+  assert.deepEqual(candidate([1.0, 2.0]),0.5);
+  assert.deepEqual(candidate([1.0, 2.0, 3.0, 4.0]),1.0);
+  assert.deepEqual(candidate([1.0, 2.0, 3.0, 4.0, 5.0]),1.2);
+}
+
+test();"
+HumanEval_5,kor_Hang,js,"/ 입력 배열의 2개의 연속적인 요소들 사이에 '분계' 숫자를 삽입 `numbers' // >>> intersperse([], 4)
+// []
+// >>> intersperse([1, 2, 3], 4)
+// [1, 4, 2, 4, 3]
+function intersperse(numbers, delimeter){
+","function intersperse(numbers, delimiter) {
+    if (numbers.length === 0) return [];
+    
+    const result = [];
+    for (let i = 0; i < numbers.length - 1; i++) {
+        result.push(numbers[i]);
+        result.push(delimiter);
+    }
+    result.push(numbers[numbers.length - 1]);
+
+    return result;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = intersperse;
+  assert.deepEqual(candidate([], 7),[]);
+  assert.deepEqual(candidate([5, 6, 3, 2], 8),[5, 8, 6, 8, 3, 8, 2]);
+  assert.deepEqual(candidate([2, 2, 2], 2),[2, 2, 2, 2, 2]);
+}
+
+test();"
+HumanEval_6,kor_Hang,js,"/ 예를 들어 (() (()) 은 최대 2개의 둥지 층을 가지고 있고 ((())) 은 3개의 둥지 층을 가지고 있습니다. / 각 그룹에 대해 가장 깊은 괄호의 둥지를 입력합니다./이 함수의 입력값은 스펙으로 분리된 둥글게 된 괄호를 위한 여러 그룹을 나타내는 문자열입니다. // >>> parse_nested_parens(""(()()) ((())) () ((())()())"")
+// [2, 3, 1, 3]
+function parse_nested_parens(paren_string){
+","function parse_nested_parens(paren_string) {
+    // Split the input string into groups based on spaces
+    const groups = paren_string.split(' ');
+    // Map each group to its maximum nesting depth
+    return groups.map(group => {
+        let maxDepth = 0;
+        let currentDepth = 0;
+
+        // Iterate through each character in the group
+        for (let char of group) {
+            if (char === '(') {
+                // Increment current depth for '('
+                currentDepth++;
+                // Update max depth if it's greater than the previous max
+                if (currentDepth > maxDepth) {
+                    maxDepth = currentDepth;
+                }
+            } else if (char === ')') {
+                // Decrement current depth for ')'
+                currentDepth--;
+            }
+        }
+        
+        return maxDepth; // Return max depth of this group
+    });
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = parse_nested_parens;
+  assert.deepEqual(candidate(""(()()) ((())) () ((())()())""),[2, 3, 1, 3]);
+  assert.deepEqual(candidate(""() (()) ((())) (((())))""),[1, 2, 3, 4]);
+  assert.deepEqual(candidate(""(()(())((())))""),[4]);
+}
+
+test();"
+HumanEval_7,kor_Hang,js,"/ 입력 배열의 문자열을 필터링하여 주어진 하위 문자열을 포함하고 있는 문자열만 필터링합니다.// >>> filter_by_substring([], ""a"")
+// []
+// >>> filter_by_substring([""abc"", ""bacd"", ""cde"", ""array""], ""a"")
+// [""abc"", ""bacd"", ""array""]
+function filter_by_substring(strings, substring){
+","function filter_by_substring(strings, substring) {
+    return strings.filter(str => str.includes(substring));
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = filter_by_substring;
+  assert.deepEqual(candidate([], ""john""),[]);
+  assert.deepEqual(candidate([""xxx"", ""asd"", ""xxy"", ""john doe"", ""xxxAAA"", ""xxx""], ""xxx""),[""xxx"", ""xxxAAA"", ""xxx""]);
+  assert.deepEqual(candidate([""xxx"", ""asd"", ""aaaxxy"", ""john doe"", ""xxxAAA"", ""xxx""], ""xx""),[""xxx"", ""aaaxxy"", ""xxxAAA"", ""xxx""]);
+  assert.deepEqual(candidate([""grunt"", ""trumpet"", ""prune"", ""gruesome""], ""run""),[""grunt"", ""prune""]);
+}
+
+test();"
+HumanEval_8,kor_Hang,js,"/ 빈 합은 0과 빈 곱은 1이 되어야 합니다./주기된 정수 배열에 대해 배열의 모든 정수의 합과 곱으로 이루어진 배열을 반환합니다.// >>> sum_product([])
+// [0, 1]
+// >>> sum_product([1, 2, 3, 4])
+// [10, 24]
+function sum_product(numbers){
+","function sum_product(numbers) {
+    let sum = 0;
+    let product = 1;
+
+    for (let i = 0; i < numbers.length; i++) {
+        sum += numbers[i];
+        product *= numbers[i];
+    }
+
+    return [sum, product];
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = sum_product;
+  assert.deepEqual(candidate([]),[0, 1]);
+  assert.deepEqual(candidate([1, 1, 1]),[3, 1]);
+  assert.deepEqual(candidate([100, 0]),[100, 0]);
+  assert.deepEqual(candidate([3, 5, 7]),[15, 105]);
+  assert.deepEqual(candidate([10]),[10, 10]);
+}
+
+test();"
+HumanEval_9,kor_Hang,js,"/ 순서대로. / 주어진 정수 배열에서 주어진 순간까지 발견된 최대 롤링 요소의 배열을 생성합니다.// >>> rolling_max([1, 2, 3, 2, 3, 4, 2])
+// [1, 2, 3, 3, 3, 4, 4]
+function rolling_max(numbers){
+","function rolling_max(numbers) {
+    let result = [];
+    let currentMax = Number.NEGATIVE_INFINITY;
+    for (let i = 0; i < numbers.length; i++) {
+        currentMax = Math.max(currentMax, numbers[i]);
+        result.push(currentMax);
+    }
+    return result;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = rolling_max;
+  assert.deepEqual(candidate([]),[]);
+  assert.deepEqual(candidate([1, 2, 3, 4]),[1, 2, 3, 4]);
+  assert.deepEqual(candidate([4, 3, 2, 1]),[4, 4, 4, 4]);
+  assert.deepEqual(candidate([3, 2, 3, 100, 3]),[3, 3, 3, 100, 100]);
+}
+
+test();"
+HumanEval_10,kor_Hang,js,"/ - 줄의 끝부분에 팔린드로믹 접두사 앞에 있는 줄 접두사를 붙여주십시오. / - 제공된 문자열의 가장 긴 포스트픽스를 찾아서 팔린드로마를 구합니다. / 알고리즘 아이디어는 간단합니다: / 제공된 문자열로 시작하는 가장 짧은 팔린드로임을 찾아보세요. // >>> make_palindrome("""")
+// """"
+// >>> make_palindrome(""cat"")
+// ""catac""
+// >>> make_palindrome(""cata"")
+// ""catac""
+function make_palindrome(string){
+","function make_palindrome(string) {
+    // Helper function to check if a string is a palindrome
+    function isPalindrome(s) {
+        let left = 0;
+        let right = s.length - 1;
+        while (left < right) {
+            if (s[left] !== s[right]) {
+                return false;
+            }
+            left++;
+            right--;
+        }
+        return true;
+    }
+
+    // Find the longest palindromic suffix
+    let longestPalindromicSuffixLength = 0;
+    for (let i = 0; i < string.length; i++) {
+        if (isPalindrome(string.slice(i))) {
+            longestPalindromicSuffixLength = string.length - i;
+            break;
+        }
+    }
+
+    // Create the shortest palindrome
+    const prefixToReverse = string.slice(0, string.length - longestPalindromicSuffixLength);
+    const reversedPrefix = prefixToReverse.split('').reverse().join('');
+    return string + reversedPrefix;
+}
+
+// Examples
+console.log(make_palindrome(""""));     // """"
+console.log(make_palindrome(""cat""));  // ""catac""
+console.log(make_palindrome(""cata"")); // ""catac""","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = make_palindrome;
+  assert.deepEqual(candidate(""""),"""");
+  assert.deepEqual(candidate(""x""),""x"");
+  assert.deepEqual(candidate(""xyz""),""xyzyx"");
+  assert.deepEqual(candidate(""xyx""),""xyx"");
+  assert.deepEqual(candidate(""jerry""),""jerryrrej"");
+}
+
+test();"
+HumanEval_11,kor_Hang,js,"/ 이진 XOR을 이 입력에 수행하고 결과를 문자열로 반환합니다. /인푸트는 1과 0으로만 구성된 두 개의 문자열 a와 b입니다.// >>> string_xor(""010"", ""110"")
+// ""100""
+function string_xor(a, b){
+","function string_xor(a, b) {
+    let result = """";
+    for (let i = 0; i < a.length; i++) {
+        result += (a[i] === b[i]) ? ""0"" : ""1"";
+    }
+    return result;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = string_xor;
+  assert.deepEqual(candidate(""111000"", ""101010""),""010010"");
+  assert.deepEqual(candidate(""1"", ""1""),""0"");
+  assert.deepEqual(candidate(""0101"", ""0000""),""0101"");
+}
+
+test();"
+HumanEval_12,kor_Hang,js,"/ 같은 길이의 문자열. 입력 배열이 비어 있는 경우 undefined를 반환합니다. / 배열의 문자열 중에서 가장 긴 문자열을 반환합니다. 복수의 경우 첫 번째 문자열을 반환합니다.// >>> longest([])
+// undefined
+// >>> longest([""a"", ""b"", ""c""])
+// ""a""
+// >>> longest([""a"", ""bb"", ""ccc""])
+// ""ccc""
+function longest(strings){
+","function longest(strings) {
+    if (strings.length === 0) return undefined;
+    let longestString = strings[0];
+
+    for (let i = 1; i < strings.length; i++) {
+        if (strings[i].length > longestString.length) {
+            longestString = strings[i];
+        }
+    }
+
+    return longestString;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = longest;
+  assert.deepEqual(candidate([]),undefined);
+  assert.deepEqual(candidate([""x"", ""y"", ""z""]),""x"");
+  assert.deepEqual(candidate([""x"", ""yyy"", ""zzzz"", ""www"", ""kkkk"", ""abc""]),""zzzz"");
+}
+
+test();"
+HumanEval_13,kor_Hang,js,"/2개의 정수 a와 b의 최대공약수를 반환합니다.// >>> greatest_common_divisor(3, 5)
+// 1
+// >>> greatest_common_divisor(25, 15)
+// 5
+function greatest_common_divisor(a, b){
+","function greatest_common_divisor(a, b) {
+    while (b !== 0) {
+        let temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = greatest_common_divisor;
+  assert.deepEqual(candidate(3, 7),1);
+  assert.deepEqual(candidate(10, 15),5);
+  assert.deepEqual(candidate(49, 14),7);
+  assert.deepEqual(candidate(144, 60),12);
+}
+
+test();"
+HumanEval_14,kor_Hang,js,"/ 입력 문자열의 가장 짧고 가장 긴 모든 접두사들의 배열을 반환합니다.// >>> all_prefixes(""abc"")
+// [""a"", ""ab"", ""abc""]
+function all_prefixes(string){
+","function all_prefixes(string) {
+    let prefixes = [];
+    for (let i = 1; i <= string.length; i++) {
+        prefixes.push(string.substring(0, i));
+    }
+    return prefixes;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = all_prefixes;
+  assert.deepEqual(candidate(""""),[]);
+  assert.deepEqual(candidate(""asdfgh""),[""a"", ""as"", ""asd"", ""asdf"", ""asdfg"", ""asdfgh""]);
+  assert.deepEqual(candidate(""WWW""),[""W"", ""WW"", ""WWW""]);
+}
+
+test();"
+HumanEval_15,kor_Hang,js,"/ 0부터 n까지의 공간으로 정의된 숫자를 포함하는 문자열을 반환합니다. // >>> string_sequence(0)
+// ""0""
+// >>> string_sequence(5)
+// ""0 1 2 3 4 5""
+function string_sequence(n){
+","function string_sequence(n) {
+    let result = [];
+    for (let i = 0; i <= n; i++) {
+        result.push(i);
+    }
+    return result.join(' ');
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = string_sequence;
+  assert.deepEqual(candidate(0),""0"");
+  assert.deepEqual(candidate(3),""0 1 2 3"");
+  assert.deepEqual(candidate(10),""0 1 2 3 4 5 6 7 8 9 10"");
+}
+
+test();"
+HumanEval_16,kor_Hang,js,"/ 문자열을 주어, 얼마나 많은 다른 문자를 (대문자와는 상관없이)  포함하는지 알아보십시오.// >>> count_distinct_characters(""xyzXYZ"")
+// 3
+// >>> count_distinct_characters(""Jerry"")
+// 4
+function count_distinct_characters(string){
+","function count_distinct_characters(string) {
+    // Convert the string to lowercase to ignore case differences
+    const lowercaseString = string.toLowerCase();
+    // Create a Set to store distinct characters
+    const distinctChars = new Set();
+    // Iterate over each character in the string
+    for (let char of lowercaseString) {
+        distinctChars.add(char); // Add character to the set
+    }
+    // Return the size of the set which represents the number of distinct characters
+    return distinctChars.size;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = count_distinct_characters;
+  assert.deepEqual(candidate(""""),0);
+  assert.deepEqual(candidate(""abcde""),5);
+  assert.deepEqual(candidate(""abcdecadeCADE""),5);
+  assert.deepEqual(candidate(""aaaaAAAAaaaa""),1);
+  assert.deepEqual(candidate(""Jerry jERRY JeRRRY""),5);
+}
+
+test();"
+HumanEval_17,kor_Hang,js,"' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ''오 이' - 반노트, 두 박수를 다/ 'o' - 전체 음, 4박을 지속 / 전설이 있습니다: / 마지막이 아니죠./ 당신의 임무는 이 문자열을 분석하고 각 벡터마다 얼마나 많은 박자를 는지에 대응하는 정수의 배열을 반환하는 것입니다./이 함수의 입력값은 특별한 ASCII 형식으로 음악 음을 나타내는 문자열입니다. // >>> parse_music(""o o| .| o| o| .| .| .| .| o o"")
+// [4, 2, 1, 2, 2, 1, 1, 1, 1, 4, 4]
+function parse_music(music_string){
+","function parse_music(music_string) {
+    let notes = music_string.split("" "");
+    let beats = [];
+
+    for (let note of notes) {
+        switch (note) {
+            case 'o':
+                beats.push(4);
+                break;
+            case 'o|':
+                beats.push(2);
+                break;
+            case '.|':
+                beats.push(1);
+                break;
+            default:
+                // Handle unexpected notes if necessary
+                break;
+        }
+    }
+    return beats;
+}
+
+// Example usage:
+// console.log(parse_music(""o o| .| o| o| .| .| .| .| o o"")); 
+// Output: [4, 2, 1, 2, 2, 1, 1, 1, 1, 4, 4]","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = parse_music;
+  assert.deepEqual(candidate(""""),[]);
+  assert.deepEqual(candidate(""o o o o""),[4, 4, 4, 4]);
+  assert.deepEqual(candidate("".| .| .| .|""),[1, 1, 1, 1]);
+  assert.deepEqual(candidate(""o| o| .| .| o o o o""),[2, 2, 1, 1, 4, 4, 4, 4]);
+  assert.deepEqual(candidate(""o| .| o| .| o o| o o|""),[2, 1, 2, 1, 4, 2, 4, 2]);
+}
+
+test();"
+HumanEval_18,kor_Hang,js,"/주기된 하위 문자열이 원래 문자열에서 몇 번 찾을 수 있는지 알아봅니다. 겹치는 경우를 계산합니다.// >>> how_many_times("""", ""a"")
+// 0
+// >>> how_many_times(""aaa"", ""a"")
+// 3
+// >>> how_many_times(""aaaa"", ""aa"")
+// 3
+function how_many_times(string, substring){
+","function how_many_times(string, substring) {
+  if (substring.length === 0) return 0;
+  
+  let count = 0;
+  let position = 0;
+  
+  while ((position = string.indexOf(substring, position)) !== -1) {
+    count++;
+    position++;
+  }
+  
+  return count;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = how_many_times;
+  assert.deepEqual(candidate("""", ""x""),0);
+  assert.deepEqual(candidate(""xyxyxyx"", ""x""),4);
+  assert.deepEqual(candidate(""cacacacac"", ""cac""),4);
+  assert.deepEqual(candidate(""john doe"", ""john""),1);
+}
+
+test();"
+HumanEval_19,kor_Hang,js,"/ 숫자가 가장 작은 것에서 가장 큰 것까지 정렬된 문자열을 반환합니다 ./ 유효한 선택은 '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'입니다. /인푸트는 '0'에서 '9'까지의 숫자들로 이루어진 공간으로 구분된 문자열입니다.// >>> sort_numbers(""three one five"")
+// ""one three five""
+function sort_numbers(numbers){
+","function sort_numbers(numbers) {
+    const numberWords = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+    
+    return numbers
+        .split(' ')
+        .sort((a, b) => numberWords.indexOf(a) - numberWords.indexOf(b))
+        .join(' ');
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = sort_numbers;
+  assert.deepEqual(candidate(""""),"""");
+  assert.deepEqual(candidate(""three""),""three"");
+  assert.deepEqual(candidate(""three five nine""),""three five nine"");
+  assert.deepEqual(candidate(""five zero four seven nine eight""),""zero four five seven eight nine"");
+  assert.deepEqual(candidate(""six five four three two one zero""),""zero one two three four five six"");
+}
+
+test();"
+HumanEval_20,kor_Hang,js,"/ 다른 것을 찾아서 순서대로 돌려주십시오 (작은 숫자, 큰 숫자)/ 제공된 숫자 배열 (최소 두 개의 길이) 에서 각 숫자 중 가장 가까운 두 개를 선택하고 반환합니다.// >>> find_closest_elements([1.0, 2.0, 3.0, 4.0, 5.0, 2.2])
+// [2.0, 2.2]
+// >>> find_closest_elements([1.0, 2.0, 3.0, 4.0, 5.0, 2.0])
+// [2.0, 2.0]
+function find_closest_elements(numbers){
+","function find_closest_elements(numbers) {
+    if (numbers.length < 2) {
+        throw new Error('Array must contain at least two elements.');
+    }
+    
+    numbers.sort((a, b) => a - b);
+
+    let minDiff = Infinity;
+    let closestPair = [numbers[0], numbers[1]];
+
+    for (let i = 0; i < numbers.length - 1; i++) {
+        let diff = numbers[i + 1] - numbers[i];
+        if (diff < minDiff) {
+            minDiff = diff;
+            closestPair = [numbers[i], numbers[i + 1]];
+        }
+    }
+
+    return closestPair;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = find_closest_elements;
+  assert.deepEqual(candidate([1.0, 2.0, 3.9, 4.0, 5.0, 2.2]),[3.9, 4.0]);
+  assert.deepEqual(candidate([1.0, 2.0, 5.9, 4.0, 5.0]),[5.0, 5.9]);
+  assert.deepEqual(candidate([1.0, 2.0, 3.0, 4.0, 5.0, 2.2]),[2.0, 2.2]);
+  assert.deepEqual(candidate([1.0, 2.0, 3.0, 4.0, 5.0, 2.0]),[2.0, 2.0]);
+  assert.deepEqual(candidate([1.1, 2.2, 3.1, 4.1, 5.1]),[2.2, 3.1]);
+}
+
+test();"
+HumanEval_21,kor_Hang,js,"/ 가장 작은 숫자가 0이 되고 가장 큰 숫자는 1이 됩니다./주기된 숫자의 배열 (적어도 두 개의 요소로 구성된) 을, 그 배열에 선형 변환을 적용합니다.// >>> rescale_to_unit([1.0, 2.0, 3.0, 4.0, 5.0])
+// [0.0, 0.25, 0.5, 0.75, 1.0]
+function rescale_to_unit(numbers){
+","function rescale_to_unit(numbers) {
+    if (numbers.length < 2) {
+        throw new Error(""Array must contain at least two elements."");
+    }
+    
+    let min = Math.min(...numbers);
+    let max = Math.max(...numbers);
+    
+    return numbers.map(num => (num - min) / (max - min));
+}
+
+// Example usage
+console.log(rescale_to_unit([1.0, 2.0, 3.0, 4.0, 5.0])); // [0.0, 0.25, 0.5, 0.75, 1.0]","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = rescale_to_unit;
+  assert.deepEqual(candidate([2.0, 49.9]),[0.0, 1.0]);
+  assert.deepEqual(candidate([100.0, 49.9]),[1.0, 0.0]);
+  assert.deepEqual(candidate([1.0, 2.0, 3.0, 4.0, 5.0]),[0.0, 0.25, 0.5, 0.75, 1.0]);
+  assert.deepEqual(candidate([2.0, 1.0, 5.0, 3.0, 4.0]),[0.25, 0.0, 1.0, 0.5, 0.75]);
+  assert.deepEqual(candidate([12.0, 11.0, 15.0, 13.0, 14.0]),[0.25, 0.0, 1.0, 0.5, 0.75]);
+}
+
+test();"
+HumanEval_22,kor_Hang,js,"/ jsthon 값의 주어진 배열을 정수에만 필터링합니다.// >>> filter_integers([""a"", 3.14, 5])
+// [5]
+// >>> filter_integers([1, 2, 3, ""abc"", {}, []])
+// [1, 2, 3]
+function filter_integers(values){
+","function filter_integers(values) {
+    return values.filter(value => Number.isInteger(value));
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = filter_integers;
+  assert.deepEqual(candidate([]),[]);
+  assert.deepEqual(candidate([4, {}, [], 23.2, 9, ""adasd""]),[4, 9]);
+  assert.deepEqual(candidate([3, ""c"", 3, 3, ""a"", ""b""]),[3, 3, 3]);
+}
+
+test();"
+HumanEval_23,kor_Hang,js,"/ 주어진 문자열의 길이를 반환합니다 // >>> strlen("""")
+// 0
+// >>> strlen(""abc"")
+// 3
+function strlen(string){
+","function strlen(string) {
+    return string.length;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = strlen;
+  assert.deepEqual(candidate(""""),0);
+  assert.deepEqual(candidate(""x""),1);
+  assert.deepEqual(candidate(""asdasnakj""),9);
+}
+
+test();"
+HumanEval_24,kor_Hang,js,"/ 주어진 숫자 n에 대해 n보다 작은, n을 균등하게 나누는 가장 큰 숫자를 찾아봅시다// >>> largest_divisor(15)
+// 5
+function largest_divisor(n){
+","function largest_divisor(n) {
+    for (let i = n - 1; i > 0; i--) {
+        if (n % i === 0) {
+            return i;
+        }
+    }
+    return 1; // for the edge case where n is 1
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = largest_divisor;
+  assert.deepEqual(candidate(3),1);
+  assert.deepEqual(candidate(7),1);
+  assert.deepEqual(candidate(10),5);
+  assert.deepEqual(candidate(100),50);
+  assert.deepEqual(candidate(49),7);
+}
+
+test();"
+HumanEval_25,kor_Hang,js,"/ 입력 번호는 모든 인자의 곱과 같아야 합니다./ 각 인수는 인수분해에서 나타나는 수에 대응하는 수만큼 배열되어야 합니다. /주기된 정수의 소인수 배열을 가장 작은 순서에서 가장 큰 순서로 반환합니다. // >>> factorize(8)
+// [2, 2, 2]
+// >>> factorize(25)
+// [5, 5]
+// >>> factorize(70)
+// [2, 5, 7]
+function factorize(n){
+","function factorize(n) {
+    const factors = [];
+    let divisor = 2;
+
+    while (n >= 2) {
+        if (n % divisor === 0) {
+            factors.push(divisor);
+            n /= divisor;
+        } else {
+            divisor++;
+        }
+    }
+
+    return factors;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = factorize;
+  assert.deepEqual(candidate(2),[2]);
+  assert.deepEqual(candidate(4),[2, 2]);
+  assert.deepEqual(candidate(8),[2, 2, 2]);
+  assert.deepEqual(candidate(57),[3, 19]);
+  assert.deepEqual(candidate(3249),[3, 3, 19, 19]);
+  assert.deepEqual(candidate(185193),[3, 3, 3, 19, 19, 19]);
+  assert.deepEqual(candidate(20577),[3, 19, 19, 19]);
+  assert.deepEqual(candidate(18),[2, 3, 3]);
+}
+
+test();"
+HumanEval_26,kor_Hang,js,"/ 입력과 같은 요소의 순서를 유지합니다. / 정수 배열에서 한 번 이상 발생하는 모든 요소를 제거합니다.// >>> remove_duplicates([1, 2, 3, 2, 4])
+// [1, 3, 4]
+function remove_duplicates(numbers){
+","function remove_duplicates(numbers) {
+    const frequency = {};
+    // Count occurrences of each number
+    numbers.forEach(num => {
+        frequency[num] = (frequency[num] || 0) + 1;
+    });
+
+    // Filter out numbers that occur more than once
+    return numbers.filter(num => frequency[num] === 1);
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = remove_duplicates;
+  assert.deepEqual(candidate([]),[]);
+  assert.deepEqual(candidate([1, 2, 3, 4]),[1, 2, 3, 4]);
+  assert.deepEqual(candidate([1, 2, 3, 2, 4, 3, 5]),[1, 4, 5]);
+}
+
+test();"
+HumanEval_27,kor_Hang,js,"/ 주어진 문자열에 대해 소문자를 대문자로, 대문자를 소문자로 바꾸세요. // >>> flip_case(""Hello"")
+// ""hELLO""
+function flip_case(string){
+","function flip_case(string) {
+    let flippedString = '';
+    for (let i = 0; i < string.length; i++) {
+        const char = string[i];
+        if (char === char.toLowerCase()) {
+            flippedString += char.toUpperCase();
+        } else {
+            flippedString += char.toLowerCase();
+        }
+    }
+    return flippedString;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = flip_case;
+  assert.deepEqual(candidate(""""),"""");
+  assert.deepEqual(candidate(""Hello!""),""hELLO!"");
+  assert.deepEqual(candidate(""These violent delights have violent ends""),""tHESE VIOLENT DELIGHTS HAVE VIOLENT ENDS"");
+}
+
+test();"
+HumanEval_28,kor_Hang,js,"/ 문자열의 배열을 하나의 문자열로 연결합니다.// >>> concatenate([])
+// """"
+// >>> concatenate([""a"", ""b"", ""c""])
+// ""abc""
+function concatenate(strings){
+","function concatenate(strings) {
+    return strings.join('');
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = concatenate;
+  assert.deepEqual(candidate([]),"""");
+  assert.deepEqual(candidate([""x"", ""y"", ""z""]),""xyz"");
+  assert.deepEqual(candidate([""x"", ""y"", ""z"", ""w"", ""k""]),""xyzwk"");
+}
+
+test();"
+HumanEval_29,kor_Hang,js,"/ 입력 배열의 문자열을 필터링하여 주어진 접두사로 시작하는 문자열만 선택합니다.// >>> filter_by_prefix([], ""a"")
+// []
+// >>> filter_by_prefix([""abc"", ""bcd"", ""cde"", ""array""], ""a"")
+// [""abc"", ""array""]
+function filter_by_prefix(strings, prefix){
+","function filter_by_prefix(strings, prefix) {
+    return strings.filter(str => str.startsWith(prefix));
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = filter_by_prefix;
+  assert.deepEqual(candidate([], ""john""),[]);
+  assert.deepEqual(candidate([""xxx"", ""asd"", ""xxy"", ""john doe"", ""xxxAAA"", ""xxx""], ""xxx""),[""xxx"", ""xxxAAA"", ""xxx""]);
+}
+
+test();"
+HumanEval_30,kor_Hang,js,"/그림에서 양수만 반환합니다.// >>> get_positive([-1, 2, -4, 5, 6])
+// [2, 5, 6]
+// >>> get_positive([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])
+// [5, 3, 2, 3, 9, 123, 1]
+function get_positive(l){
+","function get_positive(l) {
+    return l.filter(function(num) {
+        return num > 0;
+    });
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = get_positive;
+  assert.deepEqual(candidate([-1, -2, 4, 5, 6]),[4, 5, 6]);
+  assert.deepEqual(candidate([5, 3, -5, 2, 3, 3, 9, 0, 123, 1, -10]),[5, 3, 2, 3, 3, 9, 123, 1]);
+  assert.deepEqual(candidate([-1, -2]),[]);
+  assert.deepEqual(candidate([]),[]);
+}
+
+test();"
+HumanEval_31,kor_Hang,js,"/ 주어진 숫자가 소수라면 true를 반환하고, 그렇지 않으면 false를 반환합니다.// >>> is_prime(6)
+// false
+// >>> is_prime(101)
+// true
+// >>> is_prime(11)
+// true
+// >>> is_prime(13441)
+// true
+// >>> is_prime(61)
+// true
+// >>> is_prime(4)
+// false
+// >>> is_prime(1)
+// false
+function is_prime(n){
+","function is_prime(n) {
+    if (n <= 1) return false;
+    if (n <= 3) return true;
+  
+    if (n % 2 === 0 || n % 3 === 0) return false;
+  
+    for (let i = 5; i * i <= n; i += 6) {
+        if (n % i === 0 || n % (i + 2) === 0) return false;
+    }
+  
+    return true;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = is_prime;
+  assert.deepEqual(candidate(6),false);
+  assert.deepEqual(candidate(101),true);
+  assert.deepEqual(candidate(11),true);
+  assert.deepEqual(candidate(13441),true);
+  assert.deepEqual(candidate(61),true);
+  assert.deepEqual(candidate(4),false);
+  assert.deepEqual(candidate(1),false);
+  assert.deepEqual(candidate(5),true);
+  assert.deepEqual(candidate(11),true);
+  assert.deepEqual(candidate(17),true);
+  assert.deepEqual(candidate(85),false);
+  assert.deepEqual(candidate(77),false);
+  assert.deepEqual(candidate(255379),false);
+}
+
+test();"
+HumanEval_33,kor_Hang,js,"/ l의 대응 인덱스의 값에, 하지만 정렬./ l'는 3으로 나눌 수 없는 지수에서 l와 동일하지만, 3으로 나눌 수 있는 지수에서 그 값은 같습니다./이 함수는 배열 l을 가져다가 배열 l'를 반환합니다.// >>> sort_third([1, 2, 3])
+// [1, 2, 3]
+// >>> sort_third([5, 6, 3, 4, 8, 9, 2])
+// [2, 6, 3, 4, 8, 9, 5]
+function sort_third(l){
+","function sort_third(l) {
+    // Extract the elements at indices divisible by 3
+    const elementsToSort = [];
+    for (let i = 0; i < l.length; i++) {
+        if (i % 3 === 0) {
+            elementsToSort.push(l[i]);
+        }
+    }
+    
+    // Sort the extracted elements
+    elementsToSort.sort((a, b) => a - b);
+
+    // Place the sorted elements back into their original positions
+    let sortedIndex = 0;
+    for (let i = 0; i < l.length; i++) {
+        if (i % 3 === 0) {
+            l[i] = elementsToSort[sortedIndex++];
+        }
+    }
+    
+    return l;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = sort_third;
+  assert.deepEqual(candidate([5, 6, 3, 4, 8, 9, 2]),[2, 6, 3, 4, 8, 9, 5]);
+  assert.deepEqual(candidate([5, 8, 3, 4, 6, 9, 2]),[2, 8, 3, 4, 6, 9, 5]);
+  assert.deepEqual(candidate([5, 6, 9, 4, 8, 3, 2]),[2, 6, 9, 4, 8, 3, 5]);
+  assert.deepEqual(candidate([5, 6, 3, 4, 8, 9, 2, 1]),[2, 6, 3, 4, 8, 9, 5, 1]);
+}
+
+test();"
+HumanEval_34,kor_Hang,js,"/ 배열된 고유 요소를 배열에서 반환합니다.// >>> unique([5, 3, 5, 2, 3, 3, 9, 0, 123])
+// [0, 2, 3, 5, 9, 123]
+function unique(l){
+","function unique(l) {
+    // Use a Set to remove duplicates and then spread into an array
+    const uniqueElements = [...new Set(l)];
+    // Sort the array in ascending order
+    uniqueElements.sort((a, b) => a - b);
+    return uniqueElements;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = unique;
+  assert.deepEqual(candidate([5, 3, 5, 2, 3, 3, 9, 0, 123]),[0, 2, 3, 5, 9, 123]);
+}
+
+test();"
+HumanEval_35,kor_Hang,js,"/ 배열의 최대 요소를 반환합니다. // >>> max_element([1, 2, 3])
+// 3
+// >>> max_element([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10])
+// 123
+function max_element(l){
+","function max_element(l) {
+    if (l.length === 0) return undefined; // Return undefined if the array is empty
+    return Math.max(...l);
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = max_element;
+  assert.deepEqual(candidate([1, 2, 3]),3);
+  assert.deepEqual(candidate([5, 3, -5, 2, -3, 3, 9, 0, 124, 1, -10]),124);
+}
+
+test();"
+HumanEval_36,kor_Hang,js,"/11 또는 13로 나누어지는 n보다 작은 정수에서 7이 나타나는 횟수를 반환합니다. // >>> fizz_buzz(50)
+// 0
+// >>> fizz_buzz(78)
+// 2
+// >>> fizz_buzz(79)
+// 3
+function fizz_buzz(n){
+","function fizz_buzz(n) {
+    let count = 0;
+    
+    for (let i = 1; i < n; i++) {
+        if (i % 11 === 0 || i % 13 === 0) {
+            let numStr = i.toString();
+            for (let char of numStr) {
+                if (char === '7') {
+                    count++;
+                }
+            }
+        }
+    }
+    
+    return count;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = fizz_buzz;
+  assert.deepEqual(candidate(50),0);
+  assert.deepEqual(candidate(78),2);
+  assert.deepEqual(candidate(79),3);
+  assert.deepEqual(candidate(100),3);
+  assert.deepEqual(candidate(200),6);
+  assert.deepEqual(candidate(4000),192);
+  assert.deepEqual(candidate(10000),639);
+  assert.deepEqual(candidate(100000),8026);
+}
+
+test();"
+HumanEval_37,kor_Hang,js,"/ l의 짝수 지수의 값에, 하지만 정렬. / l'는 홀수 지수에서 l와 동일하지만, 짝수 지수에서 그 값은 같습니다./이 함수는 배열 l을 가져다가 배열 l'를 반환합니다.// >>> sort_even([1, 2, 3])
+// [1, 2, 3]
+// >>> sort_even([5, 6, 3, 4])
+// [3, 6, 5, 4]
+function sort_even(l){
+","function sort_even(l) {
+    // Extract the elements at even indices
+    let evenElements = [];
+    for (let i = 0; i < l.length; i += 2) {
+        evenElements.push(l[i]);
+    }
+
+    // Sort the even elements
+    evenElements.sort((a, b) => a - b);
+
+    // Reconstruct the array with sorted even indices
+    let result = [];
+    let evenIndex = 0;
+    for (let i = 0; i < l.length; i++) {
+        if (i % 2 === 0) {
+            result.push(evenElements[evenIndex]);
+            evenIndex++;
+        } else {
+            result.push(l[i]);
+        }
+    }
+
+    return result;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = sort_even;
+  assert.deepEqual(candidate([1, 2, 3]),[1, 2, 3]);
+  assert.deepEqual(candidate([5, 3, -5, 2, -3, 3, 9, 0, 123, 1, -10]),[-10, 3, -5, 2, -3, 3, 5, 0, 9, 1, 123]);
+  assert.deepEqual(candidate([5, 8, -12, 4, 23, 2, 3, 11, 12, -10]),[-12, 8, 3, 4, 5, 2, 12, 11, 23, -10]);
+}
+
+test();"
+HumanEval_39,kor_Hang,js,"/prime_fib는 n번째 숫자를 반환합니다. 이는 피보나치 수이고 또한 소수입니다.// >>> prime_fib(1)
+// 2
+// >>> prime_fib(2)
+// 3
+// >>> prime_fib(3)
+// 5
+// >>> prime_fib(4)
+// 13
+// >>> prime_fib(5)
+// 89
+function prime_fib(n){
+","function prime_fib(n) {
+    function isPrime(num) {
+        if (num < 2) return false;
+        for (let i = 2; i * i <= num; i++) {
+            if (num % i === 0) return false;
+        }
+        return true;
+    }
+    
+    function fibonacci() {
+        let a = 0, b = 1;
+        return function() {
+            const next = a + b;
+            a = b;
+            b = next;
+            return a;
+        };
+    }
+
+    const fib = fibonacci();
+    let count = 0;
+    let primeFibNum;
+
+    while (count < n) {
+        const fibNum = fib();
+        if (isPrime(fibNum)) {
+            count++;
+            primeFibNum = fibNum;
+        }
+    }
+
+    return primeFibNum;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = prime_fib;
+  assert.deepEqual(candidate(1),2);
+  assert.deepEqual(candidate(2),3);
+  assert.deepEqual(candidate(3),5);
+  assert.deepEqual(candidate(4),13);
+  assert.deepEqual(candidate(5),89);
+  assert.deepEqual(candidate(6),233);
+  assert.deepEqual(candidate(7),1597);
+  assert.deepEqual(candidate(8),28657);
+  assert.deepEqual(candidate(9),514229);
+  assert.deepEqual(candidate(10),433494437);
+}
+
+test();"
+HumanEval_40,kor_Hang,js,"/ 0을 합하고, 그렇지 않으면 거짓입니다. / 그것은 배열에 있는 세 개의 다른 요소가 있다면 true를 반환합니다./triples_sum_to_zero는 정수의 배열을 입력으로 사용합니다.// >>> triples_sum_to_zero([1, 3, 5, 0])
+// false
+// >>> triples_sum_to_zero([1, 3, -2, 1])
+// true
+// >>> triples_sum_to_zero([1, 2, 3, 7])
+// false
+// >>> triples_sum_to_zero([2, 4, -5, 3, 9, 7])
+// true
+// >>> triples_sum_to_zero([1])
+// false
+function triples_sum_to_zero(l){
+","function triples_sum_to_zero(l) {
+    // Sort the array first
+    l.sort((a, b) => a - b);
+    // Iterate through each element in the array
+    for (let i = 0; i < l.length - 2; i++) {
+        // Use two pointers to find the other two elements
+        let left = i + 1;
+        let right = l.length - 1;
+        while (left < right) {
+            const sum = l[i] + l[left] + l[right];
+            if (sum === 0) {
+                return true;
+            } else if (sum < 0) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+    }
+    return false;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = triples_sum_to_zero;
+  assert.deepEqual(candidate([1, 3, 5, 0]),false);
+  assert.deepEqual(candidate([1, 3, 5, -1]),false);
+  assert.deepEqual(candidate([1, 3, -2, 1]),true);
+  assert.deepEqual(candidate([1, 2, 3, 7]),false);
+  assert.deepEqual(candidate([1, 2, 5, 7]),false);
+  assert.deepEqual(candidate([2, 4, -5, 3, 9, 7]),true);
+  assert.deepEqual(candidate([1]),false);
+  assert.deepEqual(candidate([1, 3, 5, -100]),false);
+  assert.deepEqual(candidate([100, 3, 5, -100]),false);
+}
+
+test();"
+HumanEval_41,kor_Hang,js,"/ 이 함수는 이러한 충돌의 수를 출력합니다. / 그들의 궤도에 충돌하지 않은 것처럼. 하지만, 이 차들은 무한히 견고하고 강합니다. 그래서 계속 움직입니다./ 왼쪽에서 오른쪽으로 움직이는 차가 오른쪽에서 왼쪽으로 움직이는 차를 치면. 모든 차는 같은 속도로 움직입니다. 두 차가 충돌한다고 합니다.두 쌍의 차가 아주 멀리 떨어져서 출발합니다.n개의 차가 왼쪽에서 오른쪽으로 움직이고, 동시에 다른 n개의 차가 움직이고,/무한한 길이의 완벽하게 직선으로 이루어진 길을 상상해 보세요.function car_race_collision(n){
+","function car_race_collision(n) {
+    // Each car moving left to right will collide with each car moving right to left exactly once.
+    // Therefore, the number of collisions is n * n.
+    return n * n;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = car_race_collision;
+  assert.deepEqual(candidate(2),4);
+  assert.deepEqual(candidate(3),9);
+  assert.deepEqual(candidate(4),16);
+  assert.deepEqual(candidate(8),64);
+  assert.deepEqual(candidate(10),100);
+}
+
+test();"
+HumanEval_42,kor_Hang,js,"/ 1으로 증가된 요소를 가진 배열을 반환합니다. // >>> incr_list([1, 2, 3])
+// [2, 3, 4]
+// >>> incr_list([5, 3, 5, 2, 3, 3, 9, 0, 123])
+// [6, 4, 6, 3, 4, 4, 10, 1, 124]
+function incr_list(l){
+","function incr_list(l) {
+    return l.map(element => element + 1);
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = incr_list;
+  assert.deepEqual(candidate([]),[]);
+  assert.deepEqual(candidate([3, 2, 1]),[4, 3, 2]);
+  assert.deepEqual(candidate([5, 2, 5, 2, 3, 3, 9, 0, 123]),[6, 3, 6, 3, 4, 4, 10, 1, 124]);
+}
+
+test();"
+HumanEval_43,kor_Hang,js,"/ 0을 합하고, 그렇지 않으면 거짓입니다. / 그것은 배열에 두 개의 다른 요소가 있다면 true를 반환합니다./pairs_sum_to_zero는 정수의 배열을 입력으로 사용합니다.// >>> pairs_sum_to_zero([1, 3, 5, 0])
+// false
+// >>> pairs_sum_to_zero([1, 3, -2, 1])
+// false
+// >>> pairs_sum_to_zero([1, 2, 3, 7])
+// false
+// >>> pairs_sum_to_zero([2, 4, -5, 3, 5, 7])
+// true
+// >>> pairs_sum_to_zero([1])
+// false
+function pairs_sum_to_zero(l){
+","function pairs_sum_to_zero(l) {
+    const seen = new Set();
+    
+    for (const num of l) {
+        if (seen.has(-num)) {
+            return true;
+        }
+        seen.add(num);
+    }
+    
+    return false;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = pairs_sum_to_zero;
+  assert.deepEqual(candidate([1, 3, 5, 0]),false);
+  assert.deepEqual(candidate([1, 3, -2, 1]),false);
+  assert.deepEqual(candidate([1, 2, 3, 7]),false);
+  assert.deepEqual(candidate([2, 4, -5, 3, 5, 7]),true);
+  assert.deepEqual(candidate([1]),false);
+  assert.deepEqual(candidate([-3, 9, -1, 3, 2, 30]),true);
+  assert.deepEqual(candidate([-3, 9, -1, 3, 2, 31]),true);
+  assert.deepEqual(candidate([-3, 9, -1, 4, 2, 30]),false);
+  assert.deepEqual(candidate([-3, 9, -1, 4, 2, 31]),false);
+}
+
+test();"
+HumanEval_44,kor_Hang,js,"/ 기지수는 10보다 작습니다./ 변환 후 문자열 표현을 반환합니다. / 입력 번호 x의 숫자 기지를 기지로 변경합니다. // >>> change_base(8, 3)
+// ""22""
+// >>> change_base(8, 2)
+// ""1000""
+// >>> change_base(7, 2)
+// ""111""
+function change_base(x, base){
+","function change_base(x, base) {
+    if (base < 2 || base > 9) {
+        throw new Error(""Base must be between 2 and 9."");
+    }
+
+    if (x === 0) {
+        return ""0"";
+    }
+
+    let result = '';
+    while (x > 0) {
+        result = (x % base) + result;
+        x = Math.floor(x / base);
+    }
+
+    return result;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = change_base;
+  assert.deepEqual(candidate(8, 3),""22"");
+  assert.deepEqual(candidate(9, 3),""100"");
+  assert.deepEqual(candidate(234, 2),""11101010"");
+  assert.deepEqual(candidate(16, 2),""10000"");
+  assert.deepEqual(candidate(8, 2),""1000"");
+  assert.deepEqual(candidate(7, 2),""111"");
+  assert.deepEqual(candidate(2, 3),""2"");
+  assert.deepEqual(candidate(3, 4),""3"");
+  assert.deepEqual(candidate(4, 5),""4"");
+  assert.deepEqual(candidate(5, 6),""5"");
+  assert.deepEqual(candidate(6, 7),""6"");
+  assert.deepEqual(candidate(7, 8),""7"");
+}
+
+test();"
+HumanEval_45,kor_Hang,js,"/ 삼각형의 변의 길이를 보고 높은 반환 영역을 // >>> triangle_area(5, 3)
+// 7.5
+function triangle_area(a, h){
+","function triangle_area(a, h) {
+    return 0.5 * a * h;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = triangle_area;
+  assert.deepEqual(candidate(5, 3),7.5);
+  assert.deepEqual(candidate(2, 2),2.0);
+  assert.deepEqual(candidate(10, 8),40.0);
+}
+
+test();"
+HumanEval_46,kor_Hang,js,"/ fib4 수열의 n번째 요소를 효율적으로 계산하는 함수를 작성하십시오. 재귀를 사용하지 마십시오. / fib4(n) -> fib4(n-1) + fib4(n-2) + fib4(n-3) + fib4(n-4)./ fib4(3) -> 0 / fib4(2) -> 2 / fib4(1) -> 0 / fib4(0) -> 0 /Fib4 수열은 다음과 같이 정의되는 피보나치 수열과 유사한 수열입니다: // >>> fib4(5)
+// 4
+// >>> fib4(6)
+// 8
+// >>> fib4(7)
+// 14
+function fib4(n){
+","function fib4(n) {
+    if (n === 0) return 0;
+    if (n === 1) return 0;
+    if (n === 2) return 2;
+    if (n === 3) return 0;
+    
+    let fibs = [0, 0, 2, 0];
+    
+    for (let i = 4; i <= n; i++) {
+        let nextFib = fibs[0] + fibs[1] + fibs[2] + fibs[3];
+        fibs.shift(); // Remove the first element
+        fibs.push(nextFib); // Add the new element to the end
+    }
+    
+    return fibs[3];
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = fib4;
+  assert.deepEqual(candidate(5),4);
+  assert.deepEqual(candidate(8),28);
+  assert.deepEqual(candidate(10),104);
+  assert.deepEqual(candidate(12),386);
+}
+
+test();"
+HumanEval_47,kor_Hang,js,"/그림 1의 원소 중간값을 반환합니다.// >>> median([3, 1, 2, 4, 5])
+// 3
+// >>> median([-10, 4, 6, 1000, 10, 20])
+// 15.0
+function median(l){
+","function median(l) {
+    // First, sort the array
+    l.sort((a, b) => a - b);
+
+    // Calculate the middle index
+    const mid = Math.floor(l.length / 2);
+
+    // If array length is odd, return the middle element
+    if (l.length % 2 !== 0) {
+        return l[mid];
+    }
+    // If array length is even, return the average of the two middle elements
+    else {
+        return (l[mid - 1] + l[mid]) / 2;
+    }
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = median;
+  assert.deepEqual(candidate([3, 1, 2, 4, 5]),3);
+  assert.deepEqual(candidate([-10, 4, 6, 1000, 10, 20]),8.0);
+  assert.deepEqual(candidate([5]),5);
+  assert.deepEqual(candidate([6, 5]),5.5);
+  assert.deepEqual(candidate([8, 1, 3, 9, 9, 2, 7]),7);
+}
+
+test();"
+HumanEval_48,kor_Hang,js,"/ 주어진 문자열이 팔린드로임인지 확인합니다.// >>> is_palindrome("""")
+// true
+// >>> is_palindrome(""aba"")
+// true
+// >>> is_palindrome(""aaaaa"")
+// true
+// >>> is_palindrome(""zbcd"")
+// false
+function is_palindrome(text){
+","function is_palindrome(text){
+    // Remove non-alphanumeric characters and convert to lower case
+    const cleanedText = text.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+    // Reverse the cleaned text
+    const reversedText = cleanedText.split('').reverse().join('');
+    // Check if the cleaned text is equal to its reverse
+    return cleanedText === reversedText;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = is_palindrome;
+  assert.deepEqual(candidate(""""),true);
+  assert.deepEqual(candidate(""aba""),true);
+  assert.deepEqual(candidate(""aaaaa""),true);
+  assert.deepEqual(candidate(""zbcd""),false);
+  assert.deepEqual(candidate(""xywyx""),true);
+  assert.deepEqual(candidate(""xywyz""),false);
+  assert.deepEqual(candidate(""xywzx""),false);
+}
+
+test();"
+HumanEval_49,kor_Hang,js,"/ 2^n p 모듈을 반환합니다 (수적에 주의를 기울여 보세요).// >>> modp(3, 5)
+// 3
+// >>> modp(1101, 101)
+// 2
+// >>> modp(0, 101)
+// 1
+// >>> modp(3, 11)
+// 8
+// >>> modp(100, 101)
+// 1
+function modp(n, p){
+","function modp(n, p) {
+    if (p === 1) return 0; // Base case when p is 1
+
+    // Initialize result
+    let result = 1;
+    let base = 2;
+
+    while (n > 0) {
+        // If n is odd, multiply base with result
+        if (n % 2 === 1) {
+            result = (result * base) % p;
+        }
+
+        // n must be even now
+        n = Math.floor(n / 2);
+        base = (base * base) % p; 
+    }
+
+    return result;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = modp;
+  assert.deepEqual(candidate(3, 5),3);
+  assert.deepEqual(candidate(1101, 101),2);
+  assert.deepEqual(candidate(0, 101),1);
+  assert.deepEqual(candidate(3, 11),8);
+  assert.deepEqual(candidate(100, 101),1);
+  assert.deepEqual(candidate(30, 5),4);
+  assert.deepEqual(candidate(31, 5),3);
+}
+
+test();"
+HumanEval_51,kor_Hang,js,"/remove_vowels는 문자열을 가져다가 문자열을 음성 없이 반환하는 함수입니다.// >>> remove_vowels("""")
+// """"
+// >>> remove_vowels(""abcdef"")
+// ""bcdf""
+// >>> remove_vowels(""aaaaa"")
+// """"
+// >>> remove_vowels(""aaBAA"")
+// ""B""
+// >>> remove_vowels(""zbcd"")
+// ""zbcd""
+function remove_vowels(text){
+","function remove_vowels(text) {
+    return text.replace(/[aeiouAEIOU]/g, '');
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = remove_vowels;
+  assert.deepEqual(candidate(""""),"""");
+  assert.deepEqual(candidate(""abcdef
+ghijklm""),""bcdf
+ghjklm"");
+  assert.deepEqual(candidate(""fedcba""),""fdcb"");
+  assert.deepEqual(candidate(""eeeee""),"""");
+  assert.deepEqual(candidate(""acBAA""),""cB"");
+  assert.deepEqual(candidate(""EcBOO""),""cB"");
+  assert.deepEqual(candidate(""ybcd""),""ybcd"");
+}
+
+test();"
+HumanEval_52,kor_Hang,js,"/그림의 모든 숫자가 임계 t 이하인 경우 true를 반환합니다.// >>> below_threshold([1, 2, 4, 10], 100)
+// true
+// >>> below_threshold([1, 20, 4, 10], 5)
+// false
+function below_threshold(l, t){
+","function below_threshold(l, t) {
+    return l.every(num => num < t);
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = below_threshold;
+  assert.deepEqual(candidate([1, 2, 4, 10], 100),true);
+  assert.deepEqual(candidate([1, 20, 4, 10], 5),false);
+  assert.deepEqual(candidate([1, 20, 4, 10], 21),true);
+  assert.deepEqual(candidate([1, 20, 4, 10], 22),true);
+  assert.deepEqual(candidate([1, 8, 4, 10], 11),true);
+  assert.deepEqual(candidate([1, 8, 4, 10], 10),false);
+}
+
+test();"
+HumanEval_53,kor_Hang,js,"/ 두 개의 숫자를 더해 x와 y // >>> add(2, 3)
+// 5
+// >>> add(5, 7)
+// 12
+function add(x, y){
+","function add(x, y) {
+    return x + y;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = add;
+  assert.deepEqual(candidate(0, 1),1);
+  assert.deepEqual(candidate(1, 0),1);
+  assert.deepEqual(candidate(2, 3),5);
+  assert.deepEqual(candidate(5, 7),12);
+  assert.deepEqual(candidate(7, 5),12);
+}
+
+test();"
+HumanEval_54,kor_Hang,js,"/ 두 단어의 문자들이 같는지 확인합니다. // >>> same_chars(""eabcdzzzz"", ""dddzzzzzzzddeddabc"")
+// true
+// >>> same_chars(""abcd"", ""dddddddabc"")
+// true
+// >>> same_chars(""dddddddabc"", ""abcd"")
+// true
+// >>> same_chars(""eabcd"", ""dddddddabc"")
+// false
+// >>> same_chars(""abcd"", ""dddddddabce"")
+// false
+// >>> same_chars(""eabcdzzzz"", ""dddzzzzzzzddddabc"")
+// false
+function same_chars(s0, s1){
+","function same_chars(s0, s1) {
+    const charSet0 = new Set(s0);
+    const charSet1 = new Set(s1);
+
+    if (charSet0.size !== charSet1.size) return false;
+
+    for (let char of charSet0) {
+        if (!charSet1.has(char)) return false;
+    }
+
+    return true;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = same_chars;
+  assert.deepEqual(candidate(""eabcdzzzz"", ""dddzzzzzzzddeddabc""),true);
+  assert.deepEqual(candidate(""abcd"", ""dddddddabc""),true);
+  assert.deepEqual(candidate(""dddddddabc"", ""abcd""),true);
+  assert.deepEqual(candidate(""eabcd"", ""dddddddabc""),false);
+  assert.deepEqual(candidate(""abcd"", ""dddddddabcf""),false);
+  assert.deepEqual(candidate(""eabcdzzzz"", ""dddzzzzzzzddddabc""),false);
+  assert.deepEqual(candidate(""aabb"", ""aaccc""),false);
+}
+
+test();"
+HumanEval_55,kor_Hang,js,"/ n-th 피보나치 수를 반환합니다. // >>> fib(10)
+// 55
+// >>> fib(1)
+// 1
+// >>> fib(8)
+// 21
+function fib(n){
+","function fib(n) {
+    if (n <= 1) return n;
+    let a = 0, b = 1, result = 1;
+    for (let i = 2; i <= n; i++) {
+        result = a + b;
+        a = b;
+        b = result;
+    }
+    return result;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = fib;
+  assert.deepEqual(candidate(10),55);
+  assert.deepEqual(candidate(1),1);
+  assert.deepEqual(candidate(8),21);
+  assert.deepEqual(candidate(11),89);
+  assert.deepEqual(candidate(12),144);
+}
+
+test();"
+HumanEval_56,kor_Hang,js,"/ 모든 개시 브래킷이 해당하는 닫기 브래킷을 가지고 있다면 true를 반환합니다. /brackets는 ""<""와 "">""의 문자열입니다.// >>> correct_bracketing(""<"")
+// false
+// >>> correct_bracketing(""<>"")
+// true
+// >>> correct_bracketing(""<<><>>"")
+// true
+// >>> correct_bracketing(""><<>"")
+// false
+function correct_bracketing(brackets){
+","function correct_bracketing(brackets) {
+    let balance = 0;
+    for (let char of brackets) {
+        if (char === '<') {
+            balance += 1;
+        } else if (char === '>') {
+            balance -= 1;
+        }
+        if (balance < 0) {
+            return false;
+        }
+    }
+    return balance === 0;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = correct_bracketing;
+  assert.deepEqual(candidate(""<>""),true);
+  assert.deepEqual(candidate(""<<><>>""),true);
+  assert.deepEqual(candidate(""<><><<><>><>""),true);
+  assert.deepEqual(candidate(""<><><<<><><>><>><<><><<>>>""),true);
+  assert.deepEqual(candidate(""<<<><>>>>""),false);
+  assert.deepEqual(candidate(""><<>""),false);
+  assert.deepEqual(candidate(""<""),false);
+  assert.deepEqual(candidate(""<<<<""),false);
+  assert.deepEqual(candidate("">""),false);
+  assert.deepEqual(candidate(""<<>""),false);
+  assert.deepEqual(candidate(""<><><<><>><>><<>""),false);
+  assert.deepEqual(candidate(""<><><<><>><>>><>""),false);
+}
+
+test();"
+HumanEval_57,kor_Hang,js,"/true를 반환하면 배열 요소가 단조롭게 증가하거나 감소합니다.// >>> monotonic([1, 2, 4, 20])
+// true
+// >>> monotonic([1, 20, 4, 10])
+// false
+// >>> monotonic([4, 1, 0, -10])
+// true
+function monotonic(l){
+","function monotonic(l) {
+    if (l.length <= 1) return true;
+    let isIncreasing = true;
+    let isDecreasing = true;
+    
+    for (let i = 1; i < l.length; i++) {
+        if (l[i] > l[i - 1]) {
+            isDecreasing = false;
+        } else if (l[i] < l[i - 1]) {
+            isIncreasing = false;
+        }
+        
+        if (!isIncreasing && !isDecreasing) return false;
+    }
+    
+    return true;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = monotonic;
+  assert.deepEqual(candidate([1, 2, 4, 10]),true);
+  assert.deepEqual(candidate([1, 2, 4, 20]),true);
+  assert.deepEqual(candidate([1, 20, 4, 10]),false);
+  assert.deepEqual(candidate([4, 1, 0, -10]),true);
+  assert.deepEqual(candidate([4, 1, 1, 0]),true);
+  assert.deepEqual(candidate([1, 2, 3, 2, 5, 60]),false);
+  assert.deepEqual(candidate([1, 2, 3, 4, 5, 60]),true);
+  assert.deepEqual(candidate([9, 9, 9, 9]),true);
+}
+
+test();"
+HumanEval_58,kor_Hang,js,"/2개의 배열에 대해 정렬된 고유한 공통 요소를 반환합니다.// >>> common([1, 4, 3, 34, 653, 2, 5], [5, 7, 1, 5, 9, 653, 121])
+// [1, 5, 653]
+// >>> common([5, 3, 2, 8], [3, 2])
+// [2, 3]
+function common(l1, l2){
+","function common(l1, l2) {
+    const set1 = new Set(l1);
+    const set2 = new Set(l2);
+    const result = [...set1].filter(item => set2.has(item));
+    return result.sort((a, b) => a - b);
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = common;
+  assert.deepEqual(candidate([1, 4, 3, 34, 653, 2, 5], [5, 7, 1, 5, 9, 653, 121]),[1, 5, 653]);
+  assert.deepEqual(candidate([5, 3, 2, 8], [3, 2]),[2, 3]);
+  assert.deepEqual(candidate([4, 3, 2, 8], [3, 2, 4]),[2, 3, 4]);
+  assert.deepEqual(candidate([4, 3, 2, 8], []),[]);
+}
+
+test();"
+HumanEval_59,kor_Hang,js,"/n의 가장 큰 소수 인수를 반환합니다. n>1이 소수 아닌 것으로 가정합니다. // >>> largest_prime_factor(13195)
+// 29
+// >>> largest_prime_factor(2048)
+// 2
+function largest_prime_factor(n){
+","function largest_prime_factor(n) {
+  let largest = -1;
+  while (n % 2 === 0) {
+    largest = 2;
+    n /= 2;
+  }
+  
+  for (let factor = 3; factor * factor <= n; factor += 2) {
+    while (n % factor === 0) {
+      largest = factor;
+      n /= factor;
+    }
+  }
+  
+  if (n > 2) {
+    largest = n;
+  }
+  
+  return largest;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = largest_prime_factor;
+  assert.deepEqual(candidate(15),5);
+  assert.deepEqual(candidate(27),3);
+  assert.deepEqual(candidate(63),7);
+  assert.deepEqual(candidate(330),11);
+  assert.deepEqual(candidate(13195),29);
+}
+
+test();"
+HumanEval_60,kor_Hang,js,"/sum_to_n는 1부터 n까지의 숫자를 합하는 함수입니다.// >>> sum_to_n(30)
+// 465
+// >>> sum_to_n(100)
+// 5050
+// >>> sum_to_n(5)
+// 15
+// >>> sum_to_n(10)
+// 55
+// >>> sum_to_n(1)
+// 1
+function sum_to_n(n){
+","function sum_to_n(n) {
+    return n * (n + 1) / 2;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = sum_to_n;
+  assert.deepEqual(candidate(1),1);
+  assert.deepEqual(candidate(6),21);
+  assert.deepEqual(candidate(11),66);
+  assert.deepEqual(candidate(30),465);
+  assert.deepEqual(candidate(100),5050);
+}
+
+test();"
+HumanEval_61,kor_Hang,js,"/ 모든 개시 브래킷이 해당하는 닫기 브래킷을 가지고 있다면 true를 반환합니다. /brackets는 ""(""와 """") 의 문자열입니다.// >>> correct_bracketing(""("")
+// false
+// >>> correct_bracketing(""()"")
+// true
+// >>> correct_bracketing(""(()())"")
+// true
+// >>> correct_bracketing("")(()"")
+// false
+function correct_bracketing(brackets){
+","function correct_bracketing(brackets) {
+    let balance = 0;
+    for (let i = 0; i < brackets.length; i++) {
+        if (brackets[i] === '(') {
+            balance++;
+        } else if (brackets[i] === ')') {
+            balance--;
+        }
+        if (balance < 0) {
+            return false;
+        }
+    }
+    return balance === 0;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = correct_bracketing;
+  assert.deepEqual(candidate(""()""),true);
+  assert.deepEqual(candidate(""(()())""),true);
+  assert.deepEqual(candidate(""()()(()())()""),true);
+  assert.deepEqual(candidate(""()()((()()())())(()()(()))""),true);
+  assert.deepEqual(candidate(""((()())))""),false);
+  assert.deepEqual(candidate("")(()""),false);
+  assert.deepEqual(candidate(""(""),false);
+  assert.deepEqual(candidate(""((((""),false);
+  assert.deepEqual(candidate("")""),false);
+  assert.deepEqual(candidate(""(()""),false);
+  assert.deepEqual(candidate(""()()(()())())(()""),false);
+  assert.deepEqual(candidate(""()()(()())()))()""),false);
+}
+
+test();"
+HumanEval_62,kor_Hang,js,"/ 이 다항식의 같은 형태의 파생값을 반환합니다. / xs[0] + xs[1] * x + xs[2] * x^2 + .... /xs는 다항식의 계수를 나타냅니다.// >>> derivative([3, 1, 2, 4, 5])
+// [1, 4, 12, 20]
+// >>> derivative([1, 2, 3])
+// [2, 6]
+function derivative(xs){
+","function derivative(xs) {
+    const result = [];
+    for (let i = 1; i < xs.length; i++) {
+        result.push(xs[i] * i);
+    }
+    return result;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = derivative;
+  assert.deepEqual(candidate([3, 1, 2, 4, 5]),[1, 4, 12, 20]);
+  assert.deepEqual(candidate([1, 2, 3]),[2, 6]);
+  assert.deepEqual(candidate([3, 2, 1]),[2, 2]);
+  assert.deepEqual(candidate([3, 2, 1, 0, 4]),[2, 2, 0, 16]);
+  assert.deepEqual(candidate([1]),[]);
+}
+
+test();"
+HumanEval_63,kor_Hang,js,"/ fibfib 수열의 n번째 요소를 효율적으로 계산하는 함수를 작성해 주세요. / fibfib (n) == fibfib (n-1) + fibfib (n-2) + fibfib (n-3)./ fib fib () == 1 / fib fib () == 0 / fib fib () == 0 /FibFib 수열은 다음과 같이 정의되는 피보나치 수열과 유사한 수열입니다: // >>> fibfib(1)
+// 0
+// >>> fibfib(5)
+// 4
+// >>> fibfib(8)
+// 24
+function fibfib(n){
+","function fibfib(n) {
+    if (n === 0 || n === 1) return 0;
+    if (n === 2) return 1;
+    
+    let a = 0, b = 0, c = 1, d;
+
+    for (let i = 3; i <= n; i++) {
+        d = a + b + c;
+        a = b;
+        b = c;
+        c = d;
+    }
+    
+    return c;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = fibfib;
+  assert.deepEqual(candidate(2),1);
+  assert.deepEqual(candidate(1),0);
+  assert.deepEqual(candidate(5),4);
+  assert.deepEqual(candidate(8),24);
+  assert.deepEqual(candidate(10),81);
+  assert.deepEqual(candidate(12),274);
+  assert.deepEqual(candidate(14),927);
+}
+
+test();"
+HumanEval_64,kor_Hang,js,"/ 예: / 음절, 하지만 주어진 단어의 끝에 있을 때만./ 이 경우의 모음은 'a', 'e', 'i', 'o', 'u'입니다. 여기, 'y'는 또한 a 입니다./ 입력으로 단어를 입력하고 문자열의 음절 수를 반환합니다. /vowels_count라는 함수를 쓰세요.// >>> vowels_count(""abcde"")
+// 2
+// >>> vowels_count(""ACEDY"")
+// 3
+function vowels_count(s){
+","function vowels_count(s) {
+    const vowels = 'aeiou';
+    let count = 0;
+    s = s.toLowerCase();
+    
+    for (let i = 0; i < s.length; i++) {
+        if (vowels.includes(s[i]) || (i === s.length - 1 && s[i] === 'y')) {
+            count++;
+        }
+    }
+
+    return count;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = vowels_count;
+  assert.deepEqual(candidate(""abcde""),2);
+  assert.deepEqual(candidate(""Alone""),3);
+  assert.deepEqual(candidate(""key""),2);
+  assert.deepEqual(candidate(""bye""),1);
+  assert.deepEqual(candidate(""keY""),2);
+  assert.deepEqual(candidate(""bYe""),1);
+  assert.deepEqual(candidate(""ACEDY""),3);
+}
+
+test();"
+HumanEval_65,kor_Hang,js,"/ shift > 숫자, 반환 숫자는 역전. / 그리고 결과를 문자열로 반환합니다. x의 숫자를 순환적으로 이동시켜, 숫자를 좌우로 이동시켜// >>> circular_shift(12, 1)
+// ""21""
+// >>> circular_shift(12, 2)
+// ""12""
+function circular_shift(x, shift){
+","function circular_shift(x, shift) {
+    let numStr = x.toString();
+    let length = numStr.length;
+
+    if (shift > length) {
+        return numStr.split('').reverse().join('');
+    } else {
+        let endPart = numStr.slice(-shift);
+        let startPart = numStr.slice(0, length - shift);
+        return endPart + startPart;
+    }
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = circular_shift;
+  assert.deepEqual(candidate(100, 2),""001"");
+  assert.deepEqual(candidate(12, 2),""12"");
+  assert.deepEqual(candidate(97, 8),""79"");
+  assert.deepEqual(candidate(12, 1),""21"");
+  assert.deepEqual(candidate(11, 101),""11"");
+}
+
+test();"
+HumanEval_66,kor_Hang,js,"/ 예: / ASCII 코드. / 입력으로 문자열을 받아 상위 문자들의 합만을 반환하는 함수를 작성합니다' / 임무 // >>> digitSum("""")
+// 0
+// >>> digitSum(""abAB"")
+// 131
+// >>> digitSum(""abcCd"")
+// 67
+// >>> digitSum(""helloE"")
+// 69
+// >>> digitSum(""woArBld"")
+// 131
+// >>> digitSum(""aAaaaXa"")
+// 153
+function digitSum(s){
+","function digitSum(s) {
+    let sum = 0;
+    for (let i = 0; i < s.length; i++) {
+        let char = s[i];
+        if (char >= 'A' && char <= 'Z') {
+            sum += char.charCodeAt(0);
+        }
+    }
+    return sum;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = digitSum;
+  assert.deepEqual(candidate(""""),0);
+  assert.deepEqual(candidate(""abAB""),131);
+  assert.deepEqual(candidate(""abcCd""),67);
+  assert.deepEqual(candidate(""helloE""),69);
+  assert.deepEqual(candidate(""woArBld""),131);
+  assert.deepEqual(candidate(""aAaaaXa""),153);
+  assert.deepEqual(candidate("" How are yOu?""),151);
+  assert.deepEqual(candidate(""You arE Very Smart""),327);
+}
+
+test();"
+HumanEval_67,kor_Hang,js,"/ examble를 위해: / 바구니에 바구니에 있는 망고 열매의 숫자를 반환합니다. / 오렌지와 사과와 과일의 총수를 나타내는 정수 / 사과, 오렌지, 그리고 망고 과일. 전체 숫자를 나타내는 문자열을 / 과일을 담은 바구니에 배포됩니다 이 바구니에는 이 작업에서, 여러분은 사과와 오렌지를 나타내는 문자열을 받게 됩니다.// >>> fruit_distribution(""5 apples and 6 oranges"", 19)
+// 8
+// >>> fruit_distribution(""0 apples and 1 oranges"", 3)
+// 2
+// >>> fruit_distribution(""2 apples and 3 oranges"", 100)
+// 95
+// >>> fruit_distribution(""100 apples and 1 oranges"", 120)
+// 19
+function fruit_distribution(s, n){
+","function fruit_distribution(s, n) {
+    let apples = 0;
+    let oranges = 0;
+    
+    // Regular expressions to extract the number of apples and oranges from the string
+    const applesMatch = s.match(/(\d+)\s*apples/);
+    const orangesMatch = s.match(/(\d+)\s*oranges/);
+    
+    // If a match is found, parse the number
+    if (applesMatch) {
+        apples = parseInt(applesMatch[1], 10);
+    }
+    if (orangesMatch) {
+        oranges = parseInt(orangesMatch[1], 10);
+    }
+    
+    // Calculate the number of mangoes
+    const mangoes = n - (apples + oranges);
+    return mangoes;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = fruit_distribution;
+  assert.deepEqual(candidate(""5 apples and 6 oranges"", 19),8);
+  assert.deepEqual(candidate(""5 apples and 6 oranges"", 21),10);
+  assert.deepEqual(candidate(""0 apples and 1 oranges"", 3),2);
+  assert.deepEqual(candidate(""1 apples and 0 oranges"", 3),2);
+  assert.deepEqual(candidate(""2 apples and 3 oranges"", 100),95);
+  assert.deepEqual(candidate(""2 apples and 3 oranges"", 5),0);
+  assert.deepEqual(candidate(""1 apples and 100 oranges"", 120),19);
+}
+
+test();"
+HumanEval_68,kor_Hang,js,"/ 예제 1: / 짝값이 없거나 주어진 배열이 비어 있다면, return []를 반환합니다./ 뽑힌 노드는 배열에서 반환되어야 합니다, [ smalest_value, its index ], / 같은 가장 작은 짝값을 가진 여러 개의 노드가 발견되면 가장 작은 인덱스를 가진 노드를 반환합니다. / 뽑은 노드는 가장 작은 짝값을 가진 노드여야 합니다. / 당신의 임무는 노드 중 하나를 뜯어내고 그것을 반환하는 것입니다. /""무효적인 정수 노드를 가진 나무의 지점을 나타내는 배열을 주어 // >>> pluck([4, 2, 3])
+// [2, 1]
+// Explanation: 2 has the smallest even value, and 2 has the smallest index.
+// Example 2:
+// >>> pluck([1, 2, 3])
+// [2, 1]
+// Explanation: 2 has the smallest even value, and 2 has the smallest index.
+// Example 3:
+// >>> pluck([])
+// []
+// Example 4:
+// >>> pluck([5, 0, 3, 0, 4, 2])
+// [0, 1]
+// Explanation: 0 is the smallest value, but  there are two zeros,
+// so we will choose the first zero, which has the smallest index.
+// Constraints:
+// * 1 <= nodes.length <= 10000
+// * 0 <= node.value
+function pluck(arr){
+","function pluck(arr) {
+    let smallestEvenValue = Infinity;
+    let smallestEvenIndex = -1;
+
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i] % 2 === 0) {
+            if (arr[i] < smallestEvenValue) {
+                smallestEvenValue = arr[i];
+                smallestEvenIndex = i;
+            }
+        }
+    }
+
+    return smallestEvenIndex === -1 ? [] : [smallestEvenValue, smallestEvenIndex];
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = pluck;
+  assert.deepEqual(candidate([4, 2, 3]),[2, 1]);
+  assert.deepEqual(candidate([1, 2, 3]),[2, 1]);
+  assert.deepEqual(candidate([]),[]);
+  assert.deepEqual(candidate([5, 0, 3, 0, 4, 2]),[0, 1]);
+  assert.deepEqual(candidate([1, 2, 3, 0, 5, 3]),[0, 3]);
+  assert.deepEqual(candidate([5, 4, 8, 4, 8]),[4, 1]);
+  assert.deepEqual(candidate([7, 6, 7, 1]),[6, 1]);
+  assert.deepEqual(candidate([7, 9, 7, 1]),[]);
+}
+
+test();"
+HumanEval_69,kor_Hang,js,"/ 예: / 만약 그런 값이 존재하지 않는다면 -1을 반환합니다./ 정수의 빈도는 배열에 나타나는 횟수입니다./ 0이고, 그 값이 정수 자체보다 크거나 같다는 주파수를 가지고 있습니다./ 비공백이 아닌 양수 정수 배열을 주어 보다 큰 최대 정수를 반환합니다.// >>> search([4, 1, 2, 2, 3, 1])
+// 2
+// >>> search([1, 2, 2, 3, 3, 3, 4, 4, 4])
+// 3
+// >>> search([5, 5, 4, 4, 4])
+// -1
+function search(lst){
+","function search(lst) {
+    const frequencyMap = new Map();
+
+    lst.forEach(num => {
+        frequencyMap.set(num, (frequencyMap.get(num) || 0) + 1);
+    });
+
+    let result = -1;
+
+    frequencyMap.forEach((count, num) => {
+        if (count >= num && num > 0 && num > result) {
+            result = num;
+        }
+    });
+
+    return result;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = search;
+  assert.deepEqual(candidate([5, 5, 5, 5, 1]),1);
+  assert.deepEqual(candidate([4, 1, 4, 1, 4, 4]),4);
+  assert.deepEqual(candidate([3, 3]),-1);
+  assert.deepEqual(candidate([8, 8, 8, 8, 8, 8, 8, 8]),8);
+  assert.deepEqual(candidate([2, 3, 3, 2, 2]),2);
+  assert.deepEqual(candidate([2, 7, 8, 8, 4, 8, 7, 3, 9, 6, 5, 10, 4, 3, 6, 7, 1, 7, 4, 10, 8, 1]),1);
+  assert.deepEqual(candidate([3, 2, 8, 2]),2);
+  assert.deepEqual(candidate([6, 7, 1, 8, 8, 10, 5, 8, 5, 3, 10]),1);
+  assert.deepEqual(candidate([8, 8, 3, 6, 5, 6, 4]),-1);
+  assert.deepEqual(candidate([6, 9, 6, 7, 1, 4, 7, 1, 8, 8, 9, 8, 10, 10, 8, 4, 10, 4, 10, 1, 2, 9, 5, 7, 9]),1);
+  assert.deepEqual(candidate([1, 9, 10, 1, 3]),1);
+  assert.deepEqual(candidate([6, 9, 7, 5, 8, 7, 5, 3, 7, 5, 10, 10, 3, 6, 10, 2, 8, 6, 5, 4, 9, 5, 3, 10]),5);
+  assert.deepEqual(candidate([1]),1);
+  assert.deepEqual(candidate([8, 8, 10, 6, 4, 3, 5, 8, 2, 4, 2, 8, 4, 6, 10, 4, 2, 1, 10, 2, 1, 1, 5]),4);
+  assert.deepEqual(candidate([2, 10, 4, 8, 2, 10, 5, 1, 2, 9, 5, 5, 6, 3, 8, 6, 4, 10]),2);
+  assert.deepEqual(candidate([1, 6, 10, 1, 6, 9, 10, 8, 6, 8, 7, 3]),1);
+  assert.deepEqual(candidate([9, 2, 4, 1, 5, 1, 5, 2, 5, 7, 7, 7, 3, 10, 1, 5, 4, 2, 8, 4, 1, 9, 10, 7, 10, 2, 8, 10, 9, 4]),4);
+  assert.deepEqual(candidate([2, 6, 4, 2, 8, 7, 5, 6, 4, 10, 4, 6, 3, 7, 8, 8, 3, 1, 4, 2, 2, 10, 7]),4);
+  assert.deepEqual(candidate([9, 8, 6, 10, 2, 6, 10, 2, 7, 8, 10, 3, 8, 2, 6, 2, 3, 1]),2);
+  assert.deepEqual(candidate([5, 5, 3, 9, 5, 6, 3, 2, 8, 5, 6, 10, 10, 6, 8, 4, 10, 7, 7, 10, 8]),-1);
+  assert.deepEqual(candidate([10]),-1);
+  assert.deepEqual(candidate([9, 7, 7, 2, 4, 7, 2, 10, 9, 7, 5, 7, 2]),2);
+  assert.deepEqual(candidate([5, 4, 10, 2, 1, 1, 10, 3, 6, 1, 8]),1);
+  assert.deepEqual(candidate([7, 9, 9, 9, 3, 4, 1, 5, 9, 1, 2, 1, 1, 10, 7, 5, 6, 7, 6, 7, 7, 6]),1);
+  assert.deepEqual(candidate([3, 10, 10, 9, 2]),-1);
+}
+
+test();"
+HumanEval_70,kor_Hang,js,"/ 예: / 나머지 정수의 최대, 최소 등등/ 이상한 정렬, 당신이 최소 값으로 시작하면, /주기된 정수의 배열, 이상한 순서로 배열을 반환합니다. // >>> strange_sort_list([1, 2, 3, 4])
+// [1, 4, 2, 3]
+// >>> strange_sort_list([5, 5, 5, 5])
+// [5, 5, 5, 5]
+// >>> strange_sort_list([])
+// []
+function strange_sort_list(lst){
+","function strange_sort_list(lst) {
+    let result = [];
+    lst.sort((a, b) => a - b); // Sort the array in ascending order
+
+    while (lst.length) {
+        result.push(lst.shift()); // Add the minimum element
+        if (lst.length) {
+            result.push(lst.pop()); // Add the maximum element
+        }
+    }
+
+    return result;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = strange_sort_list;
+  assert.deepEqual(candidate([1, 2, 3, 4]),[1, 4, 2, 3]);
+  assert.deepEqual(candidate([5, 6, 7, 8, 9]),[5, 9, 6, 8, 7]);
+  assert.deepEqual(candidate([1, 2, 3, 4, 5]),[1, 5, 2, 4, 3]);
+  assert.deepEqual(candidate([5, 6, 7, 8, 9, 1]),[1, 9, 5, 8, 6, 7]);
+  assert.deepEqual(candidate([5, 5, 5, 5]),[5, 5, 5, 5]);
+  assert.deepEqual(candidate([]),[]);
+  assert.deepEqual(candidate([1, 2, 3, 4, 5, 6, 7, 8]),[1, 8, 2, 7, 3, 6, 4, 5]);
+  assert.deepEqual(candidate([0, 2, 2, 2, 5, 5, -5, -5]),[-5, 5, -5, 5, 0, 2, 2, 2]);
+  assert.deepEqual(candidate([111111]),[111111]);
+}
+
+test();"
+HumanEval_71,kor_Hang,js,"/ 예: / 세 번째 측면보다. / 세 변이 유효한 삼각형은 어떤 두 변의 합이 더 크면 됩니다./ 그렇지 않으면 -1 로 돌려보내/ 삼각형의 세 변이 유효한 삼각형이라면 삼각형은 소수점 2점으로 둥글게 됩니다. 삼각형의 세 변의 길이를 구하면// >>> triangle_area(3, 4, 5)
+// 6.0
+// >>> triangle_area(1, 2, 10)
+// -1
+function triangle_area(a, b, c){
+","function triangle_area(a, b, c) {
+    // Check if the sides form a valid triangle
+    if (a + b > c && a + c > b && b + c > a) {
+        // Use Heron's formula to calculate the area
+        const s = (a + b + c) / 2;
+        const area = Math.sqrt(s * (s - a) * (s - b) * (s - c));
+        // Return the area rounded to 2 decimal places
+        return Math.round(area * 100) / 100;
+    } else {
+        // Return -1 for an invalid triangle
+        return -1;
+    }
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = triangle_area;
+  assert.deepEqual(candidate(3, 4, 5),6.0);
+  assert.deepEqual(candidate(1, 2, 10),-1);
+  assert.deepEqual(candidate(4, 8, 5),8.18);
+  assert.deepEqual(candidate(2, 2, 2),1.73);
+  assert.deepEqual(candidate(1, 2, 3),-1);
+  assert.deepEqual(candidate(10, 5, 7),16.25);
+  assert.deepEqual(candidate(2, 6, 3),-1);
+  assert.deepEqual(candidate(1, 1, 1),0.43);
+  assert.deepEqual(candidate(2, 2, 10),-1);
+}
+
+test();"
+HumanEval_72,kor_Hang,js,"/ 예: / 물체 q는 균형이 잡혀 있고, 그 요소들의 합이 최대 가능한 무게 w보다 작거나 같다면 날아갈 것입니다./ q 객체가 날아가면 true, 그렇지 않으면 false를 반환하는 함수를 작성합니다. // >>> will_it_fly([1, 2], 5)
+// false
+// # 1+2 is less than the maximum possible weight, but it's unbalanced.
+// >>> will_it_fly([3, 2, 3], 1)
+// false
+// # it's balanced, but 3+2+3 is more than the maximum possible weight.
+// >>> will_it_fly([3, 2, 3], 9)
+// true
+// # 3+2+3 is less than the maximum possible weight, and it's balanced.
+// >>> will_it_fly([3], 5)
+// true
+// # 3 is less than the maximum possible weight, and it's balanced.
+function will_it_fly(q, w){
+","function will_it_fly(q, w) {
+    // Check if q is a palindromic array
+    function isPalindromic(arr) {
+        for (let i = 0; i < Math.floor(arr.length / 2); i++) {
+            if (arr[i] !== arr[arr.length - 1 - i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Calculate the sum of the array
+    function sumArray(arr) {
+        return arr.reduce((acc, val) => acc + val, 0);
+    }
+
+    // Check if the array is balanced and the sum is within the limit
+    return isPalindromic(q) && sumArray(q) <= w;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = will_it_fly;
+  assert.deepEqual(candidate([3, 2, 3], 9),true);
+  assert.deepEqual(candidate([1, 2], 5),false);
+  assert.deepEqual(candidate([3], 5),true);
+  assert.deepEqual(candidate([3, 2, 3], 1),false);
+  assert.deepEqual(candidate([1, 2, 3], 6),false);
+  assert.deepEqual(candidate([5], 5),true);
+}
+
+test();"
+HumanEval_73,kor_Hang,js,"/ 예를 들어: /는 앞뒤로 똑같이 읽히고 한 번 변경하면 한 요소를 다른 요소로 변경할 수 있습니다./를 변경해야 배열이 팔린드로믹하게 됩니다. 팔린드로믹 배열은 /주수의 배열 arr을 주어, // >>> smallest_change([1, 2, 3, 5, 4, 7, 9, 6])
+// 4
+// >>> smallest_change([1, 2, 3, 4, 3, 2, 2])
+// 1
+// >>> smallest_change([1, 2, 3, 2, 1])
+// 0
+function smallest_change(arr){
+","function smallest_change(arr) {
+    let changes = 0;
+    let left = 0;
+    let right = arr.length - 1;
+
+    while (left < right) {
+        if (arr[left] !== arr[right]) {
+            changes++;
+        }
+        left++;
+        right--;
+    }
+
+    return changes;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = smallest_change;
+  assert.deepEqual(candidate([1, 2, 3, 5, 4, 7, 9, 6]),4);
+  assert.deepEqual(candidate([1, 2, 3, 4, 3, 2, 2]),1);
+  assert.deepEqual(candidate([1, 4, 2]),1);
+  assert.deepEqual(candidate([1, 4, 4, 2]),1);
+  assert.deepEqual(candidate([1, 2, 3, 2, 1]),0);
+  assert.deepEqual(candidate([3, 1, 1, 3]),0);
+  assert.deepEqual(candidate([1]),0);
+  assert.deepEqual(candidate([0, 1]),1);
+}
+
+test();"
+HumanEval_74,kor_Hang,js,"/ 예제 / 두 배열이 동일한 숫자의 문자라면 첫 배열을 반환합니다. / 배열의 모든 문자열의 전체 문자열 수가 다른 배열보다 적습니다. / 두 개의 문자열을 받아서 를 가진 배열을 반환하는 함수를 작성합니다.// >>> total_match([], [])
+// []
+// >>> total_match([""hi"", ""admin""], [""hI"", ""Hi""])
+// [""hI"", ""Hi""]
+// >>> total_match([""hi"", ""admin""], [""hi"", ""hi"", ""admin"", ""project""])
+// [""hi"", ""admin""]
+// >>> total_match([""hi"", ""admin""], [""hI"", ""hi"", ""hi""])
+// [""hI"", ""hi"", ""hi""]
+// >>> total_match([""4""], [""1"", ""2"", ""3"", ""4"", ""5""])
+// [""4""]
+function total_match(lst1, lst2){
+","function total_match(lst1, lst2) {
+    // Helper function to calculate total characters in an array of strings
+    const totalChars = (arr) => arr.reduce((sum, str) => sum + str.length, 0);
+
+    const total1 = totalChars(lst1);
+    const total2 = totalChars(lst2);
+
+    if (total1 < total2) {
+        return lst1;
+    } else {
+        return lst2;
+    }
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = total_match;
+  assert.deepEqual(candidate([], []),[]);
+  assert.deepEqual(candidate([""hi"", ""admin""], [""hi"", ""hi""]),[""hi"", ""hi""]);
+  assert.deepEqual(candidate([""hi"", ""admin""], [""hi"", ""hi"", ""admin"", ""project""]),[""hi"", ""admin""]);
+  assert.deepEqual(candidate([""4""], [""1"", ""2"", ""3"", ""4"", ""5""]),[""4""]);
+  assert.deepEqual(candidate([""hi"", ""admin""], [""hI"", ""Hi""]),[""hI"", ""Hi""]);
+  assert.deepEqual(candidate([""hi"", ""admin""], [""hI"", ""hi"", ""hi""]),[""hI"", ""hi"", ""hi""]);
+  assert.deepEqual(candidate([""hi"", ""admin""], [""hI"", ""hi"", ""hii""]),[""hi"", ""admin""]);
+  assert.deepEqual(candidate([], [""this""]),[]);
+  assert.deepEqual(candidate([""this""], []),[]);
+}
+
+test();"
+HumanEval_75,kor_Hang,js,"/ 예: 100보다 작다는 것을 알고 있습니다./ 거짓이라고 생각하면. / 주어진 숫자가 3개의 소수 곱하기라면 true를 반환하는 함수를 쓰세요.// >>> is_multiply_prime(30)
+// true
+// 30 = 2 * 3 * 5
+function is_multiply_prime(a){
+","function is_prime(n) {
+    if (n <= 1) return false;
+    if (n <= 3) return true;
+    if (n % 2 === 0 || n % 3 === 0) return false;
+    for (let i = 5; i * i <= n; i += 6) {
+        if (n % i === 0 || n % (i + 2) === 0) return false;
+    }
+    return true;
+}
+
+function generate_primes(upper_limit) {
+    const primes = [];
+    for (let num = 2; num < upper_limit; num++) {
+        if (is_prime(num)) {
+            primes.push(num);
+        }
+    }
+    return primes;
+}
+
+function is_multiply_prime(a) {
+    if (a < 2) return false;
+    const primes = generate_primes(100);
+    const primesLength = primes.length;
+
+    for (let i = 0; i < primesLength; i++) {
+        for (let j = i; j < primesLength; j++) {
+            for (let k = j; k < primesLength; k++) {
+                if (primes[i] * primes[j] * primes[k] === a) {
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = is_multiply_prime;
+  assert.deepEqual(candidate(5),false);
+  assert.deepEqual(candidate(30),true);
+  assert.deepEqual(candidate(8),true);
+  assert.deepEqual(candidate(10),false);
+  assert.deepEqual(candidate(125),true);
+  assert.deepEqual(candidate(105),true);
+  assert.deepEqual(candidate(126),false);
+  assert.deepEqual(candidate(729),false);
+  assert.deepEqual(candidate(891),false);
+  assert.deepEqual(candidate(1001),true);
+}
+
+test();"
+HumanEval_76,kor_Hang,js,"/ 예를 들어: /x는 n의 단순 제곱이 됩니다. 만약 n**int=x 라면/ n의 제곱이고 다른 경우에는 false입니다./당신의 임무는 x가 단순이라면 true를 반환하는 함수를 작성하는 것입니다.// >>> is_simple_power(1, 4)
+// true
+// >>> is_simple_power(2, 2)
+// true
+// >>> is_simple_power(8, 2)
+// true
+// >>> is_simple_power(3, 2)
+// false
+// >>> is_simple_power(3, 1)
+// false
+// >>> is_simple_power(5, 3)
+// false
+function is_simple_power(x, n){
+","function is_simple_power(x, n) {
+    if (x === 1) return true;  // Any number to the power of zero is 1
+    if (n <= 1) return false;  // n must be greater than 1 to have simple powers other than itself
+
+    let power = n;
+    while (power < x) {
+        power *= n;
+    }
+
+    return power === x;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = is_simple_power;
+  assert.deepEqual(candidate(16, 2),true);
+  assert.deepEqual(candidate(143214, 16),false);
+  assert.deepEqual(candidate(4, 2),true);
+  assert.deepEqual(candidate(9, 3),true);
+  assert.deepEqual(candidate(16, 4),true);
+  assert.deepEqual(candidate(24, 2),false);
+  assert.deepEqual(candidate(128, 4),false);
+  assert.deepEqual(candidate(12, 6),false);
+  assert.deepEqual(candidate(1, 1),true);
+  assert.deepEqual(candidate(1, 12),true);
+}
+
+test();"
+HumanEval_77,kor_Hang,js,"/ 예: / 참고: 입력값이 항상 유효하다고 가정할 수 있습니다. / 만약 이 ingeger가 어떤 정수 큐브라면. /a를 전수로 가져다가 true를 반환하는 함수를 쓰세요.// >>> iscube(1)
+// true
+// >>> iscube(2)
+// false
+// >>> iscube(-1)
+// true
+// >>> iscube(64)
+// true
+// >>> iscube(0)
+// true
+// >>> iscube(180)
+// false
+function iscube(a){
+","function iscube(a) {
+    if (a < 0) a = -a;
+    let cubeRoot = Math.round(Math.pow(a, 1/3));
+    return cubeRoot * cubeRoot * cubeRoot === a;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = iscube;
+  assert.deepEqual(candidate(1),true);
+  assert.deepEqual(candidate(2),false);
+  assert.deepEqual(candidate(-1),true);
+  assert.deepEqual(candidate(64),true);
+  assert.deepEqual(candidate(180),false);
+  assert.deepEqual(candidate(1000),true);
+  assert.deepEqual(candidate(0),true);
+  assert.deepEqual(candidate(1729),false);
+}
+
+test();"
+HumanEval_78,kor_Hang,js,"/ 예: / 그리고 기호 A,B,C,D,E,F는 항상 대문자로 되어있습니다. / 참고: 입력값이 항상 정확하거나 빈 문자열이라고 가정할 수 있습니다./ B (= 십진수 11), D (= 십진수 13). / 그래서 다음 숫자의 숫자를 정해야 합니다: 2, 3, 5, 7, / 소수는 2, 3, 5, 7, 11, 13, 17.../  십진 기호는 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F./ 1보다 크지만 두 개의 더 작은 자연수의 곱이 아닌 경우)/ 소수인 숫자를  수 (prime number, 또는 prime는 자연수입니다./  십진수 숫자를 문자열로 만들고  십진수의 숫자를 계산합니다/ 당신은 수신하는 함수를 작성하는 임무를 받았습니다.// >>> hex_key(""AB"")
+// 1
+// >>> hex_key(""1077E"")
+// 2
+// >>> hex_key(""ABED1A33"")
+// 4
+// >>> hex_key(""123456789ABCDEF0"")
+// 6
+// >>> hex_key(""2020"")
+// 2
+function hex_key(num){
+","function hex_key(num) {
+    // Define a set of hexadecimal digits that are prime numbers
+    const primeHexDigits = new Set(['2', '3', '5', '7', 'B', 'D']);
+    
+    // Initialize a count variable to track the number of prime digits
+    let count = 0;
+    
+    // Iterate over each character in the input string
+    for (let char of num) {
+        // Check if the character is in the set of prime hexadecimal digits
+        if (primeHexDigits.has(char)) {
+            // Increment the count if the character is a prime digit
+            count++;
+        }
+    }
+    
+    // Return the total count of prime hexadecimal digits
+    return count;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = hex_key;
+  assert.deepEqual(candidate(""AB""),1);
+  assert.deepEqual(candidate(""1077E""),2);
+  assert.deepEqual(candidate(""ABED1A33""),4);
+  assert.deepEqual(candidate(""2020""),2);
+  assert.deepEqual(candidate(""123456789ABCDEF0""),6);
+  assert.deepEqual(candidate(""112233445566778899AABBCCDDEEFF00""),12);
+}
+
+test();"
+HumanEval_79,kor_Hang,js,"/ 예: / 추가 문자는 형식을 돕기 위해 있습니다. / 문자열의 시작과 끝에 추가 문자 'db'가 있을 것입니다. / number. 문자열의 각 문자는 '0' 또는 '1'이 됩니다./ 이진 형식. 함수는 각 문자가 이진 을 나타내는 문자열을 반환해야 합니다./당신은 십진수 형태로 번호를 제공 될 것입니다 그리고 당신의 임무는 로 변환하는 것입니다// >>> decimal_to_binary(15)
+// ""db1111db""
+// >>> decimal_to_binary(32)
+// ""db100000db""
+function decimal_to_binary(decimal){
+","function decimal_to_binary(decimal) {
+    // Convert the decimal number to a binary string
+    let binaryString = decimal.toString(2);
+    // Add 'db' at the beginning and end of the binary string
+    return 'db' + binaryString + 'db';
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = decimal_to_binary;
+  assert.deepEqual(candidate(0),""db0db"");
+  assert.deepEqual(candidate(32),""db100000db"");
+  assert.deepEqual(candidate(103),""db1100111db"");
+  assert.deepEqual(candidate(15),""db1111db"");
+}
+
+test();"
+HumanEval_80,kor_Hang,js,"/ 예를 들어: / 문자열의 길이가 최소 3개이고 3개의 연속 문자마다 다른 경우 / 당신의 임무는 문자열이 hapjs인지 아닌지를 확인하는 것입니다. / 당신은 문자열 s를 부여. // >>> is_happy(""a"")
+// false
+// >>> is_happy(""aa"")
+// false
+// >>> is_happy(""abcd"")
+// true
+// >>> is_happy(""aabb"")
+// false
+// >>> is_happy(""adb"")
+// true
+// >>> is_happy(""xyy"")
+// false
+function is_happy(s){
+","function is_happy(s) {
+    if (s.length < 3) return false;
+    for (let i = 0; i < s.length - 2; i++) {
+        if (s[i] === s[i + 1] || s[i] === s[i + 2] || s[i + 1] === s[i + 2]) {
+            return false;
+        }
+    }
+    return true;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = is_happy;
+  assert.deepEqual(candidate(""a""),false);
+  assert.deepEqual(candidate(""aa""),false);
+  assert.deepEqual(candidate(""abcd""),true);
+  assert.deepEqual(candidate(""aabb""),false);
+  assert.deepEqual(candidate(""adb""),true);
+  assert.deepEqual(candidate(""xyy""),false);
+  assert.deepEqual(candidate(""iopaxpoi""),true);
+  assert.deepEqual(candidate(""iopaxioi""),false);
+}
+
+test();"
+HumanEval_81,kor_Hang,js,"/ 예: / 0.0 E / > 0.0 D- / > 0.7 D / > 1.0 D+ / > 1.3 C- / > 1.7 C / > 2.0 C+ / > 2.3 B- / > 2.7 B / > 3.0 B+ / > 3.3 A- / > 3.7 A / 4.0 A+ GPA, 글자 등급/ 다음 표를 사용하여 문자 등급의 배열을 출력할 수 있는 함수입니다: / 그녀는 당신에게 GPA의 배열을 몇 학생을 위해 제공 하 고 당신은 쓰기 위해있다./ 유일한 문제는, 그녀는 그녀가 등급을 위해 사용 된 코드를 잃었다는 것입니다. / 학생에게. 교사는 자신의 알고리즘을 만들어 평가를 하고 있습니다.학기 마지막 주입니다. 선생님께서 점수를 주셔야 합니다.// >>> grade_equation([4.0, 3, 1.7, 2, 3.5])
+// [""A+"", ""B"", ""C-"", ""C"", ""A-""]
+function numerical_letter_grade(grades){
+","function numerical_letter_grade(grades){
+    return grades.map(gpa => {
+        if (gpa === 4.0) return ""A+"";
+        else if (gpa > 3.7) return ""A"";
+        else if (gpa > 3.3) return ""A-"";
+        else if (gpa > 3.0) return ""B+"";
+        else if (gpa > 2.7) return ""B"";
+        else if (gpa > 2.3) return ""B-"";
+        else if (gpa > 2.0) return ""C+"";
+        else if (gpa > 1.7) return ""C"";
+        else if (gpa > 1.3) return ""C-"";
+        else if (gpa > 1.0) return ""D+"";
+        else if (gpa > 0.7) return ""D"";
+        else if (gpa > 0.0) return ""D-"";
+        else return ""E"";
+    });
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = numerical_letter_grade;
+  assert.deepEqual(candidate([4.0, 3, 1.7, 2, 3.5]),[""A+"", ""B"", ""C-"", ""C"", ""A-""]);
+  assert.deepEqual(candidate([1.2]),[""D+""]);
+  assert.deepEqual(candidate([0.5]),[""D-""]);
+  assert.deepEqual(candidate([0.0]),[""E""]);
+  assert.deepEqual(candidate([1.0, 0.3, 1.5, 2.8, 3.3]),[""D"", ""D-"", ""C-"", ""B"", ""B+""]);
+  assert.deepEqual(candidate([0.0, 0.7]),[""E"", ""D-""]);
+}
+
+test();"
+HumanEval_82,kor_Hang,js,"/ 예제 / length가 소수인지 아니면 false인지/ 문자열을 가져다가 string 라면 true를 반환하는 함수를 작성합니다.// >>> prime_length(""Hello"")
+// true
+// >>> prime_length(""abcdcba"")
+// true
+// >>> prime_length(""kittens"")
+// true
+// >>> prime_length(""orange"")
+// false
+function prime_length(string){
+","function prime_length(string) {
+    function isPrime(num) {
+        if (num <= 1) return false;
+        if (num <= 3) return true;
+        if (num % 2 === 0 || num % 3 === 0) return false;
+        for (let i = 5; i * i <= num; i += 6) {
+            if (num % i === 0 || num % (i + 2) === 0) return false;
+        }
+        return true;
+    }
+    
+    return isPrime(string.length);
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = prime_length;
+  assert.deepEqual(candidate(""Hello""),true);
+  assert.deepEqual(candidate(""abcdcba""),true);
+  assert.deepEqual(candidate(""kittens""),true);
+  assert.deepEqual(candidate(""orange""),false);
+  assert.deepEqual(candidate(""wow""),true);
+  assert.deepEqual(candidate(""world""),true);
+  assert.deepEqual(candidate(""MadaM""),true);
+  assert.deepEqual(candidate(""Wow""),true);
+  assert.deepEqual(candidate(""""),false);
+  assert.deepEqual(candidate(""HI""),true);
+  assert.deepEqual(candidate(""go""),true);
+  assert.deepEqual(candidate(""gogo""),false);
+  assert.deepEqual(candidate(""aaaaaaaaaaaaaaa""),false);
+  assert.deepEqual(candidate(""Madam""),true);
+  assert.deepEqual(candidate(""M""),false);
+  assert.deepEqual(candidate(""0""),false);
+}
+
+test();"
+HumanEval_83,kor_Hang,js,"/ 1으로 시작하거나 끝나는 양수 정수입니다. /긍정적인 정수 n을 주어, n자리의 숫자의 수를 반환합니다.function starts_one_ends(n){
+","function starts_one_ends(n) {
+    if (n === 1) return 1; // For n = 1, only number is 1 itself
+
+    // Calculate the number of n-digit numbers that either start or end with 1
+    // Total n-digit numbers: 9 * 10^(n-1) (ranging from 10^(n-1) to 10^n - 1)
+
+    let totalCount = 9 * Math.pow(10, n - 1);
+
+    // Numbers that both start and end with 1: 10^(n-2) (e.g., 101, 111, 121, ..., 191 if n=3)
+    let bothStartAndEndWithOne = Math.pow(10, n - 2);
+
+    // Numbers that start with 1: 10^(n-1)
+    let startWithOne = Math.pow(10, n - 1);
+
+    // Numbers that end with 1: 9 * 10^(n-1) / 10 = 10^(n-1) (because we're counting 1 - 1, 11, 21, ..., 91)
+    let endWithOne = Math.pow(10, n - 1);
+
+    // Use inclusion-exclusion principle: number starts with 1 + numbers end with 1 - numbers that both start and end with 1
+    return startWithOne + endWithOne - bothStartAndEndWithOne;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = starts_one_ends;
+  assert.deepEqual(candidate(1),1);
+  assert.deepEqual(candidate(2),18);
+  assert.deepEqual(candidate(3),180);
+  assert.deepEqual(candidate(4),1800);
+  assert.deepEqual(candidate(5),18000);
+}
+
+test();"
+HumanEval_84,kor_Hang,js,"/ 예제 /긍정적인 정수 N을 주어, 이진수에서 그 숫자의 총합을 반환합니다. // >>> solve(1000)
+// ""1""
+// >>> solve(150)
+// ""110""
+// >>> solve(147)
+// ""1100""
+// Variables:
+// @N integer
+// Constraints: 0 ≤ N ≤ 10000.
+// Output:
+// a string of binary number
+function solve(N){
+","function solve(N) {
+    // Convert the number to a string and split into individual characters (digits)
+    let digits = N.toString().split('');
+    // Calculate the sum of all digits
+    let sum = digits.reduce((acc, digit) => acc + Number(digit), 0);
+    // Convert the sum to a binary string and return
+    return sum.toString(2);
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = solve;
+  assert.deepEqual(candidate(1000),""1"");
+  assert.deepEqual(candidate(150),""110"");
+  assert.deepEqual(candidate(147),""1100"");
+  assert.deepEqual(candidate(333),""1001"");
+  assert.deepEqual(candidate(963),""10010"");
+}
+
+test();"
+HumanEval_85,kor_Hang,js,"/ 예: / 비공백된 정수 배열을 주어 lst. 짝수 요소를 더합니다.// >>> add([4, 2, 6, 7])
+// 2
+function add(lst){
+","function add(lst) {
+    let sum = 0;
+    for (let i = 1; i < lst.length; i += 2) {
+        if (lst[i] % 2 === 0) {
+            sum += lst[i];
+        }
+    }
+    return sum;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = add;
+  assert.deepEqual(candidate([4, 88]),88);
+  assert.deepEqual(candidate([4, 5, 6, 7, 2, 122]),122);
+  assert.deepEqual(candidate([4, 0, 6, 7]),0);
+  assert.deepEqual(candidate([4, 4, 6, 8]),12);
+}
+
+test();"
+HumanEval_86,kor_Hang,js,"/ 예를 들어: / 참고: 문장 내의 단어 순서와 빈 공간을 유지해야 합니다. / ASCII 값에 따라 상승 순서로./ 는 새로운 단어로 대체되며, 모든 문자는 로 배열됩니다./ 문자열의 순서 버전, 모든 단어 (공간으로 분리) 가 있는 문자열입니다./ 문자열을 가져다가 순서대로 복귀하는 함수를 작성합니다.// >>> anti_shuffle(""Hi"")
+// ""Hi""
+// >>> anti_shuffle(""hello"")
+// ""ehllo""
+// >>> anti_shuffle(""Hello World!!!"")
+// ""Hello !!!Wdlor""
+function anti_shuffle(s){
+","function anti_shuffle(s) {
+    return s.split(' ').map(word => {
+        return word.split('').sort().join('');
+    }).join(' ');
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = anti_shuffle;
+  assert.deepEqual(candidate(""Hi""),""Hi"");
+  assert.deepEqual(candidate(""hello""),""ehllo"");
+  assert.deepEqual(candidate(""number""),""bemnru"");
+  assert.deepEqual(candidate(""abcd""),""abcd"");
+  assert.deepEqual(candidate(""Hello World!!!""),""Hello !!!Wdlor"");
+  assert.deepEqual(candidate(""""),"""");
+  assert.deepEqual(candidate(""Hi. My name is Mister Robot. How are you?""),"".Hi My aemn is Meirst .Rboot How aer ?ouy"");
+}
+
+test();"
+HumanEval_87,kor_Hang,js,"/ 예: / 또한 줄의 좌표를 열에 따라 순서대로 정렬하세요./ 좌표들을 순서대로 순서대로 정렬해/ 각 배열은 좌표 - (줄, 열) 입니다. 0으로 시작됩니다. / 그리고 array의 array을 반환합니다, [(x1, y1), (x2, y2) ...] 이렇게 / lst, 그리고 정수 x를 주어, 배열에서 정수 x를 찾아, / 각 행에는 다른 수의 열이 있을 수 있습니다./ 매트릭스와 비슷하지만, 매트릭스와는 다릅니다,/ 당신은 2 차원 데이터를 주어집니다, 둥글게 배열, // >>> get_row([[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 1, 6], [1, 2, 3, 4, 5, 1]], 1)
+// [[0, 0], [1, 4], [1, 0], [2, 5], [2, 0]]
+// >>> get_row([], 1)
+// []
+// >>> get_row([[], [1], [1, 2, 3]], 3)
+// [[2, 2]]
+function get_row(lst, x){
+","function get_row(lst, x) {
+    const result = [];
+
+    for (let i = 0; i < lst.length; i++) {
+        for (let j = 0; j < lst[i].length; j++) {
+            if (lst[i][j] === x) {
+                result.push([i, j]);
+            }
+        }
+    }
+
+    result.sort((a, b) => {
+        if (a[0] === b[0]) {
+            return b[1] - a[1]; // Sort by columns in descending order for the same row
+        }
+        return a[0] - b[0]; // Sort by rows in ascending order
+    });
+
+    return result;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = get_row;
+  assert.deepEqual(candidate([[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 1, 6], [1, 2, 3, 4, 5, 1]], 1),[[0, 0], [1, 4], [1, 0], [2, 5], [2, 0]]);
+  assert.deepEqual(candidate([[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6]], 2),[[0, 1], [1, 1], [2, 1], [3, 1], [4, 1], [5, 1]]);
+  assert.deepEqual(candidate([[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 1, 3, 4, 5, 6], [1, 2, 1, 4, 5, 6], [1, 2, 3, 1, 5, 6], [1, 2, 3, 4, 1, 6], [1, 2, 3, 4, 5, 1]], 1),[[0, 0], [1, 0], [2, 1], [2, 0], [3, 2], [3, 0], [4, 3], [4, 0], [5, 4], [5, 0], [6, 5], [6, 0]]);
+  assert.deepEqual(candidate([], 1),[]);
+  assert.deepEqual(candidate([[1]], 2),[]);
+  assert.deepEqual(candidate([[], [1], [1, 2, 3]], 3),[[2, 2]]);
+}
+
+test();"
+HumanEval_88,kor_Hang,js,"/ 예: / * 주어진 배열을 변경하지 마십시오. / 참고: / 또는 수 (첫 번째 인덱스 값, 마지막 인덱스 값) 가 짝수라면 그 순서를 가분수로 정렬합니다./ 주어진 배열을 상승 순서로 정렬합니다. 만약  (첫 번째 인덱스 값, 마지막 인덱스 값) 이 홀수라면,/ 음이 아닌 정수의 배열을 주어 정렬 후 주어진 배열의 cojs를 반환합니다.// >>> sort_array([])
+// []
+// >>> sort_array([5])
+// [5]
+// >>> sort_array([2, 4, 3, 0, 1, 5])
+// [0, 1, 2, 3, 4, 5]
+// >>> sort_array([2, 4, 3, 0, 1, 5, 6])
+// [6, 5, 4, 3, 2, 1, 0]
+function sort_array(array){
+","function sort_array(array) {
+    if (array.length === 0) return [];
+
+    let firstValue = array[0];
+    let lastValue = array[array.length - 1];
+    let sum = firstValue + lastValue;
+    
+    let sortedArray = [...array]; // Clone the array to avoid modifying the original
+
+    if (sum % 2 === 0) {
+        // Even sum: sort in descending order
+        sortedArray.sort((a, b) => b - a);
+    } else {
+        // Odd sum: sort in ascending order
+        sortedArray.sort((a, b) => a - b);
+    }
+
+    return sortedArray;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = sort_array;
+  assert.deepEqual(candidate([]),[]);
+  assert.deepEqual(candidate([5]),[5]);
+  assert.deepEqual(candidate([2, 4, 3, 0, 1, 5]),[0, 1, 2, 3, 4, 5]);
+  assert.deepEqual(candidate([2, 4, 3, 0, 1, 5, 6]),[6, 5, 4, 3, 2, 1, 0]);
+  assert.deepEqual(candidate([2, 1]),[1, 2]);
+  assert.deepEqual(candidate([15, 42, 87, 32, 11, 0]),[0, 11, 15, 32, 42, 87]);
+  assert.deepEqual(candidate([21, 14, 23, 11]),[23, 21, 14, 11]);
+}
+
+test();"
+HumanEval_89,kor_Hang,js,"/ 예를 들어: / 2 곱하기 2 자리로 아래로 이동합니다. / 알파벳은 글자가 / 는 알파벳을 회전하는 방식으로 암호화된 문자열을 반환합니다. / 함수 암호를 생성하여 문자열을 인수로 사용하며 // >>> encrypt(""hi"")
+// ""lm""
+// >>> encrypt(""asdfghjkl"")
+// ""ewhjklnop""
+// >>> encrypt(""gf"")
+// ""kj""
+// >>> encrypt(""et"")
+// ""ix""
+function encrypt(s){
+","function encrypt(s) {
+    const shift = 2 * 2; // shift down by two multiplied by two places
+    let encrypted = '';
+    for (let i = 0; i < s.length; i++) {
+        let charCode = s.charCodeAt(i);
+        let newCharCode = ((charCode - 97 + shift) % 26) + 97; // wrap around within 'a' to 'z'
+        encrypted += String.fromCharCode(newCharCode);
+    }
+    return encrypted;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = encrypt;
+  assert.deepEqual(candidate(""hi""),""lm"");
+  assert.deepEqual(candidate(""asdfghjkl""),""ewhjklnop"");
+  assert.deepEqual(candidate(""gf""),""kj"");
+  assert.deepEqual(candidate(""et""),""ix"");
+  assert.deepEqual(candidate(""faewfawefaewg""),""jeiajeaijeiak"");
+  assert.deepEqual(candidate(""hellomyfriend""),""lippsqcjvmirh"");
+  assert.deepEqual(candidate(""dxzdlmnilfuhmilufhlihufnmlimnufhlimnufhfucufh""),""hbdhpqrmpjylqmpyjlpmlyjrqpmqryjlpmqryjljygyjl"");
+  assert.deepEqual(candidate(""a""),""e"");
+}
+
+test();"
+HumanEval_90,kor_Hang,js,"/ 그런 요소가 없는 경우 undefined를 반환합니다. / next_smallest () 함수를 쓰면 배열의 2번째로 작은 요소를 반환합니다. / 당신은 정수의 배열을 부여됩니다. // >>> next_smallest([1, 2, 3, 4, 5])
+// 2
+// >>> next_smallest([5, 1, 4, 3, 2])
+// 2
+// >>> next_smallest([])
+// undefined
+// >>> next_smallest([1, 1])
+// undefined
+function next_smallest(lst){
+","function next_smallest(lst) {
+    if (lst.length < 2) return undefined;
+    
+    let firstSmallest = Infinity;
+    let secondSmallest = Infinity;
+    
+    for (let num of lst) {
+        if (num < firstSmallest) {
+            secondSmallest = firstSmallest;
+            firstSmallest = num;
+        } else if (num < secondSmallest && num != firstSmallest) {
+            secondSmallest = num;
+        }
+    }
+    
+    return secondSmallest === Infinity ? undefined : secondSmallest;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = next_smallest;
+  assert.deepEqual(candidate([1, 2, 3, 4, 5]),2);
+  assert.deepEqual(candidate([5, 1, 4, 3, 2]),2);
+  assert.deepEqual(candidate([]),undefined);
+  assert.deepEqual(candidate([1, 1]),undefined);
+  assert.deepEqual(candidate([1, 1, 1, 1, 0]),1);
+  assert.deepEqual(candidate([1, 1]),undefined);
+  assert.deepEqual(candidate([-35, 34, 12, -45]),-35);
+}
+
+test();"
+HumanEval_91,kor_Hang,js,"/ 예를 들어: / 문장에는 '.', '?' 또는 '!'로 구분됩니다. 지루함은 ""I""로 시작하는 문장입니다./ 당신은 단어의 줄이 주어질 것입니다, 그리고 당신의 임무는 숫자를 세는 것입니다.// >>> is_bored(""Hello world"")
+// 0
+// >>> is_bored(""The sky is blue. The sun is shining. I love this weather"")
+// 1
+function is_bored(S){
+","function is_bored(S) {
+    // Split the string into sentences using '.', '?', and '!' as delimiters
+    const sentences = S.split(/[.!?]/);
+    
+    // Initialize boredom count
+    let boredomCount = 0;
+    
+    // Iterate over each sentence
+    sentences.forEach(sentence => {
+        // Trim any whitespace from the beginning of the sentence and check if it starts with ""I""
+        if (sentence.trim().startsWith(""I"")) {
+            boredomCount++;
+        }
+    });
+    
+    return boredomCount;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = is_bored;
+  assert.deepEqual(candidate(""Hello world""),0);
+  assert.deepEqual(candidate(""Is the sky blue?""),0);
+  assert.deepEqual(candidate(""I love It !""),1);
+  assert.deepEqual(candidate(""bIt""),0);
+  assert.deepEqual(candidate(""I feel good today. I will be productive. will kill It""),2);
+  assert.deepEqual(candidate(""You and I are going for a walk""),0);
+}
+
+test();"
+HumanEval_92,kor_Hang,js,"/ 예제 / 다른 경우 모두 false를 반환합니다. / 숫자의 하나가 다른 두 숫자의 합과 같고 모든 숫자가 정수인 경우 true를 반환합니다. / 3개의 숫자를 가지고 있는 함수를 만들어라.// >>> any_int(5, 2, 7)
+// true
+// >>> any_int(3, 2, 2)
+// false
+// >>> any_int(3, -2, 1)
+// true
+// >>> any_int(3.6, -2.2, 2)
+// false
+function any_int(x, y, z){
+","function any_int(x, y, z) {
+    // Check if all numbers are integers
+    if (Number.isInteger(x) && Number.isInteger(y) && Number.isInteger(z)) {
+        // Check if any number is the sum of the other two
+        return x === y + z || y === x + z || z === x + y;
+    }
+    // Return false if not all numbers are integers
+    return false;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = any_int;
+  assert.deepEqual(candidate(2, 3, 1),true);
+  assert.deepEqual(candidate(2.5, 2, 3),false);
+  assert.deepEqual(candidate(1.5, 5, 3.5),false);
+  assert.deepEqual(candidate(2, 6, 2),false);
+  assert.deepEqual(candidate(4, 2, 2),true);
+  assert.deepEqual(candidate(2.2, 2.2, 2.2),false);
+  assert.deepEqual(candidate(-4, 6, 2),true);
+  assert.deepEqual(candidate(2, 1, 1),true);
+  assert.deepEqual(candidate(3, 4, 7),true);
+  assert.deepEqual(candidate(3.0, 4, 7),false);
+}
+
+test();"
+HumanEval_93,kor_Hang,js,"/ 예: / 글자만 가정해. / 영어 알파벳의 음절. // 그보다 2 자리 앞쪽에 있는 글자를 가진 메시지/ 모든 글자의 대문자를 바꿔서 모든 음절을 로 바꿔서/ 메시지를 받아서 란 식으로 암호화하는 함수를 쓰세요.// >>> encode(""test"")
+// ""TGST""
+// >>> encode(""This is a message"")
+// ""tHKS KS C MGSSCGG""
+function encode(message){
+","function encode(message) {
+    // Helper function to swap the case of a character
+    function swapCase(char) {
+        if (char === char.toLowerCase()) {
+            return char.toUpperCase();
+        } else {
+            return char.toLowerCase();
+        }
+    }
+
+    // Vowel mapping
+    const vowelMap = {
+        'a': 'c',
+        'e': 'g',
+        'i': 'k',
+        'o': 'q',
+        'u': 'w',
+        'A': 'C',
+        'E': 'G',
+        'I': 'K',
+        'O': 'Q',
+        'U': 'W'
+    };
+
+    // Encode the message
+    let encodedMessage = '';
+    
+    for (let char of message) {
+        if (/[aeiouAEIOU]/.test(char)) {
+            // Replace vowel with appropriate letter
+            encodedMessage += vowelMap[char];
+        } else {
+            // Swap case for non-vowel letters
+            encodedMessage += swapCase(char);
+        }
+    }
+    
+    return encodedMessage;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = encode;
+  assert.deepEqual(candidate(""TEST""),""tgst"");
+  assert.deepEqual(candidate(""Mudasir""),""mWDCSKR"");
+  assert.deepEqual(candidate(""YES""),""ygs"");
+  assert.deepEqual(candidate(""This is a message""),""tHKS KS C MGSSCGG"");
+  assert.deepEqual(candidate(""I DoNt KnOw WhAt tO WrItE""),""k dQnT kNqW wHcT Tq wRkTg"");
+}
+
+test();"
+HumanEval_94,kor_Hang,js,"/ 예: / 가장 큰 소수값을 찾아서 숫자의 합을 반환해야 합니다./ 당신은 정수의 배열을 부여됩니다. // >>> skjkasdkd([0, 3, 2, 1, 3, 5, 7, 4, 5, 5, 5, 2, 181, 32, 4, 32, 3, 2, 32, 324, 4, 3])
+// 10
+// >>> skjkasdkd([1, 0, 1, 8, 2, 4597, 2, 1, 3, 40, 1, 2, 1, 2, 4, 2, 5, 1])
+// 25
+// >>> skjkasdkd([1, 3, 1, 32, 5107, 34, 83278, 109, 163, 23, 2323, 32, 30, 1, 9, 3])
+// 13
+// >>> skjkasdkd([0, 724, 32, 71, 99, 32, 6, 0, 5, 91, 83, 0, 5, 6])
+// 11
+// >>> skjkasdkd([0, 81, 12, 3, 1, 21])
+// 3
+// >>> skjkasdkd([0, 8, 1, 2, 1, 7])
+// 7
+function skjkasdkd(lst){
+","function skjkasdkd(lst) {
+    function isPrime(num) {
+        if (num <= 1) return false;
+        if (num <= 3) return true;
+        if (num % 2 === 0 || num % 3 === 0) return false;
+        for (let i = 5; i * i <= num; i += 6) {
+            if (num % i === 0 || num % (i + 2) === 0) return false;
+        }
+        return true;
+    }
+
+    function sumOfDigits(num) {
+        return num.toString().split('').reduce((sum, digit) => sum + parseInt(digit), 0);
+    }
+
+    let largestPrime = -1;
+
+    for (let num of lst) {
+        if (isPrime(num) && num > largestPrime) {
+            largestPrime = num;
+        }
+    }
+    
+    return largestPrime !== -1 ? sumOfDigits(largestPrime) : 0;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = skjkasdkd;
+  assert.deepEqual(candidate([0, 3, 2, 1, 3, 5, 7, 4, 5, 5, 5, 2, 181, 32, 4, 32, 3, 2, 32, 324, 4, 3]),10);
+  assert.deepEqual(candidate([1, 0, 1, 8, 2, 4597, 2, 1, 3, 40, 1, 2, 1, 2, 4, 2, 5, 1]),25);
+  assert.deepEqual(candidate([1, 3, 1, 32, 5107, 34, 83278, 109, 163, 23, 2323, 32, 30, 1, 9, 3]),13);
+  assert.deepEqual(candidate([0, 724, 32, 71, 99, 32, 6, 0, 5, 91, 83, 0, 5, 6]),11);
+  assert.deepEqual(candidate([0, 81, 12, 3, 1, 21]),3);
+  assert.deepEqual(candidate([0, 8, 1, 2, 1, 7]),7);
+  assert.deepEqual(candidate([8191]),19);
+  assert.deepEqual(candidate([8191, 123456, 127, 7]),19);
+  assert.deepEqual(candidate([127, 97, 8192]),10);
+}
+
+test();"
+HumanEval_95,kor_Hang,js,"/ 예: / 주어진 객체가 비어 있으면 함수는 false를 반환해야 합니다. / case 또는 모든 키가 대문자로 된 문자열이 되거나 false를 반환합니다./ 객체를 주어진, 모든 키가 더 낮은 에서 문자열을 반환// >>> check_dict_case({""a"": ""apple"", ""b"": ""banana""})
+// true
+// >>> check_dict_case({""a"": ""apple"", ""A"": ""banana"", ""B"": ""banana""})
+// false
+// >>> check_dict_case({""a"": ""apple"", 8: ""banana"", ""a"": ""apple""})
+// false
+// >>> check_dict_case({""Name"": ""John"", ""Age"": ""36"", ""City"": ""Houston""})
+// false
+// >>> check_dict_case({""STATE"": ""NC"", ""ZIP"": ""12345""})
+// true
+function check_dict_case(dict){
+","function check_dict_case(dict) {
+    const keys = Object.keys(dict);
+
+    if (keys.length === 0) return false;
+
+    const allLowerCase = keys.every(key => typeof key === 'string' && key === key.toLowerCase());
+    const allUpperCase = keys.every(key => typeof key === 'string' && key === key.toUpperCase());
+
+    return allLowerCase || allUpperCase;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = check_dict_case;
+  assert.deepEqual(candidate({""p"": ""pineapple"", ""b"": ""banana""}),true);
+  assert.deepEqual(candidate({""p"": ""pineapple"", ""A"": ""banana"", ""B"": ""banana""}),false);
+  assert.deepEqual(candidate({""p"": ""pineapple"", ""5"": ""banana"", ""a"": ""apple""}),false);
+  assert.deepEqual(candidate({""Name"": ""John"", ""Age"": ""36"", ""City"": ""Houston""}),false);
+  assert.deepEqual(candidate({""STATE"": ""NC"", ""ZIP"": ""12345""}),true);
+  assert.deepEqual(candidate({""fruit"": ""Orange"", ""taste"": ""Sweet""}),true);
+  assert.deepEqual(candidate({}),false);
+}
+
+test();"
+HumanEval_96,kor_Hang,js,"/ 예를 들어: / n보다 작은 소수인 정수들. / 비 음의 정수를 가져다가 첫 번째 n의 배열을 반환하는 함수를 구현합니다.// >>> count_up_to(5)
+// [2, 3]
+// >>> count_up_to(11)
+// [2, 3, 5, 7]
+// >>> count_up_to(0)
+// []
+// >>> count_up_to(20)
+// [2, 3, 5, 7, 11, 13, 17, 19]
+// >>> count_up_to(1)
+// []
+// >>> count_up_to(18)
+// [2, 3, 5, 7, 11, 13, 17]
+function count_up_to(n){
+","function count_up_to(n) {
+    function isPrime(num) {
+        if (num < 2) return false;
+        for (let i = 2, sqrt = Math.sqrt(num); i <= sqrt; i++) {
+            if (num % i === 0) return false;
+        }
+        return true;
+    }
+
+    const primes = [];
+    for (let i = 2; i < n; i++) {
+        if (isPrime(i)) {
+            primes.push(i);
+        }
+    }
+    return primes;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = count_up_to;
+  assert.deepEqual(candidate(5),[2, 3]);
+  assert.deepEqual(candidate(6),[2, 3, 5]);
+  assert.deepEqual(candidate(7),[2, 3, 5]);
+  assert.deepEqual(candidate(10),[2, 3, 5, 7]);
+  assert.deepEqual(candidate(0),[]);
+  assert.deepEqual(candidate(22),[2, 3, 5, 7, 11, 13, 17, 19]);
+  assert.deepEqual(candidate(1),[]);
+  assert.deepEqual(candidate(18),[2, 3, 5, 7, 11, 13, 17]);
+  assert.deepEqual(candidate(47),[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43]);
+  assert.deepEqual(candidate(101),[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]);
+}
+
+test();"
+HumanEval_97,kor_Hang,js,"/ 예: / 입력값이 항상 유효하다고 가정합니다. / 단위 숫자의 곱을 / 두 개의 정수를 가져오는 함수를 완료하고 반환합니다.// >>> multiply(148, 412)
+// 16
+// >>> multiply(19, 28)
+// 72
+// >>> multiply(2020, 1851)
+// 0
+// >>> multiply(14, -15)
+// 20
+function multiply(a, b){
+","function multiply(a, b) {
+    // Get the absolute value of each number
+    a = Math.abs(a);
+    b = Math.abs(b);
+
+    // Extract the unit digit of each number
+    let unitDigitA = a % 10;
+    let unitDigitB = b % 10;
+
+    // Return the product of the unit digits
+    return unitDigitA * unitDigitB;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = multiply;
+  assert.deepEqual(candidate(148, 412),16);
+  assert.deepEqual(candidate(19, 28),72);
+  assert.deepEqual(candidate(2020, 1851),0);
+  assert.deepEqual(candidate(14, -15),20);
+  assert.deepEqual(candidate(76, 67),42);
+  assert.deepEqual(candidate(17, 27),49);
+  assert.deepEqual(candidate(0, 1),0);
+  assert.deepEqual(candidate(0, 0),0);
+}
+
+test();"
+HumanEval_98,kor_Hang,js,"/ 예를 들어: / 문자열 s를 주어, 대문자 모음의 숫자를 짝수 인덱스에서 계산해 보세요.// >>> count_upper(""aBCdEf"")
+// 1
+// >>> count_upper(""abcdefg"")
+// 0
+// >>> count_upper(""dBBE"")
+// 0
+function count_upper(s){
+","function count_upper(s) {
+    const vowels = new Set(['A', 'E', 'I', 'O', 'U']);
+    let count = 0;
+    for (let i = 0; i < s.length; i += 2) {
+        if (vowels.has(s[i])) {
+            count++;
+        }
+    }
+    return count;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = count_upper;
+  assert.deepEqual(candidate(""aBCdEf""),1);
+  assert.deepEqual(candidate(""abcdefg""),0);
+  assert.deepEqual(candidate(""dBBE""),0);
+  assert.deepEqual(candidate(""B""),0);
+  assert.deepEqual(candidate(""U""),1);
+  assert.deepEqual(candidate(""""),0);
+  assert.deepEqual(candidate(""EEEE""),2);
+}
+
+test();"
+HumanEval_99,kor_Hang,js,"/ 예제 / 두 개의 정수에서 0에서 더 멀리 둥글게 니다./ 그리고 가장 가까운 정수를 반환합니다. 숫자가 동등한 거리에 있다면/ 숫자를 나타내는 값 ( 문자열) 을 가져오는 함수를 생성합니다.// >>> closest_integer(""10"")
+// 10
+// >>> closest_integer(""15.3"")
+// 15
+// Note:
+// Rounding away from zero means that if the given number is equidistant
+// from two integers, the one you should return is the one that is the
+// farthest from zero. For example closest_integer(""14.5"") should
+// return 15 and closest_integer(""-14.5"") should return -15.
+function closest_integer(value){
+","function closest_integer(value) {
+    let num = parseFloat(value);
+    if (num > 0) {
+        return Math.floor(num + 0.5);
+    } else {
+        return Math.ceil(num - 0.5);
+    }
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = closest_integer;
+  assert.deepEqual(candidate(""10""),10);
+  assert.deepEqual(candidate(""14.5""),15);
+  assert.deepEqual(candidate(""-15.5""),-16);
+  assert.deepEqual(candidate(""15.3""),15);
+  assert.deepEqual(candidate(""0""),0);
+}
+
+test();"
+HumanEval_100,kor_Hang,js,"/ 예: / i는 레벨 (i+1) 에 있는 돌의 수를 나타냅니다./ 각 레벨의 돌의 수를 array에서 반환합니다./ - n이 짝수라면 다음 짝수입니다. / - n이 홀수라면 다음 홀수/ 다음 층의 돌의 수는: / 첫 번째 레벨에는 n개의 돌이 있습니다. / 긍정적 인 정수 n을 주어, 당신은 n 레벨의 돌을 쌓아야합니다.// >>> make_a_pile(3)
+// [3, 5, 7]
+function make_a_pile(n){
+","function make_a_pile(n) {
+    const pile = [];
+    let currentStones = n;
+    
+    for (let i = 0; i < n; i++) {
+        pile.push(currentStones);
+        currentStones += (currentStones % 2 === 0) ? 2 : 2;
+    }
+
+    return pile;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = make_a_pile;
+  assert.deepEqual(candidate(3),[3, 5, 7]);
+  assert.deepEqual(candidate(4),[4, 6, 8, 10]);
+  assert.deepEqual(candidate(5),[5, 7, 9, 11, 13]);
+  assert.deepEqual(candidate(6),[6, 8, 10, 12, 14, 16]);
+  assert.deepEqual(candidate(8),[8, 10, 12, 14, 16, 18, 20, 22]);
+}
+
+test();"
+HumanEval_101,kor_Hang,js,"/ 예를 들어: / 문자열을 단어로 나누고 단어의 배열을 반환합니다. / 당신은 코마 또는 공간으로 분리 된 단어의 문자열을 제공 될 것입니다. 당신의 임무는 // >>> words_string(""Hi, my name is John"")
+// [""Hi"", ""my"", ""name"", ""is"", ""John""]
+// >>> words_string(""One, two, three, four, five, six"")
+// [""One"", ""two"", ""three"", ""four"", ""five"", ""six""]
+function words_string(s){
+","function words_string(s) {
+    // Split the string by removing commas and spaces, filter out any empty strings
+    return s.split(/[\s,]+/).filter(Boolean);
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = words_string;
+  assert.deepEqual(candidate(""Hi, my name is John""),[""Hi"", ""my"", ""name"", ""is"", ""John""]);
+  assert.deepEqual(candidate(""One, two, three, four, five, six""),[""One"", ""two"", ""three"", ""four"", ""five"", ""six""]);
+  assert.deepEqual(candidate(""Hi, my name""),[""Hi"", ""my"", ""name""]);
+  assert.deepEqual(candidate(""One,, two, three, four, five, six,""),[""One"", ""two"", ""three"", ""four"", ""five"", ""six""]);
+  assert.deepEqual(candidate(""""),[]);
+  assert.deepEqual(candidate(""ahmed     , gamal""),[""ahmed"", ""gamal""]);
+}
+
+test();"
+HumanEval_102,kor_Hang,js,"/ 예를 들어: / 그런 숫자가 없으므로 함수는 -1을 반환해야 합니다./ 최대 정수인 경우 [x, y] 범위 안에 있습니다./이 함수는 양수 x와 y를 가지고 를 반환합니다// >>> choose_num(12, 15)
+// 14
+// >>> choose_num(13, 12)
+// -1
+function choose_num(x, y){
+","function choose_num(x, y) {
+    if (x > y) {
+        return -1;
+    }
+    for (let i = y; i >= x; i--) {
+        if (i % 2 === 0) {
+            return i;
+        }
+    }
+    return -1;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = choose_num;
+  assert.deepEqual(candidate(12, 15),14);
+  assert.deepEqual(candidate(13, 12),-1);
+  assert.deepEqual(candidate(33, 12354),12354);
+  assert.deepEqual(candidate(5234, 5233),-1);
+  assert.deepEqual(candidate(6, 29),28);
+  assert.deepEqual(candidate(27, 10),-1);
+  assert.deepEqual(candidate(7, 7),-1);
+  assert.deepEqual(candidate(546, 546),546);
+}
+
+test();"
+HumanEval_103,kor_Hang,js,"/ 예: / n이 m보다 크면 -1을 반환합니다./ 답을 가장 가까운 정수까지 합쳐서 이진수로 변환합니다. / n에서 m까지의 정수의 평균 (n과 m 포함)/ 두 개의 양수 n과 m을 주어, 여러분의 임무는 을 계산하는 것입니다.// >>> rounded_avg(1, 5)
+// ""0b11""
+// >>> rounded_avg(7, 5)
+// -1
+// >>> rounded_avg(10, 20)
+// ""0b1111""
+// >>> rounded_avg(20, 33)
+// ""0b11010""
+function rounded_avg(n, m){
+","function rounded_avg(n, m) {
+    if (n > m) {
+        return -1;
+    }
+    
+    let sum = 0;
+    let count = 0;
+    
+    for (let i = n; i <= m; i++) {
+        sum += i;
+        count++;
+    }
+    
+    let average = sum / count;
+    let roundedAverage = Math.round(average);
+    return ""0b"" + roundedAverage.toString(2);
+}
+
+// Example Usage
+console.log(rounded_avg(1, 5));   // ""0b11""
+console.log(rounded_avg(7, 5));   // -1
+console.log(rounded_avg(10, 20)); // ""0b1111""
+console.log(rounded_avg(20, 33)); // ""0b11010""","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = rounded_avg;
+  assert.deepEqual(candidate(1, 5),""0b11"");
+  assert.deepEqual(candidate(7, 13),""0b1010"");
+  assert.deepEqual(candidate(964, 977),""0b1111001010"");
+  assert.deepEqual(candidate(996, 997),""0b1111100100"");
+  assert.deepEqual(candidate(560, 851),""0b1011000010"");
+  assert.deepEqual(candidate(185, 546),""0b101101110"");
+  assert.deepEqual(candidate(362, 496),""0b110101101"");
+  assert.deepEqual(candidate(350, 902),""0b1001110010"");
+  assert.deepEqual(candidate(197, 233),""0b11010111"");
+  assert.deepEqual(candidate(7, 5),-1);
+  assert.deepEqual(candidate(5, 1),-1);
+  assert.deepEqual(candidate(5, 5),""0b101"");
+}
+
+test();"
+HumanEval_104,kor_Hang,js,"/ 예를 들어: / 참고: 반환 된 배열은 증가 순서로 정렬되어야 합니다. / 어떤 짝수 숫자가 없는 요소들. / 양수 정수 x의 배열을 주어 모든 의 정렬 배열을 반환합니다// >>> unique_digits([15, 33, 1422, 1])
+// [1, 15, 33]
+// >>> unique_digits([152, 323, 1422, 10])
+// []
+function unique_digits(x){
+","function unique_digits(x) {
+    return x.filter(num => {
+        return !num.toString().split('').some(digit => digit % 2 === 0);
+    }).sort((a, b) => a - b);
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = unique_digits;
+  assert.deepEqual(candidate([15, 33, 1422, 1]),[1, 15, 33]);
+  assert.deepEqual(candidate([152, 323, 1422, 10]),[]);
+  assert.deepEqual(candidate([12345, 2033, 111, 151]),[111, 151]);
+  assert.deepEqual(candidate([135, 103, 31]),[31, 135]);
+}
+
+test();"
+HumanEval_105,kor_Hang,js,"/ 예를 들어: / ""하나"", ""두"", ""세"", ""네"", ""다섯"", ""여섯"", ""일곱"", ""여덟"", ""아홉""./ 이 배열을 뒤집고, 각 숫자를 에서 의 이름과 교체합니다./1부터 9까지의 정수를 정렬합니다.// >>> by_length([2, 1, 1, 4, 5, 8, 2, 3])
+// [""Eight"", ""Five"", ""Four"", ""Three"", ""Two"", ""Two"", ""One"", ""One""]
+// If the array is empty, return an empty array:
+// >>> by_length([])
+// []
+// If the array has any strange number ignore it:
+// >>> by_length([1, -1, 55])
+// [""One""]
+function by_length(arr){
+","function by_length(arr) {
+  const numberNames = [
+    ""One"", ""Two"", ""Three"", ""Four"", ""Five"",
+    ""Six"", ""Seven"", ""Eight"", ""Nine""
+  ];
+
+  return arr.filter(num => num >= 1 && num <= 9)
+            .sort((a, b) => a - b)
+            .reverse()
+            .map(num => numberNames[num - 1]);
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = by_length;
+  assert.deepEqual(candidate([2, 1, 1, 4, 5, 8, 2, 3]),[""Eight"", ""Five"", ""Four"", ""Three"", ""Two"", ""Two"", ""One"", ""One""]);
+  assert.deepEqual(candidate([]),[]);
+  assert.deepEqual(candidate([1, -1, 55]),[""One""]);
+  assert.deepEqual(candidate([1, -1, 3, 2]),[""Three"", ""Two"", ""One""]);
+  assert.deepEqual(candidate([9, 4, 8]),[""Nine"", ""Eight"", ""Four""]);
+}
+
+test();"
+HumanEval_106,kor_Hang,js,"/ 예: / i의 인수는 1에서 i까지의 숫자의 곱입니다 (1 * 2 * ... * i)./ i 1부터 시작됩니다. / 또는 1에서 i까지의 숫자의 합입니다./ 그리고 크기가 n인 배열을 반환합니다. 즉, i의 인덱스 i의 값은 i의 인수분수입니다./ n을 파라미터로 사용하는 함수 f를 구현합니다.// >>> f(5)
+// [1, 2, 6, 24, 15]
+function f(n){
+","function f(n) {
+    function factorial(num) {
+        let result = 1;
+        for (let i = 2; i <= num; i++) {
+            result *= i;
+        }
+        return result;
+    }
+
+    function sumUpTo(num) {
+        return (num * (num + 1)) / 2; // Sum of first num natural numbers
+    }
+
+    let result = [];
+    for (let i = 1; i <= n; i++) {
+        if (i % 2 === 0) {
+            result.push(factorial(i));
+        } else {
+            result.push(sumUpTo(i));
+        }
+    }
+    return result;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = f;
+  assert.deepEqual(candidate(5),[1, 2, 6, 24, 15]);
+  assert.deepEqual(candidate(7),[1, 2, 6, 24, 15, 720, 28]);
+  assert.deepEqual(candidate(1),[1]);
+  assert.deepEqual(candidate(3),[1, 2, 6]);
+}
+
+test();"
+HumanEval_107,kor_Hang,js,"/ 예제 1: / n을 포함한 범위 안에 있는 정수 팔린드로미스. /긍정적인 정수 n을 주어, 짝수와 홀수의 수를 가진 배열을 반환합니다.// >>> even_odd_palindrome(3)
+// [1, 2]
+// Explanation:
+// Integer palindrome are 1, 2, 3. one of them is even, and two of them are odd.
+// Example 2:
+// >>> even_odd_palindrome(12)
+// [4, 6]
+// Explanation:
+// Integer palindrome are 1, 2, 3, 4, 5, 6, 7, 8, 9, 11. four of them are even, and 6 of them are odd.
+// Note:
+// 1. 1 <= n <= 10^3
+// 2. returned array has the number of even and odd integer palindromes respectively.
+function even_odd_palindrome(n){
+","function even_odd_palindrome(n) {
+    function isPalindrome(num) {
+        let str = num.toString();
+        return str === str.split('').reverse().join('');
+    }
+
+    let evenCount = 0;
+    let oddCount = 0;
+
+    for (let i = 1; i <= n; i++) {
+        if (isPalindrome(i)) {
+            if (i % 2 === 0) {
+                evenCount++;
+            } else {
+                oddCount++;
+            }
+        }
+    }
+
+    return [evenCount, oddCount];
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = even_odd_palindrome;
+  assert.deepEqual(candidate(123),[8, 13]);
+  assert.deepEqual(candidate(12),[4, 6]);
+  assert.deepEqual(candidate(3),[1, 2]);
+  assert.deepEqual(candidate(63),[6, 8]);
+  assert.deepEqual(candidate(25),[5, 6]);
+  assert.deepEqual(candidate(19),[4, 6]);
+  assert.deepEqual(candidate(9),[4, 5]);
+  assert.deepEqual(candidate(1),[0, 1]);
+}
+
+test();"
+HumanEval_108,kor_Hang,js,"/ 예를 들어 -123은 -1, 2, 3의 자릿수를 가지고 있습니다./ 만약 숫자가 음수라면, 첫 번째 기호된 숫자는 음수입니다: / 숫자 합이 0이 넘는 요소의 수/count_nums라는 함수를 쓰세요.// >>> count_nums([])
+// 0
+// >>> count_nums([-1, 11, -11])
+// 1
+// >>> count_nums([1, 1, 2])
+// 3
+function count_nums(arr){
+","function count_nums(arr) {
+    return arr.reduce((count, num) => {
+        let str = num.toString();
+        let sum = 0;
+        for (let i = 0; i < str.length; i++) {
+            if (i === 0 && str[i] === '-') {
+                continue;
+            }
+            sum += parseInt(str[i]);
+        }
+        if (num < 0) {
+            sum += 2 * parseInt(str[1]); // Adjust for the negative signed digit
+        }
+        return sum > 0 ? count + 1 : count;
+    }, 0);
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = count_nums;
+  assert.deepEqual(candidate([]),0);
+  assert.deepEqual(candidate([-1, -2, 0]),0);
+  assert.deepEqual(candidate([1, 1, 2, -2, 3, 4, 5]),6);
+  assert.deepEqual(candidate([1, 6, 9, -6, 0, 1, 5]),5);
+  assert.deepEqual(candidate([1, 100, 98, -7, 1, -1]),4);
+  assert.deepEqual(candidate([12, 23, 34, -45, -56, 0]),5);
+  assert.deepEqual(candidate([0, 1]),1);
+  assert.deepEqual(candidate([1]),1);
+}
+
+test();"
+HumanEval_109,kor_Hang,js,"/ 예를 들어: / 참고: 주어진 배열은 고유한 요소를 가지고 있다는 것이 보장됩니다. / 주어진 배열이 비어 있다면 true를 반환합니다. / 그럼 true를 반환한다 아니면 false를 반환한다. / 위의 작업을 수행하여 정렬 된 배열을 얻을 수 있다면 / 배열의 시작 위치 즉 0th 인덱스. / 위치로 이동합니다. 배열의 마지막 요소는 로 이동됩니다./ 한 번 오른쪽으로 이동하는 것은 배열의 모든 요소를 한 번 이동시키는 것을 의미합니다./ 당신은 몇 번이나 오른쪽 이동 작업을 수행 할 수 있습니다. / 주어진 배열에 대한 다음 연산: / 행렬을 감소하지 않는 순서로 정렬하는 것은 가능한데,/ 배열의 숫자는 무작위로 순서로 배치됩니다. 당신의 임무는 / 우리는 N개의 정수 arr[1], arr[2], ..., arr[N]의 배열 'arr'을 가지고 있습니다. // >>> move_one_ball([3, 4, 5, 1, 2])
+// true
+// Explanation: By performin 2 right shift operations, non-decreasing order can
+// be achieved for the given array.
+// >>> move_one_ball([3, 5, 4, 1, 2])
+// false
+// Explanation:It is not possible to get non-decreasing order for the given
+// array by performing any number of right shift operations.
+function move_one_ball(arr){
+","function move_one_ball(arr) {
+    // If the array is empty, it's trivially sorted
+    if (arr.length === 0) return true;
+
+    // Count the number of positions where the next element is smaller than the current one
+    let dropCount = 0;
+    let n = arr.length;
+
+    for (let i = 0; i < n; i++) {
+        if (arr[i] > arr[(i + 1) % n]) {
+            dropCount++;
+        }
+    }
+
+    // If the drop count is more than 1, it means more than one drop is there
+    // and thus we cannot sort it with right shifts
+    return dropCount <= 1;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = move_one_ball;
+  assert.deepEqual(candidate([3, 4, 5, 1, 2]),true);
+  assert.deepEqual(candidate([3, 5, 10, 1, 2]),true);
+  assert.deepEqual(candidate([4, 3, 1, 2]),false);
+  assert.deepEqual(candidate([3, 5, 4, 1, 2]),false);
+  assert.deepEqual(candidate([]),true);
+}
+
+test();"
+HumanEval_110,kor_Hang,js,"/ 예를 들어: / 그렇지 않으면 ""NO""를 돌려주십시오./ lst1의 모든 요소가 짝수인 경우, ""YES""를 반환합니다./ lst1과 lst2 사이의 요소를 교환하는 것이 가능하다면/ lst1과 lst2 사이에 교환되는 요소의 수에 제한이 없습니다./ 그들 사이에 lst1을 단지 짝수들의 배열로 만들기 위해. / 그리고 요소 교환을 수행 할 수 있는지 여부를 결정합니다./이 문제에서, 당신은 두 개의 숫자의 배열을 가져가는 함수를 구현합니다, // >>> exchange([1, 2, 3, 4], [1, 2, 3, 4])
+// ""YES""
+// >>> exchange([1, 2, 3, 4], [1, 5, 3, 4])
+// ""NO""
+// It is assumed that the input arrays will be non-empty.
+function exchange(lst1, lst2){
+","function exchange(lst1, lst2) {
+    // Check if lst1 already consists of only even numbers
+    let allEvenLst1 = lst1.every(num => num % 2 === 0);
+    if (allEvenLst1) return ""YES"";
+    
+    // Check if there's at least one even number in lst2
+    let hasEvenInLst2 = lst2.some(num => num % 2 === 0);
+    
+    // If there is at least one even number in lst2, it's possible to perform an exchange
+    // to make all elements in lst1 even
+    if (hasEvenInLst2) return ""YES"";
+    
+    // If no conditions above are met, it's not possible to make lst1 all even
+    return ""NO"";
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = exchange;
+  assert.deepEqual(candidate([1, 2, 3, 4], [1, 2, 3, 4]),""YES"");
+  assert.deepEqual(candidate([1, 2, 3, 4], [1, 5, 3, 4]),""NO"");
+  assert.deepEqual(candidate([1, 2, 3, 4], [2, 1, 4, 3]),""YES"");
+  assert.deepEqual(candidate([5, 7, 3], [2, 6, 4]),""YES"");
+  assert.deepEqual(candidate([5, 7, 3], [2, 6, 3]),""NO"");
+  assert.deepEqual(candidate([3, 2, 6, 1, 8, 9], [3, 5, 5, 1, 1, 1]),""NO"");
+  assert.deepEqual(candidate([100, 200], [200, 200]),""YES"");
+}
+
+test();"
+HumanEval_111,kor_Hang,js,"/ 예: / 여러 글자가 같은 경우, 그들 모두를 반환합니다. / 가장 많이 반복되는 글자 중 하나이며, 해당 숫자를 포함합니다. /공간이 분리된 소문자를 나타내는 문자열을 주어 객체를 반환합니다.// >>> histogram(""a b c"")
+// {""a"": 1, ""b"": 1, ""c"": 1}
+// >>> histogram(""a b b a"")
+// {""a"": 2, ""b"": 2}
+// >>> histogram(""a b c a b"")
+// {""a"": 2, ""b"": 2}
+// >>> histogram(""b b b b a"")
+// {""b"": 4}
+// >>> histogram("""")
+// {}
+function histogram(test){
+","function histogram(test) {
+  if (!test) return {};
+  
+  const letters = test.split(' ');
+  const letterCount = {};
+  
+  for (let letter of letters) {
+    if (letterCount[letter]) {
+      letterCount[letter]++;
+    } else {
+      letterCount[letter] = 1;
+    }
+  }
+  
+  let maxCount = 0;
+  for (let count of Object.values(letterCount)) {
+    if (count > maxCount) {
+      maxCount = count;
+    }
+  }
+  
+  const result = {};
+  for (let [letter, count] of Object.entries(letterCount)) {
+    if (count === maxCount) {
+      result[letter] = count;
+    }
+  }
+  
+  return result;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = histogram;
+  assert.deepEqual(candidate(""a b b a""),{""a"": 2, ""b"": 2});
+  assert.deepEqual(candidate(""a b c a b""),{""a"": 2, ""b"": 2});
+  assert.deepEqual(candidate(""a b c d g""),{""a"": 1, ""b"": 1, ""c"": 1, ""d"": 1, ""g"": 1});
+  assert.deepEqual(candidate(""r t g""),{""r"": 1, ""t"": 1, ""g"": 1});
+  assert.deepEqual(candidate(""b b b b a""),{""b"": 4});
+  assert.deepEqual(candidate(""r t g""),{""r"": 1, ""t"": 1, ""g"": 1});
+  assert.deepEqual(candidate(""""),{});
+  assert.deepEqual(candidate(""a""),{""a"": 1});
+}
+
+test();"
+HumanEval_112,kor_Hang,js,"/ 예제 / 당신은 결과 문자열과 확인을 위해 true/false를 포함하는 배열을 반환해야 합니다. / 문자열은 앞과 뒤로 똑같이 읽으면 팔린드로마라고 불립니다./ 그러면 결과 문자열이 팔린드로임인지 확인합니다. / 우리는 두 개의 문자열 s와 c를 가지고 있습니다. 당신은 c의 모든 문자와 같은 s의 모든 문자를 삭제해야 합니다./ 임무 // >>> reverse_delete(""abcde"", ""ae"")
+// [""bcd"", false]
+// >>> reverse_delete(""abcdef"", ""b"")
+// [""acdef"", false]
+// >>> reverse_delete(""abcdedcba"", ""ab"")
+// [""cdedc"", true]
+function reverse_delete(s, c){
+","function reverse_delete(s, c) {
+    let result = '';
+    // Create a set of characters to be deleted
+    const deleteChars = new Set(c);
+    
+    // Construct the result string excluding the characters in c
+    for (let char of s) {
+        if (!deleteChars.has(char)) {
+            result += char;
+        }
+    }
+    
+    // Check if the result string is a palindrome
+    const isPalindrome = result === result.split('').reverse().join('');
+    
+    return [result, isPalindrome];
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = reverse_delete;
+  assert.deepEqual(candidate(""abcde"", ""ae""),[""bcd"", false]);
+  assert.deepEqual(candidate(""abcdef"", ""b""),[""acdef"", false]);
+  assert.deepEqual(candidate(""abcdedcba"", ""ab""),[""cdedc"", true]);
+  assert.deepEqual(candidate(""dwik"", ""w""),[""dik"", false]);
+  assert.deepEqual(candidate(""a"", ""a""),["""", true]);
+  assert.deepEqual(candidate(""abcdedcba"", """"),[""abcdedcba"", true]);
+  assert.deepEqual(candidate(""abcdedcba"", ""v""),[""abcdedcba"", true]);
+  assert.deepEqual(candidate(""vabba"", ""v""),[""abba"", true]);
+  assert.deepEqual(candidate(""mamma"", ""mia""),["""", true]);
+}
+
+test();"
+HumanEval_113,kor_Hang,js,"/ 입력의 i'th 문자열에 홀수 숫자의. / 입력의 문자열 i. "" 모든 i가 숫자 로 대체되어야 합니다./ 출력 i의 각 요소는 에 있는 홀수 요소의 수여야 합니다/ 문자열의 배열을 주어, 각 문자열은 단지 숫자로 구성되어, 배열을 반환합니다.// >>> odd_count([""1234567""])
+// [""the number of odd elements 4n the str4ng 4 of the 4nput.""]
+// >>> odd_count([""3"", ""11111111""])
+// [""the number of odd elements 1n the str1ng 1 of the 1nput."", ""the number of odd elements 8n the str8ng 8 of the 8nput.""]
+function odd_count(lst){
+","function odd_count(lst) {
+    return lst.map(str => {
+        const oddCount = Array.from(str).filter(ch => parseInt(ch) % 2 !== 0).length;
+        let sentence = ""the number of odd elements in the string i of the input."";
+        return sentence.replace(/i/g, oddCount.toString());
+    });
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = odd_count;
+  assert.deepEqual(candidate([""1234567""]),[""the number of odd elements 4n the str4ng 4 of the 4nput.""]);
+  assert.deepEqual(candidate([""3"", ""11111111""]),[""the number of odd elements 1n the str1ng 1 of the 1nput."", ""the number of odd elements 8n the str8ng 8 of the 8nput.""]);
+  assert.deepEqual(candidate([""271"", ""137"", ""314""]),[""the number of odd elements 2n the str2ng 2 of the 2nput."", ""the number of odd elements 3n the str3ng 3 of the 3nput."", ""the number of odd elements 2n the str2ng 2 of the 2nput.""]);
+}
+
+test();"
+HumanEval_114,kor_Hang,js,"/ 예제 / 숫자의. /1개의 정수 n을 가진 배열을 주어, 비공백 하위 배열의 최소 합을 찾아보세요.// >>> minSubArraySum([2, 3, 4, 1, 2, 4])
+// 1
+// >>> minSubArraySum([-1, -2, -3])
+// -6
+function minSubArraySum(nums){
+","function minSubArraySum(nums) {
+    let minSum = nums[0];
+    let currentSum = nums[0];
+    
+    for (let i = 1; i < nums.length; i++) {
+        if (currentSum > 0) {
+            currentSum = nums[i];
+        } else {
+            currentSum += nums[i];
+        }
+        minSum = Math.min(minSum, currentSum);
+    }
+    
+    return minSum;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = minSubArraySum;
+  assert.deepEqual(candidate([2, 3, 4, 1, 2, 4]),1);
+  assert.deepEqual(candidate([-1, -2, -3]),-6);
+  assert.deepEqual(candidate([-1, -2, -3, 2, -10]),-14);
+  assert.deepEqual(candidate([-9999999999999999]),-9999999999999999);
+  assert.deepEqual(candidate([0, 10, 20, 1000000]),0);
+  assert.deepEqual(candidate([-1, -2, -3, 10, -5]),-6);
+  assert.deepEqual(candidate([100, -1, -2, -3, 10, -5]),-6);
+  assert.deepEqual(candidate([10, 11, 13, 8, 3, 4]),3);
+  assert.deepEqual(candidate([100, -33, 32, -1, 0, -2]),-33);
+  assert.deepEqual(candidate([-10]),-10);
+  assert.deepEqual(candidate([7]),7);
+  assert.deepEqual(candidate([1, -1]),-1);
+}
+
+test();"
+HumanEval_115,kor_Hang,js,"/ 예제 1: / 버킷을 내려놓을 수 있는 횟수를 입력합니다./ 당신의 임무는 우물을 비우는 데 버킷을 사용하는 것입니다. / 모든 버킷은 같은 용량을 가지고 있습니다. / 각 우물은 물 빼기 위해 사용할 수 있는 수동이 있습니다, / 그리고 각 1은 물의 단위를 나타냅니다.우물들의 직사각형 격자 모양을 갖게 됩니다. 각 행은 하나의 우물을 나타냅니다.// >>> max_fill([[0, 0, 1, 0], [0, 1, 0, 0], [1, 1, 1, 1]], 1)
+// 6
+// Example 2:
+// >>> max_fill([[0, 0, 1, 1], [0, 0, 0, 0], [1, 1, 1, 1], [0, 1, 1, 1]], 2)
+// 5
+// Example 3:
+// >>> max_fill([[0, 0, 0], [0, 0, 0]], 5)
+// 0
+// Constraints:
+// * all wells have the same length
+// * 1 <= grid.length <= 10^2
+// * 1 <= grid[:,1].length <= 10^2
+// * grid[i][j] -> 0 | 1
+// * 1 <= capacity <= 10
+function max_fill(grid, capacity){
+","function max_fill(grid, capacity) {
+    let totalWater = 0;
+    
+    for (let row of grid) {
+        for (let cell of row) {
+            totalWater += cell;
+        }
+    }
+    
+    return Math.ceil(totalWater / capacity);
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = max_fill;
+  assert.deepEqual(candidate([[0, 0, 1, 0], [0, 1, 0, 0], [1, 1, 1, 1]], 1),6);
+  assert.deepEqual(candidate([[0, 0, 1, 1], [0, 0, 0, 0], [1, 1, 1, 1], [0, 1, 1, 1]], 2),5);
+  assert.deepEqual(candidate([[0, 0, 0], [0, 0, 0]], 5),0);
+  assert.deepEqual(candidate([[1, 1, 1, 1], [1, 1, 1, 1]], 2),4);
+  assert.deepEqual(candidate([[1, 1, 1, 1], [1, 1, 1, 1]], 9),2);
+}
+
+test();"
+HumanEval_116,kor_Hang,js,"/ 이 방법은 다음과 같습니다: / 같은 수의 1을 위해 소수점을 기준으로 정렬합니다./ 1의 숫자가 2진법으로 올라가는 순서로 나타납니다.이 카타에서, 여러분은 음이 아닌 정수의 배열을 에 따라 정렬해야 합니다.// >>> sort_array([1, 5, 2, 3, 4])
+// [1, 2, 3, 4, 5]
+// >>> sort_array([-2, -3, -4, -5, -6])
+// [-6, -5, -4, -3, -2]
+// >>> sort_array([1, 0, 2, 3, 4])
+// [0, 1, 2, 3, 4]
+function sort_array(arr){
+","function sort_array(arr) {
+    return arr.slice().sort((a, b) => {
+        const countOnes = num => num.toString(2).split('0').join('').length;
+        const onesA = countOnes(a);
+        const onesB = countOnes(b);
+        if (onesA === onesB) {
+            return a - b;
+        }
+        return onesA - onesB;
+    });
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = sort_array;
+  assert.deepEqual(candidate([1, 5, 2, 3, 4]),[1, 2, 4, 3, 5]);
+  assert.deepEqual(candidate([-2, -3, -4, -5, -6]),[-4, -2, -6, -5, -3]);
+  assert.deepEqual(candidate([1, 0, 2, 3, 4]),[0, 1, 2, 4, 3]);
+  assert.deepEqual(candidate([]),[]);
+  assert.deepEqual(candidate([2, 5, 77, 4, 5, 3, 5, 7, 2, 3, 4]),[2, 2, 4, 4, 3, 3, 5, 5, 5, 7, 77]);
+  assert.deepEqual(candidate([3, 6, 44, 12, 32, 5]),[32, 3, 5, 6, 12, 44]);
+  assert.deepEqual(candidate([2, 4, 8, 16, 32]),[2, 4, 8, 16, 32]);
+  assert.deepEqual(candidate([2, 4, 8, 16, 32]),[2, 4, 8, 16, 32]);
+}
+
+test();"
+HumanEval_117,kor_Hang,js,"/ 예: / 참고: 입력 문자열에는 문자와 공백만 포함된다고 가정할 수 있습니다. / 문자열 s가 빈 경우 함수는 빈 배열을 반환해야 합니다. / n 자음, 이 단어들이 문자열 s에 나타나는 순서로. /는 정확히 를 포함하는 문자열 s의 모든 단어의 배열을 반환하는 함수입니다./ 문자열 s와 자연수 n을 주어, 당신은 실행하는 일을 맡았습니다.// >>> select_words(""Mary had a little lamb"", 4)
+// [""little""]
+// >>> select_words(""Mary had a little lamb"", 3)
+// [""Mary"", ""lamb""]
+// >>> select_words(""simple white space"", 2)
+// []
+// >>> select_words(""Hello world"", 4)
+// [""world""]
+// >>> select_words(""Uncle sam"", 3)
+// [""Uncle""]
+function select_words(s, n){
+","function select_words(s, n) {
+    const vowels = new Set(['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U']);
+    const words = s.split(' ');
+    const result = [];
+
+    for (let word of words) {
+        let consonantCount = 0;
+        
+        for (let char of word) {
+            if (!vowels.has(char)) {
+                consonantCount += 1;
+            }
+        }
+
+        if (consonantCount === n) {
+            result.push(word);
+        }
+    }
+
+    return result;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = select_words;
+  assert.deepEqual(candidate(""Mary had a little lamb"", 4),[""little""]);
+  assert.deepEqual(candidate(""Mary had a little lamb"", 3),[""Mary"", ""lamb""]);
+  assert.deepEqual(candidate(""simple white space"", 2),[]);
+  assert.deepEqual(candidate(""Hello world"", 4),[""world""]);
+  assert.deepEqual(candidate(""Uncle sam"", 3),[""Uncle""]);
+  assert.deepEqual(candidate("""", 4),[]);
+  assert.deepEqual(candidate(""a b c d e f"", 1),[""b"", ""c"", ""d"", ""f""]);
+}
+
+test();"
+HumanEval_118,kor_Hang,js,"/ 예: / 주어진 문자열은 영어 문자만 포함한다고 가정할 수 있습니다. / 위의 조건을 만족하는 음절을 찾아내십시오. / 시작과 끝의 모음은 계산되지 않습니다. 당신이하지 않은 경우 빈 문자열을 반환 / 두 개의 자음 (case sensitive) 을 단어의 오른쪽에서 씁니다.단어 하나만 주어져 있는데, 그 사이에 있는 가장 가까운 모음을 찾아내야 합니다.// >>> get_closest_vowel(""yogurt"")
+// ""u""
+// >>> get_closest_vowel(""FULL"")
+// ""U""
+// >>> get_closest_vowel(""quick"")
+// """"
+// >>> get_closest_vowel(""ab"")
+// """"
+function get_closest_vowel(word){
+","function get_closest_vowel(word) {
+    const vowels = ""aeiouAEIOU"";
+
+    for (let i = word.length - 2; i > 0; i--) {
+        if (vowels.includes(word[i]) && 
+            !vowels.includes(word[i - 1]) && 
+            !vowels.includes(word[i + 1])) {
+            return word[i];
+        }
+    }
+
+    return """";
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = get_closest_vowel;
+  assert.deepEqual(candidate(""yogurt""),""u"");
+  assert.deepEqual(candidate(""full""),""u"");
+  assert.deepEqual(candidate(""easy""),"""");
+  assert.deepEqual(candidate(""eAsy""),"""");
+  assert.deepEqual(candidate(""ali""),"""");
+  assert.deepEqual(candidate(""bad""),""a"");
+  assert.deepEqual(candidate(""most""),""o"");
+  assert.deepEqual(candidate(""ab""),"""");
+  assert.deepEqual(candidate(""ba""),"""");
+  assert.deepEqual(candidate(""quick""),"""");
+  assert.deepEqual(candidate(""anime""),""i"");
+  assert.deepEqual(candidate(""Asia""),"""");
+  assert.deepEqual(candidate(""Above""),""o"");
+}
+
+test();"
+HumanEval_119,kor_Hang,js,"/ 예: / 좋은 문자열을 만들 수 있는 방법이 있다면 '예'를 반환하고, 그렇지 않으면 '아니오'를 반환합니다./ '()) '는 아닙니다./는 균형이 잡힌다. 예를 들어: 문자열 '(()))) '는 좋고, 문자열 은/ 문자열 S는 모든 괄호가 S 안에 있는 경우에만 좋은 것으로 간주됩니다./ 어떤 순서, 그 결과 문자열이 좋을 것입니다. / 당신의 일은 두 개의 문자열을 연결할 수 있는지 확인하는 것입니다./ 괄호 '(' 또는 괄호 ') '만 붙여집니다./ 당신은 두 개의 문자열의 배열을 제공, 두 문자열은 개방 // >>> match_parens([""()("", "")""])
+// ""Yes""
+// >>> match_parens(["")"", "")""])
+// ""No""
+function match_parens(lst){
+","function match_parens(lst) {
+    function isBalanced(str) {
+        let balance = 0;
+        for (let char of str) {
+            if (char === '(') {
+                balance++;
+            } else {
+                balance--;
+            }
+            if (balance < 0) return false;
+        }
+        return balance === 0;
+    }
+
+    const [s1, s2] = lst;
+    if (isBalanced(s1 + s2) || isBalanced(s2 + s1)) {
+        return 'Yes';
+    }
+    return 'No';
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = match_parens;
+  assert.deepEqual(candidate([""()("", "")""]),""Yes"");
+  assert.deepEqual(candidate(["")"", "")""]),""No"");
+  assert.deepEqual(candidate([""(()(())"", ""())())""]),""No"");
+  assert.deepEqual(candidate(["")())"", ""(()()(""]),""Yes"");
+  assert.deepEqual(candidate([""(())))"", ""(()())((""]),""Yes"");
+  assert.deepEqual(candidate([""()"", ""())""]),""No"");
+  assert.deepEqual(candidate([""(()("", ""()))()""]),""Yes"");
+  assert.deepEqual(candidate([""(((("", ""((())""]),""No"");
+  assert.deepEqual(candidate(["")(()"", ""(()(""]),""No"");
+  assert.deepEqual(candidate(["")("", "")(""]),""No"");
+  assert.deepEqual(candidate([""("", "")""]),""Yes"");
+  assert.deepEqual(candidate(["")"", ""(""]),""Yes"");
+}
+
+test();"
+HumanEval_120,kor_Hang,js,"/ 예제 1: / 길이가 k이고, 최대 k개의 숫자가 arr에 들어있죠./정수 arr과 양수 k의 배열을 주어 정렬된 배열을 반환합니다.// >>> maximum([-3, -4, 5], 3)
+// [-4, -3, 5]
+// Example 2:
+// >>> maximum([4, -4, 4], 2)
+// [4, 4]
+// Example 3:
+// >>> maximum([-3, 2, 1, 2, -1, -2, 1], 1)
+// [2]
+// Note:
+// 1. The length of the array will be in the range of [1, 1000].
+// 2. The elements in the array will be in the range of [-1000, 1000].
+// 3. 0 <= k <= len(arr)
+function maximum(arr, k){
+","function maximum(arr, k) {
+    return arr.sort((a, b) => b - a).slice(0, k).sort((a, b) => a - b);
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = maximum;
+  assert.deepEqual(candidate([-3, -4, 5], 3),[-4, -3, 5]);
+  assert.deepEqual(candidate([4, -4, 4], 2),[4, 4]);
+  assert.deepEqual(candidate([-3, 2, 1, 2, -1, -2, 1], 1),[2]);
+  assert.deepEqual(candidate([123, -123, 20, 0, 1, 2, -3], 3),[2, 20, 123]);
+  assert.deepEqual(candidate([-123, 20, 0, 1, 2, -3], 4),[0, 1, 2, 20]);
+  assert.deepEqual(candidate([5, 15, 0, 3, -13, -8, 0], 7),[-13, -8, 0, 0, 3, 5, 15]);
+  assert.deepEqual(candidate([-1, 0, 2, 5, 3, -10], 2),[3, 5]);
+  assert.deepEqual(candidate([1, 0, 5, -7], 1),[5]);
+  assert.deepEqual(candidate([4, -4], 2),[-4, 4]);
+  assert.deepEqual(candidate([-10, 10], 2),[-10, 10]);
+  assert.deepEqual(candidate([1, 2, 3, -23, 243, -400, 0], 0),[]);
+}
+
+test();"
+HumanEval_121,kor_Hang,js,"/ 예제 / 비공백된 정수 배열을 주어, 짝수 위치에 있는 모든 홀수들의 합을 반환합니다.// >>> solution([5, 8, 7, 1])
+// 12
+// >>> solution([3, 3, 3, 3, 3])
+// 9
+// >>> solution([30, 13, 24, 321])
+// 0
+function solution(lst){
+","function solution(lst) {
+    let sum = 0;
+    for (let i = 0; i < lst.length; i += 2) {
+        if (lst[i] % 2 !== 0) {
+            sum += lst[i];
+        }
+    }
+    return sum;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = solution;
+  assert.deepEqual(candidate([5, 8, 7, 1]),12);
+  assert.deepEqual(candidate([3, 3, 3, 3, 3]),9);
+  assert.deepEqual(candidate([30, 13, 24, 321]),0);
+  assert.deepEqual(candidate([5, 9]),5);
+  assert.deepEqual(candidate([2, 4, 8]),0);
+  assert.deepEqual(candidate([30, 13, 23, 32]),23);
+  assert.deepEqual(candidate([3, 13, 2, 9]),3);
+}
+
+test();"
+HumanEval_122,kor_Hang,js,"/ 예: / arr의 첫 번째 k 요소에서 최대 두 자릿수를 가진 요소의 합입니다. / 비공백이 아닌 정수 arr과 정수 k를 주어, return 를 반환합니다.// >>> add_elements([111, 21, 3, 4000, 5, 6, 7, 8, 9], 4)
+// 24
+// Constraints:
+// 1. 1 <= len(arr) <= 100
+// 2. 1 <= k <= len(arr)
+function add_elements(arr, k){
+","function add_elements(arr, k) {
+    let sum = 0;
+    for (let i = 0; i < k; i++) {
+        if (Math.abs(arr[i]) < 100) {
+            sum += arr[i];
+        }
+    }
+    return sum;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = add_elements;
+  assert.deepEqual(candidate([1, -2, -3, 41, 57, 76, 87, 88, 99], 3),-4);
+  assert.deepEqual(candidate([111, 121, 3, 4000, 5, 6], 2),0);
+  assert.deepEqual(candidate([11, 21, 3, 90, 5, 6, 7, 8, 9], 4),125);
+  assert.deepEqual(candidate([111, 21, 3, 4000, 5, 6, 7, 8, 9], 4),24);
+  assert.deepEqual(candidate([1], 1),1);
+}
+
+test();"
+HumanEval_123,kor_Hang,js,"/ get_odd_collatz(5) 는 [1, 5] # 5의 collatz 순서는 [5, 16, 8, 4, 2, 1], 그래서 홀수들은 1과 5일 뿐입니다./ 예를 들어: / 2. 증가 순서로 정렬된 배열을 반환합니다./ 1. Collatz(1) 은 [1] 입니다./ 참고: /term+1 의 추측은 n의 값이 무엇이든, 순서는 항상 1에 도달한다는 것입니다./ 이전 항을 니다. 이전 항이 홀수라면 다음 항은 3배입니다./ 이전 항은 다음과 같습니다. 이전 항이 짝이면 다음 항은 의 절반입니다./ 다음으로: 어떤 양수 n으로 시작해 각 항은 에서 얻는다./ 콜라츠 추측은 수학에서 정의된 순서에 관한 추측입니다 /긍정적인 정수 n을 주어, 트 순서로 홀수들을 가진 정렬된 배열을 반환합니다.// >>> get_odd_collatz(5)
+// [1, 5]
+function get_odd_collatz(n){
+","function get_odd_collatz(n) {
+    let collatzSequence = [];
+    while (n !== 1) {
+        if (n % 2 !== 0) {
+            collatzSequence.push(n);
+        }
+        n = n % 2 === 0 ? n / 2 : 3 * n + 1;
+    }
+    collatzSequence.push(1); // Include 1 as it's part of the sequence and is odd
+    return collatzSequence.sort((a, b) => a - b);
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = get_odd_collatz;
+  assert.deepEqual(candidate(14),[1, 5, 7, 11, 13, 17]);
+  assert.deepEqual(candidate(5),[1, 5]);
+  assert.deepEqual(candidate(12),[1, 3, 5]);
+  assert.deepEqual(candidate(1),[1]);
+}
+
+test();"
+HumanEval_124,kor_Hang,js,"/ 4. 날짜는 다음과 같은 형식으로 표시되어야 합니다: mm-dd-yyyy / 3. 달은 1보다 작거나 12보다 높지 않아야 합니다./ 2. 달 1,3,5,7,8,10,12에 대한 날의 수는 1보다 작거나 31일보다 높지 않습니다. 그리고 달 4,6,9,11에 대한 날의 수는 1보다 작거나 30일보다 높지 않습니다. 그리고, 달 2에 대한 날의 수는 1보다 작거나 29일보다 높지 않습니다./ 1. 날짜 문자열은 비어 있지 않습니다./ 날짜는 다음 규칙이 모두 충족되는 경우 유효합니다: / 날짜가 유효하다면 true를 반환한다 그렇지 않으면 false를 반환한다. / 주어진 날짜 문자열을 검증하는 함수를 작성해야 합니다.// >>> valid_date(""03-11-2000"")
+// true
+// >>> valid_date(""15-01-2012"")
+// false
+// >>> valid_date(""04-0-2040"")
+// false
+// >>> valid_date(""06-04-2020"")
+// true
+// >>> valid_date(""06/04/2020"")
+// false
+function valid_date(date){
+","function valid_date(date) {
+    if (!date) return false;
+    
+    // Regular expression to match the date pattern mm-dd-yyyy
+    const datePattern = /^(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])-\d{4}$/;
+    if (!datePattern.test(date)) return false;
+
+    // Split the date into parts
+    const [month, day, year] = date.split('-').map(Number);
+
+    // Check the valid number of days per month
+    if (month === 2) {
+        // Check for February, normally 28 max days, 29 if leap year
+        const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+        if (day > 29 || (day === 29 && !isLeapYear)) return false;
+    } else if ([4, 6, 9, 11].includes(month)) {
+        // April, June, September, November have 30 max days
+        if (day > 30) return false;
+    } else {
+        // Other months have 31 max days
+        if (day > 31) return false;
+    }
+
+    return true;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = valid_date;
+  assert.deepEqual(candidate(""03-11-2000""),true);
+  assert.deepEqual(candidate(""15-01-2012""),false);
+  assert.deepEqual(candidate(""04-0-2040""),false);
+  assert.deepEqual(candidate(""06-04-2020""),true);
+  assert.deepEqual(candidate(""01-01-2007""),true);
+  assert.deepEqual(candidate(""03-32-2011""),false);
+  assert.deepEqual(candidate(""""),false);
+  assert.deepEqual(candidate(""04-31-3000""),false);
+  assert.deepEqual(candidate(""06-06-2005""),true);
+  assert.deepEqual(candidate(""21-31-2000""),false);
+  assert.deepEqual(candidate(""04-12-2003""),true);
+  assert.deepEqual(candidate(""04122003""),false);
+  assert.deepEqual(candidate(""20030412""),false);
+  assert.deepEqual(candidate(""2003-04""),false);
+  assert.deepEqual(candidate(""2003-04-12""),false);
+  assert.deepEqual(candidate(""04-2003""),false);
+}
+
+test();"
+HumanEval_125,kor_Hang,js,"/ 예제 / 알파벳, ord (a) = 0, ord (b) = 1, ... ord (z) = 25/는 코마로 나누어야 합니다 ',' 코마가 존재하지 않는다면 에서 홀수 순서로 소문자 수를 반환해야 합니다/ 단어의 문자열을 주어, 당신이 원하는 텍스트에 빈 공간이 존재하지 않는 경우, 빈 공간에 나누어진 단어의 배열을 반환합니다.// >>> split_words(""Hello world!"")
+// [""Hello"", ""world!""]
+// >>> split_words(""Hello,world!"")
+// [""Hello"", ""world!""]
+// >>> split_words(""abcdef"")
+// 3
+function split_words(txt){
+","function split_words(txt) {
+    if (/\s/.test(txt)) {
+        // Split on whitespace if it exists
+        return txt.split(/\s+/);
+    } else if (/,/.test(txt)) {
+        // Split on commas if no whitespace exists
+        return txt.split(',');
+    } else {
+        // Return count of lowercase letters with odd order in the alphabet
+        let oddOrderCount = 0;
+        for (let i = 0; i < txt.length; i++) {
+            let char = txt[i];
+            if (char >= 'a' && char <= 'z') {
+                let order = char.charCodeAt(0) - 'a'.charCodeAt(0);
+                if (order % 2 !== 0) {
+                    oddOrderCount++;
+                }
+            }
+        }
+        return oddOrderCount;
+    }
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = split_words;
+  assert.deepEqual(candidate(""Hello world!""),[""Hello"", ""world!""]);
+  assert.deepEqual(candidate(""Hello,world!""),[""Hello"", ""world!""]);
+  assert.deepEqual(candidate(""Hello world,!""),[""Hello"", ""world,!""]);
+  assert.deepEqual(candidate(""Hello,Hello,world !""),[""Hello,Hello,world"", ""!""]);
+  assert.deepEqual(candidate(""abcdef""),3);
+  assert.deepEqual(candidate(""aaabb""),2);
+  assert.deepEqual(candidate(""aaaBb""),1);
+  assert.deepEqual(candidate(""""),0);
+}
+
+test();"
+HumanEval_126,kor_Hang,js,"/ 예제 / number, return false. 음수와 정수만 가정한다./ 상승 순서로. 배열이 동일한 1 개 이상의 복제본을 가지고 있다면 / 숫자의 배열을 주어, 그들이 정렬되었는지 아닌지를 반환합니다.// >>> is_sorted([5])
+// true
+// >>> is_sorted([1, 2, 3, 4, 5])
+// true
+// >>> is_sorted([1, 3, 2, 4, 5])
+// false
+// >>> is_sorted([1, 2, 3, 4, 5, 6])
+// true
+// >>> is_sorted([1, 2, 3, 4, 5, 6, 7])
+// true
+// >>> is_sorted([1, 3, 2, 4, 5, 6, 7])
+// false
+// >>> is_sorted([1, 2, 2, 3, 3, 4])
+// true
+// >>> is_sorted([1, 2, 2, 2, 3, 4])
+// false
+function is_sorted(lst){
+","function is_sorted(lst) {
+    if (lst.length <= 1) return true;
+
+    for (let i = 0; i < lst.length - 1; i++) {
+        if (lst[i] > lst[i + 1]) {
+            return false;
+        }
+        if (lst[i] === lst[i + 1]) {
+            // Check if more than 1 duplicate by looking two steps ahead
+            if (i + 2 < lst.length && lst[i] === lst[i + 2]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = is_sorted;
+  assert.deepEqual(candidate([5]),true);
+  assert.deepEqual(candidate([1, 2, 3, 4, 5]),true);
+  assert.deepEqual(candidate([1, 3, 2, 4, 5]),false);
+  assert.deepEqual(candidate([1, 2, 3, 4, 5, 6]),true);
+  assert.deepEqual(candidate([1, 2, 3, 4, 5, 6, 7]),true);
+  assert.deepEqual(candidate([1, 3, 2, 4, 5, 6, 7]),false);
+  assert.deepEqual(candidate([]),true);
+  assert.deepEqual(candidate([1]),true);
+  assert.deepEqual(candidate([3, 2, 1]),false);
+  assert.deepEqual(candidate([1, 2, 2, 2, 3, 4]),false);
+  assert.deepEqual(candidate([1, 2, 3, 3, 3, 4]),false);
+  assert.deepEqual(candidate([1, 2, 2, 3, 3, 4]),true);
+  assert.deepEqual(candidate([1, 2, 3, 4]),true);
+}
+
+test();"
+HumanEval_127,kor_Hang,js,"/ [입출력] 샘플: / 두 간격이 교차하지 않으면 ""NO""를 반환합니다. / 그렇지 않으면 ""NO""를 반환합니다./ 교차선의 길이 소수라면 ""YES""를 반환합니다./ 그 길이가 1인 소수 아닌 숫자입니다./ 예를 들어, 간격 (1, 3), (2, 4) 의 교차점은 (2, 3) 입니다./ 간격은 소수입니다. / 당신의 임무는 이 두 칸의 교차선의 길이가/ 각 주어진 간격에 대해, 그것의 시작은 그것의 끝보다 작거나 같다고 가정합니다. / 시작과 끝을 모두 포함합니다. / 주어진 간격은 닫혀있다는 것을 의미하며, 간격은 (시작, 끝)/ 각 간격이 정수 쌍인 경우. 예를 들어, 간격 = (시작, 끝) = (1, 2)./ 두 개의 간격이 주어집니다, // >>> intersection([1, 2], [2, 3])
+// ""NO""
+// >>> intersection([-1, 1], [0, 4])
+// ""NO""
+// >>> intersection([-3, -1], [-5, 5])
+// ""YES""
+function intersection(interval1, interval2){
+","function intersection(interval1, interval2) {
+    const [start1, end1] = interval1;
+    const [start2, end2] = interval2;
+
+    // Determine the start and end of the intersection
+    const startIntersection = Math.max(start1, start2);
+    const endIntersection = Math.min(end1, end2);
+
+    // Calculate the length of the intersection
+    const intersectionLength = endIntersection - startIntersection;
+
+    // Helper function to check if a number is prime
+    function isPrime(num) {
+        if (num <= 1) return false;
+        if (num <= 3) return true;
+        if (num % 2 === 0 || num % 3 === 0) return false;
+        for (let i = 5; i * i <= num; i += 6) {
+            if (num % i === 0 || num % (i + 2) === 0) return false;
+        }
+        return true;
+    }
+
+    // Check if the length of the intersection is a prime number
+    return intersectionLength > 0 && isPrime(intersectionLength) ? ""YES"" : ""NO"";
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = intersection;
+  assert.deepEqual(candidate([1, 2], [2, 3]),""NO"");
+  assert.deepEqual(candidate([-1, 1], [0, 4]),""NO"");
+  assert.deepEqual(candidate([-3, -1], [-5, 5]),""YES"");
+  assert.deepEqual(candidate([-2, 2], [-4, 0]),""YES"");
+  assert.deepEqual(candidate([-11, 2], [-1, -1]),""NO"");
+  assert.deepEqual(candidate([1, 2], [3, 5]),""NO"");
+  assert.deepEqual(candidate([1, 2], [1, 2]),""NO"");
+  assert.deepEqual(candidate([-2, -2], [-3, -2]),""NO"");
+}
+
+test();"
+HumanEval_128,kor_Hang,js,"/ 예: / 참고: 빈 arr에 대해 정의되지 않은 값을 반환합니다. / 각 숫자의 배열, 1으로 표현, -1 또는 0을. / 모든 기호의 곱으로 곱한 정수의 크기의 합 / 당신은 정수의 배열 arr을 주어지고 당신은 반환해야합니다.// >>> prod_signs([1, 2, 2, -4])
+// 9
+// >>> prod_signs([0, 1])
+// 0
+// >>> prod_signs([])
+// undefined
+function prod_signs(arr){
+","function prod_signs(arr) {
+    if (arr.length === 0) return undefined;
+
+    let sumOfMagnitudes = 0;
+    let productOfSigns = 1;
+
+    for (let num of arr) {
+        sumOfMagnitudes += Math.abs(num);
+        productOfSigns *= (num === 0 ? 0 : Math.sign(num));
+    }
+
+    return sumOfMagnitudes * productOfSigns;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = prod_signs;
+  assert.deepEqual(candidate([1, 2, 2, -4]),-9);
+  assert.deepEqual(candidate([0, 1]),0);
+  assert.deepEqual(candidate([1, 1, 1, 2, 3, -1, 1]),-10);
+  assert.deepEqual(candidate([]),undefined);
+  assert.deepEqual(candidate([2, 4, 1, 2, -1, -1, 9]),20);
+  assert.deepEqual(candidate([-1, 1, -1, 1]),4);
+  assert.deepEqual(candidate([-1, 1, 1, 1]),-4);
+  assert.deepEqual(candidate([-1, 1, 1, 0]),0);
+}
+
+test();"
+HumanEval_129,kor_Hang,js,"/ 예: / 최소 경로가 통과하는 셀에 대한 값의 순서 배열을 반환합니다. / 그 답이 독특하다는 게 보장됩니다./ lst_A[j] = lst_B[j] / lst_A[i] < lst_B[i]와 모든 j (1 <= j <i) 에 대해 우리는 / lst_B보다 더 많다는 뜻입니다. 즉, i (1 <= i <= k) 라는 정수 인덱스가 존재한다는 뜻입니다./를 통해 (lst_A와 lst_B라고 부르겠습니다), lst_A는 사전적으로 덜 / A와 B가 가는 셀에 있는 값들의 순서 배열을 만든 후/ 길이 A (길이 k) 는 길이 B (길이 k) 보다 작다고 간주됩니다./ 당신은 그리드 밖으로 갈 수 없습니다. / 반드시 구별되는)/ 길이 k의 경로는 정확히 k개의 세포를 방문하는 것을 의미합니다 (아니면 / 셀. 다른 말로 하면, 여러분은 현재와 가장자리를 공유하는 세포로 갈 수 있습니다./ 어떤 세포에서, 그리고 각 단계에 당신은 이웃 세포의 어느 이동할 수 있습니다, 그리드에서 길이 k의 최소 경로를 찾아내야 합니다. 시작하실 수 있습니다./ inclusive는 그리드의 셀에 정확히 한 번 나타납니다./ 그리드의 각 셀에는 값이 들어있습니다. [1, N * N] 범위의 모든 정수/ N 행과 N 열 (N >=2) 과 양수 k를 가진 그리드를 보면, // >>> minPath([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 3)
+// [1, 2, 1]
+// >>> minPath([[5, 9, 3], [4, 1, 6], [7, 8, 2]], 1)
+// [1]
+function minPath(grid, k){
+","function minPath(grid, k) {
+    const N = grid.length;
+    const directions = [
+        [0, 1], // right
+        [1, 0], // down
+        [0, -1], // left
+        [-1, 0]  // up
+    ];
+    
+    let minPathResult = Array(k).fill(Infinity);
+
+    function dfs(x, y, path) {
+        if (path.length === k) {
+            // Check if the current path is lexicographically smaller
+            if (comparePaths(path, minPathResult)) {
+                minPathResult = [...path];
+            }
+            return;
+        }
+
+        for (const [dx, dy] of directions) {
+            const nx = x + dx;
+            const ny = y + dy;
+            if (nx >= 0 && nx < N && ny >= 0 && ny < N) {
+                path.push(grid[nx][ny]);
+                dfs(nx, ny, path);
+                path.pop();
+            }
+        }
+    }
+    
+    function comparePaths(pathA, pathB) {
+        for (let i = 0; i < pathA.length; i++) {
+            if (pathA[i] < pathB[i]) return true;
+            if (pathA[i] > pathB[i]) return false;
+        }
+        return false;
+    }
+
+    for (let i = 0; i < N; i++) {
+        for (let j = 0; j < N; j++) {
+            dfs(i, j, [grid[i][j]]);
+        }
+    }
+
+    return minPathResult;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = minPath;
+  assert.deepEqual(candidate([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 3),[1, 2, 1]);
+  assert.deepEqual(candidate([[5, 9, 3], [4, 1, 6], [7, 8, 2]], 1),[1]);
+  assert.deepEqual(candidate([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]], 4),[1, 2, 1, 2]);
+  assert.deepEqual(candidate([[6, 4, 13, 10], [5, 7, 12, 1], [3, 16, 11, 15], [8, 14, 9, 2]], 7),[1, 10, 1, 10, 1, 10, 1]);
+  assert.deepEqual(candidate([[8, 14, 9, 2], [6, 4, 13, 15], [5, 7, 1, 12], [3, 10, 11, 16]], 5),[1, 7, 1, 7, 1]);
+  assert.deepEqual(candidate([[11, 8, 7, 2], [5, 16, 14, 4], [9, 3, 15, 6], [12, 13, 10, 1]], 9),[1, 6, 1, 6, 1, 6, 1, 6, 1]);
+  assert.deepEqual(candidate([[12, 13, 10, 1], [9, 3, 15, 6], [5, 16, 14, 4], [11, 8, 7, 2]], 12),[1, 6, 1, 6, 1, 6, 1, 6, 1, 6, 1, 6]);
+  assert.deepEqual(candidate([[2, 7, 4], [3, 1, 5], [6, 8, 9]], 8),[1, 3, 1, 3, 1, 3, 1, 3]);
+  assert.deepEqual(candidate([[6, 1, 5], [3, 8, 9], [2, 7, 4]], 8),[1, 5, 1, 5, 1, 5, 1, 5]);
+  assert.deepEqual(candidate([[1, 2], [3, 4]], 10),[1, 2, 1, 2, 1, 2, 1, 2, 1, 2]);
+  assert.deepEqual(candidate([[1, 3], [3, 2]], 10),[1, 3, 1, 3, 1, 3, 1, 3, 1, 3]);
+}
+
+test();"
+HumanEval_130,kor_Hang,js,"/ 예: / 트리보나치 수열의 첫 번째 n + 1 숫자들. / 음이 아닌 정수 n을 주어, 의 배열을 반환해야 합니다/ = 2 + 3 + 3 = 8/ tri(3) = tri(2) + tri(1) + tri(4)/ tri(4) = 3 / tri(2) = 1 + (2 / 2) = 2 / 예를 들어: / tri (n) = tri (n - 1) + tri (n - 2) + tri (n + 1) 이므로 n은 홀수입니다./ tri (n) = 1 + n / 2 이고, n이 짝수라면/ tri(1) = 3 / 트리보나치 염기서열은 다음과 같은 반복으로 정의됩니다: 하지만 사람들이 모르는 것은 트리보나치 염기서열입니다.피보나치 수열은 수학자들이 깊이 연구한 것으로 알려져 있습니다.// >>> tri(3)
+// [1, 3, 2, 8]
+function tri(n){
+","function tri(n) {
+    if (n < 0) return [];
+    
+    let tribonacci = new Array(n + 1);
+
+    for (let i = 0; i <= n; i++) {
+        if (i === 1) {
+            tribonacci[i] = 3;
+        } else if (i % 2 === 0) {
+            tribonacci[i] = 1 + i / 2;
+        } else {
+            tribonacci[i] = 
+                (tribonacci[i - 1] !== undefined ? tribonacci[i - 1] : 0) + 
+                (tribonacci[i - 2] !== undefined ? tribonacci[i - 2] : 0) + 
+                (tribonacci[i + 1] !== undefined ? tribonacci[i + 1] : 0);
+        }
+    }
+
+    return tribonacci;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = tri;
+  assert.deepEqual(candidate(3),[1, 3, 2, 8]);
+  assert.deepEqual(candidate(4),[1, 3, 2, 8, 3]);
+  assert.deepEqual(candidate(5),[1, 3, 2, 8, 3, 15]);
+  assert.deepEqual(candidate(6),[1, 3, 2, 8, 3, 15, 4]);
+  assert.deepEqual(candidate(7),[1, 3, 2, 8, 3, 15, 4, 24]);
+  assert.deepEqual(candidate(8),[1, 3, 2, 8, 3, 15, 4, 24, 5]);
+  assert.deepEqual(candidate(9),[1, 3, 2, 8, 3, 15, 4, 24, 5, 35]);
+  assert.deepEqual(candidate(20),[1, 3, 2, 8, 3, 15, 4, 24, 5, 35, 6, 48, 7, 63, 8, 80, 9, 99, 10, 120, 11]);
+  assert.deepEqual(candidate(0),[1]);
+  assert.deepEqual(candidate(1),[1, 3]);
+}
+
+test();"
+HumanEval_131,kor_Hang,js,"/ 예를 들어: / 모든 숫자가 짝수인 경우 0을 반환합니다. /긍정적인 정수 n을 주어 홀수들의 곱을 반환합니다.// >>> digits(1)
+// 1
+// >>> digits(4)
+// 0
+// >>> digits(235)
+// 15
+function digits(n){
+","function digits(n) {
+    let product = 1;
+    let hasOdd = false;
+
+    while (n > 0) {
+        let digit = n % 10;
+        if (digit % 2 !== 0) {
+            product *= digit;
+            hasOdd = true;
+        }
+        n = Math.floor(n / 10);
+    }
+
+    return hasOdd ? product : 0;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = digits;
+  assert.deepEqual(candidate(5),5);
+  assert.deepEqual(candidate(54),5);
+  assert.deepEqual(candidate(120),1);
+  assert.deepEqual(candidate(5014),5);
+  assert.deepEqual(candidate(98765),315);
+  assert.deepEqual(candidate(5576543),2625);
+  assert.deepEqual(candidate(2468),0);
+}
+
+test();"
+HumanEval_132,kor_Hang,js,"/ 하위 계열의 적어도 한 개의 괄호가 둥글게 되어 있습니다. / 함수는 유효한 괄호의 하위열이 존재할 경우에만 true를 반환해야 합니다./ square brackets만 포함된 문자열을 입력하는 함수를 생성합니다.// >>> is_nested(""[[]]"")
+// true
+// >>> is_nested(""[]]]]]]][[[[[]"")
+// false
+// >>> is_nested(""[][]"")
+// false
+// >>> is_nested(""[]"")
+// false
+// >>> is_nested(""[[][]]"")
+// true
+// >>> is_nested(""[[]][["")
+// true
+function is_nested(string){
+","function is_nested(string) {
+    let openCount = 0;
+    let nested = false;
+
+    for (let char of string) {
+        if (char === '[') {
+            if (openCount > 0) {
+                nested = true;
+            }
+            openCount++;
+        } else if (char === ']') {
+            if (openCount > 0) {
+                openCount--;
+            }
+        }
+    }
+    
+    return nested && openCount === 0;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = is_nested;
+  assert.deepEqual(candidate(""[[]]""),true);
+  assert.deepEqual(candidate(""[]]]]]]][[[[[]""),false);
+  assert.deepEqual(candidate(""[][]""),false);
+  assert.deepEqual(candidate(""[]""),false);
+  assert.deepEqual(candidate(""[[[[]]]]""),true);
+  assert.deepEqual(candidate(""[]]]]]]]]]]""),false);
+  assert.deepEqual(candidate(""[][][[]]""),true);
+  assert.deepEqual(candidate(""[[]""),false);
+  assert.deepEqual(candidate(""[]]""),false);
+  assert.deepEqual(candidate(""[[]][[""),true);
+  assert.deepEqual(candidate(""[[][]]""),true);
+  assert.deepEqual(candidate(""""),false);
+  assert.deepEqual(candidate(""[[[[[[[[""),false);
+  assert.deepEqual(candidate(""]]]]]]]]""),false);
+}
+
+test();"
+HumanEval_133,kor_Hang,js,"/ 예: / 각 요소를 먼저 상위 int (~ 천장) 로 둥글게 묶어줍니다./ 주어진 배열의 제곱 수의 합을 반환해야 합니다, / 당신은 숫자의 배열을 부여됩니다. /// >>> lst([1.0, 2.0, 3.0])
+// 14
+// >>> lst([1.0, 4.0, 9.0])
+// 98
+// >>> lst([1.0, 3.0, 5.0, 7.0])
+// 84
+// >>> lst([1.4, 4.2, 0.0])
+// 29
+// >>> lst([-2.4, 1.0, 1.0])
+// 6
+function sum_squares(lst){
+","function sum_squares(lst) {
+    return lst.map(Math.ceil).reduce((sum, num) => sum + num * num, 0);
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = sum_squares;
+  assert.deepEqual(candidate([1.0, 2.0, 3.0]),14);
+  assert.deepEqual(candidate([1.0, 2.0, 3.0]),14);
+  assert.deepEqual(candidate([1.0, 3.0, 5.0, 7.0]),84);
+  assert.deepEqual(candidate([1.4, 4.2, 0.0]),29);
+  assert.deepEqual(candidate([-2.4, 1.0, 1.0]),6);
+  assert.deepEqual(candidate([100.0, 1.0, 15.0, 2.0]),10230);
+  assert.deepEqual(candidate([10000.0, 10000.0]),200000000);
+  assert.deepEqual(candidate([-1.4, 4.6, 6.3]),75);
+  assert.deepEqual(candidate([-1.4, 17.9, 18.9, 19.9]),1086);
+  assert.deepEqual(candidate([0.0]),0);
+  assert.deepEqual(candidate([-1.0]),1);
+  assert.deepEqual(candidate([-1.0, 1.0, 0.0]),2);
+}
+
+test();"
+HumanEval_134,kor_Hang,js,"/ 예: / 참고: ""word""는 공간으로 분리된 문자 그룹입니다./ 단어의 일부, 그리고 거짓 그렇지 않으면. / 는 알파벳 문자이며, 는 아닙니다./ 마지막 문자가 라면 true를 반환하는 함수를 생성합니다.// >>> check_if_last_char_is_a_letter(""apple pie"")
+// false
+// >>> check_if_last_char_is_a_letter(""apple pi e"")
+// true
+// >>> check_if_last_char_is_a_letter(""apple pi e "")
+// false
+// >>> check_if_last_char_is_a_letter("""")
+// false
+function check_if_last_char_is_a_letter(txt){
+","function check_if_last_char_is_a_letter(txt) {
+    if (txt.length === 0) return false;
+    
+    txt = txt.trim();
+    if (txt.length === 0) return false;
+    
+    let parts = txt.split(' ');
+    let lastWord = parts[parts.length - 1];
+    
+    if (lastWord.length === 0) return false;
+    
+    let lastChar = lastWord[lastWord.length - 1];
+    return /^[a-zA-Z]$/.test(lastChar);
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = check_if_last_char_is_a_letter;
+  assert.deepEqual(candidate(""apple""),false);
+  assert.deepEqual(candidate(""apple pi e""),true);
+  assert.deepEqual(candidate(""eeeee""),false);
+  assert.deepEqual(candidate(""A""),true);
+  assert.deepEqual(candidate(""Pumpkin pie ""),false);
+  assert.deepEqual(candidate(""Pumpkin pie 1""),false);
+  assert.deepEqual(candidate(""""),false);
+  assert.deepEqual(candidate(""eeeee e ""),false);
+  assert.deepEqual(candidate(""apple pie""),false);
+  assert.deepEqual(candidate(""apple pi e ""),false);
+}
+
+test();"
+HumanEval_135,kor_Hang,js,"/ 예: / 두 번 반복되는 값./ 그런 요소가 존재하지 않으면 -1을 반환합니다. 주어진 배열에는 가 포함되지 않습니다./는 바로 앞의 요소보다 크거나 같지는 않습니다. 만약 / 란 요소의 가장 큰 인덱스를 반환하는 함수를 생성합니다.// >>> can_arrange([1, 2, 4, 3, 5])
+// 3
+// >>> can_arrange([1, 2, 3])
+// -1
+function can_arrange(arr){
+","function can_arrange(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        if (arr[i] < arr[i - 1]) {
+            return i;
+        }
+    }
+    return -1;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = can_arrange;
+  assert.deepEqual(candidate([1, 2, 4, 3, 5]),3);
+  assert.deepEqual(candidate([1, 2, 4, 5]),-1);
+  assert.deepEqual(candidate([1, 4, 2, 5, 6, 7, 8, 9, 10]),2);
+  assert.deepEqual(candidate([4, 8, 5, 7, 3]),4);
+  assert.deepEqual(candidate([]),-1);
+}
+
+test();"
+HumanEval_136,kor_Hang,js,"/ 예: / 음수나 양수 정수가 없다면 undefined로 반환합니다./ 행렬의 양수 정수들 중 하나. / 음수 중 가장 큰 숫자이고, 'b'는 가장 작은 숫자입니다./a가 인 배열 (a, b) 을 반환하는 함수를 생성합니다.// >>> largest_smallest_integers([2, 4, 1, 3, 5, 7])
+// [undefined, 1]
+// >>> largest_smallest_integers([])
+// [undefined, undefined]
+// >>> largest_smallest_integers([0])
+// [undefined, undefined]
+function largest_smallest_integers(lst){
+","function largest_smallest_integers(lst) {
+    let largestNegative = undefined;
+    let smallestPositive = undefined;
+    
+    lst.forEach(num => {
+        if (num < 0 && (largestNegative === undefined || num > largestNegative)) {
+            largestNegative = num;
+        }
+        if (num > 0 && (smallestPositive === undefined || num < smallestPositive)) {
+            smallestPositive = num;
+        }
+    });
+    
+    return [largestNegative, smallestPositive];
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = largest_smallest_integers;
+  assert.deepEqual(candidate([2, 4, 1, 3, 5, 7]),[undefined, 1]);
+  assert.deepEqual(candidate([2, 4, 1, 3, 5, 7, 0]),[undefined, 1]);
+  assert.deepEqual(candidate([1, 3, 2, 4, 5, 6, -2]),[-2, 1]);
+  assert.deepEqual(candidate([4, 5, 3, 6, 2, 7, -7]),[-7, 2]);
+  assert.deepEqual(candidate([7, 3, 8, 4, 9, 2, 5, -9]),[-9, 2]);
+  assert.deepEqual(candidate([]),[undefined, undefined]);
+  assert.deepEqual(candidate([0]),[undefined, undefined]);
+  assert.deepEqual(candidate([-1, -3, -5, -6]),[-1, undefined]);
+  assert.deepEqual(candidate([-1, -3, -5, -6, 0]),[-1, undefined]);
+  assert.deepEqual(candidate([-6, -4, -4, -3, 1]),[-3, 1]);
+  assert.deepEqual(candidate([-6, -4, -4, -3, -100, 1]),[-3, 1]);
+}
+
+test();"
+HumanEval_137,kor_Hang,js,"/ 참고: 실수가 문자열로 표현되면 부동 소수점은 . 또는 , / 값이 같다면 undefined를 반환합니다. / 실제 숫자, 그리고 주어진 변수 타입에서 더 큰 변수를 반환합니다. / 를 나타내는 정수, 플로이트 또는 문자열을 사용하는 함수를 생성합니다.// >>> compare_one(1, 2.5)
+// 2.5
+// >>> compare_one(1, ""2,3"")
+// ""2,3""
+// >>> compare_one(""5,1"", ""6"")
+// ""6""
+// >>> compare_one(""1"", 1)
+// undefined
+function compare_one(a, b){
+","function compare_one(a, b) {
+    // Function to parse the input into a real number.
+    const parseNum = (val) => {
+        if (typeof val === 'number') return val;
+        if (typeof val === 'string') {
+            // Replace comma with dot for parsing
+            let parsed = parseFloat(val.replace(',', '.'));
+            // If parsing fails, return NaN
+            if (isNaN(parsed)) return NaN;
+            return parsed;
+        }
+        return NaN;
+    };
+
+    // Get parsed numerical values
+    const numA = parseNum(a);
+    const numB = parseNum(b);
+
+    // Compare the inputs to determine which is greater
+    if (numA > numB) return a;
+    if (numB > numA) return b;
+
+    // If values are equal return undefined
+    return undefined;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = compare_one;
+  assert.deepEqual(candidate(1, 2),2);
+  assert.deepEqual(candidate(1, 2.5),2.5);
+  assert.deepEqual(candidate(2, 3),3);
+  assert.deepEqual(candidate(5, 6),6);
+  assert.deepEqual(candidate(1, ""2,3""),""2,3"");
+  assert.deepEqual(candidate(""5,1"", ""6""),""6"");
+  assert.deepEqual(candidate(""1"", ""2""),""2"");
+  assert.deepEqual(candidate(""1"", 1),undefined);
+}
+
+test();"
+HumanEval_138,kor_Hang,js,"/ 예제 / 주어진 숫자 n이 정확히 4개의 양수 짝수의 합으로 쓸 수 있는지 평가해 보세요.// >>> is_equal_to_sum_even(4)
+// false
+// >>> is_equal_to_sum_even(6)
+// false
+// >>> is_equal_to_sum_even(8)
+// true
+function is_equal_to_sum_even(n){
+","function is_equal_to_sum_even(n) {
+    // A number can be expressed as the sum of 4 positive even numbers
+    // if it is greater than or equal to 8 and is even.
+
+    if (n >= 8 && n % 2 === 0) {
+        return true;
+    }
+    return false;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = is_equal_to_sum_even;
+  assert.deepEqual(candidate(4),false);
+  assert.deepEqual(candidate(6),false);
+  assert.deepEqual(candidate(8),true);
+  assert.deepEqual(candidate(10),true);
+  assert.deepEqual(candidate(11),false);
+  assert.deepEqual(candidate(12),true);
+  assert.deepEqual(candidate(13),false);
+  assert.deepEqual(candidate(16),true);
+}
+
+test();"
+HumanEval_139,kor_Hang,js,"/ 예를 들어: / n > 0 / brazilian_factorial (n) = n! * (n-1)! * (n-2)! * ... * 1! / 브라질 인수수는 다음과 같이 정의됩니다: // >>> special_factorial(4)
+// 288
+// The function will receive an integer as input and should return the special
+// factorial of this integer.
+function special_factorial(n){
+","function factorial(num) {
+    if (num <= 1) return 1;
+    return num * factorial(num - 1);
+}
+
+function special_factorial(n) {
+    let result = 1;
+    for (let i = n; i > 0; i--) {
+        result *= factorial(i);
+    }
+    return result;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = special_factorial;
+  assert.deepEqual(candidate(4),288);
+  assert.deepEqual(candidate(5),34560);
+  assert.deepEqual(candidate(7),125411328000);
+  assert.deepEqual(candidate(1),1);
+}
+
+test();"
+HumanEval_140,kor_Hang,js,"/ 다음으로 모든 연속적인 공백을 - 로 대체합니다./ 그리고 문자열이 2개 이상의 연속적인 스페이스를 가지고 있다면, / 텍스트 문자열을 주어, 모든 공간을 밑줄로 대체합니다, // >>> fix_spaces("" Example"")
+// ""Example""
+// >>> fix_spaces("" Example 1"")
+// ""Example_1""
+// >>> fix_spaces("" Example 2"")
+// ""_Example_2""
+// >>> fix_spaces("" Example 3"")
+// ""_Example-3""
+function fix_spaces(text){
+","function fix_spaces(text) {
+    return text.trim().replace(/\s{2,}/g, '-').replace(/\s/g, '_');
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = fix_spaces;
+  assert.deepEqual(candidate(""Example""),""Example"");
+  assert.deepEqual(candidate(""Mudasir Hanif ""),""Mudasir_Hanif_"");
+  assert.deepEqual(candidate(""Yellow Yellow  Dirty  Fellow""),""Yellow_Yellow__Dirty__Fellow"");
+  assert.deepEqual(candidate(""Exa   mple""),""Exa-mple"");
+  assert.deepEqual(candidate(""   Exa 1 2 2 mple""),""-Exa_1_2_2_mple"");
+}
+
+test();"
+HumanEval_141,kor_Hang,js,"/ 예: / - 점 뒤에 있는 하위 문자열은 다음 중 하나여야 합니다: ['txt', 'exe', 'dll'] / 라틴어 알파벳 ('a'-'z' 및 'A'-'Z'). / - 점 앞의 하위 문자열은 빈 것이 되어서는 안되며, 에서 시작됩니다./ - 파일 이름에는 정확히 한 점 '.' / - 파일 이름에는 3자리 이상 ('0'-'9') 이 없어야 합니다. / 충족 되 니까: / 파일의 이름은 다음 조건이 모두 충족된 경우에만 유효하다고 간주됩니다./ 파일 이름이 유효하다면 '예'를, 그렇지 않으면 '아니오'를 반환합니다./파일 이름을 나타내는 문자열을 가져다가 를 반환하는 함수를 생성합니다.// >>> file_name_check(""example.txt"")
+// ""Yes""
+// >>> file_name_check(""1example.dll"")
+// ""No""
+function file_name_check(file_name){
+","function file_name_check(file_name) {
+    const validExtensions = ['txt', 'exe', 'dll'];
+    const parts = file_name.split('.');
+
+    if (parts.length !== 2) {
+        return 'No';
+    }
+
+    const [namePart, extensionPart] = parts;
+
+    // Check that the name part is not empty, starts with a letter, and has at most 3 digits
+    if (namePart.length === 0 || !/^[a-zA-Z]/.test(namePart)) {
+        return 'No';
+    }
+
+    const digitCount = (namePart.match(/\d/g) || []).length;
+    if (digitCount > 3) {
+        return 'No';
+    }
+
+    // Check if the extension is one of the valid ones
+    if (!validExtensions.includes(extensionPart)) {
+        return 'No';
+    }
+
+    return 'Yes';
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = file_name_check;
+  assert.deepEqual(candidate(""example.txt""),""Yes"");
+  assert.deepEqual(candidate(""1example.dll""),""No"");
+  assert.deepEqual(candidate(""s1sdf3.asd""),""No"");
+  assert.deepEqual(candidate(""K.dll""),""Yes"");
+  assert.deepEqual(candidate(""MY16FILE3.exe""),""Yes"");
+  assert.deepEqual(candidate(""His12FILE94.exe""),""No"");
+  assert.deepEqual(candidate(""_Y.txt""),""No"");
+  assert.deepEqual(candidate(""?aREYA.exe""),""No"");
+  assert.deepEqual(candidate(""/this_is_valid.dll""),""No"");
+  assert.deepEqual(candidate(""this_is_valid.wow""),""No"");
+  assert.deepEqual(candidate(""this_is_valid.txt""),""Yes"");
+  assert.deepEqual(candidate(""this_is_valid.txtexe""),""No"");
+  assert.deepEqual(candidate(""#this2_i4s_5valid.ten""),""No"");
+  assert.deepEqual(candidate(""@this1_is6_valid.exe""),""No"");
+  assert.deepEqual(candidate(""this_is_12valid.6exe4.txt""),""No"");
+  assert.deepEqual(candidate(""all.exe.txt""),""No"");
+  assert.deepEqual(candidate(""I563_No.exe""),""Yes"");
+  assert.deepEqual(candidate(""Is3youfault.txt""),""Yes"");
+  assert.deepEqual(candidate(""no_one#knows.dll""),""Yes"");
+  assert.deepEqual(candidate(""1I563_Yes3.exe""),""No"");
+  assert.deepEqual(candidate(""I563_Yes3.txtt""),""No"");
+  assert.deepEqual(candidate(""final..txt""),""No"");
+  assert.deepEqual(candidate(""final132""),""No"");
+  assert.deepEqual(candidate(""_f4indsartal132.""),""No"");
+  assert.deepEqual(candidate("".txt""),""No"");
+  assert.deepEqual(candidate(""s.""),""No"");
+}
+
+test();"
+HumanEval_142,kor_Hang,js,"/ 예: / 색인이 3 또는 4 의 배수가 아닌 배열의 항목을 변경합니다. 함수는 모든 항목의 합을 반환합니다./ 곱하기 3 이 되고, 인덱스가 3의 곱이 아닌 4의 곱이라면 정수 엔트리를 세로화합니다. 함수는 / 이 함수는 정수의 배열을 가져옵니다. 배열의 모든 항목에 대해 함수는 인덱스가 a라면 정수 항목을 제곱합니다./"" // >>> lst
+// [1, 2, 3]
+// >>> lst
+// []
+// >>> lst
+// [-1, -5, 2, -1, -5]
+function sum_squares(lst){
+","function sum_squares(lst) {
+    let sum = 0;
+    for (let i = 0; i < lst.length; i++) {
+        if (i % 3 === 0) {
+            sum += Math.pow(lst[i], 2);
+        } else if (i % 4 === 0) {
+            sum += Math.pow(lst[i], 3);
+        } else {
+            sum += lst[i];
+        }
+    }
+    return sum;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = sum_squares;
+  assert.deepEqual(candidate([1, 2, 3]),6);
+  assert.deepEqual(candidate([1, 4, 9]),14);
+  assert.deepEqual(candidate([]),0);
+  assert.deepEqual(candidate([1, 1, 1, 1, 1, 1, 1, 1, 1]),9);
+  assert.deepEqual(candidate([-1, -1, -1, -1, -1, -1, -1, -1, -1]),-3);
+  assert.deepEqual(candidate([0]),0);
+  assert.deepEqual(candidate([-1, -5, 2, -1, -5]),-126);
+  assert.deepEqual(candidate([-56, -99, 1, 0, -2]),3030);
+  assert.deepEqual(candidate([-1, 0, 0, 0, 0, 0, 0, 0, -1]),0);
+  assert.deepEqual(candidate([-16, -9, -2, 36, 36, 26, -20, 25, -40, 20, -4, 12, -26, 35, 37]),-14196);
+  assert.deepEqual(candidate([-1, -3, 17, -1, -15, 13, -1, 14, -14, -12, -5, 14, -14, 6, 13, 11, 16, 16, 4, 10]),-1448);
+}
+
+test();"
+HumanEval_143,kor_Hang,js,"/ 예제 1: / 새로운 문자열의 단어들의 순서는 원래의 것과 같아야 합니다. / 그 길이는 소수입니다, / 그리고 당신은 원래 문장의 단어들을 포함 한 문자열을 반환해야 합니다, / 문장에는 공백으로 분리된 단어들이 들어있습니다./ 당신은 문장을 나타내는 문자열을 주어집니다, // >>> words_in_sentence(""This is a test"")
+// ""is""
+// Example 2:
+// >>> words_in_sentence(""lets go for swimming"")
+// ""go for""
+// Constraints:
+// * 1 <= len(sentence) <= 100
+// * sentence contains only letters
+function words_in_sentence(sentence){
+","function words_in_sentence(sentence) {
+    function isPrime(num) {
+        if (num <= 1) return false;
+        if (num <= 3) return true;
+        if (num % 2 === 0 || num % 3 === 0) return false;
+        for (let i = 5; i * i <= num; i += 6) {
+            if (num % i === 0 || num % (i + 2) === 0) return false;
+        }
+        return true;
+    }
+
+    return sentence.split(' ')
+                   .filter(word => isPrime(word.length))
+                   .join(' ');
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = words_in_sentence;
+  assert.deepEqual(candidate(""This is a test""),""is"");
+  assert.deepEqual(candidate(""lets go for swimming""),""go for"");
+  assert.deepEqual(candidate(""there is no place available here""),""there is no place"");
+  assert.deepEqual(candidate(""Hi I am Hussein""),""Hi am Hussein"");
+  assert.deepEqual(candidate(""go for it""),""go for it"");
+  assert.deepEqual(candidate(""here""),"""");
+  assert.deepEqual(candidate(""here is""),""is"");
+}
+
+test();"
+HumanEval_144,kor_Hang,js,"/ x, n가 유효 분수이고, 분모가 0이 아닌 것으로 가정할 수 있습니다./ <분수>/<분모> 분자와 분모가 양수 정수일 때/ 그렇지 않으면. x와 n 둘 다 분수의 문자열 표현이고, 다음과 같은 형식을 가지고 있습니다./ x * n. 함수는 x * n이 정수이고 false 라면 true를 반환합니다./당신의 임무는 표현식을 단순화할 수 있는 함수를 구현하는 것입니다.// >>> simplify(""1/5"", ""5/1"")
+// true
+// >>> simplify(""1/6"", ""2/1"")
+// false
+// >>> simplify(""7/10"", ""10/2"")
+// false
+function simplify(x, n){
+","function simplify(x, n) {
+    const parseFraction = (fraction) => {
+        const [numerator, denominator] = fraction.split('/').map(Number);
+        return { numerator, denominator };
+    };
+
+    const xFraction = parseFraction(x);
+    const nFraction = parseFraction(n);
+
+    const resultNumerator = xFraction.numerator * nFraction.numerator;
+    const resultDenominator = xFraction.denominator * nFraction.denominator;
+
+    return resultNumerator % resultDenominator === 0;
+}
+
+// Example usage
+console.log(simplify(""1/5"", ""5/1"")); // true
+console.log(simplify(""1/6"", ""2/1"")); // false
+console.log(simplify(""7/10"", ""10/2"")); // false","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = simplify;
+  assert.deepEqual(candidate(""1/5"", ""5/1""),true);
+  assert.deepEqual(candidate(""1/6"", ""2/1""),false);
+  assert.deepEqual(candidate(""5/1"", ""3/1""),true);
+  assert.deepEqual(candidate(""7/10"", ""10/2""),false);
+  assert.deepEqual(candidate(""2/10"", ""50/10""),true);
+  assert.deepEqual(candidate(""7/2"", ""4/2""),true);
+  assert.deepEqual(candidate(""11/6"", ""6/1""),true);
+  assert.deepEqual(candidate(""2/3"", ""5/2""),false);
+  assert.deepEqual(candidate(""5/2"", ""3/5""),false);
+  assert.deepEqual(candidate(""2/4"", ""8/4""),true);
+  assert.deepEqual(candidate(""2/4"", ""4/2""),true);
+  assert.deepEqual(candidate(""1/5"", ""5/1""),true);
+  assert.deepEqual(candidate(""1/5"", ""1/5""),false);
+}
+
+test();"
+HumanEval_145,kor_Hang,js,"/ 예를 들어: / 원래 배열의 인덱스에 따라 순서를 정합니다. / 참고: 몇 개의 항목이 있으면 숫자의 합이 비슷합니다./ 숫자의 합에 따라 순서대로 올라갑니다./ 주어진 정수 배열을 정렬하는 함수를 쓰세요.// >>> order_by_points([1, 11, -1, -11, -12])
+// [-1, -11, 1, -12, 11]
+// >>> order_by_points([])
+// []
+function order_by_points(nums){
+","function order_by_points(nums) {
+    function sumOfDigits(n) {
+        // Absolute value to ensure digits are summed correctly for negative numbers
+        return Math.abs(n).toString().split('').reduce((sum, digit) => sum + parseInt(digit), 0);
+    }
+
+    nums.sort((a, b) => {
+        const sumA = sumOfDigits(a);
+        const sumB = sumOfDigits(b);
+        if (sumA === sumB) {
+            return 0; // Maintain original order
+        }
+        return sumA - sumB;
+    });
+
+    return nums;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = order_by_points;
+  assert.deepEqual(candidate([1, 11, -1, -11, -12]),[-1, -11, 1, -12, 11]);
+  assert.deepEqual(candidate([1234, 423, 463, 145, 2, 423, 423, 53, 6, 37, 3457, 3, 56, 0, 46]),[0, 2, 3, 6, 53, 423, 423, 423, 1234, 145, 37, 46, 56, 463, 3457]);
+  assert.deepEqual(candidate([]),[]);
+  assert.deepEqual(candidate([1, -11, -32, 43, 54, -98, 2, -3]),[-3, -32, -98, -11, 1, 2, 43, 54]);
+  assert.deepEqual(candidate([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]),[1, 10, 2, 11, 3, 4, 5, 6, 7, 8, 9]);
+  assert.deepEqual(candidate([0, 6, 6, -76, -21, 23, 4]),[-76, -21, 0, 4, 23, 6, 6]);
+}
+
+test();"
+HumanEval_146,kor_Hang,js,"/ 예를 들어: / 숫자의 처음과 마지막 숫자는 홀수 (1, 3, 5, 7, 9) 입니다./ 배열의 10보다 큰 요소의 수와 둘 다 / 입력과 반환으로 숫자의 배열을 가져오는 함수를 작성합니다.// >>> specialFilter([15, -73, 14, -15])
+// 1
+// >>> specialFilter([33, -2, -3, 45, 21, 109])
+// 2
+function specialFilter(nums){
+","function specialFilter(nums) {
+    return nums.reduce((count, num) => {
+        if (Math.abs(num) > 10) {
+            const numStr = Math.abs(num).toString();
+            const firstDigit = parseInt(numStr[0]);
+            const lastDigit = parseInt(numStr[numStr.length - 1]);
+            if ([1, 3, 5, 7, 9].includes(firstDigit) && [1, 3, 5, 7, 9].includes(lastDigit)) {
+                return count + 1;
+            }
+        }
+        return count;
+    }, 0);
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = specialFilter;
+  assert.deepEqual(candidate([5, -2, 1, -5]),0);
+  assert.deepEqual(candidate([15, -73, 14, -15]),1);
+  assert.deepEqual(candidate([33, -2, -3, 45, 21, 109]),2);
+  assert.deepEqual(candidate([43, -12, 93, 125, 121, 109]),4);
+  assert.deepEqual(candidate([71, -2, -33, 75, 21, 19]),3);
+  assert.deepEqual(candidate([1]),0);
+  assert.deepEqual(candidate([]),0);
+}
+
+test();"
+HumanEval_147,kor_Hang,js,"/ 예시: / 그리고 a[i] + a[j] + a[k]은 3의 배수입니다. / a의 세 번 번 수 (a[i], a[j], a[k]) 를 반환합니다./ 각 i (1 ≤ i ≤ n) 에 대해 a[i] = i * i - i + 1의 값은/ 당신은 양수 n을 주어집니다. 당신은 길이 n의 정수 배열을 만들어야합니다.// >>> get_max_triples(5)
+// 1
+// Explanation: 
+// a = [1, 3, 7, 13, 21]
+// The only valid triple is (1, 7, 13).
+function get_max_triples(n){
+","function get_max_triples(n) {
+    // Step 1: Create the integer array 'a'
+    let a = new Array(n);
+    for (let i = 1; i <= n; i++) {
+        a[i - 1] = i * i - i + 1;
+    }
+
+    // Step 2: Count the triples
+    let count = 0;
+    for (let i = 0; i < n - 2; i++) {
+        for (let j = i + 1; j < n - 1; j++) {
+            for (let k = j + 1; k < n; k++) {
+                if ((a[i] + a[j] + a[k]) % 3 === 0) {
+                    count++;
+                }
+            }
+        }
+    }
+
+    return count;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = get_max_triples;
+  assert.deepEqual(candidate(5),1);
+  assert.deepEqual(candidate(6),4);
+  assert.deepEqual(candidate(10),36);
+  assert.deepEqual(candidate(100),53361);
+}
+
+test();"
+HumanEval_148,kor_Hang,js,"/ 예제 / 행성 이름이 맞지 않아요. // 함수는 planet1 또는 planet2 라면 빈 배열을 반환해야 합니다./ 태양에 가까운 거리에. / 행성1의 궤도와 행성2의 궤도 사이에 위치하고 있습니다./ 함수는 궤도가 / 행성의 이름 두 개를 문자열 planet1과 planet2로 가져가는 함수를 쓰세요. / 우라노스, 해왕성./ 수성, 다음 하나는 금성, 그 다음 지구, 화성, 목성, 토성, 태양계에는 8개의 행성이 있는데 태양에 가장 가까운 행성입니다.// >>> bf(""Jupiter"", ""Neptune"")
+// [""Saturn"", ""Uranus""]
+// >>> bf(""Earth"", ""Mercury"")
+// ""Venus""
+// >>> bf(""Mercury"", ""Uranus"")
+// [""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn""]
+function bf(planet1, planet2){
+","function bf(planet1, planet2) {
+    const planets = [
+        ""Mercury"",
+        ""Venus"",
+        ""Earth"",
+        ""Mars"",
+        ""Jupiter"",
+        ""Saturn"",
+        ""Uranus"",
+        ""Neptune""
+    ];
+
+    const index1 = planets.indexOf(planet1);
+    const index2 = planets.indexOf(planet2);
+
+    if (index1 === -1 || index2 === -1) {
+        return [];
+    }
+
+    const start = Math.min(index1, index2) + 1;
+    const end = Math.max(index1, index2);
+
+    return planets.slice(start, end);
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = bf;
+  assert.deepEqual(candidate(""Jupiter"", ""Neptune""),[""Saturn"", ""Uranus""]);
+  assert.deepEqual(candidate(""Earth"", ""Mercury""),[""Venus""]);
+  assert.deepEqual(candidate(""Mercury"", ""Uranus""),[""Venus"", ""Earth"", ""Mars"", ""Jupiter"", ""Saturn""]);
+  assert.deepEqual(candidate(""Neptune"", ""Venus""),[""Earth"", ""Mars"", ""Jupiter"", ""Saturn"", ""Uranus""]);
+  assert.deepEqual(candidate(""Earth"", ""Earth""),[]);
+  assert.deepEqual(candidate(""Mars"", ""Earth""),[]);
+  assert.deepEqual(candidate(""Jupiter"", ""Makemake""),[]);
+}
+
+test();"
+HumanEval_149,kor_Hang,js,"/ 예를 들어: / 모든 단어들이 같은 길이일 것이라고 가정할 수 있습니다. / 함수는 정렬된 순서로 문자열의 배열을 반환해야 합니다. / 두 단어의 길이가 같다면, 배열을 알파벳 순으로 정렬합니다. / 이 규칙에 따라 정렬된 배열을 반환해야 합니다. / 배열의 순서는 각 단어의 길이에 따라 상승해야 합니다, 그리고 당신은 / 그리고 이중이 있을 수도 있습니다./ 배열은 항상 문자열의 배열이고 숫자의 배열은 결코 아닙니다, / 그리고 정렬된 순서를 가진 결과 배열을 반환합니다, / 이 홀수 길이의 문자열을 삭제합니다, / 문자열의 배열을 파라미터로 받아들이는 함수를 작성합니다.// >>> list_sort([""aa"", ""a"", ""aaa""])
+// [""aa""]
+// >>> list_sort([""ab"", ""a"", ""aaa"", ""cd""])
+// [""ab"", ""cd""]
+function sorted_list_sum(lst){
+","function sorted_list_sum(lst) {
+    return lst
+        .filter(word => word.length % 2 === 0)
+        .sort((a, b) => {
+            if (a.length === b.length) {
+                return a.localeCompare(b);
+            }
+            return a.length - b.length;
+        });
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = sorted_list_sum;
+  assert.deepEqual(candidate([""aa"", ""a"", ""aaa""]),[""aa""]);
+  assert.deepEqual(candidate([""school"", ""AI"", ""asdf"", ""b""]),[""AI"", ""asdf"", ""school""]);
+  assert.deepEqual(candidate([""d"", ""b"", ""c"", ""a""]),[]);
+  assert.deepEqual(candidate([""d"", ""dcba"", ""abcd"", ""a""]),[""abcd"", ""dcba""]);
+  assert.deepEqual(candidate([""AI"", ""ai"", ""au""]),[""AI"", ""ai"", ""au""]);
+  assert.deepEqual(candidate([""a"", ""b"", ""b"", ""c"", ""c"", ""a""]),[]);
+  assert.deepEqual(candidate([""aaaa"", ""bbbb"", ""dd"", ""cc""]),[""cc"", ""dd"", ""aaaa"", ""bbbb""]);
+}
+
+test();"
+HumanEval_150,kor_Hang,js,"/ 예: / 소수이고 y의 값을 반환해야 합니다. 그렇지 않으면/n이 라면 x의 값을 반환하는 간단한 프로그램// >>> x_or_y(7, 34, 12)
+// 34
+// >>> x_or_y(15, 8, 5)
+// 5
+function x_or_y(n, x, y){
+","function isPrime(num) {
+    if (num <= 1) return false;
+    if (num <= 3) return true;
+
+    if (num % 2 === 0 || num % 3 === 0) return false;
+
+    for (let i = 5; i * i <= num; i += 6) {
+        if (num % i === 0 || num % (i + 2) === 0) return false;
+    }
+
+    return true;
+}
+
+function x_or_y(n, x, y) {
+    return isPrime(n) ? x : y;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = x_or_y;
+  assert.deepEqual(candidate(7, 34, 12),34);
+  assert.deepEqual(candidate(15, 8, 5),5);
+  assert.deepEqual(candidate(3, 33, 5212),33);
+  assert.deepEqual(candidate(1259, 3, 52),3);
+  assert.deepEqual(candidate(7919, -1, 12),-1);
+  assert.deepEqual(candidate(3609, 1245, 583),583);
+  assert.deepEqual(candidate(91, 56, 129),129);
+  assert.deepEqual(candidate(6, 34, 1234),1234);
+  assert.deepEqual(candidate(1, 2, 0),0);
+  assert.deepEqual(candidate(2, 2, 0),2);
+}
+
+test();"
+HumanEval_151,kor_Hang,js,"/ 홀수인 배열에. 음수나 정수 아닌 숫자를 무시합니다./ 숫자의 배열을 주어, 숫자의 제곱의 합을 반환합니다.// >>> double_the_difference([1, 3, 2, 0])
+// 10
+// >>> double_the_difference([-1, -2, 0])
+// 0
+// >>> double_the_difference([9, -2])
+// 81
+// >>> double_the_difference([0])
+// 0
+// If the input array is empty, return 0.
+function double_the_difference(lst){
+","function double_the_difference(lst) {
+    return lst.reduce((sum, num) => {
+        if (Number.isInteger(num) && num > 0 && num % 2 !== 0) {
+            return sum + num * num;
+        }
+        return sum;
+    }, 0);
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = double_the_difference;
+  assert.deepEqual(candidate([]),0);
+  assert.deepEqual(candidate([5.0, 4.0]),25);
+  assert.deepEqual(candidate([0.1, 0.2, 0.3]),0);
+  assert.deepEqual(candidate([-10.0, -20.0, -30.0]),0);
+  assert.deepEqual(candidate([-1.0, -2.0, 8.0]),0);
+  assert.deepEqual(candidate([0.2, 3.0, 5.0]),34);
+  assert.deepEqual(candidate([-9.0, -7.0, -5.0, -3.0, -1.0, 1.0, 3.0, 5.0, 7.0, 9.0]),165);
+}
+
+test();"
+HumanEval_152,kor_Hang,js,"/ 예: / 값은 0이고, 그렇지 않다면, 값은 추측과 점수 사이의 절대적인 차이입니다./ 같은 길이의 배열을 반환하여 각 추측의 거리를 나타냅니다. 만약 그들이 정확하게 추측했다면, / 당신은 두 개의 점수 배열과 같은 길이의 추측을 받습니다. 각 지수는 일치합니다./ 당신의 임무는 사람이 여러 경기의 결과를 정확하게 추측했는지 결정하는 것입니다. / 확실히 기록하고 비교할 가치가 있습니다. 그 순간의 생각과 감정은우리 모두 그 기분을 기억합니다.// >>> compare([1, 2, 3, 4, 5, 1], [1, 2, 3, 4, 2, -2])
+// [0, 0, 0, 0, 3, 3]
+// >>> compare([0, 5, 0, 0, 0, 4], [4, 1, 1, 0, 0, -2])
+// [4, 4, 1, 0, 0, 6]
+function compare(game, guess){
+","function compare(game, guess) {
+    return game.map((score, index) => Math.abs(score - guess[index]));
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = compare;
+  assert.deepEqual(candidate([1, 2, 3, 4, 5, 1], [1, 2, 3, 4, 2, -2]),[0, 0, 0, 0, 3, 3]);
+  assert.deepEqual(candidate([0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]),[0, 0, 0, 0, 0, 0]);
+  assert.deepEqual(candidate([1, 2, 3], [-1, -2, -3]),[2, 4, 6]);
+  assert.deepEqual(candidate([1, 2, 3, 5], [-1, 2, 3, 4]),[2, 0, 0, 1]);
+}
+
+test();"
+HumanEval_153,kor_Hang,js,"/ 예: / (그 강도는 -1) 입니다./ 'Slices.SErviNGSliCes'를 반환합니다. 왜냐하면 'SErviNGSliCes'가 가장 강력한 확장자이기 때문입니다./ extensions: ['SErviNGSliCes', 'Cheese', 'StuFfed'] 그러면 당신은 / 예를 들어, 만약 ""Slices""가 클래스와 의 배열으로 주어졌다면/ 배열에서 먼저 나오는 것을 선택합니다. / 같은 강도 두 개 이상의 확장자가 있다면, 당신은/ format: ClassName.StrongestExtensionName.  클래스 이름. 가장 강력한 확장 이름. / 가장 강력한 확장자를 찾아서 여기에 문자열을 반환해야 합니다./ 확장 이름에서, 강도는 CAP - SM 분수로 주어집니다. / 확장자의 이름의 글자, 그리고 SM는 소문자 의 숫자입니다./ 확장자의 강도는 다음과 같습니다: CAP가 대문자의 숫자 로 둡니다./ 확장자는 클래스에 추가 클래스를 로드하는 데 사용된다./당신은 클래스의 이름 (스링) 과 확장자의 배열을 받게 될 것입니다.// >>> Strongest_Extension(""my_class"", [""AA"", ""Be"", ""CC""])
+// ""my_class.AA""
+function Strongest_Extension(class_name, extensions){
+","function Strongest_Extension(class_name, extensions) {
+    let strongestExtension = '';
+    let maxStrength = -Infinity;
+
+    extensions.forEach(extension => {
+        let capCount = 0;
+        let smCount = 0;
+
+        for (let char of extension) {
+            if (char >= 'A' && char <= 'Z') {
+                capCount++;
+            } else if (char >= 'a' && char <= 'z') {
+                smCount++;
+            }
+        }
+
+        let strength = capCount - smCount;
+
+        if (strength > maxStrength) {
+            maxStrength = strength;
+            strongestExtension = extension;
+        }
+    });
+
+    return `${class_name}.${strongestExtension}`;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = Strongest_Extension;
+  assert.deepEqual(candidate(""Watashi"", [""tEN"", ""niNE"", ""eIGHt8OKe""]),""Watashi.eIGHt8OKe"");
+  assert.deepEqual(candidate(""Boku123"", [""nani"", ""NazeDa"", ""YEs.WeCaNe"", ""32145tggg""]),""Boku123.YEs.WeCaNe"");
+  assert.deepEqual(candidate(""__YESIMHERE"", [""t"", ""eMptY"", ""nothing"", ""zeR00"", ""NuLl__"", ""123NoooneB321""]),""__YESIMHERE.NuLl__"");
+  assert.deepEqual(candidate(""K"", [""Ta"", ""TAR"", ""t234An"", ""cosSo""]),""K.TAR"");
+  assert.deepEqual(candidate(""__HAHA"", [""Tab"", ""123"", ""781345"", ""-_-""]),""__HAHA.123"");
+  assert.deepEqual(candidate(""YameRore"", [""HhAas"", ""okIWILL123"", ""WorkOut"", ""Fails"", ""-_-""]),""YameRore.okIWILL123"");
+  assert.deepEqual(candidate(""finNNalLLly"", [""Die"", ""NowW"", ""Wow"", ""WoW""]),""finNNalLLly.WoW"");
+  assert.deepEqual(candidate(""_"", [""Bb"", ""91245""]),""_.Bb"");
+  assert.deepEqual(candidate(""Sp"", [""671235"", ""Bb""]),""Sp.671235"");
+}
+
+test();"
+HumanEval_154,kor_Hang,js,"/2개의 단어가 주어져 있습니다. 두 번째 단어 또는 그 중 어떤 회전이 첫 번째 단어의 하위 문자열이라면 true를 반환해야 합니다.// >>> cycpattern_check(""abcd"", ""abd"")
+// false
+// >>> cycpattern_check(""hello"", ""ell"")
+// true
+// >>> cycpattern_check(""whassup"", ""psus"")
+// false
+// >>> cycpattern_check(""abab"", ""baa"")
+// true
+// >>> cycpattern_check(""efef"", ""eeff"")
+// false
+// >>> cycpattern_check(""himenss"", ""simen"")
+// true
+function cycpattern_check(a, b){
+","function cycpattern_check(a, b) {
+    if (b.length > a.length) return false;
+    
+    let currentRotation = b;
+    for (let i = 0; i < b.length; i++) {
+        if (a.includes(currentRotation)) {
+            return true;
+        }
+        currentRotation = currentRotation.slice(1) + currentRotation[0];
+    }
+    
+    return false;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = cycpattern_check;
+  assert.deepEqual(candidate(""xyzw"", ""xyw""),false);
+  assert.deepEqual(candidate(""yello"", ""ell""),true);
+  assert.deepEqual(candidate(""whattup"", ""ptut""),false);
+  assert.deepEqual(candidate(""efef"", ""fee""),true);
+  assert.deepEqual(candidate(""abab"", ""aabb""),false);
+  assert.deepEqual(candidate(""winemtt"", ""tinem""),true);
+}
+
+test();"
+HumanEval_155,kor_Hang,js,"/ 예: /정수값을 주어. 각각 짝수와 홀수 숫자를 가진 배열을 반환합니다.// >>> even_odd_count(-12)
+// [1, 1]
+// >>> even_odd_count(123)
+// [1, 2]
+function even_odd_count(num){
+","function even_odd_count(num) {
+    // Convert the number to a string and take the absolute value for negative numbers
+    const numStr = Math.abs(num).toString();
+    let evenCount = 0;
+    let oddCount = 0;
+
+    // Loop through each digit in the string
+    for (let char of numStr) {
+        // Convert the character back to a number
+        let digit = parseInt(char, 10);
+        // Check if the digit is even or odd
+        if (digit % 2 === 0) {
+            evenCount++;
+        } else {
+            oddCount++;
+        }
+    }
+    return [evenCount, oddCount];
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = even_odd_count;
+  assert.deepEqual(candidate(7),[0, 1]);
+  assert.deepEqual(candidate(-78),[1, 1]);
+  assert.deepEqual(candidate(3452),[2, 2]);
+  assert.deepEqual(candidate(346211),[3, 3]);
+  assert.deepEqual(candidate(-345821),[3, 3]);
+  assert.deepEqual(candidate(-2),[1, 0]);
+  assert.deepEqual(candidate(-45347),[2, 3]);
+  assert.deepEqual(candidate(0),[1, 0]);
+}
+
+test();"
+HumanEval_156,kor_Hang,js,"/ 예: / 제한: 1 <= num <= 1000/ 그리고 작은 글자로 돌려주죠. / 긍정적 인 정수를 주어, 문자열로 로마 숫자의 동등한을 얻으십시오, // >>> int_to_mini_roman(19)
+// ""xix""
+// >>> int_to_mini_roman(152)
+// ""clii""
+// >>> int_to_mini_roman(426)
+// ""cdxxvi""
+function int_to_mini_roman(number){
+","function int_to_mini_roman(number) {
+    const romanNumerals = [
+        { value: 1000, numeral: 'm' },
+        { value: 900, numeral: 'cm' },
+        { value: 500, numeral: 'd' },
+        { value: 400, numeral: 'cd' },
+        { value: 100, numeral: 'c' },
+        { value: 90, numeral: 'xc' },
+        { value: 50, numeral: 'l' },
+        { value: 40, numeral: 'xl' },
+        { value: 10, numeral: 'x' },
+        { value: 9, numeral: 'ix' },
+        { value: 5, numeral: 'v' },
+        { value: 4, numeral: 'iv' },
+        { value: 1, numeral: 'i' }
+    ];
+    
+    let result = '';
+    for (const { value, numeral } of romanNumerals) {
+        while (number >= value) {
+            result += numeral;
+            number -= value;
+        }
+    }
+    return result;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = int_to_mini_roman;
+  assert.deepEqual(candidate(19),""xix"");
+  assert.deepEqual(candidate(152),""clii"");
+  assert.deepEqual(candidate(251),""ccli"");
+  assert.deepEqual(candidate(426),""cdxxvi"");
+  assert.deepEqual(candidate(500),""d"");
+  assert.deepEqual(candidate(1),""i"");
+  assert.deepEqual(candidate(4),""iv"");
+  assert.deepEqual(candidate(43),""xliii"");
+  assert.deepEqual(candidate(90),""xc"");
+  assert.deepEqual(candidate(94),""xciv"");
+  assert.deepEqual(candidate(532),""dxxxii"");
+  assert.deepEqual(candidate(900),""cm"");
+  assert.deepEqual(candidate(994),""cmxciv"");
+  assert.deepEqual(candidate(1000),""m"");
+}
+
+test();"
+HumanEval_157,kor_Hang,js,"/ 예: 90도./ 직각삼각형은 한 각이 직각인 삼각형 또는 / 변이 직각 삼각형을 이루고, 그렇지 않으면 틀린 것입니다. 삼각형의 세 변의 길이를 주어, 3 칸의 길이가 0 이면 true를 반환합니다.// >>> right_angle_triangle(3, 4, 5)
+// true
+// >>> right_angle_triangle(1, 2, 3)
+// false
+function right_angle_triangle(a, b, c){
+","function right_angle_triangle(a, b, c) {
+    // Sort the sides to ensure the largest side is at the end (potential hypotenuse)
+    let sides = [a, b, c].sort((x, y) => x - y);
+    
+    // Check the Pythagorean theorem to determine if it's a right-angled triangle
+    return sides[0]**2 + sides[1]**2 === sides[2]**2;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = right_angle_triangle;
+  assert.deepEqual(candidate(3, 4, 5),true);
+  assert.deepEqual(candidate(1, 2, 3),false);
+  assert.deepEqual(candidate(10, 6, 8),true);
+  assert.deepEqual(candidate(2, 2, 2),false);
+  assert.deepEqual(candidate(7, 24, 25),true);
+  assert.deepEqual(candidate(10, 5, 7),false);
+  assert.deepEqual(candidate(5, 12, 13),true);
+  assert.deepEqual(candidate(15, 8, 17),true);
+  assert.deepEqual(candidate(48, 55, 73),true);
+  assert.deepEqual(candidate(1, 1, 1),false);
+  assert.deepEqual(candidate(2, 2, 10),false);
+}
+
+test();"
+HumanEval_158,kor_Hang,js,"/ 문자, 사전적 순서에서 먼저 나오는 것을 반환합니다. /의 고유 한 문자를. 여러 문자열이 고유 한 최대 수를 가지고 있다면 / 배열에는 다른 단어가 들어 있습니다. 최대 숫자를 가진 단어를 반환합니다./ 문자열의 배열을 받아들이는 함수를 작성합니다.// >>> find_max([""name"", ""of"", ""string""])
+// ""string""
+// >>> find_max([""name"", ""enam"", ""game""])
+// ""enam""
+// >>> find_max([""aaaaaaa"", ""bb"", ""cc""])
+// ""aaaaaaa""
+function find_max(words){
+","function find_max(words) {
+    function uniqueCharacterCount(word) {
+        const uniqueChars = new Set(word);
+        return uniqueChars.size;
+    }
+
+    let maxUniqueCount = -1;
+    let result = """";
+
+    words.forEach(word => {
+        const currentUniqueCount = uniqueCharacterCount(word);
+        if (currentUniqueCount > maxUniqueCount || 
+            (currentUniqueCount === maxUniqueCount && word < result)) {
+            maxUniqueCount = currentUniqueCount;
+            result = word;
+        }
+    });
+
+    return result;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = find_max;
+  assert.deepEqual(candidate([""name"", ""of"", ""string""]),""string"");
+  assert.deepEqual(candidate([""name"", ""enam"", ""game""]),""enam"");
+  assert.deepEqual(candidate([""aaaaaaa"", ""bb"", ""cc""]),""aaaaaaa"");
+  assert.deepEqual(candidate([""abc"", ""cba""]),""abc"");
+  assert.deepEqual(candidate([""play"", ""this"", ""game"", ""of"", ""footbott""]),""footbott"");
+  assert.deepEqual(candidate([""we"", ""are"", ""gonna"", ""rock""]),""gonna"");
+  assert.deepEqual(candidate([""we"", ""are"", ""a"", ""mad"", ""nation""]),""nation"");
+  assert.deepEqual(candidate([""this"", ""is"", ""a"", ""prrk""]),""this"");
+  assert.deepEqual(candidate([""b""]),""b"");
+  assert.deepEqual(candidate([""play"", ""play"", ""play""]),""play"");
+}
+
+test();"
+HumanEval_159,kor_Hang,js,"/ 예: / 만약 남은 당근이 충분하지 않다면, 남은 당근을 다 먹지만, 여전히 배고프게 될 것입니다. / 식사 후 남은 당근의 수 ] / 당신은 [먹은 당근의 총 수를 배열 반환해야 식사 후, / 하지만 이제 하루의 식사를 완료하기 위해 더 많은 당근을 먹어야 합니다. 당신은 배고픈 토끼이고 이미 많은 양의 당근을 먹었습니다.// >>> eat(5, 6, 10)
+// [11, 4]
+// >>> eat(4, 8, 9)
+// [12, 1]
+// >>> eat(1, 10, 10)
+// [11, 0]
+// >>> eat(2, 11, 5)
+// [7, 0]
+// Variables:
+// @number : integer
+// the number of carrots that you have eaten.
+// @need : integer
+// the number of carrots that you need to eat.
+// @remaining : integer
+// the number of remaining carrots thet exist in stock
+// Constrain:
+// * 0 <= number <= 1000
+// * 0 <= need <= 1000
+// * 0 <= remaining <= 1000
+// Have fun :)
+function eat(number, need, remaining){
+","function eat(number, need, remaining) {
+    const carrotsToEat = Math.min(need, remaining);
+    const totalEaten = number + carrotsToEat;
+    const carrotsLeft = remaining - carrotsToEat;
+    return [totalEaten, carrotsLeft];
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = eat;
+  assert.deepEqual(candidate(5, 6, 10),[11, 4]);
+  assert.deepEqual(candidate(4, 8, 9),[12, 1]);
+  assert.deepEqual(candidate(1, 10, 10),[11, 0]);
+  assert.deepEqual(candidate(2, 11, 5),[7, 0]);
+  assert.deepEqual(candidate(4, 5, 7),[9, 2]);
+  assert.deepEqual(candidate(4, 5, 1),[5, 0]);
+}
+
+test();"
+HumanEval_160,kor_Hang,js,"/ 연산자 배열에는 적어도 하나의 연산자가 있고, 연산자 배열에는 적어도 두 개의 연산자가 있습니다. / 오퍼랜드는 음이 아닌 정수의 배열입니다. / 연산자 배열의 길이는 연산자 배열의 길이가 1 빼기 같다는 것을 알 수 있습니다./ 참고: / => 결과 = 9/ 결과 = 2 + 3 * 4 - 5 / 배열 = [2, 3, 4, 5] / operator['+', '*', '-'] / 예: / 기하급수 (**)/ 층 분할 ( // ) / 곱하기 (*) / 빼기 ( - ) / 추가 (+) / 기본적인 대수 연산: / 표현식과 이 표현식의 평가를 반환합니다./ 두 번째 배열은 정수의 배열입니다. 주어진 두 배열을 이용하여 대수학을 만들 수 있습니다./ 두 개의 배열 연산자와 연산자를 주어 1 배열은 기본적인 대수 연산을 하고,function do_algebra(operator, operand){
+","function do_algebra(operator, operand) {
+    let expression = operand[0].toString();
+    
+    for (let i = 0; i < operator.length; i++) {
+        let op = operator[i];
+        let currentOperand = operand[i + 1];
+        
+        // Replace floor division symbol '//' with actual JavaScript behavior
+        if (op === '//') {
+            expression += `Math.floor(${currentOperand})`;
+        } else {
+            expression += ` ${op} ${currentOperand}`;
+        }
+    }
+    
+    // Evaluate the resulting expression
+    let result = eval(expression);
+    return result;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = do_algebra;
+  assert.deepEqual(candidate([""**"", ""*"", ""+""], [2, 3, 4, 5]),37);
+  assert.deepEqual(candidate([""+"", ""*"", ""-""], [2, 3, 4, 5]),9);
+  assert.deepEqual(candidate([""//"", ""*""], [7, 3, 4]),8);
+}
+
+test();"
+HumanEval_161,kor_Hang,js,"/ 예제 / 함수는 결과 문자열을 반환해야 합니다. / 문자열에 문자가 없다면, 문자열을 역으로 돌려보냅니다./ 그렇지 않으면 그대로 유지합니다. / s[i]가 글자라면, 밑에서 위로 또는 그 반대 방향으로, / 당신은 문자열 s를 부여. // >>> solve(""1234"")
+// ""4321""
+// >>> solve(""ab"")
+// ""AB""
+// >>> solve(""#a@C"")
+// ""#A@c""
+function solve(s){
+","function solve(s) {
+    let hasLetter = false;
+    let result = '';
+
+    for (let i = 0; i < s.length; i++) {
+        let char = s[i];
+        if (/[a-zA-Z]/.test(char)) {
+            hasLetter = true;
+            if (char === char.toLowerCase()) {
+                result += char.toUpperCase();
+            } else {
+                result += char.toLowerCase();
+            }
+        } else {
+            result += char;
+        }
+    }
+
+    if (!hasLetter) {
+        return result.split('').reverse().join('');
+    }
+
+    return result;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = solve;
+  assert.deepEqual(candidate(""AsDf""),""aSdF"");
+  assert.deepEqual(candidate(""1234""),""4321"");
+  assert.deepEqual(candidate(""ab""),""AB"");
+  assert.deepEqual(candidate(""#a@C""),""#A@c"");
+  assert.deepEqual(candidate(""#AsdfW^45""),""#aSDFw^45"");
+  assert.deepEqual(candidate(""#6@2""),""2@6#"");
+  assert.deepEqual(candidate(""#$a^D""),""#$A^d"");
+  assert.deepEqual(candidate(""#ccc""),""#CCC"");
+}
+
+test();"
+HumanEval_162,kor_Hang,js,"/ 'text'가 빈 문자열이라면 undefined를 반환합니다. / 문자열 'text'을 주어 md5 해시 대응 문자열을 반환합니다. // >>> string_to_md5(""Hello world"")
+// ""3e25960a79dbc69b674cd4ec67a72c62""
+function string_to_md5(text){
+","const crypto = require('crypto');
+
+function string_to_md5(text) {
+    if (text === """") {
+        return undefined;
+    }
+    return crypto.createHash('md5').update(text).digest('hex');
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = string_to_md5;
+  assert.deepEqual(candidate(""Hello world""),""3e25960a79dbc69b674cd4ec67a72c62"");
+  assert.deepEqual(candidate(""""),undefined);
+  assert.deepEqual(candidate(""A B C""),""0ef78513b0cb8cef12743f5aeb35f888"");
+  assert.deepEqual(candidate(""password""),""5f4dcc3b5aa765d61d8327deb882cf99"");
+}
+
+test();"
+HumanEval_163,kor_Hang,js,"/ 예를 들어: / 그리고 b, 상승 순서로./ 두 개의 양수 정수 a와 b를 주어 a와 b 사이의 짝수 숫자를 반환합니다.// >>> generate_integers(2, 8)
+// [2, 4, 6, 8]
+// >>> generate_integers(8, 2)
+// [2, 4, 6, 8]
+// >>> generate_integers(10, 14)
+// []
+function generate_integers(a, b){
+","function generate_integers(a, b) {
+    let start = Math.min(a, b);
+    let end = Math.max(a, b);
+    let evenDigits = [];
+
+    for (let i = start; i <= end; i++) {
+        if (i % 2 === 0) {
+            evenDigits.push(i);
+        }
+    }
+
+    return evenDigits;
+}","const assert = require('node:assert');
+
+
+function test() {
+  let candidate = generate_integers;
+  assert.deepEqual(candidate(2, 10),[2, 4, 6, 8]);
+  assert.deepEqual(candidate(10, 2),[2, 4, 6, 8]);
+  assert.deepEqual(candidate(132, 2),[2, 4, 6, 8]);
+  assert.deepEqual(candidate(17, 89),[]);
+}
+
+test();"
