@@ -1,0 +1,3938 @@
+task_id,nl,pl,prompt,canonical_solution,tests
+HumanEval_0,zho_Hans,hs,"--给定值.--检查给定数列表中的两个数字是否比--  >>> hasCloseElements [1.0,2.0,3.0] 0.5
+--  False
+--  >>> hasCloseElements [1.0,2.8,3.0,4.0,5.0,2.0] 0.3
+--  True
+hasCloseElements :: [Float] -> Float -> Bool
+hasCloseElements numbers threshold =","hasCloseElements :: [Float] -> Float -> Bool
+hasCloseElements numbers threshold = any (\(x,y) -> abs (x - y) < threshold) [(a, b) | a <- numbers, b <- numbers, a /= b]","
+main :: IO ()
+main = do
+  let candidate = hasCloseElements
+  if candidate [1.0,2.0,3.9,4.0,5.0,2.2] 0.3 == True then pure () else error ""assertion failed""
+  if candidate [1.0,2.0,3.9,4.0,5.0,2.2] 0.05 == False then pure () else error ""assertion failed""
+  if candidate [1.0,2.0,5.9,4.0,5.0] 0.95 == True then pure () else error ""assertion failed""
+  if candidate [1.0,2.0,5.9,4.0,5.0] 0.8 == False then pure () else error ""assertion failed""
+  if candidate [1.0,2.0,3.0,4.0,5.0,2.0] 0.1 == True then pure () else error ""assertion failed""
+  if candidate [1.1,2.2,3.1,4.1,5.1] 1.0 == True then pure () else error ""assertion failed""
+  if candidate [1.1,2.2,3.1,4.1,5.1] 0.5 == False then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_1,zho_Hans,hs,"--忽略输入字符串中的任何空格.--独立的组是平衡的 (每个开放的支架是适当关闭的),而不是彼此之间嵌套.--将这些组分为单独的字符串并返回这些列表.--输入这个函数是一个包含多个嵌套括号组的字符串.--  >>> separateParenGroups ""( ) (( )) (( )( ))""
+--  [""()"",""(())"",""(()())""]
+separateParenGroups :: String -> [String]
+separateParenGroups paren_string =","separateParenGroups :: String -> [String]
+separateParenGroups paren_string = go paren_string 0 [] """" []
+  where
+    go [] _ _ current acc = if null current then acc else acc ++ [current]
+    go (x:xs) depth stack current acc
+      | x == ' ' = go xs depth stack current acc
+      | x == '(' = go xs (depth + 1) ('(':stack) (current ++ [x]) acc
+      | x == ')' =
+          let newCurrent = current ++ [x]
+              newDepth = depth - 1
+          in if newDepth == 0
+             then go xs newDepth (tail stack) """" (acc ++ [newCurrent])
+             else go xs newDepth (tail stack) newCurrent acc
+      | otherwise = error ""Unexpected character""","
+main :: IO ()
+main = do
+  let candidate = separateParenGroups
+  if candidate ""(()()) ((())) () ((())()())"" == [""(()())"",""((()))"",""()"",""((())()())""] then pure () else error ""assertion failed""
+  if candidate ""() (()) ((())) (((())))"" == [""()"",""(())"",""((()))"",""(((())))""] then pure () else error ""assertion failed""
+  if candidate ""(()(())((())))"" == [""(()(())((())))""] then pure () else error ""assertion failed""
+  if candidate ""( ) (( )) (( )( ))"" == [""()"",""(())"",""(()())""] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_2,zho_Hans,hs,"--返回数字的小数部分.--总是小于1个.--和整数部分 (最大的整数小于给定数) 和小数点--给定一个正的浮点数, 它可以分解成--  >>> truncateNumber 3.5
+--  0.5
+truncateNumber :: Float -> Float
+truncateNumber number =","truncateNumber :: Float -> Float
+truncateNumber number = number - fromIntegral (floor number)","
+main :: IO ()
+main = do
+  let candidate = truncateNumber
+  if candidate 3.5 == 0.5 then pure () else error ""assertion failed""
+  if candidate 1.25 == 0.25 then pure () else error ""assertion failed""
+  if candidate 123.0 == 0.0 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_3,zho_Hans,hs,"--在这个点,函数应该返回true.否则它应该返回false.--您的任务是检测账户余额是否在任何时候都低于零,--您会看到银行账户中的存款和提款操作列表, 列表的开头是--  >>> belowZero [1,2,3]
+--  False
+--  >>> belowZero [1,2,(-4),5]
+--  True
+belowZero :: [Int] -> Bool
+belowZero operations =","belowZero :: [Int] -> Bool
+belowZero operations = any (< 0) $ scanl (+) 0 operations","
+main :: IO ()
+main = do
+  let candidate = belowZero
+  if candidate [] == False then pure () else error ""assertion failed""
+  if candidate [1,2,(-3),1,2,(-3)] == False then pure () else error ""assertion failed""
+  if candidate [1,2,(-4),5,6] == True then pure () else error ""assertion failed""
+  if candidate [1,(-1),2,(-2),5,(-5),4,(-4)] == False then pure () else error ""assertion failed""
+  if candidate [1,(-1),2,(-2),5,(-5),4,(-5)] == True then pure () else error ""assertion failed""
+  if candidate [1,(-2),2,(-2),5,(-5),4,(-4)] == True then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_4,zho_Hans,hs,"--平均值是指平均值的值.--元素和一个中心点 (在这种情况下是平均值):--平均绝对偏差是每一个 之间的平均绝对差异.--对于这个数据集的平均值.--对于给定的输入数列表, 计算平均绝对偏差.--  >>> meanAbsoluteDeviation [1.0,2.0,3.0,4.0]
+--  1.0
+meanAbsoluteDeviation :: [Float] -> Float
+meanAbsoluteDeviation numbers =","meanAbsoluteDeviation :: [Float] -> Float
+meanAbsoluteDeviation numbers = sum absoluteDifferences / fromIntegral (length numbers)
+  where
+    mean = sum numbers / fromIntegral (length numbers)
+    absoluteDifferences = map (\x -> abs (x - mean)) numbers","
+main :: IO ()
+main = do
+  let candidate = meanAbsoluteDeviation
+  if candidate [1.0,2.0] == 0.5 then pure () else error ""assertion failed""
+  if candidate [1.0,2.0,3.0,4.0] == 1.0 then pure () else error ""assertion failed""
+  if candidate [1.0,2.0,3.0,4.0,5.0] == 1.2 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_5,zho_Hans,hs,"--输入列表中的每两个连续元素之间插入一个数字""分隔符""--  >>> intersperse [] 4
+--  []
+--  >>> intersperse [1,2,3] 4
+--  [1,4,2,4,3]
+intersperse :: [Int] -> Int -> [Int]
+intersperse numbers delimeter =","intersperse :: [Int] -> Int -> [Int]
+intersperse [] _ = []
+intersperse [x] _ = [x]
+intersperse (x:xs) delimeter = x : delimeter : intersperse xs delimeter","
+main :: IO ()
+main = do
+  let candidate = intersperse
+  if candidate [] 7 == [] then pure () else error ""assertion failed""
+  if candidate [5,6,3,2] 8 == [5,8,6,8,3,8,2] then pure () else error ""assertion failed""
+  if candidate [2,2,2] 2 == [2,2,2,2,2] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_6,zho_Hans,hs,"--例如, (() (()) 具有最多两个巢层次,而 ((())) 则有三个.--输出每个组的括号嵌套的最深层次.--输入这个函数是一个字符串, 代表了多个群体, 嵌套括号分隔空格.--  >>> parseNestedParens ""(()()) ((())) () ((())()())""
+--  [2,3,1,3]
+parseNestedParens :: String -> [Int]
+parseNestedParens paren_string =","parseNestedParens :: String -> [Int]
+parseNestedParens paren_string = map maxDepth (words paren_string)
+  where
+    maxDepth :: String -> Int
+    maxDepth = go 0 0
+      where
+        go :: Int -> Int -> String -> Int
+        go currentDepth maxDepth [] = maxDepth
+        go currentDepth maxDepth (c:cs)
+          | c == '('  = go (currentDepth + 1) (max currentDepth maxDepth) cs
+          | c == ')'  = go (currentDepth - 1) maxDepth cs
+          | otherwise = go currentDepth maxDepth cs","
+main :: IO ()
+main = do
+  let candidate = parseNestedParens
+  if candidate ""(()()) ((())) () ((())()())"" == [2,3,1,3] then pure () else error ""assertion failed""
+  if candidate ""() (()) ((())) (((())))"" == [1,2,3,4] then pure () else error ""assertion failed""
+  if candidate ""(()(())((())))"" == [4] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_7,zho_Hans,hs,"--仅过输入字符串列表中包含给定的子字符串的字符串.--  >>> filterBySubstring [] ""a""
+--  []
+--  >>> filterBySubstring [""abc"",""bacd"",""cde"",""array""] ""a""
+--  [""abc"",""bacd"",""array""]
+filterBySubstring :: [String] -> String -> [String]
+filterBySubstring strings substring =","filterBySubstring :: [String] -> String -> [String]
+filterBySubstring strings substring = filter (substring `isInfixOf`) strings
+  where isInfixOf = isInfixOf","
+main :: IO ()
+main = do
+  let candidate = filterBySubstring
+  if candidate [] ""john"" == [] then pure () else error ""assertion failed""
+  if candidate [""xxx"",""asd"",""xxy"",""john doe"",""xxxAAA"",""xxx""] ""xxx"" == [""xxx"",""xxxAAA"",""xxx""] then pure () else error ""assertion failed""
+  if candidate [""xxx"",""asd"",""aaaxxy"",""john doe"",""xxxAAA"",""xxx""] ""xx"" == [""xxx"",""aaaxxy"",""xxxAAA"",""xxx""] then pure () else error ""assertion failed""
+  if candidate [""grunt"",""trumpet"",""prune"",""gruesome""] ""run"" == [""grunt"",""prune""] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_8,zho_Hans,hs,"--虚和应等于0而虚积应等于1.--对于给定的整数列表,返回一个由列表中的所有整数的和和乘积组成的元组.--  >>> sumProduct []
+--  (0, 1)
+--  >>> sumProduct [1,2,3,4]
+--  (10, 24)
+sumProduct :: [Int] -> (Int, Int)
+sumProduct numbers =","sumProduct :: [Int] -> (Int, Int)
+sumProduct numbers = (sum numbers, product numbers)","
+main :: IO ()
+main = do
+  let candidate = sumProduct
+  if candidate [] == (0, 1) then pure () else error ""assertion failed""
+  if candidate [1,1,1] == (3, 1) then pure () else error ""assertion failed""
+  if candidate [100,0] == (100, 0) then pure () else error ""assertion failed""
+  if candidate [3,5,7] == (15, 105) then pure () else error ""assertion failed""
+  if candidate [10] == (10, 10) then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_9,zho_Hans,hs,"--在序列中.--通过给定整数列表,生成一列在给定时刻之前发现的最大元素.--  >>> rollingMax [1,2,3,2,3,4,2]
+--  [1,2,3,3,3,4,4]
+rollingMax :: [Int] -> [Int]
+rollingMax numbers =","rollingMax :: [Int] -> [Int]
+rollingMax = scanl1 max","
+main :: IO ()
+main = do
+  let candidate = rollingMax
+  if candidate [] == [] then pure () else error ""assertion failed""
+  if candidate [1,2,3,4] == [1,2,3,4] then pure () else error ""assertion failed""
+  if candidate [4,3,2,1] == [4,4,4,4] then pure () else error ""assertion failed""
+  if candidate [3,2,3,100,3] == [3,3,3,100,100] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_10,zho_Hans,hs,"--- 在字符串前的末尾添加一个字符串前, 后是 palindromic.--- 找到提供字符串中最长的后代码,它是平行符.--算法很简单:--找到最短的以已提供的字符串开始的平行符号.--  >>> makePalindrome """"
+--  """"
+--  >>> makePalindrome ""cat""
+--  ""catac""
+--  >>> makePalindrome ""cata""
+--  ""catac""
+makePalindrome :: String -> String
+makePalindrome string =","makePalindrome :: String -> String
+makePalindrome string = string ++ reverse (take (length string - palindromeLength) string)
+  where
+    palindromeLength = longestPalindromicSuffix string
+
+longestPalindromicSuffix :: String -> Int
+longestPalindromicSuffix str = maximum [l | l <- [0..length str], isPalindrome (drop l str)]
+
+isPalindrome :: String -> Bool
+isPalindrome s = s == reverse s","
+main :: IO ()
+main = do
+  let candidate = makePalindrome
+  if candidate """" == """" then pure () else error ""assertion failed""
+  if candidate ""x"" == ""x"" then pure () else error ""assertion failed""
+  if candidate ""xyz"" == ""xyzyx"" then pure () else error ""assertion failed""
+  if candidate ""xyx"" == ""xyx"" then pure () else error ""assertion failed""
+  if candidate ""jerry"" == ""jerryrrej"" then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_11,zho_Hans,hs,"--在这些输入上执行二进制XOR,并返回结果作为字符串.--输入是两个字符串a和b, 只有1和0--  >>> stringXor ""010"" ""110""
+--  ""100""
+stringXor :: String -> String -> String
+stringXor a b =","stringXor :: String -> String -> String
+stringXor a b = [if x == y then '0' else '1' | (x, y) <- zip a b]","
+main :: IO ()
+main = do
+  let candidate = stringXor
+  if candidate ""111000"" ""101010"" == ""010010"" then pure () else error ""assertion failed""
+  if candidate ""1"" ""1"" == ""0"" then pure () else error ""assertion failed""
+  if candidate ""0101"" ""0000"" == ""0101"" then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_12,zho_Hans,hs,"--如果输入列表是空的,则返回无.--返回最长的字符串. 如果有多个字符串, 返回第一个字符串.--  >>> longest []
+--  Just (Nothing)
+--  >>> longest [""a"",""b"",""c""]
+--  Just (""a"")
+--  >>> longest [""a"",""bb"",""ccc""]
+--  Just (""ccc"")
+longest :: [String] -> Maybe String
+longest strings =","longest :: [String] -> Maybe String
+longest [] = Nothing
+longest strings = Just $ foldl1 (\acc x -> if length x > length acc then x else acc) strings","
+main :: IO ()
+main = do
+  let candidate = longest
+  if candidate [] == Just (Nothing) then pure () else error ""assertion failed""
+  if candidate [""x"",""y"",""z""] == Just (""x"") then pure () else error ""assertion failed""
+  if candidate [""x"",""yyy"",""zzzz"",""www"",""kkkk"",""abc""] == Just (""zzzz"") then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_13,zho_Hans,hs,"--返回两个整数a和b的最大公分数--  >>> greatestCommonDivisor 3 5
+--  1
+--  >>> greatestCommonDivisor 25 15
+--  5
+greatestCommonDivisor :: Int -> Int -> Int
+greatestCommonDivisor a b =","greatestCommonDivisor :: Int -> Int -> Int
+greatestCommonDivisor a b
+  | b == 0    = a
+  | otherwise = greatestCommonDivisor b (a `mod` b)","
+main :: IO ()
+main = do
+  let candidate = greatestCommonDivisor
+  if candidate 3 7 == 1 then pure () else error ""assertion failed""
+  if candidate 10 15 == 5 then pure () else error ""assertion failed""
+  if candidate 49 14 == 7 then pure () else error ""assertion failed""
+  if candidate 144 60 == 12 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_14,zho_Hans,hs,"--返回所有序列列从最短到最长的输入字符串列表--  >>> allPrefixes ""abc""
+--  [""a"",""ab"",""abc""]
+allPrefixes :: String -> [String]
+allPrefixes string =","allPrefixes :: String -> [String]
+allPrefixes string = [take n string | n <- [1 .. length string]]","
+main :: IO ()
+main = do
+  let candidate = allPrefixes
+  if candidate """" == [] then pure () else error ""assertion failed""
+  if candidate ""asdfgh"" == [""a"",""as"",""asd"",""asdf"",""asdfg"",""asdfgh""] then pure () else error ""assertion failed""
+  if candidate ""WWW"" == [""W"",""WW"",""WWW""] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_15,zho_Hans,hs,"--返回一个包含从0到n的空间划分数的字符串.--  >>> stringSequence 0
+--  ""0""
+--  >>> stringSequence 5
+--  ""0 1 2 3 4 5""
+stringSequence :: Int -> String
+stringSequence n =","stringSequence :: Int -> String
+stringSequence n = unwords $ map show [0..n]","
+main :: IO ()
+main = do
+  let candidate = stringSequence
+  if candidate 0 == ""0"" then pure () else error ""assertion failed""
+  if candidate 3 == ""0 1 2 3"" then pure () else error ""assertion failed""
+  if candidate 10 == ""0 1 2 3 4 5 6 7 8 9 10"" then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_16,zho_Hans,hs,"--给定一个字符串, 找出它包含多少个不同的字符 (不论大小写).--  >>> countDistinctCharacters ""xyzXYZ""
+--  3
+--  >>> countDistinctCharacters ""Jerry""
+--  4
+countDistinctCharacters :: String -> Int
+countDistinctCharacters string =","import Data.Char (toLower)
+import Data.Set (fromList, size)
+
+countDistinctCharacters :: String -> Int
+countDistinctCharacters string = size . fromList $ map toLower string","
+main :: IO ()
+main = do
+  let candidate = countDistinctCharacters
+  if candidate """" == 0 then pure () else error ""assertion failed""
+  if candidate ""abcde"" == 5 then pure () else error ""assertion failed""
+  if candidate ""abcdecadeCADE"" == 5 then pure () else error ""assertion failed""
+  if candidate ""aaaaAAAAaaaa"" == 1 then pure () else error ""assertion failed""
+  if candidate ""Jerry jERRY JeRRRY"" == 5 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_17,zho_Hans,hs,"--音 - - 四音符,持续一个节奏.--""o""是半音,持续两拍.--音符""O""是整个音符,持续四次.--这里有一个传说:--没有最后一次.--您的任务是解析这个字符串并返回对应于每个数的整数列表.--输入这个函数是一个符串, 代表音乐音符在一个特殊的ASCII格式.--  >>> parseMusic ""o o| .| o| o| .| .| .| .| o o""
+--  [4,2,1,2,2,1,1,1,1,4,4]
+parseMusic :: String -> [Int]
+parseMusic music_string =","parseMusic :: String -> [Int]
+parseMusic music_string = map beats (words music_string)
+  where
+    beats ""o"" = 4
+    beats ""o|"" = 2
+    beats "".|"" = 1
+    beats _ = 0","
+main :: IO ()
+main = do
+  let candidate = parseMusic
+  if candidate """" == [] then pure () else error ""assertion failed""
+  if candidate ""o o o o"" == [4,4,4,4] then pure () else error ""assertion failed""
+  if candidate "".| .| .| .|"" == [1,1,1,1] then pure () else error ""assertion failed""
+  if candidate ""o| o| .| .| o o o o"" == [2,2,1,1,4,4,4,4] then pure () else error ""assertion failed""
+  if candidate ""o| .| o| .| o o| o o|"" == [2,1,2,1,4,2,4,2] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_18,zho_Hans,hs,"--找出给定的子字符串在原始字符串中可以找到的次数. 计算重叠的情况.--  >>> howManyTimes """" ""a""
+--  0
+--  >>> howManyTimes ""aaa"" ""a""
+--  3
+--  >>> howManyTimes ""aaaa"" ""aa""
+--  3
+howManyTimes :: String -> String -> Int
+howManyTimes string substring =","howManyTimes :: String -> String -> Int
+howManyTimes string substring
+  | null substring = 0
+  | otherwise = length . filter isPrefixOfSubstring $ tails string
+  where
+    isPrefixOfSubstring = isPrefixOf substring
+    isPrefixOf :: Eq a => [a] -> [a] -> Bool
+    isPrefixOf prefix str = prefix `isPrefixOf` str","
+main :: IO ()
+main = do
+  let candidate = howManyTimes
+  if candidate """" ""x"" == 0 then pure () else error ""assertion failed""
+  if candidate ""xyxyxyx"" ""x"" == 4 then pure () else error ""assertion failed""
+  if candidate ""cacacacac"" ""cac"" == 4 then pure () else error ""assertion failed""
+  if candidate ""john doe"" ""john"" == 1 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_19,zho_Hans,hs,"--返回从最小到最大排序的数列--有效的选择是""零"""",一"""",两"""",三"""",四"""",五"""",六"""",七"""",八""和""九"".--输入是一个空间划分的数字串从'零'到'九'.--  >>> sortNumbers ""three one five""
+--  ""one three five""
+sortNumbers :: String -> String
+sortNumbers numbers =","import Data.List (sort)
+import Data.Maybe (fromJust)
+import Data.Map (Map, fromList, lookup)
+
+sortNumbers :: String -> String
+sortNumbers numbers = unwords $ map snd $ sort $ map (\w -> (fromJust $ lookup w wordToNumber, w)) (words numbers)
+  where
+    wordToNumber :: Map String Int
+    wordToNumber = fromList [(""zero"", 0), (""one"", 1), (""two"", 2), (""three"", 3), (""four"", 4),
+                             (""five"", 5), (""six"", 6), (""seven"", 7), (""eight"", 8), (""nine"", 9)]","
+main :: IO ()
+main = do
+  let candidate = sortNumbers
+  if candidate """" == """" then pure () else error ""assertion failed""
+  if candidate ""three"" == ""three"" then pure () else error ""assertion failed""
+  if candidate ""three five nine"" == ""three five nine"" then pure () else error ""assertion failed""
+  if candidate ""five zero four seven nine eight"" == ""zero four five seven eight nine"" then pure () else error ""assertion failed""
+  if candidate ""six five four three two one zero"" == ""zero one two three four five six"" then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_20,zho_Hans,hs,"--其他,并按顺序返回 (数量较小,数量较大).--通过提供列表中的数字 (长度至少为两个) 选择并返回最接近每个数字的两个数字.--  >>> findClosestElements [1.0,2.0,3.0,4.0,5.0,2.2]
+--  (2.0, 2.2)
+--  >>> findClosestElements [1.0,2.0,3.0,4.0,5.0,2.0]
+--  (2.0, 2.0)
+findClosestElements :: [Float] -> (Float, Float)
+findClosestElements numbers =","findClosestElements :: [Float] -> (Float, Float)
+findClosestElements numbers = head . foldr1 minByDiff $ zip sortedNumbers (tail sortedNumbers)
+  where
+    sortedNumbers = sort numbers
+    minByDiff (a1, b1) (a2, b2)
+      | abs (a1 - b1) < abs (a2 - b2) = (a1, b1)
+      | otherwise = (a2, b2)","
+main :: IO ()
+main = do
+  let candidate = findClosestElements
+  if candidate [1.0,2.0,3.9,4.0,5.0,2.2] == (3.9, 4.0) then pure () else error ""assertion failed""
+  if candidate [1.0,2.0,5.9,4.0,5.0] == (5.0, 5.9) then pure () else error ""assertion failed""
+  if candidate [1.0,2.0,3.0,4.0,5.0,2.2] == (2.0, 2.2) then pure () else error ""assertion failed""
+  if candidate [1.0,2.0,3.0,4.0,5.0,2.0] == (2.0, 2.0) then pure () else error ""assertion failed""
+  if candidate [1.1,2.2,3.1,4.1,5.1] == (2.2, 3.1) then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_21,zho_Hans,hs,"--最小的数量将成为0和最大的数量将成为1--给出一个数列 (至少有两个元素), 应用一个线性变换到这个列表中,--  >>> rescaleToUnit [1.0,2.0,3.0,4.0,5.0]
+--  [0.0,0.25,0.5,0.75,1.0]
+rescaleToUnit :: [Float] -> [Float]
+rescaleToUnit numbers =","rescaleToUnit :: [Float] -> [Float]
+rescaleToUnit numbers = map (\x -> (x - minVal) / range) numbers
+  where
+    minVal = minimum numbers
+    maxVal = maximum numbers
+    range = maxVal - minVal","
+main :: IO ()
+main = do
+  let candidate = rescaleToUnit
+  if candidate [2.0,49.9] == [0.0,1.0] then pure () else error ""assertion failed""
+  if candidate [100.0,49.9] == [1.0,0.0] then pure () else error ""assertion failed""
+  if candidate [1.0,2.0,3.0,4.0,5.0] == [0.0,0.25,0.5,0.75,1.0] then pure () else error ""assertion failed""
+  if candidate [2.0,1.0,5.0,3.0,4.0] == [0.25,0.0,1.0,0.5,0.75] then pure () else error ""assertion failed""
+  if candidate [12.0,11.0,15.0,13.0,14.0] == [0.25,0.0,1.0,0.5,0.75] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_23,zho_Hans,hs,"--返回给定的字符串的长度--  >>> strlen """"
+--  0
+--  >>> strlen ""abc""
+--  3
+strlen :: String -> Int
+strlen string =","strlen :: String -> Int
+strlen string = length string","
+main :: IO ()
+main = do
+  let candidate = strlen
+  if candidate """" == 0 then pure () else error ""assertion failed""
+  if candidate ""x"" == 1 then pure () else error ""assertion failed""
+  if candidate ""asdasnakj"" == 9 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_24,zho_Hans,hs,"--给定一个数 n, 找出最大的数, 分 n 均, 小于 n.--  >>> largestDivisor 15
+--  5
+largestDivisor :: Int -> Int
+largestDivisor n =","largestDivisor :: Int -> Int
+largestDivisor n = head [ x | x <- [n-1, n-2..1], n `mod` x == 0 ]","
+main :: IO ()
+main = do
+  let candidate = largestDivisor
+  if candidate 3 == 1 then pure () else error ""assertion failed""
+  if candidate 7 == 1 then pure () else error ""assertion failed""
+  if candidate 10 == 5 then pure () else error ""assertion failed""
+  if candidate 100 == 50 then pure () else error ""assertion failed""
+  if candidate 49 == 7 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_25,zho_Hans,hs,"--输入数应该等于所有因子的乘积.--每个因子应列出数次, 应对应于它在因子化中出现的次数.--返回给定整数的素因数列表,从最小到最大的顺序.--  >>> factorize 8
+--  [2,2,2]
+--  >>> factorize 25
+--  [5,5]
+--  >>> factorize 70
+--  [2,5,7]
+factorize :: Int -> [Int]
+factorize n =","factorize :: Int -> [Int]
+factorize n = factorize' n 2
+  where
+    factorize' 1 _ = []
+    factorize' m f
+      | m `mod` f == 0 = f : factorize' (m `div` f) f
+      | otherwise      = factorize' m (f + 1)","
+main :: IO ()
+main = do
+  let candidate = factorize
+  if candidate 2 == [2] then pure () else error ""assertion failed""
+  if candidate 4 == [2,2] then pure () else error ""assertion failed""
+  if candidate 8 == [2,2,2] then pure () else error ""assertion failed""
+  if candidate 57 == [3,19] then pure () else error ""assertion failed""
+  if candidate 3249 == [3,3,19,19] then pure () else error ""assertion failed""
+  if candidate 185193 == [3,3,3,19,19,19] then pure () else error ""assertion failed""
+  if candidate 20577 == [3,19,19,19] then pure () else error ""assertion failed""
+  if candidate 18 == [2,3,3] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_26,zho_Hans,hs,"--保持元素的顺序与输入相同.--删除所有多次出现的元素.--  >>> removeDuplicates [1,2,3,2,4]
+--  [1,3,4]
+removeDuplicates :: [Int] -> [Int]
+removeDuplicates numbers =","removeDuplicates :: [Int] -> [Int]
+removeDuplicates numbers = filter (\x -> count x numbers == 1) numbers
+  where
+    count x = length . filter (== x)","
+main :: IO ()
+main = do
+  let candidate = removeDuplicates
+  if candidate [] == [] then pure () else error ""assertion failed""
+  if candidate [1,2,3,4] == [1,2,3,4] then pure () else error ""assertion failed""
+  if candidate [1,2,3,2,4,3,5] == [1,4,5] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_27,zho_Hans,hs,"--对于给定的字符串, 把小写字符翻转成大写, 大写字符翻转成小写字符.--  >>> flipCase ""Hello""
+--  ""hELLO""
+flipCase :: String -> String
+flipCase string =","flipCase :: String -> String
+flipCase = map flipChar
+  where
+    flipChar c
+      | c >= 'a' && c <= 'z' = toEnum (fromEnum c - 32)
+      | c >= 'A' && c <= 'Z' = toEnum (fromEnum c + 32)
+      | otherwise = c","
+main :: IO ()
+main = do
+  let candidate = flipCase
+  if candidate """" == """" then pure () else error ""assertion failed""
+  if candidate ""Hello!"" == ""hELLO!"" then pure () else error ""assertion failed""
+  if candidate ""These violent delights have violent ends"" == ""tHESE VIOLENT DELIGHTS HAVE VIOLENT ENDS"" then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_28,zho_Hans,hs,"--连接字符串列表到一个字符串中--  >>> concatenate []
+--  """"
+--  >>> concatenate [""a"",""b"",""c""]
+--  ""abc""
+concatenate :: [String] -> String
+concatenate strings =","concatenate :: [String] -> String
+concatenate strings = concat strings","
+main :: IO ()
+main = do
+  let candidate = concatenate
+  if candidate [] == """" then pure () else error ""assertion failed""
+  if candidate [""x"",""y"",""z""] == ""xyz"" then pure () else error ""assertion failed""
+  if candidate [""x"",""y"",""z"",""w"",""k""] == ""xyzwk"" then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_29,zho_Hans,hs,"--仅对以给定的前开始的字符串进行过.--  >>> filterByPrefix [] ""a""
+--  []
+--  >>> filterByPrefix [""abc"",""bcd"",""cde"",""array""] ""a""
+--  [""abc"",""array""]
+filterByPrefix :: [String] -> String -> [String]
+filterByPrefix strings prefix =","filterByPrefix strings prefix = filter (isPrefixOf prefix) strings
+  where
+    isPrefixOf pfx str = take (length pfx) str == pfx","
+main :: IO ()
+main = do
+  let candidate = filterByPrefix
+  if candidate [] ""john"" == [] then pure () else error ""assertion failed""
+  if candidate [""xxx"",""asd"",""xxy"",""john doe"",""xxxAAA"",""xxx""] ""xxx"" == [""xxx"",""xxxAAA"",""xxx""] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_30,zho_Hans,hs,"--返回列表中的正数.--  >>> getPositive [(-1),2,(-4),5,6]
+--  [2,5,6]
+--  >>> getPositive [5,3,(-5),2,(-3),3,9,0,123,1,(-10)]
+--  [5,3,2,3,9,123,1]
+getPositive :: [Int] -> [Int]
+getPositive l =","getPositive :: [Int] -> [Int]
+getPositive l = filter (> 0) l","
+main :: IO ()
+main = do
+  let candidate = getPositive
+  if candidate [(-1),(-2),4,5,6] == [4,5,6] then pure () else error ""assertion failed""
+  if candidate [5,3,(-5),2,3,3,9,0,123,1,(-10)] == [5,3,2,3,3,9,123,1] then pure () else error ""assertion failed""
+  if candidate [(-1),(-2)] == [] then pure () else error ""assertion failed""
+  if candidate [] == [] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_31,zho_Hans,hs,"--如果给定数是素数,则返回true,否则返回false.--  >>> isPrime 6
+--  False
+--  >>> isPrime 101
+--  True
+--  >>> isPrime 11
+--  True
+--  >>> isPrime 13441
+--  True
+--  >>> isPrime 61
+--  True
+--  >>> isPrime 4
+--  False
+--  >>> isPrime 1
+--  False
+isPrime :: Int -> Bool
+isPrime n =","isPrime :: Int -> Bool
+isPrime n
+  | n <= 1 = False
+  | n == 2 = True
+  | even n = False
+  | otherwise = not (any (\x -> n `mod` x == 0) [3,5..floor (sqrt (fromIntegral n))])","
+main :: IO ()
+main = do
+  let candidate = isPrime
+  if candidate 6 == False then pure () else error ""assertion failed""
+  if candidate 101 == True then pure () else error ""assertion failed""
+  if candidate 11 == True then pure () else error ""assertion failed""
+  if candidate 13441 == True then pure () else error ""assertion failed""
+  if candidate 61 == True then pure () else error ""assertion failed""
+  if candidate 4 == False then pure () else error ""assertion failed""
+  if candidate 1 == False then pure () else error ""assertion failed""
+  if candidate 5 == True then pure () else error ""assertion failed""
+  if candidate 11 == True then pure () else error ""assertion failed""
+  if candidate 17 == True then pure () else error ""assertion failed""
+  if candidate 85 == False then pure () else error ""assertion failed""
+  if candidate 77 == False then pure () else error ""assertion failed""
+  if candidate 255379 == False then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_33,zho_Hans,hs,"--值的相应指数的l,但分类.--在三不可分割的指数中,l'与l相同,而在三可分割的指数中,它的值是相同的.--这个函数取一个列表l,并返回一个列表l,这样--  >>> sortThird [1,2,3]
+--  [1,2,3]
+--  >>> sortThird [5,6,3,4,8,9,2]
+--  [2,6,3,4,8,9,5]
+sortThird :: [Int] -> [Int]
+sortThird l =","sortThird :: [Int] -> [Int]
+sortThird l = map selectElem indexed
+  where
+    indexed = zip [0..] l
+    thirdIndicesElems = [elem | (i, elem) <- indexed, i `mod` 3 == 0]
+    sortedThirdElems = sortedElems thirdIndicesElems
+    sortedElems = id -- or List.sort if imported
+    selectElem (i, x)
+      | i `mod` 3 == 0 = head sortedThirdElems
+      | otherwise = x
+    replaceSortedElem xs sorted = map selectElem indexed
+      where
+        replaceElem i (x:xs)
+          | i == 0 = x:xs
+          | otherwise = replaceElem (i - 1) xs
+        selectElem (i, x)
+          | i `mod` 3 == 0 = head (replaceElem (i `div` 3) sortedThirdElems)
+          | otherwise = x","
+main :: IO ()
+main = do
+  let candidate = sortThird
+  if candidate [5,6,3,4,8,9,2] == [2,6,3,4,8,9,5] then pure () else error ""assertion failed""
+  if candidate [5,8,3,4,6,9,2] == [2,8,3,4,6,9,5] then pure () else error ""assertion failed""
+  if candidate [5,6,9,4,8,3,2] == [2,6,9,4,8,3,5] then pure () else error ""assertion failed""
+  if candidate [5,6,3,4,8,9,2,1] == [2,6,3,4,8,9,5,1] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_34,zho_Hans,hs,"--返回列表中的排序的唯一元素--  >>> unique [5,3,5,2,3,3,9,0,123]
+--  [0,2,3,5,9,123]
+unique :: [Int] -> [Int]
+unique l =","unique :: [Int] -> [Int]
+unique l = sort $ nub l
+  where
+    -- | Remove duplicate elements from a list.
+    nub :: (Eq a) => [a] -> [a]
+    nub [] = []
+    nub (x:xs) = x : nub (filter (/= x) xs)
+
+    -- | Sort a list of elements (using QuickSort algorithm).
+    sort :: (Ord a) => [a] -> [a]
+    sort [] = []
+    sort (x:xs) =
+      let smallerSorted = sort [a | a <- xs, a <= x]
+          biggerSorted = sort [a | a <- xs, a > x]
+      in  smallerSorted ++ [x] ++ biggerSorted","
+main :: IO ()
+main = do
+  let candidate = unique
+  if candidate [5,3,5,2,3,3,9,0,123] == [0,2,3,5,9,123] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_35,zho_Hans,hs,"--返回列表中的最大元素.--  >>> maxElement [1,2,3]
+--  3
+--  >>> maxElement [5,3,(-5),2,(-3),3,9,0,123,1,(-10)]
+--  123
+maxElement :: [Int] -> Int
+maxElement l =","maxElement :: [Int] -> Int
+maxElement [] = error ""List cannot be empty""
+maxElement (x:xs) = maxElementHelper xs x
+  where
+    maxElementHelper [] currentMax = currentMax
+    maxElementHelper (y:ys) currentMax = maxElementHelper ys (max y currentMax)","
+main :: IO ()
+main = do
+  let candidate = maxElement
+  if candidate [1,2,3] == 3 then pure () else error ""assertion failed""
+  if candidate [5,3,(-5),2,(-3),3,9,0,124,1,(-10)] == 124 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_36,zho_Hans,hs,"--返回数字7在小于n的整数中出现的次数, 整数可被11或13除以.--  >>> fizzBuzz 50
+--  0
+--  >>> fizzBuzz 78
+--  2
+--  >>> fizzBuzz 79
+--  3
+fizzBuzz :: Int -> Int
+fizzBuzz n =","fizzBuzz :: Int -> Int
+fizzBuzz n = length [x | x <- [1..n-1], (x `mod` 11 == 0 || x `mod` 13 == 0), '7' `elem` show x]","
+main :: IO ()
+main = do
+  let candidate = fizzBuzz
+  if candidate 50 == 0 then pure () else error ""assertion failed""
+  if candidate 78 == 2 then pure () else error ""assertion failed""
+  if candidate 79 == 3 then pure () else error ""assertion failed""
+  if candidate 100 == 3 then pure () else error ""assertion failed""
+  if candidate 200 == 6 then pure () else error ""assertion failed""
+  if candidate 4000 == 192 then pure () else error ""assertion failed""
+  if candidate 10000 == 639 then pure () else error ""assertion failed""
+  if candidate 100000 == 8026 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_37,zho_Hans,hs,"--对于 l 的偶数指数的值,但有所排序.--在奇数指数中,l'与l相同,而在偶数指数中,它的值是相同的.--这个函数取一个列表l,并返回一个列表l,这样--  >>> sortEven [1,2,3]
+--  [1,2,3]
+--  >>> sortEven [5,6,3,4]
+--  [3,6,5,4]
+sortEven :: [Int] -> [Int]
+sortEven l =","sortEven :: [Int] -> [Int]
+sortEven l = merge odds sortedEvens
+  where
+    (odds, evens) = partitionList l
+    sortedEvens = sort evens
+
+    partitionList :: [Int] -> ([Int], [Int])
+    partitionList [] = ([], [])
+    partitionList [x] = ([x], [])
+    partitionList (x:y:xs) = (x:xsOdds, y:xsEvens)
+      where
+        (xsOdds, xsEvens) = partitionList xs
+
+    merge :: [Int] -> [Int] -> [Int]
+    merge [] ys = ys
+    merge (x:xs) [] = x:xs
+    merge (x:xs) (y:ys) = x:y:merge xs ys","
+main :: IO ()
+main = do
+  let candidate = sortEven
+  if candidate [1,2,3] == [1,2,3] then pure () else error ""assertion failed""
+  if candidate [5,3,(-5),2,(-3),3,9,0,123,1,(-10)] == [(-10),3,(-5),2,(-3),3,5,0,9,1,123] then pure () else error ""assertion failed""
+  if candidate [5,8,(-12),4,23,2,3,11,12,(-10)] == [(-12),8,3,4,5,2,12,11,23,(-10)] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_39,zho_Hans,hs,"--返回第n个是斐波那契数,也是一个素数.--  >>> primeFib 1
+--  2
+--  >>> primeFib 2
+--  3
+--  >>> primeFib 3
+--  5
+--  >>> primeFib 4
+--  13
+--  >>> primeFib 5
+--  89
+primeFib :: Int -> Int
+primeFib n =","primeFib :: Int -> Int
+primeFib n = primeFibs !! (n - 1)
+  where
+    primeFibs = filter isPrime fibs
+    fibs = map fst $ iterate (\(a, b) -> (b, a + b)) (0, 1)
+
+isPrime :: Int -> Bool
+isPrime k
+  | k < 2 = False
+  | k == 2 = True
+  | even k = False
+  | otherwise = null [x | x <- [3,5..upperLimit], k `mod` x == 0]
+  where
+    upperLimit = floor . sqrt $ fromIntegral k","
+main :: IO ()
+main = do
+  let candidate = primeFib
+  if candidate 1 == 2 then pure () else error ""assertion failed""
+  if candidate 2 == 3 then pure () else error ""assertion failed""
+  if candidate 3 == 5 then pure () else error ""assertion failed""
+  if candidate 4 == 13 then pure () else error ""assertion failed""
+  if candidate 5 == 89 then pure () else error ""assertion failed""
+  if candidate 6 == 233 then pure () else error ""assertion failed""
+  if candidate 7 == 1597 then pure () else error ""assertion failed""
+  if candidate 8 == 28657 then pure () else error ""assertion failed""
+  if candidate 9 == 514229 then pure () else error ""assertion failed""
+  if candidate 10 == 433494437 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_40,zho_Hans,hs,"--其他情况是错误的.--如果列表中有三个不同的元素,则返回True--输入一个整数列表.--  >>> triplesSumToZero [1,3,5,0]
+--  False
+--  >>> triplesSumToZero [1,3,(-2),1]
+--  True
+--  >>> triplesSumToZero [1,2,3,7]
+--  False
+--  >>> triplesSumToZero [2,4,(-5),3,9,7]
+--  True
+--  >>> triplesSumToZero [1]
+--  False
+triplesSumToZero :: [Int] -> Bool
+triplesSumToZero l =","triplesSumToZero :: [Int] -> Bool
+triplesSumToZero l = any (== 0) [x + y + z | (x:ys) <- tails l, (y:zs) <- tails ys, z <- zs]
+  where
+    tails [] = []
+    tails xs@(_:xs') = xs : tails xs'","
+main :: IO ()
+main = do
+  let candidate = triplesSumToZero
+  if candidate [1,3,5,0] == False then pure () else error ""assertion failed""
+  if candidate [1,3,5,(-1)] == False then pure () else error ""assertion failed""
+  if candidate [1,3,(-2),1] == True then pure () else error ""assertion failed""
+  if candidate [1,2,3,7] == False then pure () else error ""assertion failed""
+  if candidate [1,2,5,7] == False then pure () else error ""assertion failed""
+  if candidate [2,4,(-5),3,9,7] == True then pure () else error ""assertion failed""
+  if candidate [1] == False then pure () else error ""assertion failed""
+  if candidate [1,3,5,(-100)] == False then pure () else error ""assertion failed""
+  if candidate [100,3,5,(-100)] == False then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_41,zho_Hans,hs,"--这一函数输出了此类碰撞的数量.--它们的轨迹似乎没有碰撞.--它们的动力是无限强大的,--车辆在向右转向左的方向撞上了向右转向左的方向.--两辆车相撞的速度是相同的.--两组车辆从距离非常远的地方开始.--同时,不同的组的n个车辆--想象一下一条完全直的无限长的路.carRaceCollision :: Int -> Int
+carRaceCollision n =","carRaceCollision :: Int -> Int
+carRaceCollision n = n","
+main :: IO ()
+main = do
+  let candidate = carRaceCollision
+  if candidate 2 == 4 then pure () else error ""assertion failed""
+  if candidate 3 == 9 then pure () else error ""assertion failed""
+  if candidate 4 == 16 then pure () else error ""assertion failed""
+  if candidate 8 == 64 then pure () else error ""assertion failed""
+  if candidate 10 == 100 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_42,zho_Hans,hs,"--返回一个元素增加1的列表.--  >>> incrList [1,2,3]
+--  [2,3,4]
+--  >>> incrList [5,3,5,2,3,3,9,0,123]
+--  [6,4,6,3,4,4,10,1,124]
+incrList :: [Int] -> [Int]
+incrList l =","incrList :: [Int] -> [Int]
+incrList l = map (+1) l","
+main :: IO ()
+main = do
+  let candidate = incrList
+  if candidate [] == [] then pure () else error ""assertion failed""
+  if candidate [3,2,1] == [4,3,2] then pure () else error ""assertion failed""
+  if candidate [5,2,5,2,3,3,9,0,123] == [6,3,6,3,4,4,10,1,124] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_43,zho_Hans,hs,"--其他情况是错误的.--如果列表中有两个不同的元素,则返回True--需要整数列表作为输入.--  >>> pairsSumToZero [1,3,5,0]
+--  False
+--  >>> pairsSumToZero [1,3,(-2),1]
+--  False
+--  >>> pairsSumToZero [1,2,3,7]
+--  False
+--  >>> pairsSumToZero [2,4,(-5),3,5,7]
+--  True
+--  >>> pairsSumToZero [1]
+--  False
+pairsSumToZero :: [Int] -> Bool
+pairsSumToZero l =","pairsSumToZero :: [Int] -> Bool
+pairsSumToZero l = any (\x -> -x `elem` l) l && (length l > 1)","
+main :: IO ()
+main = do
+  let candidate = pairsSumToZero
+  if candidate [1,3,5,0] == False then pure () else error ""assertion failed""
+  if candidate [1,3,(-2),1] == False then pure () else error ""assertion failed""
+  if candidate [1,2,3,7] == False then pure () else error ""assertion failed""
+  if candidate [2,4,(-5),3,5,7] == True then pure () else error ""assertion failed""
+  if candidate [1] == False then pure () else error ""assertion failed""
+  if candidate [(-3),9,(-1),3,2,30] == True then pure () else error ""assertion failed""
+  if candidate [(-3),9,(-1),3,2,31] == True then pure () else error ""assertion failed""
+  if candidate [(-3),9,(-1),4,2,30] == False then pure () else error ""assertion failed""
+  if candidate [(-3),9,(-1),4,2,31] == False then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_44,zho_Hans,hs,"--基数小于10个.--在转换后返回字符串表示.--换成输入数 x 的数值基础.--  >>> changeBase 8 3
+--  ""22""
+--  >>> changeBase 8 2
+--  ""1000""
+--  >>> changeBase 7 2
+--  ""111""
+changeBase :: Int -> Int -> String
+changeBase x base =","changeBase :: Int -> Int -> String
+changeBase x base
+  | x < base  = show x
+  | otherwise = changeBase (x `div` base) base ++ show (x `mod` base)","
+main :: IO ()
+main = do
+  let candidate = changeBase
+  if candidate 8 3 == ""22"" then pure () else error ""assertion failed""
+  if candidate 9 3 == ""100"" then pure () else error ""assertion failed""
+  if candidate 234 2 == ""11101010"" then pure () else error ""assertion failed""
+  if candidate 16 2 == ""10000"" then pure () else error ""assertion failed""
+  if candidate 8 2 == ""1000"" then pure () else error ""assertion failed""
+  if candidate 7 2 == ""111"" then pure () else error ""assertion failed""
+  if candidate 2 3 == ""2"" then pure () else error ""assertion failed""
+  if candidate 3 4 == ""3"" then pure () else error ""assertion failed""
+  if candidate 4 5 == ""4"" then pure () else error ""assertion failed""
+  if candidate 5 6 == ""5"" then pure () else error ""assertion failed""
+  if candidate 6 7 == ""6"" then pure () else error ""assertion failed""
+  if candidate 7 8 == ""7"" then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_45,zho_Hans,hs,"--给出三角形的边长和高回归面积.--  >>> triangleArea 5 3
+--  7.5
+triangleArea :: Int -> Int -> Float
+triangleArea a h =","triangleArea :: Int -> Int -> Float
+triangleArea a h = 0.5 * fromIntegral a * fromIntegral h","
+main :: IO ()
+main = do
+  let candidate = triangleArea
+  if candidate 5 3 == 7.5 then pure () else error ""assertion failed""
+  if candidate 2 2 == 2.0 then pure () else error ""assertion failed""
+  if candidate 10 8 == 40.0 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_46,zho_Hans,hs,"--请写一个函数,有效计算 fib4 数序的第 n 元素. 不要使用递归.-- () ->  (-1) +  (-2) +  (-3) +  (-4).--没有任何问题.--4 (2) -> 2 --没有任何问题.--没有任何的--4数列与菲博纳奇数列相似, 定义如下:--  >>> fib4 5
+--  4
+--  >>> fib4 6
+--  8
+--  >>> fib4 7
+--  14
+fib4 :: Int -> Int
+fib4 n =","fib4 :: Int -> Int
+fib4 n
+  | n == 0 = 0
+  | n == 1 = 0
+  | n == 2 = 2
+  | n == 3 = 0
+  | otherwise = iter 0 0 2 0 n
+  where
+    iter a b c d 4 = a + b + c + d
+    iter a b c d n = iter b c d (a + b + c + d) (n - 1)","
+main :: IO ()
+main = do
+  let candidate = fib4
+  if candidate 5 == 4 then pure () else error ""assertion failed""
+  if candidate 8 == 28 then pure () else error ""assertion failed""
+  if candidate 10 == 104 then pure () else error ""assertion failed""
+  if candidate 12 == 386 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_47,zho_Hans,hs,"--返回列表中的元素中位数l.--  >>> median [3,1,2,4,5]
+--  3.0
+--  >>> median [(-10),4,6,1000,10,20]
+--  15.0
+median :: [Int] -> Float
+median l =","median :: [Int] -> Float
+median l 
+  | odd n     = fromIntegral $ sorted !! mid
+  | otherwise = (fromIntegral (sorted !! (mid - 1)) + fromIntegral (sorted !! mid)) / 2
+  where
+    sorted = sort l
+    n = length l
+    mid = n `div` 2
+    sort = sortBy compare","
+main :: IO ()
+main = do
+  let candidate = median
+  if candidate [3,1,2,4,5] == 3.0 then pure () else error ""assertion failed""
+  if candidate [(-10),4,6,1000,10,20] == 8.0 then pure () else error ""assertion failed""
+  if candidate [5] == 5.0 then pure () else error ""assertion failed""
+  if candidate [6,5] == 5.5 then pure () else error ""assertion failed""
+  if candidate [8,1,3,9,9,2,7] == 7.0 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_48,zho_Hans,hs,"--检查给定的字符串是否是平行符号.--  >>> isPalindrome """"
+--  True
+--  >>> isPalindrome ""aba""
+--  True
+--  >>> isPalindrome ""aaaaa""
+--  True
+--  >>> isPalindrome ""zbcd""
+--  False
+isPalindrome :: String -> Bool
+isPalindrome text =","isPalindrome :: String -> Bool
+isPalindrome text = text == reverse text","
+main :: IO ()
+main = do
+  let candidate = isPalindrome
+  if candidate """" == True then pure () else error ""assertion failed""
+  if candidate ""aba"" == True then pure () else error ""assertion failed""
+  if candidate ""aaaaa"" == True then pure () else error ""assertion failed""
+  if candidate ""zbcd"" == False then pure () else error ""assertion failed""
+  if candidate ""xywyx"" == True then pure () else error ""assertion failed""
+  if candidate ""xywyz"" == False then pure () else error ""assertion failed""
+  if candidate ""xywzx"" == False then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_49,zho_Hans,hs,"--返回2^n模分数 p (注意数字).--  >>> modp 3 5
+--  3
+--  >>> modp 1101 101
+--  2
+--  >>> modp 0 101
+--  1
+--  >>> modp 3 11
+--  8
+--  >>> modp 100 101
+--  1
+modp :: Int -> Int -> Int
+modp n p =","modp :: Int -> Int -> Int
+modp n p = powMod 2 n p
+
+powMod :: Int -> Int -> Int -> Int
+powMod base exp modulus
+  | modulus == 1 = 0
+  | exp == 0     = 1
+  | exp == 1     = base `mod` modulus
+  | otherwise    = if odd exp
+                   then (base * halfExp * halfExp) `mod` modulus
+                   else (halfExp * halfExp) `mod` modulus
+  where
+    halfExp = powMod base (exp `div` 2) modulus","
+main :: IO ()
+main = do
+  let candidate = modp
+  if candidate 3 5 == 3 then pure () else error ""assertion failed""
+  if candidate 1101 101 == 2 then pure () else error ""assertion failed""
+  if candidate 0 101 == 1 then pure () else error ""assertion failed""
+  if candidate 3 11 == 8 then pure () else error ""assertion failed""
+  if candidate 100 101 == 1 then pure () else error ""assertion failed""
+  if candidate 30 5 == 4 then pure () else error ""assertion failed""
+  if candidate 31 5 == 3 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_51,zho_Hans,hs,"--删除_母音是一个函数, 取字符串并返回没有母音的字符串.--  >>> removeVowels """"
+--  """"
+--  >>> removeVowels ""abcdef""
+--  ""bcdf""
+--  >>> removeVowels ""aaaaa""
+--  """"
+--  >>> removeVowels ""aaBAA""
+--  ""B""
+--  >>> removeVowels ""zbcd""
+--  ""zbcd""
+removeVowels :: String -> String
+removeVowels text =","removeVowels :: String -> String
+removeVowels text = filter (`notElem` ""aeiouAEIOU"") text","
+main :: IO ()
+main = do
+  let candidate = removeVowels
+  if candidate """" == """" then pure () else error ""assertion failed""
+  if candidate ""abcdef
+ghijklm"" == ""bcdf
+ghjklm"" then pure () else error ""assertion failed""
+  if candidate ""fedcba"" == ""fdcb"" then pure () else error ""assertion failed""
+  if candidate ""eeeee"" == """" then pure () else error ""assertion failed""
+  if candidate ""acBAA"" == ""cB"" then pure () else error ""assertion failed""
+  if candidate ""EcBOO"" == ""cB"" then pure () else error ""assertion failed""
+  if candidate ""ybcd"" == ""ybcd"" then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_52,zho_Hans,hs,"--如果列表中的所有数字都低于值t,则返回true.--  >>> belowThreshold [1,2,4,10] 100
+--  True
+--  >>> belowThreshold [1,20,4,10] 5
+--  False
+belowThreshold :: [Int] -> Int -> Bool
+belowThreshold l t =",belowThreshold l t = all (< t) l,"
+main :: IO ()
+main = do
+  let candidate = belowThreshold
+  if candidate [1,2,4,10] 100 == True then pure () else error ""assertion failed""
+  if candidate [1,20,4,10] 5 == False then pure () else error ""assertion failed""
+  if candidate [1,20,4,10] 21 == True then pure () else error ""assertion failed""
+  if candidate [1,20,4,10] 22 == True then pure () else error ""assertion failed""
+  if candidate [1,8,4,10] 11 == True then pure () else error ""assertion failed""
+  if candidate [1,8,4,10] 10 == False then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_53,zho_Hans,hs,"--增加两个数字x和y.--  >>> add 2 3
+--  5
+--  >>> add 5 7
+--  12
+add :: Int -> Int -> Int
+add x y =","add :: Int -> Int -> Int
+add x y = x + y","
+main :: IO ()
+main = do
+  let candidate = add
+  if candidate 0 1 == 1 then pure () else error ""assertion failed""
+  if candidate 1 0 == 1 then pure () else error ""assertion failed""
+  if candidate 2 3 == 5 then pure () else error ""assertion failed""
+  if candidate 5 7 == 12 then pure () else error ""assertion failed""
+  if candidate 7 5 == 12 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_54,zho_Hans,hs,"--检查两个单词是否有相同的字符.--  >>> sameChars ""eabcdzzzz"" ""dddzzzzzzzddeddabc""
+--  True
+--  >>> sameChars ""abcd"" ""dddddddabc""
+--  True
+--  >>> sameChars ""dddddddabc"" ""abcd""
+--  True
+--  >>> sameChars ""eabcd"" ""dddddddabc""
+--  False
+--  >>> sameChars ""abcd"" ""dddddddabce""
+--  False
+--  >>> sameChars ""eabcdzzzz"" ""dddzzzzzzzddddabc""
+--  False
+sameChars :: String -> String -> Bool
+sameChars s0 s1 =","import Data.List (nub, sort)
+
+sameChars :: String -> String -> Bool
+sameChars s0 s1 = sort (nub s0) == sort (nub s1)","
+main :: IO ()
+main = do
+  let candidate = sameChars
+  if candidate ""eabcdzzzz"" ""dddzzzzzzzddeddabc"" == True then pure () else error ""assertion failed""
+  if candidate ""abcd"" ""dddddddabc"" == True then pure () else error ""assertion failed""
+  if candidate ""dddddddabc"" ""abcd"" == True then pure () else error ""assertion failed""
+  if candidate ""eabcd"" ""dddddddabc"" == False then pure () else error ""assertion failed""
+  if candidate ""abcd"" ""dddddddabcf"" == False then pure () else error ""assertion failed""
+  if candidate ""eabcdzzzz"" ""dddzzzzzzzddddabc"" == False then pure () else error ""assertion failed""
+  if candidate ""aabb"" ""aaccc"" == False then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_55,zho_Hans,hs,"--返回第n个斐波那契数.--  >>> fib 10
+--  55
+--  >>> fib 1
+--  1
+--  >>> fib 8
+--  21
+fib :: Int -> Int
+fib n =","fib :: Int -> Int
+fib n = fibHelper 0 1 n
+  where
+    fibHelper a _ 0 = a
+    fibHelper a b n = fibHelper b (a + b) (n - 1)","
+main :: IO ()
+main = do
+  let candidate = fib
+  if candidate 10 == 55 then pure () else error ""assertion failed""
+  if candidate 1 == 1 then pure () else error ""assertion failed""
+  if candidate 8 == 21 then pure () else error ""assertion failed""
+  if candidate 11 == 89 then pure () else error ""assertion failed""
+  if candidate 12 == 144 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_56,zho_Hans,hs,"--如果每个开放括号有一个相应的闭包括号,则返回true.--括号是一个字符串""<""和"">"".--  >>> correctBracketing ""<""
+--  False
+--  >>> correctBracketing ""<>""
+--  True
+--  >>> correctBracketing ""<<><>>""
+--  True
+--  >>> correctBracketing ""><<>""
+--  False
+correctBracketing :: String -> Bool
+correctBracketing brackets =","correctBracketing :: String -> Bool
+correctBracketing brackets = checkBrackets brackets 0 == 0
+
+checkBrackets :: String -> Int -> Int
+checkBrackets [] n = n
+checkBrackets (x:xs) n
+  | n < 0 = -1
+  | x == '<' = checkBrackets xs (n + 1)
+  | x == '>' = checkBrackets xs (n - 1)
+  | otherwise = checkBrackets xs n","
+main :: IO ()
+main = do
+  let candidate = correctBracketing
+  if candidate ""<>"" == True then pure () else error ""assertion failed""
+  if candidate ""<<><>>"" == True then pure () else error ""assertion failed""
+  if candidate ""<><><<><>><>"" == True then pure () else error ""assertion failed""
+  if candidate ""<><><<<><><>><>><<><><<>>>"" == True then pure () else error ""assertion failed""
+  if candidate ""<<<><>>>>"" == False then pure () else error ""assertion failed""
+  if candidate ""><<>"" == False then pure () else error ""assertion failed""
+  if candidate ""<"" == False then pure () else error ""assertion failed""
+  if candidate ""<<<<"" == False then pure () else error ""assertion failed""
+  if candidate "">"" == False then pure () else error ""assertion failed""
+  if candidate ""<<>"" == False then pure () else error ""assertion failed""
+  if candidate ""<><><<><>><>><<>"" == False then pure () else error ""assertion failed""
+  if candidate ""<><><<><>><>>><>"" == False then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_57,zho_Hans,hs,"--返回true是列表元素单调增加或减少.--  >>> monotonic [1,2,4,20]
+--  True
+--  >>> monotonic [1,20,4,10]
+--  False
+--  >>> monotonic [4,1,0,(-10)]
+--  True
+monotonic :: [Int] -> Bool
+monotonic l =","monotonic :: [Int] -> Bool
+monotonic l = increasing l || decreasing l
+  where
+    increasing xs = all (uncurry (<=)) (zip xs (tail xs))
+    decreasing xs = all (uncurry (>=)) (zip xs (tail xs))","
+main :: IO ()
+main = do
+  let candidate = monotonic
+  if candidate [1,2,4,10] == True then pure () else error ""assertion failed""
+  if candidate [1,2,4,20] == True then pure () else error ""assertion failed""
+  if candidate [1,20,4,10] == False then pure () else error ""assertion failed""
+  if candidate [4,1,0,(-10)] == True then pure () else error ""assertion failed""
+  if candidate [4,1,1,0] == True then pure () else error ""assertion failed""
+  if candidate [1,2,3,2,5,60] == False then pure () else error ""assertion failed""
+  if candidate [1,2,3,4,5,60] == True then pure () else error ""assertion failed""
+  if candidate [9,9,9,9] == True then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_58,zho_Hans,hs,"--返回两个列表的排序唯一的共同元素.--  >>> common [1,4,3,34,653,2,5] [5,7,1,5,9,653,121]
+--  [1,5,653]
+--  >>> common [5,3,2,8] [3,2]
+--  [2,3]
+common :: [Int] -> [Int] -> [Int]
+common l1 l2 =","common :: [Int] -> [Int] -> [Int]
+common l1 l2 = uniqueSortedCommon
+  where
+    commonElements = filter (`elem` l2) l1
+    uniqueCommon = removeDuplicates commonElements
+    uniqueSortedCommon = sort uniqueCommon
+
+    removeDuplicates :: [Int] -> [Int]
+    removeDuplicates = foldr (\x seen -> if x `elem` seen then seen else x : seen) []
+
+    sort :: [Int] -> [Int]
+    sort [] = []
+    sort (p:xs) = (sort lesser) ++ [p] ++ (sort greater)
+      where
+        lesser  = filter (< p) xs
+        greater = filter (>= p) xs","
+main :: IO ()
+main = do
+  let candidate = common
+  if candidate [1,4,3,34,653,2,5] [5,7,1,5,9,653,121] == [1,5,653] then pure () else error ""assertion failed""
+  if candidate [5,3,2,8] [3,2] == [2,3] then pure () else error ""assertion failed""
+  if candidate [4,3,2,8] [3,2,4] == [2,3,4] then pure () else error ""assertion failed""
+  if candidate [4,3,2,8] [] == [] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_59,zho_Hans,hs,"--返回n的最大素因数. 假设n>1并不是素数.--  >>> largestPrimeFactor 13195
+--  29
+--  >>> largestPrimeFactor 2048
+--  2
+largestPrimeFactor :: Int -> Int
+largestPrimeFactor n =","largestPrimeFactor :: Int -> Int
+largestPrimeFactor n = helper n 2
+  where
+    helper n factor
+      | factor * factor > n = n
+      | n `mod` factor == 0 = helper (n `div` factor) factor
+      | otherwise = helper n (factor + 1)","
+main :: IO ()
+main = do
+  let candidate = largestPrimeFactor
+  if candidate 15 == 5 then pure () else error ""assertion failed""
+  if candidate 27 == 3 then pure () else error ""assertion failed""
+  if candidate 63 == 7 then pure () else error ""assertion failed""
+  if candidate 330 == 11 then pure () else error ""assertion failed""
+  if candidate 13195 == 29 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_60,zho_Hans,hs,"-- sum_to_n是一个函数, 总和从1到n的数.--  >>> sumToN 30
+--  465
+--  >>> sumToN 100
+--  5050
+--  >>> sumToN 5
+--  15
+--  >>> sumToN 10
+--  55
+--  >>> sumToN 1
+--  1
+sumToN :: Int -> Int
+sumToN n =","sumToN :: Int -> Int
+sumToN n = sum [1..n]","
+main :: IO ()
+main = do
+  let candidate = sumToN
+  if candidate 1 == 1 then pure () else error ""assertion failed""
+  if candidate 6 == 21 then pure () else error ""assertion failed""
+  if candidate 11 == 66 then pure () else error ""assertion failed""
+  if candidate 30 == 465 then pure () else error ""assertion failed""
+  if candidate 100 == 5050 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_61,zho_Hans,hs,"--如果每个开放括号有一个相应的闭包括号,则返回true.--括号是一个字符串""和""的字符串.--  >>> correctBracketing ""(""
+--  False
+--  >>> correctBracketing ""()""
+--  True
+--  >>> correctBracketing ""(()())""
+--  True
+--  >>> correctBracketing "")(()""
+--  False
+correctBracketing :: String -> Bool
+correctBracketing brackets =","correctBracketing :: String -> Bool
+correctBracketing brackets = checkBalance brackets 0
+  where
+    checkBalance [] 0 = True
+    checkBalance [] _ = False
+    checkBalance (x:xs) n
+      | x == '('  = checkBalance xs (n + 1)
+      | x == ')' && n > 0 = checkBalance xs (n - 1)
+      | otherwise = False","
+main :: IO ()
+main = do
+  let candidate = correctBracketing
+  if candidate ""()"" == True then pure () else error ""assertion failed""
+  if candidate ""(()())"" == True then pure () else error ""assertion failed""
+  if candidate ""()()(()())()"" == True then pure () else error ""assertion failed""
+  if candidate ""()()((()()())())(()()(()))"" == True then pure () else error ""assertion failed""
+  if candidate ""((()())))"" == False then pure () else error ""assertion failed""
+  if candidate "")(()"" == False then pure () else error ""assertion failed""
+  if candidate ""("" == False then pure () else error ""assertion failed""
+  if candidate ""(((("" == False then pure () else error ""assertion failed""
+  if candidate "")"" == False then pure () else error ""assertion failed""
+  if candidate ""(()"" == False then pure () else error ""assertion failed""
+  if candidate ""()()(()())())(()"" == False then pure () else error ""assertion failed""
+  if candidate ""()()(()())()))()"" == False then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_62,zho_Hans,hs,"--返回这个多项式的相同形式的导数.--的值是xs[0]+xs[1] * x+xs[2] * x^2 + .... --代表一个多项式的系数.--  >>> derivative [3,1,2,4,5]
+--  [1,4,12,20]
+--  >>> derivative [1,2,3]
+--  [2,6]
+derivative :: [Int] -> [Int]
+derivative xs =","derivative :: [Int] -> [Int]
+derivative xs = zipWith (*) (tail xs) [1..]","
+main :: IO ()
+main = do
+  let candidate = derivative
+  if candidate [3,1,2,4,5] == [1,4,12,20] then pure () else error ""assertion failed""
+  if candidate [1,2,3] == [2,6] then pure () else error ""assertion failed""
+  if candidate [3,2,1] == [2,2] then pure () else error ""assertion failed""
+  if candidate [3,2,1,0,4] == [2,2,0,16] then pure () else error ""assertion failed""
+  if candidate [1] == [] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_63,zho_Hans,hs,"--请写一个函数来有效计算fibfib数列的第n个元素.--                                                                                                                                                                                                                                                              --          --         --        --的数列与的数列相似, 定义如下:--  >>> fibfib 1
+--  0
+--  >>> fibfib 5
+--  4
+--  >>> fibfib 8
+--  24
+fibfib :: Int -> Int
+fibfib n =","fibfib :: Int -> Int
+fibfib n
+  | n == 0 = 0
+  | n == 1 = 0
+  | n == 2 = 1
+  | otherwise = fibs !! n
+  where
+    fibs = 0 : 0 : 1 : zipWith3 (\a b c -> a + b + c) fibs (tail fibs) (drop 2 fibs)","
+main :: IO ()
+main = do
+  let candidate = fibfib
+  if candidate 2 == 1 then pure () else error ""assertion failed""
+  if candidate 1 == 0 then pure () else error ""assertion failed""
+  if candidate 5 == 4 then pure () else error ""assertion failed""
+  if candidate 8 == 24 then pure () else error ""assertion failed""
+  if candidate 10 == 81 then pure () else error ""assertion failed""
+  if candidate 12 == 274 then pure () else error ""assertion failed""
+  if candidate 14 == 927 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_64,zho_Hans,hs,"--举例:--只有在给定的词的末尾时才会出现.--在此情况下,元音是""a"""",e"""",i"""",o"""",u"". 在这里"",y""也是""a""--返回字符串中的元音数.--写一个函数,用字符串表示--  >>> vowelsCount ""abcde""
+--  2
+--  >>> vowelsCount ""ACEDY""
+--  3
+vowelsCount :: String -> Int
+vowelsCount s =","vowelsCount :: String -> Int
+vowelsCount s = length $ filter isVowel $ zip s [1..]
+  where
+    isVowel (c, pos) =
+      let lowercaseC = toLower c
+          isRegularVowel = lowercaseC `elem` ""aeiou""
+          isLastCharY = lowercaseC == 'y' && pos == length s
+      in isRegularVowel || isLastCharY","
+main :: IO ()
+main = do
+  let candidate = vowelsCount
+  if candidate ""abcde"" == 2 then pure () else error ""assertion failed""
+  if candidate ""Alone"" == 3 then pure () else error ""assertion failed""
+  if candidate ""key"" == 2 then pure () else error ""assertion failed""
+  if candidate ""bye"" == 1 then pure () else error ""assertion failed""
+  if candidate ""keY"" == 2 then pure () else error ""assertion failed""
+  if candidate ""bYe"" == 1 then pure () else error ""assertion failed""
+  if candidate ""ACEDY"" == 3 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_65,zho_Hans,hs,"--如果shift > 数字数,则返回数字反转.--返回结果作为一个字符串.--循环移动整数x的位数, 移动位数右移动.--  >>> circularShift 12 1
+--  ""21""
+--  >>> circularShift 12 2
+--  ""12""
+circularShift :: Int -> Int -> String
+circularShift x shift =","circularShift :: Int -> Int -> String
+circularShift x shift =
+  let digits = show x
+      len = length digits
+      effectiveShift = shift `mod` len
+  in if shift > len
+     then reverse digits
+     else let (begin, end) = splitAt (len - effectiveShift) digits
+          in end ++ begin","
+main :: IO ()
+main = do
+  let candidate = circularShift
+  if candidate 100 2 == ""001"" then pure () else error ""assertion failed""
+  if candidate 12 2 == ""12"" then pure () else error ""assertion failed""
+  if candidate 97 8 == ""79"" then pure () else error ""assertion failed""
+  if candidate 12 1 == ""21"" then pure () else error ""assertion failed""
+  if candidate 11 101 == ""11"" then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_66,zho_Hans,hs,"--举例:--美国数字化代码.--写一个函数, 输入字符串, 仅返回上方字符的和.--任务--  >>> digitsum """"
+--  0
+--  >>> digitsum ""abAB""
+--  131
+--  >>> digitsum ""abcCd""
+--  67
+--  >>> digitsum ""helloE""
+--  69
+--  >>> digitsum ""woArBld""
+--  131
+--  >>> digitsum ""aAaaaXa""
+--  153
+digitsum :: String -> Int
+digitsum s =","digitsum :: String -> Int
+digitsum s = sum $ map fromEnum $ filter isUpper s","
+main :: IO ()
+main = do
+  let candidate = digitsum
+  if candidate """" == 0 then pure () else error ""assertion failed""
+  if candidate ""abAB"" == 131 then pure () else error ""assertion failed""
+  if candidate ""abcCd"" == 67 then pure () else error ""assertion failed""
+  if candidate ""helloE"" == 69 then pure () else error ""assertion failed""
+  if candidate ""woArBld"" == 131 then pure () else error ""assertion failed""
+  if candidate ""aAaaaXa"" == 153 then pure () else error ""assertion failed""
+  if candidate "" How are yOu?"" == 151 then pure () else error ""assertion failed""
+  if candidate ""You arE Very Smart"" == 327 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_67,zho_Hans,hs,"--对于 examble:--在篮子里返回篮子里果的数量.--子和果和一个整数表示果实总数--给出代表总数的字符串--它们被分发在一个水果篮里,--现在我们要做的是,让我们把它放在一个字符串上,--  >>> fruitDistribution ""5 apples and 6 oranges"" 19
+--  8
+--  >>> fruitDistribution ""0 apples and 1 oranges"" 3
+--  2
+--  >>> fruitDistribution ""2 apples and 3 oranges"" 100
+--  95
+--  >>> fruitDistribution ""100 apples and 1 oranges"" 120
+--  19
+fruitDistribution :: String -> Int -> Int
+fruitDistribution s n =","import Text.Read (readMaybe)
+
+fruitDistribution :: String -> Int -> Int
+fruitDistribution s n = n - totalApplesOranges
+  where
+    totalApplesOranges = sum $ map (readNumber . words) [""apples"", ""oranges""]
+    readNumber keyword = case dropWhile (not . (=="" "") . dropWhile (/=' ')) $ words s of
+      [] -> 0
+      (num:_:rest) -> if num `elem` keyword then read num :: Int else 0","
+main :: IO ()
+main = do
+  let candidate = fruitDistribution
+  if candidate ""5 apples and 6 oranges"" 19 == 8 then pure () else error ""assertion failed""
+  if candidate ""5 apples and 6 oranges"" 21 == 10 then pure () else error ""assertion failed""
+  if candidate ""0 apples and 1 oranges"" 3 == 2 then pure () else error ""assertion failed""
+  if candidate ""1 apples and 0 oranges"" 3 == 2 then pure () else error ""assertion failed""
+  if candidate ""2 apples and 3 oranges"" 100 == 95 then pure () else error ""assertion failed""
+  if candidate ""2 apples and 3 oranges"" 5 == 0 then pure () else error ""assertion failed""
+  if candidate ""1 apples and 100 oranges"" 120 == 19 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_68,zho_Hans,hs,"--举例1:--如果没有偶数值或给定的列表是空的,返回[].--摘取的节点应该在一个列表中返回,[smallest_value,它的索引],,--如果发现有多个具有相同最小偶数值的节点,则返回具有最小索引的节点. --摘取的节点应该是最小偶数值的节点.--您的任务是摘取一个节点并将其返回.--给出一个树的分支, 列表中包含的节点是非负整数.--  >>> pluck [4,2,3]
+--  [2,1]
+--  Explanation: 2 has the smallest even value, and 2 has the smallest index.
+--  Example 2:
+--  >>> pluck [1,2,3]
+--  [2,1]
+--  Explanation: 2 has the smallest even value, and 2 has the smallest index.
+--  Example 3:
+--  >>> pluck []
+--  []
+--  Example 4:
+--  >>> pluck [5,0,3,0,4,2]
+--  [0,1]
+--  Explanation: 0 is the smallest value, but  there are two zeros,
+--  so we will choose the first zero, which has the smallest index.
+--  Constraints:
+--  * 1 <= nodes.length <= 10000
+--  * 0 <= node.value
+pluck :: [Int] -> [Int]
+pluck arr =","pluck :: [Int] -> [Int]
+pluck arr = case filter (\(x, _) -> even x) (zip arr [0..]) of
+    [] -> []
+    evens -> let (value, index) = minimum evens in [value, index]","
+main :: IO ()
+main = do
+  let candidate = pluck
+  if candidate [4,2,3] == [2,1] then pure () else error ""assertion failed""
+  if candidate [1,2,3] == [2,1] then pure () else error ""assertion failed""
+  if candidate [] == [] then pure () else error ""assertion failed""
+  if candidate [5,0,3,0,4,2] == [0,1] then pure () else error ""assertion failed""
+  if candidate [1,2,3,0,5,3] == [0,3] then pure () else error ""assertion failed""
+  if candidate [5,4,8,4,8] == [4,1] then pure () else error ""assertion failed""
+  if candidate [7,6,7,1] == [6,1] then pure () else error ""assertion failed""
+  if candidate [7,9,7,1] == [] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_69,zho_Hans,hs,"--举例:--如果没有这样的值,返回 -1.--一个整数的频率是它在列表中出现的次数.--且其频率大于或等于整数本身的值.--给你一个非空的正整数列表. 返回最大的整数大于--  >>> search [4,1,2,2,3,1]
+--  2
+--  >>> search [1,2,2,3,3,3,4,4,4]
+--  3
+--  >>> search [5,5,4,4,4]
+--  (-1)
+search :: [Int] -> Int
+search lst =","import Data.List (group, sort)
+import Data.Ord (comparing)
+
+search :: [Int] -> Int
+search lst = 
+    let frequencies = map (\g -> (head g, length g)) . group . sort $ lst
+        candidates = filter (\(val, freq) -> freq >= val) frequencies
+    in case candidates of
+         [] -> -1
+         _  -> fst . maximum $ candidates","
+main :: IO ()
+main = do
+  let candidate = search
+  if candidate [5,5,5,5,1] == 1 then pure () else error ""assertion failed""
+  if candidate [4,1,4,1,4,4] == 4 then pure () else error ""assertion failed""
+  if candidate [3,3] == (-1) then pure () else error ""assertion failed""
+  if candidate [8,8,8,8,8,8,8,8] == 8 then pure () else error ""assertion failed""
+  if candidate [2,3,3,2,2] == 2 then pure () else error ""assertion failed""
+  if candidate [2,7,8,8,4,8,7,3,9,6,5,10,4,3,6,7,1,7,4,10,8,1] == 1 then pure () else error ""assertion failed""
+  if candidate [3,2,8,2] == 2 then pure () else error ""assertion failed""
+  if candidate [6,7,1,8,8,10,5,8,5,3,10] == 1 then pure () else error ""assertion failed""
+  if candidate [8,8,3,6,5,6,4] == (-1) then pure () else error ""assertion failed""
+  if candidate [6,9,6,7,1,4,7,1,8,8,9,8,10,10,8,4,10,4,10,1,2,9,5,7,9] == 1 then pure () else error ""assertion failed""
+  if candidate [1,9,10,1,3] == 1 then pure () else error ""assertion failed""
+  if candidate [6,9,7,5,8,7,5,3,7,5,10,10,3,6,10,2,8,6,5,4,9,5,3,10] == 5 then pure () else error ""assertion failed""
+  if candidate [1] == 1 then pure () else error ""assertion failed""
+  if candidate [8,8,10,6,4,3,5,8,2,4,2,8,4,6,10,4,2,1,10,2,1,1,5] == 4 then pure () else error ""assertion failed""
+  if candidate [2,10,4,8,2,10,5,1,2,9,5,5,6,3,8,6,4,10] == 2 then pure () else error ""assertion failed""
+  if candidate [1,6,10,1,6,9,10,8,6,8,7,3] == 1 then pure () else error ""assertion failed""
+  if candidate [9,2,4,1,5,1,5,2,5,7,7,7,3,10,1,5,4,2,8,4,1,9,10,7,10,2,8,10,9,4] == 4 then pure () else error ""assertion failed""
+  if candidate [2,6,4,2,8,7,5,6,4,10,4,6,3,7,8,8,3,1,4,2,2,10,7] == 4 then pure () else error ""assertion failed""
+  if candidate [9,8,6,10,2,6,10,2,7,8,10,3,8,2,6,2,3,1] == 2 then pure () else error ""assertion failed""
+  if candidate [5,5,3,9,5,6,3,2,8,5,6,10,10,6,8,4,10,7,7,10,8] == (-1) then pure () else error ""assertion failed""
+  if candidate [10] == (-1) then pure () else error ""assertion failed""
+  if candidate [9,7,7,2,4,7,2,10,9,7,5,7,2] == 2 then pure () else error ""assertion failed""
+  if candidate [5,4,10,2,1,1,10,3,6,1,8] == 1 then pure () else error ""assertion failed""
+  if candidate [7,9,9,9,3,4,1,5,9,1,2,1,1,10,7,5,6,7,6,7,7,6] == 1 then pure () else error ""assertion failed""
+  if candidate [3,10,10,9,2] == (-1) then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_70,zho_Hans,hs,"--举例:--接下来是剩余的整数的最大数,然后是最小数,等等.--奇怪的分类,是当你从最小值开始,--给出一个整数列表,返回一个奇怪的顺序.--  >>> strangeSortList [1,2,3,4]
+--  [1,4,2,3]
+--  >>> strangeSortList [5,5,5,5]
+--  [5,5,5,5]
+--  >>> strangeSortList []
+--  []
+strangeSortList :: [Int] -> [Int]
+strangeSortList lst =","strangeSortList :: [Int] -> [Int]
+strangeSortList [] = []
+strangeSortList lst = go (sort lst) True
+  where
+    go [] _ = []
+    go xs toggle
+      | toggle    = head xs : go (tail xs) False
+      | otherwise = last xs : go (init xs) True","
+main :: IO ()
+main = do
+  let candidate = strangeSortList
+  if candidate [1,2,3,4] == [1,4,2,3] then pure () else error ""assertion failed""
+  if candidate [5,6,7,8,9] == [5,9,6,8,7] then pure () else error ""assertion failed""
+  if candidate [1,2,3,4,5] == [1,5,2,4,3] then pure () else error ""assertion failed""
+  if candidate [5,6,7,8,9,1] == [1,9,5,8,6,7] then pure () else error ""assertion failed""
+  if candidate [5,5,5,5] == [5,5,5,5] then pure () else error ""assertion failed""
+  if candidate [] == [] then pure () else error ""assertion failed""
+  if candidate [1,2,3,4,5,6,7,8] == [1,8,2,7,3,6,4,5] then pure () else error ""assertion failed""
+  if candidate [0,2,2,2,5,5,(-5),(-5)] == [(-5),5,(-5),5,0,2,2,2] then pure () else error ""assertion failed""
+  if candidate [111111] == [111111] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_71,zho_Hans,hs,"--举例:--没有任何其他方面.--三边是有效的三角形,如果任何两边的和大于.--否则返回-1 --如果三边构成一个有效的三角形,则三角形将被圆成2个小数点.--给出三角形的三边长. 返回的面积是--  >>> triangleArea 3 4 5
+--  6.0
+--  >>> triangleArea 1 2 10
+--  (-1).0
+triangleArea :: Int -> Int -> Int -> Float
+triangleArea a b c =","import Text.Printf (printf)
+
+triangleArea :: Int -> Int -> Int -> Float
+triangleArea a b c
+    | isValidTriangle a b c = roundToTwoDecimals (sqrt (s * (s - fromIntegral a) * (s - fromIntegral b) * (s - fromIntegral c)))
+    | otherwise = -1
+  where
+    s = (fromIntegral (a + b + c)) / 2
+    isValidTriangle x y z = x + y > z && x + z > y && y + z > x
+    roundToTwoDecimals x = read (printf ""%.2f"" x) :: Float","
+main :: IO ()
+main = do
+  let candidate = triangleArea
+  if candidate 3 4 5 == 6.0 then pure () else error ""assertion failed""
+  if candidate 1 2 10 == (-1).0 then pure () else error ""assertion failed""
+  if candidate 4 8 5 == 8.18 then pure () else error ""assertion failed""
+  if candidate 2 2 2 == 1.73 then pure () else error ""assertion failed""
+  if candidate 1 2 3 == (-1).0 then pure () else error ""assertion failed""
+  if candidate 10 5 7 == 16.25 then pure () else error ""assertion failed""
+  if candidate 2 6 3 == (-1).0 then pure () else error ""assertion failed""
+  if candidate 1 1 1 == 0.43 then pure () else error ""assertion failed""
+  if candidate 2 2 10 == (-1).0 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_72,zho_Hans,hs,"--举例:--如果物体q平衡 (它是一个平行列表),并且其元素的总和小于或等于最大可能的重量w,则它会飞.--写一个函数,如果对象q会飞,则返回True,否则返回False.--  >>> willItFly [1,2] 5
+--  False
+--  # 1+2 is less than the maximum possible weight, but it's unbalanced.
+--  >>> willItFly [3,2,3] 1
+--  False
+--  # it's balanced, but 3+2+3 is more than the maximum possible weight.
+--  >>> willItFly [3,2,3] 9
+--  True
+--  # 3+2+3 is less than the maximum possible weight, and it's balanced.
+--  >>> willItFly [3] 5
+--  True
+--  # 3 is less than the maximum possible weight, and it's balanced.
+willItFly :: [Int] -> Int -> Bool
+willItFly q w =","willItFly :: [Int] -> Int -> Bool
+willItFly q w = isPalindrome q && sum q <= w
+
+isPalindrome :: Eq a => [a] -> Bool
+isPalindrome xs = xs == reverse xs","
+main :: IO ()
+main = do
+  let candidate = willItFly
+  if candidate [3,2,3] 9 == True then pure () else error ""assertion failed""
+  if candidate [1,2] 5 == False then pure () else error ""assertion failed""
+  if candidate [3] 5 == True then pure () else error ""assertion failed""
+  if candidate [3,2,3] 1 == False then pure () else error ""assertion failed""
+  if candidate [1,2,3] 6 == False then pure () else error ""assertion failed""
+  if candidate [5] 5 == True then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_73,zho_Hans,hs,"--例如:--您可以在一次更改中将一个元素更改为任何其他元素.--需要更改以使列表成为平行符.平行符列表是指:--给定一个整数列表, 找到最小的元素数--  >>> smallestChange [1,2,3,5,4,7,9,6]
+--  4
+--  >>> smallestChange [1,2,3,4,3,2,2]
+--  1
+--  >>> smallestChange [1,2,3,2,1]
+--  0
+smallestChange :: [Int] -> Int
+smallestChange arr =","smallestChange :: [Int] -> Int
+smallestChange arr = sum $ zipWith (\x y -> if x /= y then 1 else 0) arr (reverse arr)","
+main :: IO ()
+main = do
+  let candidate = smallestChange
+  if candidate [1,2,3,5,4,7,9,6] == 4 then pure () else error ""assertion failed""
+  if candidate [1,2,3,4,3,2,2] == 1 then pure () else error ""assertion failed""
+  if candidate [1,4,2] == 1 then pure () else error ""assertion failed""
+  if candidate [1,4,4,2] == 1 then pure () else error ""assertion failed""
+  if candidate [1,2,3,2,1] == 0 then pure () else error ""assertion failed""
+  if candidate [3,1,1,3] == 0 then pure () else error ""assertion failed""
+  if candidate [1] == 0 then pure () else error ""assertion failed""
+  if candidate [0,1] == 1 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_74,zho_Hans,hs,"--举例 --如果两个列表的字符数相同,返回第一个列表.--列表中的所有字符串的总字符数量小于其他列表.--写一个函数,接受两个字符串列表,并返回具有--  >>> totalMatch [] []
+--  []
+--  >>> totalMatch [""hi"",""admin""] [""hI"",""Hi""]
+--  [""hI"",""Hi""]
+--  >>> totalMatch [""hi"",""admin""] [""hi"",""hi"",""admin"",""project""]
+--  [""hi"",""admin""]
+--  >>> totalMatch [""hi"",""admin""] [""hI"",""hi"",""hi""]
+--  [""hI"",""hi"",""hi""]
+--  >>> totalMatch [""4""] [""1"",""2"",""3"",""4"",""5""]
+--  [""4""]
+totalMatch :: [String] -> [String] -> [String]
+totalMatch lst1 lst2 =","totalMatch :: [String] -> [String] -> [String]
+totalMatch lst1 lst2
+  | totalChars lst1 < totalChars lst2 = lst1
+  | totalChars lst1 > totalChars lst2 = lst2
+  | otherwise = lst1
+  where
+    totalChars = sum . map length","
+main :: IO ()
+main = do
+  let candidate = totalMatch
+  if candidate [] [] == [] then pure () else error ""assertion failed""
+  if candidate [""hi"",""admin""] [""hi"",""hi""] == [""hi"",""hi""] then pure () else error ""assertion failed""
+  if candidate [""hi"",""admin""] [""hi"",""hi"",""admin"",""project""] == [""hi"",""admin""] then pure () else error ""assertion failed""
+  if candidate [""4""] [""1"",""2"",""3"",""4"",""5""] == [""4""] then pure () else error ""assertion failed""
+  if candidate [""hi"",""admin""] [""hI"",""Hi""] == [""hI"",""Hi""] then pure () else error ""assertion failed""
+  if candidate [""hi"",""admin""] [""hI"",""hi"",""hi""] == [""hI"",""hi"",""hi""] then pure () else error ""assertion failed""
+  if candidate [""hi"",""admin""] [""hI"",""hi"",""hii""] == [""hi"",""admin""] then pure () else error ""assertion failed""
+  if candidate [] [""this""] == [] then pure () else error ""assertion failed""
+  if candidate [""this""] [] == [] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_75,zho_Hans,hs,"--举例:--知道 (a) 小于100.--其他情况则是错误的.--写一个函数,如果给定的数是3个素数的乘法, 则返回真值.--  >>> isMultiplyPrime 30
+--  True
+--  30 = 2 * 3 * 5
+isMultiplyPrime :: Int -> Bool
+isMultiplyPrime a =","isMultiplyPrime :: Int -> Bool
+isMultiplyPrime a = any isTriplePrimeProduct primeTriples
+  where
+    primes = filter isPrime [2..99]
+    primeTriples = [(x, y, z) | x <- primes, y <- primes, z <- primes, x <= y, y <= z]
+    isTriplePrimeProduct (x, y, z) = x * y * z == a
+
+isPrime :: Int -> Bool
+isPrime n 
+  | n < 2     = False
+  | otherwise = not (any (\d -> n `mod` d == 0) [2..(floor . sqrt . fromIntegral) n])","
+main :: IO ()
+main = do
+  let candidate = isMultiplyPrime
+  if candidate 5 == False then pure () else error ""assertion failed""
+  if candidate 30 == True then pure () else error ""assertion failed""
+  if candidate 8 == True then pure () else error ""assertion failed""
+  if candidate 10 == False then pure () else error ""assertion failed""
+  if candidate 125 == True then pure () else error ""assertion failed""
+  if candidate 105 == True then pure () else error ""assertion failed""
+  if candidate 126 == False then pure () else error ""assertion failed""
+  if candidate 729 == False then pure () else error ""assertion failed""
+  if candidate 891 == False then pure () else error ""assertion failed""
+  if candidate 1001 == True then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_76,zho_Hans,hs,"--例如:--如果n**int=x,则x是n的简单次数--在其他情况下, n 的权力和 false.--写一个函数,如果一个数 x 是一个简单的--  >>> isSimplePower 1 4
+--  True
+--  >>> isSimplePower 2 2
+--  True
+--  >>> isSimplePower 8 2
+--  True
+--  >>> isSimplePower 3 2
+--  False
+--  >>> isSimplePower 3 1
+--  False
+--  >>> isSimplePower 5 3
+--  False
+isSimplePower :: Int -> Int -> Bool
+isSimplePower x n =","isSimplePower :: Int -> Int -> Bool
+isSimplePower x n
+  | x < 1 || n < 1 = False
+  | n == 1 = x == 1
+  | otherwise = x == n ^ round (logBase (fromIntegral n) (fromIntegral x))","
+main :: IO ()
+main = do
+  let candidate = isSimplePower
+  if candidate 16 2 == True then pure () else error ""assertion failed""
+  if candidate 143214 16 == False then pure () else error ""assertion failed""
+  if candidate 4 2 == True then pure () else error ""assertion failed""
+  if candidate 9 3 == True then pure () else error ""assertion failed""
+  if candidate 16 4 == True then pure () else error ""assertion failed""
+  if candidate 24 2 == False then pure () else error ""assertion failed""
+  if candidate 128 4 == False then pure () else error ""assertion failed""
+  if candidate 12 6 == False then pure () else error ""assertion failed""
+  if candidate 1 1 == True then pure () else error ""assertion failed""
+  if candidate 1 12 == True then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_77,zho_Hans,hs,"--举例:--注意:您可以假设输入总是有效的.--如果这个数是某个整数的立方体.--写一个函数, 取一个整数a, 返回True.--  >>> iscube 1
+--  True
+--  >>> iscube 2
+--  False
+--  >>> iscube (-1)
+--  True
+--  >>> iscube 64
+--  True
+--  >>> iscube 0
+--  True
+--  >>> iscube 180
+--  False
+iscube :: Int -> Bool
+iscube a =","iscube :: Int -> Bool
+iscube a = let n = round (fromIntegral a ** (1/3)) in n^3 == a","
+main :: IO ()
+main = do
+  let candidate = iscube
+  if candidate 1 == True then pure () else error ""assertion failed""
+  if candidate 2 == False then pure () else error ""assertion failed""
+  if candidate (-1) == True then pure () else error ""assertion failed""
+  if candidate 64 == True then pure () else error ""assertion failed""
+  if candidate 180 == False then pure () else error ""assertion failed""
+  if candidate 1000 == True then pure () else error ""assertion failed""
+  if candidate 0 == True then pure () else error ""assertion failed""
+  if candidate 1729 == False then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_78,zho_Hans,hs,"--举例:--标志 A,B,C,D,E,F 总是大写的--注意:您可以假设输入总是正确或空字符串,--值的值是指指数的值.--您必须确定以下数字中的一个数: 2, 3, 5, 7, --质数是2,3,5,7,11,13,17,... 它们是--十六进制数字是0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F. 它们是指一个数字,--没有两个较小的自然数的乘积).--那些是素数的数字 (素数,或一个素数,是一个自然数)--作为一个字符串, 计算十六进制数字的数量.--您被要求写一个接收函数.--  >>> hexKey ""AB""
+--  1
+--  >>> hexKey ""1077E""
+--  2
+--  >>> hexKey ""ABED1A33""
+--  4
+--  >>> hexKey ""123456789ABCDEF0""
+--  6
+--  >>> hexKey ""2020""
+--  2
+hexKey :: String -> Int
+hexKey num =","hexKey :: String -> Int
+hexKey num = length . filter (`elem` primeHexDigits) $ num
+  where
+    primeHexDigits = ""2357BD""","
+main :: IO ()
+main = do
+  let candidate = hexKey
+  if candidate ""AB"" == 1 then pure () else error ""assertion failed""
+  if candidate ""1077E"" == 2 then pure () else error ""assertion failed""
+  if candidate ""ABED1A33"" == 4 then pure () else error ""assertion failed""
+  if candidate ""2020"" == 2 then pure () else error ""assertion failed""
+  if candidate ""123456789ABCDEF0"" == 6 then pure () else error ""assertion failed""
+  if candidate ""112233445566778899AABBCCDDEEFF00"" == 12 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_79,zho_Hans,hs,"--举例:--额外的字符是为了帮助格式.--在字符串的开始和结束会有额外的""db""字符.--字符串中的每个字符都将是""0""或""1"".--函数应该返回一个字符串,每个字符代表一个二进制的字符.--您将得到一个以小数形式的数字, 您的任务是将其转换为--  >>> decimalToBinary 15
+--  ""db1111db""
+--  >>> decimalToBinary 32
+--  ""db100000db""
+decimalToBinary :: Int -> String
+decimalToBinary decimal =","decimalToBinary :: Int -> String
+decimalToBinary decimal = ""db"" ++ toBinary decimal ++ ""db""
+  where
+    toBinary 0 = ""0""
+    toBinary n = reverse (binaryHelper n)
+
+    binaryHelper 0 = """"
+    binaryHelper n = let (q, r) = n `divMod` 2 in show r ++ binaryHelper q","
+main :: IO ()
+main = do
+  let candidate = decimalToBinary
+  if candidate 0 == ""db0db"" then pure () else error ""assertion failed""
+  if candidate 32 == ""db100000db"" then pure () else error ""assertion failed""
+  if candidate 103 == ""db1100111db"" then pure () else error ""assertion failed""
+  if candidate 15 == ""db1111db"" then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_80,zho_Hans,hs,"--例如:--如果字符串长度至少为3个,并且每3个连续字母都不同,则该字符串是hphs.--您的任务是检查字符串是否是 haphs.--给你一个字符串 s.--  >>> isHappy ""a""
+--  False
+--  >>> isHappy ""aa""
+--  False
+--  >>> isHappy ""abcd""
+--  True
+--  >>> isHappy ""aabb""
+--  False
+--  >>> isHappy ""adb""
+--  True
+--  >>> isHappy ""xyy""
+--  False
+isHappy :: String -> Bool
+isHappy s =","isHappy :: String -> Bool
+isHappy s
+  | length s < 3 = False
+  | otherwise = all distinctTriples (windows 3 s)
+  where
+    distinctTriples [x, y, z] = x /= y && y /= z && x /= z
+    distinctTriples _ = False
+    windows n xs
+      | length xs < n = []
+      | otherwise = take n xs : windows n (tail xs)","
+main :: IO ()
+main = do
+  let candidate = isHappy
+  if candidate ""a"" == False then pure () else error ""assertion failed""
+  if candidate ""aa"" == False then pure () else error ""assertion failed""
+  if candidate ""abcd"" == True then pure () else error ""assertion failed""
+  if candidate ""aabb"" == False then pure () else error ""assertion failed""
+  if candidate ""adb"" == True then pure () else error ""assertion failed""
+  if candidate ""xyy"" == False then pure () else error ""assertion failed""
+  if candidate ""iopaxpoi"" == True then pure () else error ""assertion failed""
+  if candidate ""iopaxioi"" == False then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_81,zho_Hans,hs,"--举例:--没有.--其他--超过0.7 D--> 1.0 D+ 其他--> 1.3 C- 没有--超过1.7°C--超过2.0°C--> 2.3 B- 其他--> 2.7 B 其他--> 3.0 B+ 其他--> 3.3 A- 其他--> 3.7 A 其他--没有任何问题.--平均成绩:--函数可以使用下面表输出字母等级列表:--她给了你一些学生的平均成绩,你必须写下来.--唯一的问题是,她失去了她用来评分的代码.--学生们的教育工作者们也会对此进行评价.--现在是学期的最后一周,--  >>> gradeEquation [4.0,3,1.7,2,3.5]
+--  [""A+"",""B"",""C-"",""C"",""A-""]
+numericalLetterGrade :: [Float] -> [String]
+numericalLetterGrade grades =","numericalLetterGrade :: [Float] -> [String]
+numericalLetterGrade grades = map gpaToLetterGrade grades
+  where
+    gpaToLetterGrade gpa
+      | gpa == 4.0 = ""A+""
+      | gpa > 3.7  = ""A""
+      | gpa > 3.3  = ""A-""
+      | gpa > 3.0  = ""B+""
+      | gpa > 2.7  = ""B""
+      | gpa > 2.3  = ""B-""
+      | gpa > 2.0  = ""C+""
+      | gpa > 1.7  = ""C""
+      | gpa > 1.3  = ""C-""
+      | gpa > 1.0  = ""D+""
+      | gpa > 0.7  = ""D""
+      | gpa > 0.0  = ""D-""
+      | otherwise  = ""E""","
+main :: IO ()
+main = do
+  let candidate = numericalLetterGrade
+  if candidate [4.0,3,1.7,2,3.5] == [""A+"",""B"",""C-"",""C"",""A-""] then pure () else error ""assertion failed""
+  if candidate [1.2] == [""D+""] then pure () else error ""assertion failed""
+  if candidate [0.5] == [""D-""] then pure () else error ""assertion failed""
+  if candidate [0.0] == [""E""] then pure () else error ""assertion failed""
+  if candidate [1.0,0.3,1.5,2.8,3.3] == [""D"",""D-"",""C-"",""B"",""B+""] then pure () else error ""assertion failed""
+  if candidate [0.0,0.7] == [""E"",""D-""] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_82,zho_Hans,hs,"--举例 --length 是一个素数,否则则为 False --写一个函数,如果 string 值为--  >>> primeLength ""Hello""
+--  True
+--  >>> primeLength ""abcdcba""
+--  True
+--  >>> primeLength ""kittens""
+--  True
+--  >>> primeLength ""orange""
+--  False
+primeLength :: String -> Bool
+primeLength string =","primeLength :: String -> Bool
+primeLength string = isPrime (length string)
+
+isPrime :: Int -> Bool
+isPrime n
+  | n < 2     = False
+  | n == 2    = True
+  | even n    = False
+  | otherwise = null [ x | x <- [3, 5 .. floor (sqrt (fromIntegral n))], n `mod` x == 0 ]","
+main :: IO ()
+main = do
+  let candidate = primeLength
+  if candidate ""Hello"" == True then pure () else error ""assertion failed""
+  if candidate ""abcdcba"" == True then pure () else error ""assertion failed""
+  if candidate ""kittens"" == True then pure () else error ""assertion failed""
+  if candidate ""orange"" == False then pure () else error ""assertion failed""
+  if candidate ""wow"" == True then pure () else error ""assertion failed""
+  if candidate ""world"" == True then pure () else error ""assertion failed""
+  if candidate ""MadaM"" == True then pure () else error ""assertion failed""
+  if candidate ""Wow"" == True then pure () else error ""assertion failed""
+  if candidate """" == False then pure () else error ""assertion failed""
+  if candidate ""HI"" == True then pure () else error ""assertion failed""
+  if candidate ""go"" == True then pure () else error ""assertion failed""
+  if candidate ""gogo"" == False then pure () else error ""assertion failed""
+  if candidate ""aaaaaaaaaaaaaaa"" == False then pure () else error ""assertion failed""
+  if candidate ""Madam"" == True then pure () else error ""assertion failed""
+  if candidate ""M"" == False then pure () else error ""assertion failed""
+  if candidate ""0"" == False then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_83,zho_Hans,hs,"--开始或结束于1的正整数.--给出一个正整数n,返回n位数的数量.startsOneEnds :: Int -> Int
+startsOneEnds n =","startsOneEnds :: Int -> Int
+startsOneEnds n
+  | n <= 0    = 0
+  | n == 1    = 1
+  | otherwise = 18 * 10^(n-2)","
+main :: IO ()
+main = do
+  let candidate = startsOneEnds
+  if candidate 1 == 1 then pure () else error ""assertion failed""
+  if candidate 2 == 18 then pure () else error ""assertion failed""
+  if candidate 3 == 180 then pure () else error ""assertion failed""
+  if candidate 4 == 1800 then pure () else error ""assertion failed""
+  if candidate 5 == 18000 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_84,zho_Hans,hs,"--举例--给定一个正整数N, 返回其数字的二进制总和.--  >>> solve 1000
+--  ""1""
+--  >>> solve 150
+--  ""110""
+--  >>> solve 147
+--  ""1100""
+--  Variables:
+--  @N integer
+--  Constraints: 0 ≤ N ≤ 10000.
+--  Output:
+--  a string of binary number
+solve :: Int -> String
+solve N =","solve :: Int -> String
+solve N = toBinary (sumOfDigits N)
+  where
+    sumOfDigits 0 = 0
+    sumOfDigits n = (n `mod` 10) + sumOfDigits (n `div` 10)
+
+    toBinary 0 = ""0""
+    toBinary n = reverse (toBinary' n)
+      where
+        toBinary' 0 = """"
+        toBinary' x = let (q, r) = x `divMod` 2 in intToDigit r : toBinary' q","
+main :: IO ()
+main = do
+  let candidate = solve
+  if candidate 1000 == ""1"" then pure () else error ""assertion failed""
+  if candidate 150 == ""110"" then pure () else error ""assertion failed""
+  if candidate 147 == ""1100"" then pure () else error ""assertion failed""
+  if candidate 333 == ""1001"" then pure () else error ""assertion failed""
+  if candidate 963 == ""10010"" then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_85,zho_Hans,hs,"--举例:--给出一个非空的整数列表, 首先加上偶数元素,--  >>> add [4,2,6,7]
+--  2
+add :: [Int] -> Int
+add lst =","add :: [Int] -> Int
+add lst = sum [x | (i, x) <- zip [0..] lst, odd i, even x]","
+main :: IO ()
+main = do
+  let candidate = add
+  if candidate [4,88] == 88 then pure () else error ""assertion failed""
+  if candidate [4,5,6,7,2,122] == 122 then pure () else error ""assertion failed""
+  if candidate [4,0,6,7] == 0 then pure () else error ""assertion failed""
+  if candidate [4,4,6,8] == 12 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_86,zho_Hans,hs,"--例如:--注意:你应该保持句子中的单词顺序和空白.--根据ASCII值的上升顺序.--字符排列在一个新的词中.--字符串的有序版本,是一个字符串,其中所有的单词 (用空格分开) --写一个函数, 取一个字符串, 返回一个有序的版本.--  >>> antiShuffle ""Hi""
+--  ""Hi""
+--  >>> antiShuffle ""hello""
+--  ""ehllo""
+--  >>> antiShuffle ""Hello World!!!""
+--  ""Hello !!!Wdlor""
+antiShuffle :: String -> String
+antiShuffle s =","import Data.List (sort)
+import Data.Char (isAlpha)
+
+antiShuffle :: String -> String
+antiShuffle s = unwords $ map sortWord (wordsAndSpaces s)
+  where
+    sortWord word = if all isAlpha word then sort word else word
+    wordsAndSpaces [] = []
+    wordsAndSpaces xs = if head xs == ' ' 
+                        then "" "" : wordsAndSpaces (dropWhile (== ' ') xs)
+                        else let (word, rest) = break (== ' ') xs
+                             in word : wordsAndSpaces rest","
+main :: IO ()
+main = do
+  let candidate = antiShuffle
+  if candidate ""Hi"" == ""Hi"" then pure () else error ""assertion failed""
+  if candidate ""hello"" == ""ehllo"" then pure () else error ""assertion failed""
+  if candidate ""number"" == ""bemnru"" then pure () else error ""assertion failed""
+  if candidate ""abcd"" == ""abcd"" then pure () else error ""assertion failed""
+  if candidate ""Hello World!!!"" == ""Hello !!!Wdlor"" then pure () else error ""assertion failed""
+  if candidate """" == """" then pure () else error ""assertion failed""
+  if candidate ""Hi. My name is Mister Robot. How are you?"" == "".Hi My aemn is Meirst .Rboot How aer ?ouy"" then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_87,zho_Hans,hs,"--举例:--并且按列数排序行列的坐标.--首先按行数排序坐标,以上升的顺序排序.--每个元组是一个坐标 - (行,列),以0开始.--返回的组列表, [(x1, y1), (x2, y2) ...] 如此,--给定 lst, 和整数 x, 在列表中找到整数 x,--每一行可能包含不同数量的列.--它们与矩阵相似,但与矩阵不同,--您可以使用二维数据, 作为嵌套列表,--  >>> getRow [[1,2,3,4,5,6],[1,2,3,4,1,6],[1,2,3,4,5,1]] 1
+--  [(0, 0),(1, 4),(1, 0),(2, 5),(2, 0)]
+--  >>> getRow [] 1
+--  []
+--  >>> getRow [[],[1],[1,2,3]] 3
+--  [(2, 2)]
+getRow :: [[Int]] -> Int -> [(Int, Int)]
+getRow lst x =","getRow :: [[Int]] -> Int -> [(Int, Int)]
+getRow lst x = concatMap processRow (zip [0..] lst)
+  where
+    processRow (rowIndex, row) = 
+      let colIndices = reverse $ findIndices (== x) row
+      in [(rowIndex, colIndex) | colIndex <- colIndices]
+
+findIndices :: (a -> Bool) -> [a] -> [Int]
+findIndices p lst = [i | (i, val) <- zip [0..] lst, p val]","
+main :: IO ()
+main = do
+  let candidate = getRow
+  if candidate [[1,2,3,4,5,6],[1,2,3,4,1,6],[1,2,3,4,5,1]] 1 == [(0, 0),(1, 4),(1, 0),(2, 5),(2, 0)] then pure () else error ""assertion failed""
+  if candidate [[1,2,3,4,5,6],[1,2,3,4,5,6],[1,2,3,4,5,6],[1,2,3,4,5,6],[1,2,3,4,5,6],[1,2,3,4,5,6]] 2 == [(0, 1),(1, 1),(2, 1),(3, 1),(4, 1),(5, 1)] then pure () else error ""assertion failed""
+  if candidate [[1,2,3,4,5,6],[1,2,3,4,5,6],[1,1,3,4,5,6],[1,2,1,4,5,6],[1,2,3,1,5,6],[1,2,3,4,1,6],[1,2,3,4,5,1]] 1 == [(0, 0),(1, 0),(2, 1),(2, 0),(3, 2),(3, 0),(4, 3),(4, 0),(5, 4),(5, 0),(6, 5),(6, 0)] then pure () else error ""assertion failed""
+  if candidate [] 1 == [] then pure () else error ""assertion failed""
+  if candidate [[1]] 2 == [] then pure () else error ""assertion failed""
+  if candidate [[],[1],[1,2,3]] 3 == [(2, 2)] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_88,zho_Hans,hs,"--举例:--没有改变给出的列表.--需要注意的是:--如果总和 (第一个索引值,最后一个索引值) 是偶数,则按下降顺序排序.--如果总和 (第一个索引值,最后一个索引值) 是奇数, 则将给定的列表按上升顺序排序,--给出一个非负整数列表, 排序后返回给定的列表中的一个cohs,--  >>> sortArray []
+--  []
+--  >>> sortArray [5]
+--  [5]
+--  >>> sortArray [2,4,3,0,1,5]
+--  [0,1,2,3,4,5]
+--  >>> sortArray [2,4,3,0,1,5,6]
+--  [6,5,4,3,2,1,0]
+sortArray :: [Int] -> [Int]
+sortArray array =","sortArray :: [Int] -> [Int]
+sortArray array
+  | null array = array
+  | otherwise =
+    let first = head array
+        last = last array
+        sumFirstLast = first + last
+    in if odd sumFirstLast
+       then sort array
+       else reverse (sort array)","
+main :: IO ()
+main = do
+  let candidate = sortArray
+  if candidate [] == [] then pure () else error ""assertion failed""
+  if candidate [5] == [5] then pure () else error ""assertion failed""
+  if candidate [2,4,3,0,1,5] == [0,1,2,3,4,5] then pure () else error ""assertion failed""
+  if candidate [2,4,3,0,1,5,6] == [6,5,4,3,2,1,0] then pure () else error ""assertion failed""
+  if candidate [2,1] == [1,2] then pure () else error ""assertion failed""
+  if candidate [15,42,87,32,11,0] == [0,11,15,32,42,87] then pure () else error ""assertion failed""
+  if candidate [21,14,23,11] == [23,21,14,11] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_89,zho_Hans,hs,"--例如:--现在,我们可以把它乘以两个,--字母应该以这样的方式旋转,--返回一个字符串,字母被旋转.--创建一个函数加密, 作为参数使用字符串,--  >>> encrypt ""hi""
+--  ""lm""
+--  >>> encrypt ""asdfghjkl""
+--  ""ewhjklnop""
+--  >>> encrypt ""gf""
+--  ""kj""
+--  >>> encrypt ""et""
+--  ""ix""
+encrypt :: String -> String
+encrypt s =","encrypt :: String -> String
+encrypt s = map shiftChar s
+  where
+    shiftChar c
+      | 'a' <= c && c <= 'z' = chr ((ord c - ord 'a' + 4) `mod` 26 + ord 'a')
+      | 'A' <= c && c <= 'Z' = chr ((ord c - ord 'A' + 4) `mod` 26 + ord 'A')
+      | otherwise = c","
+main :: IO ()
+main = do
+  let candidate = encrypt
+  if candidate ""hi"" == ""lm"" then pure () else error ""assertion failed""
+  if candidate ""asdfghjkl"" == ""ewhjklnop"" then pure () else error ""assertion failed""
+  if candidate ""gf"" == ""kj"" then pure () else error ""assertion failed""
+  if candidate ""et"" == ""ix"" then pure () else error ""assertion failed""
+  if candidate ""faewfawefaewg"" == ""jeiajeaijeiak"" then pure () else error ""assertion failed""
+  if candidate ""hellomyfriend"" == ""lippsqcjvmirh"" then pure () else error ""assertion failed""
+  if candidate ""dxzdlmnilfuhmilufhlihufnmlimnufhlimnufhfucufh"" == ""hbdhpqrmpjylqmpyjlpmlyjrqpmqryjlpmqryjljygyjl"" then pure () else error ""assertion failed""
+  if candidate ""a"" == ""e"" then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_90,zho_Hans,hs,"--如果没有这样的元素,则返回无.--写一个函数 next_smallest (下_最小) 返回列表中的第二个最小元素. --给你一个整数列表.--  >>> nextSmallest [1,2,3,4,5]
+--  Just (2)
+--  >>> nextSmallest [5,1,4,3,2]
+--  Just (2)
+--  >>> nextSmallest []
+--  Just (Nothing)
+--  >>> nextSmallest [1,1]
+--  Just (Nothing)
+nextSmallest :: [Int] -> Maybe Int
+nextSmallest lst =","nextSmallest :: [Int] -> Maybe Int
+nextSmallest lst =
+  let uniqueSorted = removeDuplicates $ quicksort lst
+  in if length uniqueSorted < 2
+     then Nothing
+     else Just (uniqueSorted !! 1)
+
+removeDuplicates :: (Ord a) => [a] -> [a]
+removeDuplicates = foldr (\x acc -> if x `elem` acc then acc else x : acc) []
+
+quicksort :: (Ord a) => [a] -> [a]
+quicksort [] = []
+quicksort (x:xs) =
+  let smallerSorted = quicksort [a | a <- xs, a <= x]
+      biggerSorted = quicksort [a | a <- xs, a > x]
+  in smallerSorted ++ [x] ++ biggerSorted","
+main :: IO ()
+main = do
+  let candidate = nextSmallest
+  if candidate [1,2,3,4,5] == Just (2) then pure () else error ""assertion failed""
+  if candidate [5,1,4,3,2] == Just (2) then pure () else error ""assertion failed""
+  if candidate [] == Just (Nothing) then pure () else error ""assertion failed""
+  if candidate [1,1] == Just (Nothing) then pure () else error ""assertion failed""
+  if candidate [1,1,1,1,0] == Just (1) then pure () else error ""assertion failed""
+  if candidate [1,1] == Just (Nothing) then pure () else error ""assertion failed""
+  if candidate [(-35),34,12,(-45)] == Just ((-35)) then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_91,zho_Hans,hs,"--例如:--句子的界限是"""",""?""或""!""--无聊是用""我""字开始的句子.--您将得到一串单词, 您的任务是计算数量.--  >>> isBored ""Hello world""
+--  0
+--  >>> isBored ""The sky is blue. The sun is shining. I love this weather""
+--  1
+isBored :: String -> Int
+isBored S =","isBored :: String -> Int
+isBored s = length $ filter (startsWithI . words) $ splitSentences s
+  where
+    splitSentences :: String -> [String]
+    splitSentences = filter (not . null) . map (dropWhile (== ' ')) . splitOnDelimiters "".?!""
+    
+    splitOnDelimiters :: String -> String -> [String]
+    splitOnDelimiters delims str = case dropWhile (`elem` delims) str of
+      """" -> []
+      s' -> let (w, s'') = break (`elem` delims) s' in w : splitOnDelimiters delims s''
+    
+    startsWithI :: [String] -> Bool
+    startsWithI [] = False
+    startsWithI (x:_) = map toLower x == ""i""","
+main :: IO ()
+main = do
+  let candidate = isBored
+  if candidate ""Hello world"" == 0 then pure () else error ""assertion failed""
+  if candidate ""Is the sky blue?"" == 0 then pure () else error ""assertion failed""
+  if candidate ""I love It !"" == 1 then pure () else error ""assertion failed""
+  if candidate ""bIt"" == 0 then pure () else error ""assertion failed""
+  if candidate ""I feel good today. I will be productive. will kill It"" == 2 then pure () else error ""assertion failed""
+  if candidate ""You and I are going for a walk"" == 0 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_92,zho_Hans,hs,"--举例 --在其他情况下返回false.--如果一个数等于其他两个数的和,并且所有数都是整数,则返回true.--创建一个函数, 需要3个数字.--  >>> anyInt 5 2 7
+--  True
+--  >>> anyInt 3 2 2
+--  False
+--  >>> anyInt 3 (-2) 1
+--  True
+--  >>> anyInt 3.6 -2.2 2
+--  False
+anyInt :: Float -> Float -> Float -> Bool
+anyInt x y z =","anyInt :: Float -> Float -> Float -> Bool
+anyInt x y z
+  | x == fromInteger (round x) && y == fromInteger (round y) && z == fromInteger (round z) =
+      x == y + z || y == x + z || z == x + y
+  | otherwise = False","
+main :: IO ()
+main = do
+  let candidate = anyInt
+  if candidate 2.0 3.0 1.0 == True then pure () else error ""assertion failed""
+  if candidate 2.5 2.0 3.0 == False then pure () else error ""assertion failed""
+  if candidate 1.5 5.0 3.5 == False then pure () else error ""assertion failed""
+  if candidate 2.0 6.0 2.0 == False then pure () else error ""assertion failed""
+  if candidate 4.0 2.0 2.0 == True then pure () else error ""assertion failed""
+  if candidate 2.2 2.2 2.2 == False then pure () else error ""assertion failed""
+  if candidate (-4).0 6.0 2.0 == True then pure () else error ""assertion failed""
+  if candidate 2.0 1.0 1.0 == True then pure () else error ""assertion failed""
+  if candidate 3.0 4.0 7.0 == True then pure () else error ""assertion failed""
+  if candidate 3.0 4.0 7.0 == False then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_93,zho_Hans,hs,"--举例:--只有字母.--字母表中的母音.--两个字母的信息在此之前出现.--取代所有母音的字母.--写一个函数来接收信息,并将其编码为--  >>> encode ""test""
+--  ""TGST""
+--  >>> encode ""This is a message""
+--  ""tHKS KS C MGSSCGG""
+encode :: String -> String
+encode message =","encode :: String -> String
+encode = map transformChar
+  where
+    transformChar :: Char -> Char
+    transformChar c
+      | isVowel lowerC = toEnum (fromEnum lowerC + 2) `swapCase` c
+      | otherwise      = swapCase c c
+      where
+        lowerC = toLower c
+
+    isVowel :: Char -> Bool
+    isVowel c = c `elem` ""aeiou""
+
+    swapCase :: Char -> Char -> Char
+    swapCase origC c
+      | isUpper origC = toLower c
+      | otherwise     = toUpper c","
+main :: IO ()
+main = do
+  let candidate = encode
+  if candidate ""TEST"" == ""tgst"" then pure () else error ""assertion failed""
+  if candidate ""Mudasir"" == ""mWDCSKR"" then pure () else error ""assertion failed""
+  if candidate ""YES"" == ""ygs"" then pure () else error ""assertion failed""
+  if candidate ""This is a message"" == ""tHKS KS C MGSSCGG"" then pure () else error ""assertion failed""
+  if candidate ""I DoNt KnOw WhAt tO WrItE"" == ""k dQnT kNqW wHcT Tq wRkTg"" then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_94,zho_Hans,hs,"--举例:--需要找到最大的素数,并返回其数字的和.--给你一个整数列表.--  >>> skjkasdkd [0,3,2,1,3,5,7,4,5,5,5,2,181,32,4,32,3,2,32,324,4,3]
+--  10
+--  >>> skjkasdkd [1,0,1,8,2,4597,2,1,3,40,1,2,1,2,4,2,5,1]
+--  25
+--  >>> skjkasdkd [1,3,1,32,5107,34,83278,109,163,23,2323,32,30,1,9,3]
+--  13
+--  >>> skjkasdkd [0,724,32,71,99,32,6,0,5,91,83,0,5,6]
+--  11
+--  >>> skjkasdkd [0,81,12,3,1,21]
+--  3
+--  >>> skjkasdkd [0,8,1,2,1,7]
+--  7
+skjkasdkd :: [Int] -> Int
+skjkasdkd lst =","skjkasdkd :: [Int] -> Int
+skjkasdkd lst = sumDigits (largestPrime lst)
+
+-- Function to check if a number is prime
+isPrime :: Int -> Bool
+isPrime n
+  | n <= 1 = False
+  | n == 2 = True
+  | even n = False
+  | otherwise = null [x | x <- [3,5..isqrt n], n `mod` x == 0]
+
+-- Integer square root using binary search, O(log n)
+isqrt :: Int -> Int
+isqrt n = floor . sqrt $ fromIntegral n
+
+-- Function to find the largest prime in the list
+largestPrime :: [Int] -> Int
+largestPrime = foldr (\x acc -> if isPrime x && x > acc then x else acc) 0
+
+-- Function to calculate the sum of the digits of a number
+sumDigits :: Int -> Int
+sumDigits 0 = 0
+sumDigits n = n `mod` 10 + sumDigits (n `div` 10)","
+main :: IO ()
+main = do
+  let candidate = skjkasdkd
+  if candidate [0,3,2,1,3,5,7,4,5,5,5,2,181,32,4,32,3,2,32,324,4,3] == 10 then pure () else error ""assertion failed""
+  if candidate [1,0,1,8,2,4597,2,1,3,40,1,2,1,2,4,2,5,1] == 25 then pure () else error ""assertion failed""
+  if candidate [1,3,1,32,5107,34,83278,109,163,23,2323,32,30,1,9,3] == 13 then pure () else error ""assertion failed""
+  if candidate [0,724,32,71,99,32,6,0,5,91,83,0,5,6] == 11 then pure () else error ""assertion failed""
+  if candidate [0,81,12,3,1,21] == 3 then pure () else error ""assertion failed""
+  if candidate [0,8,1,2,1,7] == 7 then pure () else error ""assertion failed""
+  if candidate [8191] == 19 then pure () else error ""assertion failed""
+  if candidate [8191,123456,127,7] == 19 then pure () else error ""assertion failed""
+  if candidate [127,97,8192] == 10 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_95,zho_Hans,hs,"--举例:--函数应该返回 False 是给定的关联列表是空的.--否则返回false. --如果所有键都是下方的字符串, 返回True--  >>> checkDictCase [(""a"", ""apple""), (""b"", ""banana"")]
+--  True
+--  >>> checkDictCase [(""a"", ""apple""), (""A"", ""banana""), (""B"", ""banana"")]
+--  False
+--  >>> checkDictCase [(""a"", ""apple""), (8, ""banana""), (""a"", ""apple"")]
+--  False
+--  >>> checkDictCase [(""Name"", ""John""), (""Age"", ""36""), (""City"", ""Houston"")]
+--  False
+--  >>> checkDictCase [(""STATE"", ""NC""), (""ZIP"", ""12345"")]
+--  True
+checkDictCase :: [(String, String)] -> Bool
+checkDictCase dict =","import Data.Char (isUpper, isLower)
+
+checkDictCase :: [(String, String)] -> Bool
+checkDictCase [] = False
+checkDictCase dict = all isLower allKeys || all isUpper allKeys
+  where
+    allKeys = concatMap fst dict","
+main :: IO ()
+main = do
+  let candidate = checkDictCase
+  if candidate [(""p"", ""pineapple""), (""b"", ""banana"")] == True then pure () else error ""assertion failed""
+  if candidate [(""p"", ""pineapple""), (""A"", ""banana""), (""B"", ""banana"")] == False then pure () else error ""assertion failed""
+  if candidate [(""p"", ""pineapple""), (""5"", ""banana""), (""a"", ""apple"")] == False then pure () else error ""assertion failed""
+  if candidate [(""Name"", ""John""), (""Age"", ""36""), (""City"", ""Houston"")] == False then pure () else error ""assertion failed""
+  if candidate [(""STATE"", ""NC""), (""ZIP"", ""12345"")] == True then pure () else error ""assertion failed""
+  if candidate [(""fruit"", ""Orange""), (""taste"", ""Sweet"")] == True then pure () else error ""assertion failed""
+  if candidate [] == False then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_96,zho_Hans,hs,"--例如:--整数是素数,小于n.--实现一个函数,它取一个非负整数,并返回第一个n的列表.--  >>> countUpTo 5
+--  [2,3]
+--  >>> countUpTo 11
+--  [2,3,5,7]
+--  >>> countUpTo 0
+--  []
+--  >>> countUpTo 20
+--  [2,3,5,7,11,13,17,19]
+--  >>> countUpTo 1
+--  []
+--  >>> countUpTo 18
+--  [2,3,5,7,11,13,17]
+countUpTo :: Int -> [Int]
+countUpTo n =","countUpTo :: Int -> [Int]
+countUpTo n = filter isPrime [2..n-1]
+
+isPrime :: Int -> Bool
+isPrime k
+  | k < 2     = False
+  | otherwise = null [ x | x <- [2..isqrt k], k `mod` x == 0 ]
+
+isqrt :: Int -> Int
+isqrt = floor . sqrt . fromIntegral","
+main :: IO ()
+main = do
+  let candidate = countUpTo
+  if candidate 5 == [2,3] then pure () else error ""assertion failed""
+  if candidate 6 == [2,3,5] then pure () else error ""assertion failed""
+  if candidate 7 == [2,3,5] then pure () else error ""assertion failed""
+  if candidate 10 == [2,3,5,7] then pure () else error ""assertion failed""
+  if candidate 0 == [] then pure () else error ""assertion failed""
+  if candidate 22 == [2,3,5,7,11,13,17,19] then pure () else error ""assertion failed""
+  if candidate 1 == [] then pure () else error ""assertion failed""
+  if candidate 18 == [2,3,5,7,11,13,17] then pure () else error ""assertion failed""
+  if candidate 47 == [2,3,5,7,11,13,17,19,23,29,31,37,41,43] then pure () else error ""assertion failed""
+  if candidate 101 == [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_97,zho_Hans,hs,"--举例:--假设输入总是有效的.--它们的单位数字的乘积.--完成一个函数, 取两个整数, 返回--  >>> multiply 148 412
+--  16
+--  >>> multiply 19 28
+--  72
+--  >>> multiply 2020 1851
+--  0
+--  >>> multiply 14 (-15)
+--  20
+multiply :: Int -> Int -> Int
+multiply a b =","multiply :: Int -> Int -> Int
+multiply a b = (abs a `mod` 10) * (abs b `mod` 10)","
+main :: IO ()
+main = do
+  let candidate = multiply
+  if candidate 148 412 == 16 then pure () else error ""assertion failed""
+  if candidate 19 28 == 72 then pure () else error ""assertion failed""
+  if candidate 2020 1851 == 0 then pure () else error ""assertion failed""
+  if candidate 14 (-15) == 20 then pure () else error ""assertion failed""
+  if candidate 76 67 == 42 then pure () else error ""assertion failed""
+  if candidate 17 27 == 49 then pure () else error ""assertion failed""
+  if candidate 0 1 == 0 then pure () else error ""assertion failed""
+  if candidate 0 0 == 0 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_98,zho_Hans,hs,"--例如:--给定一个字符串 s, 计算大母音的数量.--  >>> countUpper ""aBCdEf""
+--  1
+--  >>> countUpper ""abcdefg""
+--  0
+--  >>> countUpper ""dBBE""
+--  0
+countUpper :: String -> Int
+countUpper s =","countUpper :: String -> Int
+countUpper s = length [c | (i, c) <- zip [0..] s, i `mod` 2 == 0, c `elem` ""AEIOU""]","
+main :: IO ()
+main = do
+  let candidate = countUpper
+  if candidate ""aBCdEf"" == 1 then pure () else error ""assertion failed""
+  if candidate ""abcdefg"" == 0 then pure () else error ""assertion failed""
+  if candidate ""dBBE"" == 0 then pure () else error ""assertion failed""
+  if candidate ""B"" == 0 then pure () else error ""assertion failed""
+  if candidate ""U"" == 1 then pure () else error ""assertion failed""
+  if candidate """" == 0 then pure () else error ""assertion failed""
+  if candidate ""EEEE"" == 2 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_99,zho_Hans,hs,"--举例 --取出两个整数,将其从零点圆除.--如果这个数是等距离的--创建一个函数, 取一个值 (字符串) 代表一个数字.--  >>> closestInteger ""10""
+--  10
+--  >>> closestInteger ""15.3""
+--  15
+--  Note:
+--  Rounding away from zero means that if the given number is equidistant
+--  from two integers, the one you should return is the one that is the
+--  farthest from zero. For example closest_integer(""14.5"") should
+--  return 15 and closest_integer(""-14.5"") should return -15.
+closestInteger :: String -> Int
+closestInteger value =","closestInteger :: String -> Int
+closestInteger value = 
+  let n = read value :: Double
+  in if n > 0 then floor (n + 0.5) else ceiling (n - 0.5)","
+main :: IO ()
+main = do
+  let candidate = closestInteger
+  if candidate ""10"" == 10 then pure () else error ""assertion failed""
+  if candidate ""14.5"" == 15 then pure () else error ""assertion failed""
+  if candidate ""-15.5"" == (-16) then pure () else error ""assertion failed""
+  if candidate ""15.3"" == 15 then pure () else error ""assertion failed""
+  if candidate ""0"" == 0 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_100,zho_Hans,hs,"--举例:--代表了层中的石头数量 (i+1).--返回列表中每个级别的石头数量,其中元素在索引中--- 如果n是偶数,则是下一个偶数.--- 如果n是奇数,则是下一个奇数.--接下来的层次的石头数量是:--首层有n个石头.--给定一个正整数n,你必须做一堆 n层的石头.--  >>> makeAPile 3
+--  [3,5,7]
+makeAPile :: Int -> [Int]
+makeAPile n =","makeAPile :: Int -> [Int]
+makeAPile n = take n [n, n + 2 ..]","
+main :: IO ()
+main = do
+  let candidate = makeAPile
+  if candidate 3 == [3,5,7] then pure () else error ""assertion failed""
+  if candidate 4 == [4,6,8,10] then pure () else error ""assertion failed""
+  if candidate 5 == [5,7,9,11,13] then pure () else error ""assertion failed""
+  if candidate 6 == [6,8,10,12,14,16] then pure () else error ""assertion failed""
+  if candidate 8 == [8,10,12,14,16,18,20,22] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_101,zho_Hans,hs,"--例如:--返回一个单词列表.--您将得到一串用逗号或空格分隔的单词.--  >>> wordsString ""Hi, my name is John""
+--  [""Hi"",""my"",""name"",""is"",""John""]
+--  >>> wordsString ""One, two, three, four, five, six""
+--  [""One"",""two"",""three"",""four"",""five"",""six""]
+wordsString :: String -> [String]
+wordsString s =","wordsString :: String -> [String]
+wordsString s = words $ map (\c -> if c == ',' then ' ' else c) s","
+main :: IO ()
+main = do
+  let candidate = wordsString
+  if candidate ""Hi, my name is John"" == [""Hi"",""my"",""name"",""is"",""John""] then pure () else error ""assertion failed""
+  if candidate ""One, two, three, four, five, six"" == [""One"",""two"",""three"",""four"",""five"",""six""] then pure () else error ""assertion failed""
+  if candidate ""Hi, my name"" == [""Hi"",""my"",""name""] then pure () else error ""assertion failed""
+  if candidate ""One,, two, three, four, five, six,"" == [""One"",""two"",""three"",""four"",""five"",""six""] then pure () else error ""assertion failed""
+  if candidate """" == [] then pure () else error ""assertion failed""
+  if candidate ""ahmed     , gamal"" == [""ahmed"",""gamal""] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_102,zho_Hans,hs,"--例如:--函数应该返回-1--包含在 [x,y] 范围内的最大偶数整数. 如果--这个函数取两个正数x和y, 返回--  >>> chooseNum 12 15
+--  14
+--  >>> chooseNum 13 12
+--  (-1)
+chooseNum :: Int -> Int -> Int
+chooseNum x y =","chooseNum :: Int -> Int -> Int
+chooseNum x y
+    | x > y = -1
+    | even upperBound = upperBound
+    | even (upperBound - 1) = upperBound - 1
+    | otherwise = -1
+  where
+    upperBound = max x y","
+main :: IO ()
+main = do
+  let candidate = chooseNum
+  if candidate 12 15 == 14 then pure () else error ""assertion failed""
+  if candidate 13 12 == (-1) then pure () else error ""assertion failed""
+  if candidate 33 12354 == 12354 then pure () else error ""assertion failed""
+  if candidate 5234 5233 == (-1) then pure () else error ""assertion failed""
+  if candidate 6 29 == 28 then pure () else error ""assertion failed""
+  if candidate 27 10 == (-1) then pure () else error ""assertion failed""
+  if candidate 7 7 == (-1) then pure () else error ""assertion failed""
+  if candidate 546 546 == 546 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_104,zho_Hans,hs,"--例如:--注意:返回的列表应以增长顺序排序.--没有偶数的元素.--给出一个正整数x的列表. 返回所有正整数x的排序列表.--  >>> uniqueDigits [15,33,1422,1]
+--  [1,15,33]
+--  >>> uniqueDigits [152,323,1422,10]
+--  []
+uniqueDigits :: [Int] -> [Int]
+uniqueDigits x =","uniqueDigits :: [Int] -> [Int]
+uniqueDigits x = sort $ filter (all odd . map (read . (:[])) . show) x","
+main :: IO ()
+main = do
+  let candidate = uniqueDigits
+  if candidate [15,33,1422,1] == [1,15,33] then pure () else error ""assertion failed""
+  if candidate [152,323,1422,10] == [] then pure () else error ""assertion failed""
+  if candidate [12345,2033,111,151] == [111,151] then pure () else error ""assertion failed""
+  if candidate [135,103,31] == [31,135] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_105,zho_Hans,hs,"--例如:--它们的位置是""一"",""二"",""三"",""四"",""五"",""六"",""七"",八"",九.--倒置所得到的列表,然后用来自 的相应名称取代每个数字.--给出一个整数列表, 排序1到9之间的整数,--  >>> byLength [2,1,1,4,5,8,2,3]
+--  [""Eight"",""Five"",""Four"",""Three"",""Two"",""Two"",""One"",""One""]
+--  If the list is empty, return an empty list:
+--  >>> byLength []
+--  []
+--  If the list has any strange number ignore it:
+--  >>> byLength [1,(-1),55]
+--  [""One""]
+byLength :: [Int] -> [String]
+byLength arr =","byLength :: [Int] -> [String]
+byLength arr = map digitName . reverse . sort . filter isValid $ arr
+  where
+    isValid x = x >= 1 && x <= 9
+    digitName x = case x of
+      1 -> ""One""
+      2 -> ""Two""
+      3 -> ""Three""
+      4 -> ""Four""
+      5 -> ""Five""
+      6 -> ""Six""
+      7 -> ""Seven""
+      8 -> ""Eight""
+      9 -> ""Nine""
+      _ -> error ""Unexpected number""","
+main :: IO ()
+main = do
+  let candidate = byLength
+  if candidate [2,1,1,4,5,8,2,3] == [""Eight"",""Five"",""Four"",""Three"",""Two"",""Two"",""One"",""One""] then pure () else error ""assertion failed""
+  if candidate [] == [] then pure () else error ""assertion failed""
+  if candidate [1,(-1),55] == [""One""] then pure () else error ""assertion failed""
+  if candidate [1,(-1),3,2] == [""Three"",""Two"",""One""] then pure () else error ""assertion failed""
+  if candidate [9,4,8] == [""Nine"",""Eight"",""Four""] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_106,zho_Hans,hs,"--举例:--i的因数是从1到i的数的乘法 (1 * 2 * ... * i).--开始于1--其他情况下, 则是从1到i的数的和.--如果i是偶数,则返回一个大小为n的列表, 值为i的因数.--实现函数 f 以 n 为参数,--  >>> f 5
+--  [1,2,6,24,15]
+f :: Int -> [Int]
+f n =","f :: Int -> [Int]
+f n = map g [1..n]
+  where
+    g i
+      | even i    = factorial i
+      | otherwise = sum [1..i]
+    
+    factorial 0 = 1
+    factorial m = product [1..m]","
+main :: IO ()
+main = do
+  let candidate = f
+  if candidate 5 == [1,2,6,24,15] then pure () else error ""assertion failed""
+  if candidate 7 == [1,2,6,24,15,720,28] then pure () else error ""assertion failed""
+  if candidate 1 == [1] then pure () else error ""assertion failed""
+  if candidate 3 == [1,2,6] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_107,zho_Hans,hs,"--举例1:--属于在 ((1,n) 范围内的整数平行体.--给定一个正整数n,返回一个有偶数和奇数的元组.--  >>> evenOddPalindrome 3
+--  (1, 2)
+--  Explanation:
+--  Integer palindrome are 1, 2, 3. one of them is even, and two of them are odd.
+--  Example 2:
+--  >>> evenOddPalindrome 12
+--  (4, 6)
+--  Explanation:
+--  Integer palindrome are 1, 2, 3, 4, 5, 6, 7, 8, 9, 11. four of them are even, and 6 of them are odd.
+--  Note:
+--  1. 1 <= n <= 10^3
+--  2. returned tuple has the number of even and odd integer palindromes respectively.
+evenOddPalindrome :: Int -> (Int, Int)
+evenOddPalindrome n =","evenOddPalindrome :: Int -> (Int, Int)
+evenOddPalindrome n = (length evens, length odds)
+  where
+    isPalindrome x = show x == reverse (show x)
+    palindromes = filter isPalindrome [1..n]
+    evens = filter even palindromes
+    odds  = filter odd palindromes","
+main :: IO ()
+main = do
+  let candidate = evenOddPalindrome
+  if candidate 123 == (8, 13) then pure () else error ""assertion failed""
+  if candidate 12 == (4, 6) then pure () else error ""assertion failed""
+  if candidate 3 == (1, 2) then pure () else error ""assertion failed""
+  if candidate 63 == (6, 8) then pure () else error ""assertion failed""
+  if candidate 25 == (5, 6) then pure () else error ""assertion failed""
+  if candidate 19 == (4, 6) then pure () else error ""assertion failed""
+  if candidate 9 == (4, 5) then pure () else error ""assertion failed""
+  if candidate 1 == (0, 1) then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_108,zho_Hans,hs,"--它们的数字是 -1,2,3,等等.--如果一个数是负数,那么它的第一个签字数字将是负数:--元素的数量,其数字和>0.--写一个函数 count_nums 取整数列表并返回--  >>> countNums []
+--  0
+--  >>> countNums [(-1),11,(-11)]
+--  1
+--  >>> countNums [1,1,2]
+--  3
+countNums :: [Int] -> Int
+countNums arr =","countNums :: [Int] -> Int
+countNums arr = length $ filter ((> 0) . sumDigits) arr
+  where
+    sumDigits 0 = 0
+    sumDigits n = let digits = if n < 0 then -1 : map (read . (:[])) (tail (show (-n))) else map (read . (:[])) (show n)
+                  in sum digits","
+main :: IO ()
+main = do
+  let candidate = countNums
+  if candidate [] == 0 then pure () else error ""assertion failed""
+  if candidate [(-1),(-2),0] == 0 then pure () else error ""assertion failed""
+  if candidate [1,1,2,(-2),3,4,5] == 6 then pure () else error ""assertion failed""
+  if candidate [1,6,9,(-6),0,1,5] == 5 then pure () else error ""assertion failed""
+  if candidate [1,100,98,(-7),1,(-1)] == 4 then pure () else error ""assertion failed""
+  if candidate [12,23,34,(-45),(-56),0] == 5 then pure () else error ""assertion failed""
+  if candidate [0,1] == 1 then pure () else error ""assertion failed""
+  if candidate [1] == 1 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_109,zho_Hans,hs,"--例如:--注意:所述列表中肯定包含了独特的元素.--如果给定的列表是空的,则返回true.--返回真,否则返回虚假.--如果通过执行上述操作可以获得排序列表--列表中的起始位置,即第0指数.--列表中的最后一个元素将移至--一个右移操作意味着将列表中的所有元素移动为一个.--您可以任意数次执行右转操作.--在列表中, 列出下列操作:--通过执行 可以将列表按不下降顺序排序.--您的任务是确定是否有任何问题.--我们有一个列表,它包含N个整数arr[1],arr[2], ...,arr[N].--  >>> moveOneBall [3,4,5,1,2]
+--  True
+--  Explanation: By performin 2 right shift operations, non-decreasing order can
+--  be achieved for the given list.
+--  >>> moveOneBall [3,5,4,1,2]
+--  False
+--  Explanation:It is not possible to get non-decreasing order for the given
+--  list by performing any number of right shift operations.
+moveOneBall :: [Int] -> Bool
+moveOneBall arr =","moveOneBall :: [Int] -> Bool
+moveOneBall [] = True
+moveOneBall arr = canBeSorted (arr ++ arr)
+  where
+    n = length arr
+    canBeSorted xs = any isSorted (take n <$> tails xs)
+    isSorted ys = and $ zipWith (<=) ys (tail ys)
+    tails [] = []
+    tails l@(_:xs) = l : tails xs","
+main :: IO ()
+main = do
+  let candidate = moveOneBall
+  if candidate [3,4,5,1,2] == True then pure () else error ""assertion failed""
+  if candidate [3,5,10,1,2] == True then pure () else error ""assertion failed""
+  if candidate [4,3,1,2] == False then pure () else error ""assertion failed""
+  if candidate [3,5,4,1,2] == False then pure () else error ""assertion failed""
+  if candidate [] == True then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_110,zho_Hans,hs,"--例如:--否则,返回""没有"".--返回""YES"". 返回""YES"". 返回""YES"". 返回""YES"". 返回""YES"".--如果能在lst1和lst2之间交换元素,--对于 lst1 和 lst2 之间交换的元素的数量没有限制.--只有偶数才能组成列表.--并且确定是否可以进行元素交换.--需要两个列表中的数字, --  >>> exchange [1,2,3,4] [1,2,3,4]
+--  ""YES""
+--  >>> exchange [1,2,3,4] [1,5,3,4]
+--  ""NO""
+--  It is assumed that the input lists will be non-empty.
+exchange :: [Int] -> [Int] -> String
+exchange lst1 lst2 =","exchange :: [Int] -> [Int] -> String
+exchange lst1 lst2
+  | all even lst1 = ""YES""
+  | null oddLst1 || null evenLst2 = ""NO""
+  | otherwise = let possibility = all even ([x | x <- lst1, even x] ++ evenLst2)
+                in if possibility then ""YES"" else ""NO""
+  where
+    oddLst1 = filter odd lst1
+    evenLst2 = filter even lst2","
+main :: IO ()
+main = do
+  let candidate = exchange
+  if candidate [1,2,3,4] [1,2,3,4] == ""YES"" then pure () else error ""assertion failed""
+  if candidate [1,2,3,4] [1,5,3,4] == ""NO"" then pure () else error ""assertion failed""
+  if candidate [1,2,3,4] [2,1,4,3] == ""YES"" then pure () else error ""assertion failed""
+  if candidate [5,7,3] [2,6,4] == ""YES"" then pure () else error ""assertion failed""
+  if candidate [5,7,3] [2,6,3] == ""NO"" then pure () else error ""assertion failed""
+  if candidate [3,2,6,1,8,9] [3,5,5,1,1,1] == ""NO"" then pure () else error ""assertion failed""
+  if candidate [100,200] [200,200] == ""YES"" then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_111,zho_Hans,hs,"--举例:--如果有多个字母出现相同的情况,请返回所有字母.--字母的重复数量最多,并包含相应的数量.--给出一个字符串表示一个空格分隔的小写字母,返回一个关联列表.--  >>> histogram ""a b c""
+--  [(""a"", 1), (""b"", 1), (""c"", 1)]
+--  >>> histogram ""a b b a""
+--  [(""a"", 2), (""b"", 2)]
+--  >>> histogram ""a b c a b""
+--  [(""a"", 2), (""b"", 2)]
+--  >>> histogram ""b b b b a""
+--  [(""b"", 4)]
+--  >>> histogram """"
+--  []
+histogram :: String -> [(String, Int)]
+histogram test =","import Data.List (group, sort)
+import Data.Ord (comparing)
+
+histogram :: String -> [(String, Int)]
+histogram input =
+  let wordsList = words input
+      grouped = group $ sort wordsList
+      countList = map (\ws -> (head ws, length ws)) grouped
+      maxCount = if null countList then 0 else maximum $ map snd countList
+  in filter ((== maxCount) . snd) countList","
+main :: IO ()
+main = do
+  let candidate = histogram
+  if candidate ""a b b a"" == [(""a"", 2), (""b"", 2)] then pure () else error ""assertion failed""
+  if candidate ""a b c a b"" == [(""a"", 2), (""b"", 2)] then pure () else error ""assertion failed""
+  if candidate ""a b c d g"" == [(""a"", 1), (""b"", 1), (""c"", 1), (""d"", 1), (""g"", 1)] then pure () else error ""assertion failed""
+  if candidate ""r t g"" == [(""r"", 1), (""t"", 1), (""g"", 1)] then pure () else error ""assertion failed""
+  if candidate ""b b b b a"" == [(""b"", 4)] then pure () else error ""assertion failed""
+  if candidate ""r t g"" == [(""r"", 1), (""t"", 1), (""g"", 1)] then pure () else error ""assertion failed""
+  if candidate """" == [] then pure () else error ""assertion failed""
+  if candidate ""a"" == [(""a"", 1)] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_112,zho_Hans,hs,"--举例--检查时应返回包含结果字符串和真/错的元组.--如果字符串的读数与前后相同,则称为平行符号.--然后检查结果字符串是否是平行符.--我们有两个字符串 s 和 c, 必须删除 s 中所有等于 c 中任何字符的字符.--任务--  >>> reverseDelete ""abcde"" ""ae""
+--  (""bcd"", False)
+--  >>> reverseDelete ""abcdef"" ""b""
+--  (""acdef"", False)
+--  >>> reverseDelete ""abcdedcba"" ""ab""
+--  (""cdedc"", True)
+reverseDelete :: String -> String -> (String, Bool)
+reverseDelete s c =","import Data.List (filter)
+
+reverseDelete :: String -> String -> (String, Bool)
+reverseDelete s c =
+  let result = filter (`notElem` c) s
+  in (result, result == reverse result)","
+main :: IO ()
+main = do
+  let candidate = reverseDelete
+  if candidate ""abcde"" ""ae"" == (""bcd"", False) then pure () else error ""assertion failed""
+  if candidate ""abcdef"" ""b"" == (""acdef"", False) then pure () else error ""assertion failed""
+  if candidate ""abcdedcba"" ""ab"" == (""cdedc"", True) then pure () else error ""assertion failed""
+  if candidate ""dwik"" ""w"" == (""dik"", False) then pure () else error ""assertion failed""
+  if candidate ""a"" ""a"" == ("""", True) then pure () else error ""assertion failed""
+  if candidate ""abcdedcba"" """" == (""abcdedcba"", True) then pure () else error ""assertion failed""
+  if candidate ""abcdedcba"" ""v"" == (""abcdedcba"", True) then pure () else error ""assertion failed""
+  if candidate ""vabba"" ""v"" == (""abba"", True) then pure () else error ""assertion failed""
+  if candidate ""mamma"" ""mia"" == ("""", True) then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_113,zho_Hans,hs,"--输入的第一个字符串中奇数数字的数量.--在这里所有""i""都应该被数字""i""所替代.--每个输出元素i应该是""在数组中的奇数元素的数量.--给出一个字符串列表, 每个字符串只包含数字, 返回一个列表.--  >>> oddCount [""1234567""]
+--  [""the number of odd elements 4n the str4ng 4 of the 4nput.""]
+--  >>> oddCount [""3"",""11111111""]
+--  [""the number of odd elements 1n the str1ng 1 of the 1nput."",""the number of odd elements 8n the str8ng 8 of the 8nput.""]
+oddCount :: [String] -> [String]
+oddCount lst =","oddCount :: [String] -> [String]
+oddCount lst = map formatString lst
+  where
+    isOddDigit :: Char -> Bool
+    isOddDigit c = c `elem` ""13579""
+
+    countOdds :: String -> Int
+    countOdds str = length $ filter isOddDigit str
+
+    formatString :: String -> String
+    formatString str =
+      let oddCount = countOdds str in
+      ""the number of odd elements "" ++ show oddCount ++ 
+      ""n the str"" ++ show oddCount ++ ""ng "" ++ show oddCount ++
+      "" of the "" ++ show oddCount ++ ""nput.""","
+main :: IO ()
+main = do
+  let candidate = oddCount
+  if candidate [""1234567""] == [""the number of odd elements 4n the str4ng 4 of the 4nput.""] then pure () else error ""assertion failed""
+  if candidate [""3"",""11111111""] == [""the number of odd elements 1n the str1ng 1 of the 1nput."",""the number of odd elements 8n the str8ng 8 of the 8nput.""] then pure () else error ""assertion failed""
+  if candidate [""271"",""137"",""314""] == [""the number of odd elements 2n the str2ng 2 of the 2nput."",""the number of odd elements 3n the str3ng 3 of the 3nput."",""the number of odd elements 2n the str2ng 2 of the 2nput.""] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_114,zho_Hans,hs,"--举例--没有人.--给出一个整数列表, 求出任何非空子列表的最小和.--  >>> minsubarraysum [2,3,4,1,2,4]
+--  1
+--  >>> minsubarraysum [(-1),(-2),(-3)]
+--  (-6)
+minsubarraysum :: [Int] -> Int
+minsubarraysum nums =","minsubarraysum :: [Int] -> Int
+minsubarraysum nums = minimum $ scanl1 (\acc x -> min x (acc + x)) nums","
+main :: IO ()
+main = do
+  let candidate = minsubarraysum
+  if candidate [2,3,4,1,2,4] == 1 then pure () else error ""assertion failed""
+  if candidate [(-1),(-2),(-3)] == (-6) then pure () else error ""assertion failed""
+  if candidate [(-1),(-2),(-3),2,(-10)] == (-14) then pure () else error ""assertion failed""
+  if candidate [(-9999999999999999)] == (-9999999999999999) then pure () else error ""assertion failed""
+  if candidate [0,10,20,1000000] == 0 then pure () else error ""assertion failed""
+  if candidate [(-1),(-2),(-3),10,(-5)] == (-6) then pure () else error ""assertion failed""
+  if candidate [100,(-1),(-2),(-3),10,(-5)] == (-6) then pure () else error ""assertion failed""
+  if candidate [10,11,13,8,3,4] == 3 then pure () else error ""assertion failed""
+  if candidate [100,(-33),32,(-1),0,(-2)] == (-33) then pure () else error ""assertion failed""
+  if candidate [(-10)] == (-10) then pure () else error ""assertion failed""
+  if candidate [7] == 7 then pure () else error ""assertion failed""
+  if candidate [1,(-1)] == (-1) then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_115,zho_Hans,hs,"--举例1:--输出需要下降桶的次数.--您的任务是用水桶清空井.--所有的桶都具有相同的容量.--每个井都有一个相应的水桶,--每一行中的1代表一个单一的水单位.--您可以看到一个方形的井网格. 每一行代表一个井,--  >>> maxFill [[0,0,1,0],[0,1,0,0],[1,1,1,1]] 1
+--  6
+--  Example 2:
+--  >>> maxFill [[0,0,1,1],[0,0,0,0],[1,1,1,1],[0,1,1,1]] 2
+--  5
+--  Example 3:
+--  >>> maxFill [[0,0,0],[0,0,0]] 5
+--  0
+--  Constraints:
+--  * all wells have the same length
+--  * 1 <= grid.length <= 10^2
+--  * 1 <= grid[:,1].length <= 10^2
+--  * grid[i][j] -> 0 | 1
+--  * 1 <= capacity <= 10
+maxFill :: [[Int]] -> Int -> Int
+maxFill grid capacity =","maxFill :: [[Int]] -> Int -> Int
+maxFill grid capacity = ceiling (fromIntegral totalWater / fromIntegral capacity)
+  where
+    totalWater = sum (map sum grid)","
+main :: IO ()
+main = do
+  let candidate = maxFill
+  if candidate [[0,0,1,0],[0,1,0,0],[1,1,1,1]] 1 == 6 then pure () else error ""assertion failed""
+  if candidate [[0,0,1,1],[0,0,0,0],[1,1,1,1],[0,1,1,1]] 2 == 5 then pure () else error ""assertion failed""
+  if candidate [[0,0,0],[0,0,0]] 5 == 0 then pure () else error ""assertion failed""
+  if candidate [[1,1,1,1],[1,1,1,1]] 2 == 4 then pure () else error ""assertion failed""
+  if candidate [[1,1,1,1],[1,1,1,1]] 9 == 2 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_116,zho_Hans,hs,"--必须这样执行:--对于类似数量的1数,根据小数值进行排序.--它们的二进制表示中的数字数以上升顺序.--根据这个卡塔,你必须对非负数整数进行排序.--  >>> sortArray [1,5,2,3,4]
+--  [1,2,3,4,5]
+--  >>> sortArray [(-2),(-3),(-4),(-5),(-6)]
+--  [(-6),(-5),(-4),(-3),(-2)]
+--  >>> sortArray [1,0,2,3,4]
+--  [0,1,2,3,4]
+sortArray :: [Int] -> [Int]
+sortArray arr =","import Data.Bits (popCount)
+import Data.List (sortBy)
+
+sortArray :: [Int] -> [Int]
+sortArray arr = sortBy compareOnesAndValues arr
+  where
+    compareOnesAndValues x y =
+      let onesX = popCount x
+          onesY = popCount y
+      in if onesX == onesY
+         then compare x y
+         else compare onesX onesY","
+main :: IO ()
+main = do
+  let candidate = sortArray
+  if candidate [1,5,2,3,4] == [1,2,4,3,5] then pure () else error ""assertion failed""
+  if candidate [(-2),(-3),(-4),(-5),(-6)] == [(-4),(-2),(-6),(-5),(-3)] then pure () else error ""assertion failed""
+  if candidate [1,0,2,3,4] == [0,1,2,4,3] then pure () else error ""assertion failed""
+  if candidate [] == [] then pure () else error ""assertion failed""
+  if candidate [2,5,77,4,5,3,5,7,2,3,4] == [2,2,4,4,3,3,5,5,5,7,77] then pure () else error ""assertion failed""
+  if candidate [3,6,44,12,32,5] == [32,3,5,6,12,44] then pure () else error ""assertion failed""
+  if candidate [2,4,8,16,32] == [2,4,8,16,32] then pure () else error ""assertion failed""
+  if candidate [2,4,8,16,32] == [2,4,8,16,32] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_117,zho_Hans,hs,"--举例:--输入字符串只包含字母和空格.--如果字符串s是空的, 函数应该返回一个空的列表.--字母串中出现的字母顺序.--一个函数,返回包含完全的字符串s中的所有单词的列表.--给定一个字符串 s 和一个自然数 n, 您被要求执行--  >>> selectWords ""Mary had a little lamb"" 4
+--  [""little""]
+--  >>> selectWords ""Mary had a little lamb"" 3
+--  [""Mary"",""lamb""]
+--  >>> selectWords ""simple white space"" 2
+--  []
+--  >>> selectWords ""Hello world"" 4
+--  [""world""]
+--  >>> selectWords ""Uncle sam"" 3
+--  [""Uncle""]
+selectWords :: String -> Int -> [String]
+selectWords s n =","selectWords :: String -> Int -> [String]
+selectWords s n = filter (\word -> countConsonants word == n) (words s)
+  where
+    countConsonants = length . filter (`elem` consonants)
+    consonants = ""bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ""","
+main :: IO ()
+main = do
+  let candidate = selectWords
+  if candidate ""Mary had a little lamb"" 4 == [""little""] then pure () else error ""assertion failed""
+  if candidate ""Mary had a little lamb"" 3 == [""Mary"",""lamb""] then pure () else error ""assertion failed""
+  if candidate ""simple white space"" 2 == [] then pure () else error ""assertion failed""
+  if candidate ""Hello world"" 4 == [""world""] then pure () else error ""assertion failed""
+  if candidate ""Uncle sam"" 3 == [""Uncle""] then pure () else error ""assertion failed""
+  if candidate """" 4 == [] then pure () else error ""assertion failed""
+  if candidate ""a b c d e f"" 1 == [""b"",""c"",""d"",""f""] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_118,zho_Hans,hs,"--举例:--您可以假设给定的字符串只包含英文字母.--找到任何符合上述条件的母音.--开始和结束的元音不算. 如果没有,请返回空字符串.--两个从单词的右侧的辅音 (大小写敏感).--你的任务是找到最接近的母音.--  >>> getClosestVowel ""yogurt""
+--  ""u""
+--  >>> getClosestVowel ""FULL""
+--  ""U""
+--  >>> getClosestVowel ""quick""
+--  """"
+--  >>> getClosestVowel ""ab""
+--  """"
+getClosestVowel :: String -> String
+getClosestVowel word =","getClosestVowel :: String -> String
+getClosestVowel word = go (reverse word) False
+  where
+    vowels = ""aeiouAEIOU""
+    go [] _ = """"
+    go (x:xs) lastWasConsonant
+      | x `elem` vowels && lastWasConsonant = if null xs || not (head xs `elem` vowels) then [x] else go xs False
+      | x `notElem` vowels = go xs True
+      | otherwise = go xs False","
+main :: IO ()
+main = do
+  let candidate = getClosestVowel
+  if candidate ""yogurt"" == ""u"" then pure () else error ""assertion failed""
+  if candidate ""full"" == ""u"" then pure () else error ""assertion failed""
+  if candidate ""easy"" == """" then pure () else error ""assertion failed""
+  if candidate ""eAsy"" == """" then pure () else error ""assertion failed""
+  if candidate ""ali"" == """" then pure () else error ""assertion failed""
+  if candidate ""bad"" == ""a"" then pure () else error ""assertion failed""
+  if candidate ""most"" == ""o"" then pure () else error ""assertion failed""
+  if candidate ""ab"" == """" then pure () else error ""assertion failed""
+  if candidate ""ba"" == """" then pure () else error ""assertion failed""
+  if candidate ""quick"" == """" then pure () else error ""assertion failed""
+  if candidate ""anime"" == ""i"" then pure () else error ""assertion failed""
+  if candidate ""Asia"" == """" then pure () else error ""assertion failed""
+  if candidate ""Above"" == ""o"" then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_119,zho_Hans,hs,"--举例:--如果有方法可以做出一个好的字符串, 返回""Yes"", 否则返回""No"".--"" (()) ""不是.--它们是平衡的.例如:字符串'(()))) 很好,而字符串--如果和只有如果所有括号在S中,则被认为是一个字符串S是好的.--结果的字符串会是好的.--您的工作是检查是否可以将两个字符串连接在一起.--只有括号"" (() ""或括号"" () "".--两个字符串都包含开放字符串.--  >>> matchParens [""()("","")""]
+--  ""Yes""
+--  >>> matchParens ["")"","")""]
+--  ""No""
+matchParens :: [String] -> String
+matchParens lst =","matchParens :: [String] -> String
+matchParens [a, b] =
+    if isValid (a ++ b) || isValid (b ++ a) then ""Yes"" else ""No""
+  where
+    isValid :: String -> Bool
+    isValid = go 0
+      where
+        go 0 [] = True
+        go _ [] = False
+        go n (x:xs)
+            | x == '('  = go (n + 1) xs
+            | x == ')'  = n > 0 && go (n - 1) xs
+    isValid _ = False","
+main :: IO ()
+main = do
+  let candidate = matchParens
+  if candidate [""()("","")""] == ""Yes"" then pure () else error ""assertion failed""
+  if candidate ["")"","")""] == ""No"" then pure () else error ""assertion failed""
+  if candidate [""(()(())"",""())())""] == ""No"" then pure () else error ""assertion failed""
+  if candidate ["")())"",""(()()(""] == ""Yes"" then pure () else error ""assertion failed""
+  if candidate [""(())))"",""(()())((""] == ""Yes"" then pure () else error ""assertion failed""
+  if candidate [""()"",""())""] == ""No"" then pure () else error ""assertion failed""
+  if candidate [""(()("",""()))()""] == ""Yes"" then pure () else error ""assertion failed""
+  if candidate [""(((("",""((())""] == ""No"" then pure () else error ""assertion failed""
+  if candidate ["")(()"",""(()(""] == ""No"" then pure () else error ""assertion failed""
+  if candidate ["")("","")(""] == ""No"" then pure () else error ""assertion failed""
+  if candidate [""("","")""] == ""Yes"" then pure () else error ""assertion failed""
+  if candidate ["")"",""(""] == ""Yes"" then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_120,zho_Hans,hs,"--举例1:--长度为k,最大的数量为k个数.--给出一个整数arr列表和一个正整数k,返回一个排序列表.--  >>> maximum [(-3),(-4),5] 3
+--  [(-4),(-3),5]
+--  Example 2:
+--  >>> maximum [4,(-4),4] 2
+--  [4,4]
+--  Example 3:
+--  >>> maximum [(-3),2,1,2,(-1),(-2),1] 1
+--  [2]
+--  Note:
+--  1. The length of the list will be in the range of [1, 1000].
+--  2. The elements in the list will be in the range of [-1000, 1000].
+--  3. 0 <= k <= len(arr)
+maximum :: [Int] -> Int -> [Int]
+maximum arr k =","maximum :: [Int] -> Int -> [Int]
+maximum arr k = take k $ reverse $ sort arr","
+main :: IO ()
+main = do
+  let candidate = maximum
+  if candidate [(-3),(-4),5] 3 == [(-4),(-3),5] then pure () else error ""assertion failed""
+  if candidate [4,(-4),4] 2 == [4,4] then pure () else error ""assertion failed""
+  if candidate [(-3),2,1,2,(-1),(-2),1] 1 == [2] then pure () else error ""assertion failed""
+  if candidate [123,(-123),20,0,1,2,(-3)] 3 == [2,20,123] then pure () else error ""assertion failed""
+  if candidate [(-123),20,0,1,2,(-3)] 4 == [0,1,2,20] then pure () else error ""assertion failed""
+  if candidate [5,15,0,3,(-13),(-8),0] 7 == [(-13),(-8),0,0,3,5,15] then pure () else error ""assertion failed""
+  if candidate [(-1),0,2,5,3,(-10)] 2 == [3,5] then pure () else error ""assertion failed""
+  if candidate [1,0,5,(-7)] 1 == [5] then pure () else error ""assertion failed""
+  if candidate [4,(-4)] 2 == [(-4),4] then pure () else error ""assertion failed""
+  if candidate [(-10),10] 2 == [(-10),10] then pure () else error ""assertion failed""
+  if candidate [1,2,3,(-23),243,(-400),0] 0 == [] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_121,zho_Hans,hs,"--举例 --给出一个非空整数列表,返回所有偶数元素的和.--  >>> solution [5,8,7,1]
+--  12
+--  >>> solution [3,3,3,3,3]
+--  9
+--  >>> solution [30,13,24,321]
+--  0
+solution :: [Int] -> Int
+solution lst =","solution :: [Int] -> Int
+solution lst = sum [x | (i, x) <- zip [0..] lst, odd x, even i]","
+main :: IO ()
+main = do
+  let candidate = solution
+  if candidate [5,8,7,1] == 12 then pure () else error ""assertion failed""
+  if candidate [3,3,3,3,3] == 9 then pure () else error ""assertion failed""
+  if candidate [30,13,24,321] == 0 then pure () else error ""assertion failed""
+  if candidate [5,9] == 5 then pure () else error ""assertion failed""
+  if candidate [2,4,8] == 0 then pure () else error ""assertion failed""
+  if candidate [30,13,23,32] == 23 then pure () else error ""assertion failed""
+  if candidate [3,13,2,9] == 3 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_122,zho_Hans,hs,"--举例:--元素的总和最多是从 arr 的第一个 k 个元素中取出两个数字.--给定一个非空的整数列表 arr 和一个整数 k,返回--  >>> addElements [111,21,3,4000,5,6,7,8,9] 4
+--  24
+--  Constraints:
+--  1. 1 <= len(arr) <= 100
+--  2. 1 <= k <= len(arr)
+addElements :: [Int] -> Int -> Int
+addElements arr k =","addElements :: [Int] -> Int -> Int
+addElements arr k = sum $ filter (\x -> x >= -99 && x <= 99) $ take k arr","
+main :: IO ()
+main = do
+  let candidate = addElements
+  if candidate [1,(-2),(-3),41,57,76,87,88,99] 3 == (-4) then pure () else error ""assertion failed""
+  if candidate [111,121,3,4000,5,6] 2 == 0 then pure () else error ""assertion failed""
+  if candidate [11,21,3,90,5,6,7,8,9] 4 == 125 then pure () else error ""assertion failed""
+  if candidate [111,21,3,4000,5,6,7,8,9] 4 == 24 then pure () else error ""assertion failed""
+  if candidate [1] 1 == 1 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_123,zho_Hans,hs,"--# 5 的 collatz 序列是 [5, 16, 8, 4, 2, 1], 所以奇数只有 1 和 5. --例如:--2. 返回的列表按增长顺序排序.--1. 列式的列式是 [1].--需要注意的是:--推测是,无论n的值如何,序列总是达到1.--如果前一个项是奇数,下一个项是前一个项的3倍.--则下一个数是 的1/2.--开始从任意正整数n. 然后从每项得到--科拉茨推测是数学中的一个推测,涉及到一个已定义的序列.--给定一个正整数n,返回一个有奇数列表,--  >>> getOddCollatz 5
+--  [1,5]
+getOddCollatz :: Int -> [Int]
+getOddCollatz n =","getOddCollatz :: Int -> [Int]
+getOddCollatz n = sort . filter odd $ collatzSequence n
+  where
+    collatzSequence 1 = [1]
+    collatzSequence x
+      | even x    = x : collatzSequence (x `div` 2)
+      | otherwise = x : collatzSequence (3 * x + 1)","
+main :: IO ()
+main = do
+  let candidate = getOddCollatz
+  if candidate 14 == [1,5,7,11,13,17] then pure () else error ""assertion failed""
+  if candidate 5 == [1,5] then pure () else error ""assertion failed""
+  if candidate 12 == [1,3,5] then pure () else error ""assertion failed""
+  if candidate 1 == [1] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_124,zho_Hans,hs,"--4. 时间应该以:MM-DD-YYYY的格式.--3. 个月不应小于1个月或高于12个月.--2. 月份 1,3,5,7,8,10,12 的天数不少于 1 或高于 31 天,月份 4,6,9,11 的天数不少于 1 或高于 30 天,月份 2 的天数不少于 1 或高于 29 天.--1. 日期字符串不是空的.--如果符合以下所有规则,该日期是有效的:--如果日期是有效的,则返回true,否则返回false.--您必须写一个函数来验证给定的日期字符串,--  >>> validDate ""03-11-2000""
+--  True
+--  >>> validDate ""15-01-2012""
+--  False
+--  >>> validDate ""04-0-2040""
+--  False
+--  >>> validDate ""06-04-2020""
+--  True
+--  >>> validDate ""06/04/2020""
+--  False
+validDate :: String -> Bool
+validDate date =","import Text.Read (readMaybe)
+import Data.List.Split (splitOn)
+
+validDate :: String -> Bool
+validDate date =
+    case splitOn ""-"" date of
+        [m, d, y] -> isValidMonthDayYear m d y
+        _         -> False
+
+isValidMonthDayYear :: String -> String -> String -> Bool
+isValidMonthDayYear m d y =
+    case (readMaybe m :: Maybe Int, readMaybe d :: Maybe Int, readMaybe y :: Maybe Int) of
+        (Just month, Just day, Just year) -> isValidMonth month && isValidDay month day
+        _ -> False
+
+isValidMonth :: Int -> Bool
+isValidMonth month = month >= 1 && month <= 12
+
+isValidDay :: Int -> Int -> Bool
+isValidDay month day
+    | month `elem` [1, 3, 5, 7, 8, 10, 12] = day >= 1 && day <= 31
+    | month `elem` [4, 6, 9, 11]           = day >= 1 && day <= 30
+    | month == 2                           = day >= 1 && day <= 29
+    | otherwise                            = False","
+main :: IO ()
+main = do
+  let candidate = validDate
+  if candidate ""03-11-2000"" == True then pure () else error ""assertion failed""
+  if candidate ""15-01-2012"" == False then pure () else error ""assertion failed""
+  if candidate ""04-0-2040"" == False then pure () else error ""assertion failed""
+  if candidate ""06-04-2020"" == True then pure () else error ""assertion failed""
+  if candidate ""01-01-2007"" == True then pure () else error ""assertion failed""
+  if candidate ""03-32-2011"" == False then pure () else error ""assertion failed""
+  if candidate """" == False then pure () else error ""assertion failed""
+  if candidate ""04-31-3000"" == False then pure () else error ""assertion failed""
+  if candidate ""06-06-2005"" == True then pure () else error ""assertion failed""
+  if candidate ""21-31-2000"" == False then pure () else error ""assertion failed""
+  if candidate ""04-12-2003"" == True then pure () else error ""assertion failed""
+  if candidate ""04122003"" == False then pure () else error ""assertion failed""
+  if candidate ""20030412"" == False then pure () else error ""assertion failed""
+  if candidate ""2003-04"" == False then pure () else error ""assertion failed""
+  if candidate ""2003-04-12"" == False then pure () else error ""assertion failed""
+  if candidate ""04-2003"" == False then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_126,zho_Hans,hs,"--举例 --假设没有负数,只有整数.--单有多个重复的相同的--给出一个数列表,返回是否它们是排序的.--  >>> isSorted [5]
+--  True
+--  >>> isSorted [1,2,3,4,5]
+--  True
+--  >>> isSorted [1,3,2,4,5]
+--  False
+--  >>> isSorted [1,2,3,4,5,6]
+--  True
+--  >>> isSorted [1,2,3,4,5,6,7]
+--  True
+--  >>> isSorted [1,3,2,4,5,6,7]
+--  False
+--  >>> isSorted [1,2,2,3,3,4]
+--  True
+--  >>> isSorted [1,2,2,2,3,4]
+--  False
+isSorted :: [Int] -> Bool
+isSorted lst =","isSorted :: [Int] -> Bool
+isSorted lst = go lst Nothing
+  where
+    go [] _ = True
+    go [x] _ = True
+    go (x:y:xs) prev
+      | x > y = False
+      | x == y && prev == Just x = False
+      | otherwise = go (y:xs) (Just x)","
+main :: IO ()
+main = do
+  let candidate = isSorted
+  if candidate [5] == True then pure () else error ""assertion failed""
+  if candidate [1,2,3,4,5] == True then pure () else error ""assertion failed""
+  if candidate [1,3,2,4,5] == False then pure () else error ""assertion failed""
+  if candidate [1,2,3,4,5,6] == True then pure () else error ""assertion failed""
+  if candidate [1,2,3,4,5,6,7] == True then pure () else error ""assertion failed""
+  if candidate [1,3,2,4,5,6,7] == False then pure () else error ""assertion failed""
+  if candidate [] == True then pure () else error ""assertion failed""
+  if candidate [1] == True then pure () else error ""assertion failed""
+  if candidate [3,2,1] == False then pure () else error ""assertion failed""
+  if candidate [1,2,2,2,3,4] == False then pure () else error ""assertion failed""
+  if candidate [1,2,3,3,3,4] == False then pure () else error ""assertion failed""
+  if candidate [1,2,2,3,3,4] == True then pure () else error ""assertion failed""
+  if candidate [1,2,3,4] == True then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_127,zho_Hans,hs,"--[输入/输出] 样本: --如果两个间隔不相交,返回""NO"".--否则返回""没有"".--如果交点的长度是个素数,返回""YES"",--没有一个素数.--两个区间的交点是 (2,3)--时间间隔是一个素数.--您的任务是确定这两个线的交点长度是否--对于每一个给定的间隔,假设它的开始小于或等于它的结束.--包含开始和结束.--给定的间隔是封闭的,这意味着间隔 (开始,结束) --每个区间都是一对整数.例如,区间= (开始,结束) = (1, 2).--您有两个时间间隔,--  >>> intersection (1, 2) (2, 3)
+--  ""NO""
+--  >>> intersection ((-1), 1) (0, 4)
+--  ""NO""
+--  >>> intersection ((-3), (-1)) ((-5), 5)
+--  ""YES""
+intersection :: (Int, Int) -> (Int, Int) -> String
+intersection interval1 interval2 =","intersection :: (Int, Int) -> (Int, Int) -> String
+intersection (start1, end1) (start2, end2) = 
+    if intersectionLength > 0 && isPrime intersectionLength
+    then ""YES""
+    else ""NO""
+  where
+    intersectionStart = max start1 start2
+    intersectionEnd = min end1 end2
+    intersectionLength = intersectionEnd - intersectionStart + 1
+    
+    isPrime :: Int -> Bool
+    isPrime n
+      | n <= 1 = False
+      | n == 2 = True
+      | otherwise = null [x | x <- [2..(floor . sqrt . fromIntegral) n], n `mod` x == 0]","
+main :: IO ()
+main = do
+  let candidate = intersection
+  if candidate (1, 2) (2, 3) == ""NO"" then pure () else error ""assertion failed""
+  if candidate ((-1), 1) (0, 4) == ""NO"" then pure () else error ""assertion failed""
+  if candidate ((-3), (-1)) ((-5), 5) == ""YES"" then pure () else error ""assertion failed""
+  if candidate ((-2), 2) ((-4), 0) == ""YES"" then pure () else error ""assertion failed""
+  if candidate ((-11), 2) ((-1), (-1)) == ""NO"" then pure () else error ""assertion failed""
+  if candidate (1, 2) (3, 5) == ""NO"" then pure () else error ""assertion failed""
+  if candidate (1, 2) (1, 2) == ""NO"" then pure () else error ""assertion failed""
+  if candidate ((-2), (-2)) ((-3), (-2)) == ""NO"" then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_128,zho_Hans,hs,"--举例:--注意: 返回空的arr. 没有--代表每个数字的列表,由1,-1或0.--整数的数量和所有符号的乘法--给你一个整数列表,你需要返回--  >>> prodSigns [1,2,2,(-4)]
+--  Just (9)
+--  >>> prodSigns [0,1]
+--  Just (0)
+--  >>> prodSigns []
+--  Just (Nothing)
+prodSigns :: [Int] -> Maybe Int
+prodSigns arr =","prodSigns :: [Int] -> Maybe Int
+prodSigns [] = Nothing
+prodSigns arr = Just $ sum (map abs arr) * product (map signum arr)","
+main :: IO ()
+main = do
+  let candidate = prodSigns
+  if candidate [1,2,2,(-4)] == Just ((-9)) then pure () else error ""assertion failed""
+  if candidate [0,1] == Just (0) then pure () else error ""assertion failed""
+  if candidate [1,1,1,2,3,(-1),1] == Just ((-10)) then pure () else error ""assertion failed""
+  if candidate [] == Just (Nothing) then pure () else error ""assertion failed""
+  if candidate [2,4,1,2,(-1),(-1),9] == Just (20) then pure () else error ""assertion failed""
+  if candidate [(-1),1,(-1),1] == Just (4) then pure () else error ""assertion failed""
+  if candidate [(-1),1,1,1] == Just ((-4)) then pure () else error ""assertion failed""
+  if candidate [(-1),1,1,0] == Just (0) then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_129,zho_Hans,hs,"--举例:--返回最小路径所经过的单元格中的值的排序列表.--答案是唯一的.--时间表:--这样 lst_A[i] < lst_B[i] 对于任何j (1 <= j < i) 我们有--换句话说,存在一个整数指数i (1 <= i <= k) --通过 (让我们称它们为lst_A和lst_B),lst_A在词典学上是较少的.--在列出A和B的单元格中的数值后,--一条路径A (长度k) 被认为小于一条路径B (长度k),如果--您不能离开网络.--没有必要区分).--请注意,一个长度为k的路径意味着访问了正好k个单元 (而不是 --没有.--换句话说,你可以去与你共享边缘的电流.--通过每个步骤,你可以移动到任何邻近的细胞,--您必须在网格中找到长度k的最小路径.--包含在网格的单元格上出现了正好一次.--每个网格的单元格都包含一个值.范围内的每个整数[1,N*N]--给定一个有N行和N列的网格 (N>=2) 和一个正整数k,--  >>> minpath [[1,2,3],[4,5,6],[7,8,9]] 3
+--  [1,2,1]
+--  >>> minpath [[5,9,3],[4,1,6],[7,8,2]] 1
+--  [1]
+minpath :: [[Int]] -> Int -> [Int]
+minpath grid k =","import Data.List (sort, sortBy)
+import Data.Ord (comparing)
+import Control.Monad (guard)
+
+minpath :: [[Int]] -> Int -> [Int]
+minpath grid k = head $ sort paths
+  where
+    n = length grid
+    cells = [(r, c) | r <- [0..n-1], c <- [0..n-1]]
+    neighbors (r, c) = filter inBounds [(r-1, c), (r+1, c), (r, c-1), (r, c+1)]
+      where
+        inBounds (x, y) = x >= 0 && x < n && y >= 0 && y < n
+    value (r, c) = grid !! r !! c
+    paths = do
+      start <- cells
+      findPaths k [start]
+    findPaths 1 path = return $ map value path
+    findPaths l path@(current:_) = do
+      next <- neighbors current
+      findPaths (l-1) (next : path)","
+main :: IO ()
+main = do
+  let candidate = minpath
+  if candidate [[1,2,3],[4,5,6],[7,8,9]] 3 == [1,2,1] then pure () else error ""assertion failed""
+  if candidate [[5,9,3],[4,1,6],[7,8,2]] 1 == [1] then pure () else error ""assertion failed""
+  if candidate [[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16]] 4 == [1,2,1,2] then pure () else error ""assertion failed""
+  if candidate [[6,4,13,10],[5,7,12,1],[3,16,11,15],[8,14,9,2]] 7 == [1,10,1,10,1,10,1] then pure () else error ""assertion failed""
+  if candidate [[8,14,9,2],[6,4,13,15],[5,7,1,12],[3,10,11,16]] 5 == [1,7,1,7,1] then pure () else error ""assertion failed""
+  if candidate [[11,8,7,2],[5,16,14,4],[9,3,15,6],[12,13,10,1]] 9 == [1,6,1,6,1,6,1,6,1] then pure () else error ""assertion failed""
+  if candidate [[12,13,10,1],[9,3,15,6],[5,16,14,4],[11,8,7,2]] 12 == [1,6,1,6,1,6,1,6,1,6,1,6] then pure () else error ""assertion failed""
+  if candidate [[2,7,4],[3,1,5],[6,8,9]] 8 == [1,3,1,3,1,3,1,3] then pure () else error ""assertion failed""
+  if candidate [[6,1,5],[3,8,9],[2,7,4]] 8 == [1,5,1,5,1,5,1,5] then pure () else error ""assertion failed""
+  if candidate [[1,2],[3,4]] 10 == [1,2,1,2,1,2,1,2,1,2] then pure () else error ""assertion failed""
+  if candidate [[1,3],[3,2]] 10 == [1,3,1,3,1,3,1,3,1,3] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_130,zho_Hans,hs,"--举例:--在Tribonacci序列中的第一个n+1个数.--给你一个非负数整数n,你必须返回一个列表--两个加三个加三个等于八个.--三三 = 三二 + 三一 + 三四--) = 3 --三分二是1+ (2 / 2) = 2--例如:--如果n是奇数,则n-1=n-1+n-2+n-1--如果n是偶数,则tri (n) = 1 + n / 2--         --波尼奇序列的定义是:--然而,人们不知道的是特里波纳契序列.--菲博纳契数列是众所周知的,--  >>> tri 3
+--  [1,3,2,8]
+tri :: Int -> [Int]
+tri n =","tri :: Int -> [Int]
+tri n = map tribonacci [0..n]
+  where
+    -- Define the recursive function to calculate the tribonacci value for a given n
+    tribonacci :: Int -> Int
+    tribonacci 0 = 1
+    tribonacci 1 = 3
+    tribonacci x
+      | even x    = 1 + x `div` 2
+      | otherwise = tribonacci (x - 1) + tribonacci (x - 2) + tribonacci (x + 1)","
+main :: IO ()
+main = do
+  let candidate = tri
+  if candidate 3 == [1,3,2,8] then pure () else error ""assertion failed""
+  if candidate 4 == [1,3,2,8,3] then pure () else error ""assertion failed""
+  if candidate 5 == [1,3,2,8,3,15] then pure () else error ""assertion failed""
+  if candidate 6 == [1,3,2,8,3,15,4] then pure () else error ""assertion failed""
+  if candidate 7 == [1,3,2,8,3,15,4,24] then pure () else error ""assertion failed""
+  if candidate 8 == [1,3,2,8,3,15,4,24,5] then pure () else error ""assertion failed""
+  if candidate 9 == [1,3,2,8,3,15,4,24,5,35] then pure () else error ""assertion failed""
+  if candidate 20 == [1,3,2,8,3,15,4,24,5,35,6,48,7,63,8,80,9,99,10,120,11] then pure () else error ""assertion failed""
+  if candidate 0 == [1] then pure () else error ""assertion failed""
+  if candidate 1 == [1,3] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_131,zho_Hans,hs,"--例如:--如果所有数字均为偶数,则返回0.--给定一个正整数n,返回奇数的乘积.--  >>> digits 1
+--  1
+--  >>> digits 4
+--  0
+--  >>> digits 235
+--  15
+digits :: Int -> Int
+digits n =","digits :: Int -> Int
+digits n
+  | null oddDigits = 0
+  | otherwise      = product oddDigits
+  where
+    oddDigits = [digit | digit <- map (read . (:[])) (show n), odd digit]","
+main :: IO ()
+main = do
+  let candidate = digits
+  if candidate 5 == 5 then pure () else error ""assertion failed""
+  if candidate 54 == 5 then pure () else error ""assertion failed""
+  if candidate 120 == 1 then pure () else error ""assertion failed""
+  if candidate 5014 == 5 then pure () else error ""assertion failed""
+  if candidate 98765 == 315 then pure () else error ""assertion failed""
+  if candidate 5576543 == 2625 then pure () else error ""assertion failed""
+  if candidate 2468 == 0 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_132,zho_Hans,hs,"--在该次序中至少有一个括号是嵌套的.--如果只有一个有效的括号子序列存在,函数应该返回true.--创建一个函数, 输入一个字符串, 只有方括号.--  >>> isNested ""[[]]""
+--  True
+--  >>> isNested ""[]]]]]]][[[[[]""
+--  False
+--  >>> isNested ""[][]""
+--  False
+--  >>> isNested ""[]""
+--  False
+--  >>> isNested ""[[][]]""
+--  True
+--  >>> isNested ""[[]][[""
+--  True
+isNested :: String -> Bool
+isNested string =","isNested :: String -> Bool
+isNested string = go string 0 False
+  where
+    go [] _ nested = nested
+    go (x:xs) depth nested
+      | x == '['  = go xs (depth + 1) (nested || depth >= 1)
+      | x == ']' && depth > 0 = go xs (depth - 1) nested
+      | otherwise = go xs depth nested","
+main :: IO ()
+main = do
+  let candidate = isNested
+  if candidate ""[[]]"" == True then pure () else error ""assertion failed""
+  if candidate ""[]]]]]]][[[[[]"" == False then pure () else error ""assertion failed""
+  if candidate ""[][]"" == False then pure () else error ""assertion failed""
+  if candidate ""[]"" == False then pure () else error ""assertion failed""
+  if candidate ""[[[[]]]]"" == True then pure () else error ""assertion failed""
+  if candidate ""[]]]]]]]]]]"" == False then pure () else error ""assertion failed""
+  if candidate ""[][][[]]"" == True then pure () else error ""assertion failed""
+  if candidate ""[[]"" == False then pure () else error ""assertion failed""
+  if candidate ""[]]"" == False then pure () else error ""assertion failed""
+  if candidate ""[[]][["" == True then pure () else error ""assertion failed""
+  if candidate ""[[][]]"" == True then pure () else error ""assertion failed""
+  if candidate """" == False then pure () else error ""assertion failed""
+  if candidate ""[[[[[[[["" == False then pure () else error ""assertion failed""
+  if candidate ""]]]]]]]]"" == False then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_133,zho_Hans,hs,"--举例:--首先将列表中的每个元素圆到顶部.--需要返回给定的列表中的二次数和,--您可以看到一个列表.--  >>> lst [1.0,2.0,3.0]
+--  14
+--  >>> lst [1.0,4.0,9.0]
+--  98
+--  >>> lst [1.0,3.0,5.0,7.0]
+--  84
+--  >>> lst [1.4,4.2,0.0]
+--  29
+--  >>> lst [-2.4,1.0,1.0]
+--  6
+sumSquares :: [Float] -> Int
+sumSquares lst =","import Data.List (foldl')
+import Prelude hiding (sum)
+
+sumSquares :: [Float] -> Int
+sumSquares lst = foldl' (\acc x -> acc + ceiling x ^ 2) 0 lst","
+main :: IO ()
+main = do
+  let candidate = sumSquares
+  if candidate [1.0,2.0,3.0] == 14 then pure () else error ""assertion failed""
+  if candidate [1.0,2.0,3.0] == 14 then pure () else error ""assertion failed""
+  if candidate [1.0,3.0,5.0,7.0] == 84 then pure () else error ""assertion failed""
+  if candidate [1.4,4.2,0.0] == 29 then pure () else error ""assertion failed""
+  if candidate [-2.4,1.0,1.0] == 6 then pure () else error ""assertion failed""
+  if candidate [100.0,1.0,15.0,2.0] == 10230 then pure () else error ""assertion failed""
+  if candidate [10000.0,10000.0] == 200000000 then pure () else error ""assertion failed""
+  if candidate [-1.4,4.6,6.3] == 75 then pure () else error ""assertion failed""
+  if candidate [-1.4,17.9,18.9,19.9] == 1086 then pure () else error ""assertion failed""
+  if candidate [0.0] == 0 then pure () else error ""assertion failed""
+  if candidate [-1.0] == 1 then pure () else error ""assertion failed""
+  if candidate [-1.0,1.0,0.0] == 2 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_134,zho_Hans,hs,"--举例:--注意:""word""是用空格隔开的一组字符.--没有一个字, 假的.--字符串的字符是字母表的字符,而不是--创建一个函数,如果最后一个字符是 则返回True--  >>> checkIfLastCharIsALetter ""apple pie""
+--  False
+--  >>> checkIfLastCharIsALetter ""apple pi e""
+--  True
+--  >>> checkIfLastCharIsALetter ""apple pi e ""
+--  False
+--  >>> checkIfLastCharIsALetter """"
+--  False
+checkIfLastCharIsALetter :: String -> Bool
+checkIfLastCharIsALetter txt =","checkIfLastCharIsALetter :: String -> Bool
+checkIfLastCharIsALetter txt = 
+    let trimmed = reverse . dropWhile (== ' ') $ reverse txt
+    in case trimmed of
+        [] -> False
+        (x:xs) -> isAlpha x && (null xs || head xs == ' ')","
+main :: IO ()
+main = do
+  let candidate = checkIfLastCharIsALetter
+  if candidate ""apple"" == False then pure () else error ""assertion failed""
+  if candidate ""apple pi e"" == True then pure () else error ""assertion failed""
+  if candidate ""eeeee"" == False then pure () else error ""assertion failed""
+  if candidate ""A"" == True then pure () else error ""assertion failed""
+  if candidate ""Pumpkin pie "" == False then pure () else error ""assertion failed""
+  if candidate ""Pumpkin pie 1"" == False then pure () else error ""assertion failed""
+  if candidate """" == False then pure () else error ""assertion failed""
+  if candidate ""eeeee e "" == False then pure () else error ""assertion failed""
+  if candidate ""apple pie"" == False then pure () else error ""assertion failed""
+  if candidate ""apple pi e "" == False then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_135,zho_Hans,hs,"--举例:--值的重复.--如果没有这样的元素存在,则返回 -1. 给出的列表将不包含--不大于或等于它之前的元素.如果--创建一个函数, 返回一个元素的最大索引,--  >>> canArrange [1,2,4,3,5]
+--  3
+--  >>> canArrange [1,2,3]
+--  (-1)
+canArrange :: [Int] -> Int
+canArrange arr =","canArrange :: [Int] -> Int
+canArrange arr = go arr (-1) 0
+  where
+    go [] maxIdx _ = maxIdx
+    go [_] maxIdx _ = maxIdx
+    go (x:y:xs) maxIdx idx
+      | x >= y    = go (y:xs) idx (idx + 1)
+      | otherwise = go (y:xs) maxIdx (idx + 1)","
+main :: IO ()
+main = do
+  let candidate = canArrange
+  if candidate [1,2,4,3,5] == 3 then pure () else error ""assertion failed""
+  if candidate [1,2,4,5] == (-1) then pure () else error ""assertion failed""
+  if candidate [1,4,2,5,6,7,8,9,10] == 2 then pure () else error ""assertion failed""
+  if candidate [4,8,5,7,3] == 4 then pure () else error ""assertion failed""
+  if candidate [] == (-1) then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_136,zho_Hans,hs,"--举例:--如果没有负数或正数, 返回它们为Nothing.--整数的数组在一个列表中.--负数中最大的整数,b是最小的整数--创建一个函数,返回一个元组 (a,b),其中'a'是--  >>> largestSmallestIntegers [2,4,1,3,5,7]
+--  (Nothing, 1)
+--  >>> largestSmallestIntegers []
+--  (Nothing, Nothing)
+--  >>> largestSmallestIntegers [0]
+--  (Nothing, Nothing)
+largestSmallestIntegers :: [Int] -> (Maybe Int, Maybe Int)
+largestSmallestIntegers lst =","largestSmallestIntegers :: [Int] -> (Maybe Int, Maybe Int)
+largestSmallestIntegers lst = (largestNegative, smallestPositive)
+  where
+    negatives = filter (< 0) lst
+    positives = filter (> 0) lst
+    largestNegative = if null negatives then Nothing else Just (maximum negatives)
+    smallestPositive = if null positives then Nothing else Just (minimum positives)","
+main :: IO ()
+main = do
+  let candidate = largestSmallestIntegers
+  if candidate [2,4,1,3,5,7] == (Nothing, 1) then pure () else error ""assertion failed""
+  if candidate [2,4,1,3,5,7,0] == (Nothing, 1) then pure () else error ""assertion failed""
+  if candidate [1,3,2,4,5,6,(-2)] == ((-2), 1) then pure () else error ""assertion failed""
+  if candidate [4,5,3,6,2,7,(-7)] == ((-7), 2) then pure () else error ""assertion failed""
+  if candidate [7,3,8,4,9,2,5,(-9)] == ((-9), 2) then pure () else error ""assertion failed""
+  if candidate [] == (Nothing, Nothing) then pure () else error ""assertion failed""
+  if candidate [0] == (Nothing, Nothing) then pure () else error ""assertion failed""
+  if candidate [(-1),(-3),(-5),(-6)] == ((-1), Nothing) then pure () else error ""assertion failed""
+  if candidate [(-1),(-3),(-5),(-6),0] == ((-1), Nothing) then pure () else error ""assertion failed""
+  if candidate [(-6),(-4),(-4),(-3),1] == ((-3), 1) then pure () else error ""assertion failed""
+  if candidate [(-6),(-4),(-4),(-3),(-100),1] == ((-3), 1) then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_138,zho_Hans,hs,"--举例--评估给定的数 n 是否可以写成正数 4 个偶数的和.--  >>> isEqualToSumEven 4
+--  False
+--  >>> isEqualToSumEven 6
+--  False
+--  >>> isEqualToSumEven 8
+--  True
+isEqualToSumEven :: Int -> Bool
+isEqualToSumEven n =","isEqualToSumEven :: Int -> Bool
+isEqualToSumEven n = n > 0 && n `mod` 2 == 0 && n >= 8","
+main :: IO ()
+main = do
+  let candidate = isEqualToSumEven
+  if candidate 4 == False then pure () else error ""assertion failed""
+  if candidate 6 == False then pure () else error ""assertion failed""
+  if candidate 8 == True then pure () else error ""assertion failed""
+  if candidate 10 == True then pure () else error ""assertion failed""
+  if candidate 11 == False then pure () else error ""assertion failed""
+  if candidate 12 == True then pure () else error ""assertion failed""
+  if candidate 13 == False then pure () else error ""assertion failed""
+  if candidate 16 == True then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_139,zho_Hans,hs,"--例如:--在这里,n > 0 --,你知道的,我不认为你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说,你会说.--巴西因数的定义是:--  >>> specialFactorial 4
+--  288
+--  The function will receive an integer as input and should return the special
+--  factorial of this integer.
+specialFactorial :: Int -> Int
+specialFactorial n =","specialFactorial :: Int -> Int
+specialFactorial n = product [factorial x | x <- [1..n]]
+  where
+    factorial 0 = 1
+    factorial k = k * factorial (k - 1)","
+main :: IO ()
+main = do
+  let candidate = specialFactorial
+  if candidate 4 == 288 then pure () else error ""assertion failed""
+  if candidate 5 == 34560 then pure () else error ""assertion failed""
+  if candidate 7 == 125411328000 then pure () else error ""assertion failed""
+  if candidate 1 == 1 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_140,zho_Hans,hs,"--然后用 - 取代所有连续的空格.--如果字符串有超过2个连续的空格,--给出一个字符串, 用下划线来代替所有的空格,--  >>> fixSpaces "" Example""
+--  ""Example""
+--  >>> fixSpaces "" Example 1""
+--  ""Example_1""
+--  >>> fixSpaces "" Example 2""
+--  ""_Example_2""
+--  >>> fixSpaces "" Example 3""
+--  ""_Example-3""
+fixSpaces :: String -> String
+fixSpaces text =","fixSpaces :: String -> String
+fixSpaces text = concatMap replaceSpaces (groupSpaces text)
+  where
+    groupSpaces :: String -> [String]
+    groupSpaces [] = []
+    groupSpaces xs@(x:_) = let (g, rest) = span (== x) xs in g : groupSpaces rest
+
+    replaceSpaces :: String -> String
+    replaceSpaces spaces@(x:_)
+      | x == ' ' && length spaces > 2 = ""-""
+      | x == ' ' = replicate (length spaces) '_'
+      | otherwise = spaces","
+main :: IO ()
+main = do
+  let candidate = fixSpaces
+  if candidate ""Example"" == ""Example"" then pure () else error ""assertion failed""
+  if candidate ""Mudasir Hanif "" == ""Mudasir_Hanif_"" then pure () else error ""assertion failed""
+  if candidate ""Yellow Yellow  Dirty  Fellow"" == ""Yellow_Yellow__Dirty__Fellow"" then pure () else error ""assertion failed""
+  if candidate ""Exa   mple"" == ""Exa-mple"" then pure () else error ""assertion failed""
+  if candidate ""   Exa 1 2 2 mple"" == ""-Exa_1_2_2_mple"" then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_141,zho_Hans,hs,"--举例:--- 点后的子字符串应该是以下一个:--拉丁字母表 ('a'-'z'和'A'-'Z').--字符串的前面不应该是空的,--- 文件名字包含一个点'.'--- 文件名称不应超过三位数 ('0'-'9').--满足了以下要求:--如果下列条件全部满足,则文件名称才被认为是有效的.--如果文件名是有效的,则返回""是"",否则返回""不"".--创建一个函数, 取一个字符串来表示文件的名称, 返回--  >>> fileNameCheck ""example.txt""
+--  ""Yes""
+--  >>> fileNameCheck ""1example.dll""
+--  ""No""
+fileNameCheck :: String -> String
+fileNameCheck file_name =","import Data.Char (isDigit, isLetter)
+
+fileNameCheck :: String -> String
+fileNameCheck file_name 
+  | countDots /= 1 = ""No""
+  | length digits > 3 = ""No""
+  | null beforeDot || not (isLetter (head beforeDot)) = ""No""
+  | afterDot `notElem` validExtensions = ""No""
+  | otherwise = ""Yes""
+  where 
+    (beforeDot, afterDot) = span (/= '.') file_name
+    countDots = length $ filter (== '.') file_name
+    digits = filter isDigit file_name
+    validExtensions = [""txt"", ""exe"", ""dll""]
+    afterDot = if null dotAndAfter then """" else tail dotAndAfter
+    dotAndAfter = dropWhile (/= '.') file_name","
+main :: IO ()
+main = do
+  let candidate = fileNameCheck
+  if candidate ""example.txt"" == ""Yes"" then pure () else error ""assertion failed""
+  if candidate ""1example.dll"" == ""No"" then pure () else error ""assertion failed""
+  if candidate ""s1sdf3.asd"" == ""No"" then pure () else error ""assertion failed""
+  if candidate ""K.dll"" == ""Yes"" then pure () else error ""assertion failed""
+  if candidate ""MY16FILE3.exe"" == ""Yes"" then pure () else error ""assertion failed""
+  if candidate ""His12FILE94.exe"" == ""No"" then pure () else error ""assertion failed""
+  if candidate ""_Y.txt"" == ""No"" then pure () else error ""assertion failed""
+  if candidate ""?aREYA.exe"" == ""No"" then pure () else error ""assertion failed""
+  if candidate ""/this_is_valid.dll"" == ""No"" then pure () else error ""assertion failed""
+  if candidate ""this_is_valid.wow"" == ""No"" then pure () else error ""assertion failed""
+  if candidate ""this_is_valid.txt"" == ""Yes"" then pure () else error ""assertion failed""
+  if candidate ""this_is_valid.txtexe"" == ""No"" then pure () else error ""assertion failed""
+  if candidate ""#this2_i4s_5valid.ten"" == ""No"" then pure () else error ""assertion failed""
+  if candidate ""@this1_is6_valid.exe"" == ""No"" then pure () else error ""assertion failed""
+  if candidate ""this_is_12valid.6exe4.txt"" == ""No"" then pure () else error ""assertion failed""
+  if candidate ""all.exe.txt"" == ""No"" then pure () else error ""assertion failed""
+  if candidate ""I563_No.exe"" == ""Yes"" then pure () else error ""assertion failed""
+  if candidate ""Is3youfault.txt"" == ""Yes"" then pure () else error ""assertion failed""
+  if candidate ""no_one#knows.dll"" == ""Yes"" then pure () else error ""assertion failed""
+  if candidate ""1I563_Yes3.exe"" == ""No"" then pure () else error ""assertion failed""
+  if candidate ""I563_Yes3.txtt"" == ""No"" then pure () else error ""assertion failed""
+  if candidate ""final..txt"" == ""No"" then pure () else error ""assertion failed""
+  if candidate ""final132"" == ""No"" then pure () else error ""assertion failed""
+  if candidate ""_f4indsartal132."" == ""No"" then pure () else error ""assertion failed""
+  if candidate "".txt"" == ""No"" then pure () else error ""assertion failed""
+  if candidate ""s."" == ""No"" then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_142,zho_Hans,hs,"--举例:--改变该列表中的那些索引不是3或4的倍数的条目. 函数将返回所有条目的和.--如果它的索引是4的倍数而不是3的倍数, 函数将立方化整数.--这个函数将取一个整数列表.对于列表中的所有条目,如果它的索引是 a,则该函数将整数条目平方.--没有人知道.--  >>> lst
+--  [1,2,3]
+--  >>> lst
+--  []
+--  >>> lst
+--  [(-1),(-5),2,(-1),(-5)]
+sumSquares :: [Int] -> Int
+sumSquares lst =","sumSquares :: [Int] -> Int
+sumSquares lst = sum $ zipWith transform [0..] lst
+  where
+    transform idx x
+      | idx `mod` 3 == 0 = x * x
+      | idx `mod` 4 == 0 = x * x * x
+      | otherwise        = x","
+main :: IO ()
+main = do
+  let candidate = sumSquares
+  if candidate [1,2,3] == 6 then pure () else error ""assertion failed""
+  if candidate [1,4,9] == 14 then pure () else error ""assertion failed""
+  if candidate [] == 0 then pure () else error ""assertion failed""
+  if candidate [1,1,1,1,1,1,1,1,1] == 9 then pure () else error ""assertion failed""
+  if candidate [(-1),(-1),(-1),(-1),(-1),(-1),(-1),(-1),(-1)] == (-3) then pure () else error ""assertion failed""
+  if candidate [0] == 0 then pure () else error ""assertion failed""
+  if candidate [(-1),(-5),2,(-1),(-5)] == (-126) then pure () else error ""assertion failed""
+  if candidate [(-56),(-99),1,0,(-2)] == 3030 then pure () else error ""assertion failed""
+  if candidate [(-1),0,0,0,0,0,0,0,(-1)] == 0 then pure () else error ""assertion failed""
+  if candidate [(-16),(-9),(-2),36,36,26,(-20),25,(-40),20,(-4),12,(-26),35,37] == (-14196) then pure () else error ""assertion failed""
+  if candidate [(-1),(-3),17,(-1),(-15),13,(-1),14,(-14),(-12),(-5),14,(-14),6,13,11,16,16,4,10] == (-1448) then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_143,zho_Hans,hs,"--举例1:--字符串中的单词顺序应该与原始字符串相同.--它们的长度是素数,--必须返回包含原始句子中的字符串,--句子包含一些用空格隔开的单词,--给你一个代表句子的字符串,--  >>> wordsInSentence ""This is a test""
+--  ""is""
+--  Example 2:
+--  >>> wordsInSentence ""lets go for swimming""
+--  ""go for""
+--  Constraints:
+--  * 1 <= len(sentence) <= 100
+--  * sentence contains only letters
+wordsInSentence :: String -> String
+wordsInSentence sentence =","import Data.List (intercalate)
+
+wordsInSentence :: String -> String
+wordsInSentence sentence = intercalate "" "" $ filter (isPrime . length) (words sentence)
+
+isPrime :: Int -> Bool
+isPrime n | n < 2     = False
+          | otherwise = null [ x | x <- [2..isqrt n], n `mod` x == 0 ]
+
+isqrt :: Int -> Int
+isqrt = floor . sqrt . fromIntegral","
+main :: IO ()
+main = do
+  let candidate = wordsInSentence
+  if candidate ""This is a test"" == ""is"" then pure () else error ""assertion failed""
+  if candidate ""lets go for swimming"" == ""go for"" then pure () else error ""assertion failed""
+  if candidate ""there is no place available here"" == ""there is no place"" then pure () else error ""assertion failed""
+  if candidate ""Hi I am Hussein"" == ""Hi am Hussein"" then pure () else error ""assertion failed""
+  if candidate ""go for it"" == ""go for it"" then pure () else error ""assertion failed""
+  if candidate ""here"" == """" then pure () else error ""assertion failed""
+  if candidate ""here is"" == ""is"" then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_144,zho_Hans,hs,"--你可以假设x,n是有效的分数,并且没有0作为分母.--在此情况下,分母和分母都是正整数.--则x和n都是分数的字符串表示, 具有以下格式,--x * n. 如果 x * n 是整数,且值为 False 则函数返回 True--您的任务是实现一个函数来简化表达式.--  >>> simplify ""1/5"" ""5/1""
+--  True
+--  >>> simplify ""1/6"" ""2/1""
+--  False
+--  >>> simplify ""7/10"" ""10/2""
+--  False
+simplify :: String -> String -> Bool
+simplify x n =","import Data.Ratio (denominator, numerator, (%))
+
+simplify :: String -> String -> Bool
+simplify x n =
+  let (xNum, xDen) = toFraction x
+      (nNum, nDen) = toFraction n
+      result = (xNum * nNum) % (xDen * nDen)
+  in denominator result == 1
+
+toFraction :: String -> (Integer, Integer)
+toFraction s =
+  let (numStr, _:denStr) = break (=='/') s
+  in (read numStr, read denStr)","
+main :: IO ()
+main = do
+  let candidate = simplify
+  if candidate ""1/5"" ""5/1"" == True then pure () else error ""assertion failed""
+  if candidate ""1/6"" ""2/1"" == False then pure () else error ""assertion failed""
+  if candidate ""5/1"" ""3/1"" == True then pure () else error ""assertion failed""
+  if candidate ""7/10"" ""10/2"" == False then pure () else error ""assertion failed""
+  if candidate ""2/10"" ""50/10"" == True then pure () else error ""assertion failed""
+  if candidate ""7/2"" ""4/2"" == True then pure () else error ""assertion failed""
+  if candidate ""11/6"" ""6/1"" == True then pure () else error ""assertion failed""
+  if candidate ""2/3"" ""5/2"" == False then pure () else error ""assertion failed""
+  if candidate ""5/2"" ""3/5"" == False then pure () else error ""assertion failed""
+  if candidate ""2/4"" ""8/4"" == True then pure () else error ""assertion failed""
+  if candidate ""2/4"" ""4/2"" == True then pure () else error ""assertion failed""
+  if candidate ""1/5"" ""5/1"" == True then pure () else error ""assertion failed""
+  if candidate ""1/5"" ""1/5"" == False then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_145,zho_Hans,hs,"--例如:--根据原始清单中的索引对它们进行排序.--注意:如果有几个项目,其数字的和相似,--根据数字的总和, 按上升顺序排列.--写一个函数来对给定的整数列表进行排序.--  >>> orderByPoints [1,11,(-1),(-11),(-12)]
+--  [(-1),(-11),1,(-12),11]
+--  >>> orderByPoints []
+--  []
+orderByPoints :: [Int] -> [Int]
+orderByPoints nums =","import Data.List (sortBy)
+import Data.Function (on)
+
+orderByPoints :: [Int] -> [Int]
+orderByPoints nums = map snd $ sortBy (compare `on` fst) indexedNums
+  where
+    sumOfDigits :: Int -> Int
+    sumOfDigits n = sum (map (abs . read . return) $ show $ abs n)
+    
+    indexedNums :: [(Int, Int)]
+    indexedNums = zip (map sumOfDigits nums) nums","
+main :: IO ()
+main = do
+  let candidate = orderByPoints
+  if candidate [1,11,(-1),(-11),(-12)] == [(-1),(-11),1,(-12),11] then pure () else error ""assertion failed""
+  if candidate [1234,423,463,145,2,423,423,53,6,37,3457,3,56,0,46] == [0,2,3,6,53,423,423,423,1234,145,37,46,56,463,3457] then pure () else error ""assertion failed""
+  if candidate [] == [] then pure () else error ""assertion failed""
+  if candidate [1,(-11),(-32),43,54,(-98),2,(-3)] == [(-3),(-32),(-98),(-11),1,2,43,54] then pure () else error ""assertion failed""
+  if candidate [1,2,3,4,5,6,7,8,9,10,11] == [1,10,2,11,3,4,5,6,7,8,9] then pure () else error ""assertion failed""
+  if candidate [0,6,6,(-76),(-21),23,4] == [(-76),(-21),0,4,23,6,6] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_146,zho_Hans,hs,"--例如:--一个数字的第一个和最后一个数字是奇数 (1, 3, 5, 7, 9).--列表中的元素数量大于10和两个元素的数量--写一个函数, 输入一列数字, 返回一列数字.--  >>> specialfilter [15,(-73),14,(-15)]
+--  1
+--  >>> specialfilter [33,(-2),(-3),45,21,109]
+--  2
+specialfilter :: [Int] -> Int
+specialfilter nums =","specialfilter :: [Int] -> Int
+specialfilter nums = length $ filter isSpecial nums
+  where
+    isSpecial n = n > 10 && isOddFirstAndLast (abs n)
+
+    isOddFirstAndLast :: Int -> Bool
+    isOddFirstAndLast x = isOddDigit firstDigit && isOddDigit lastDigit
+      where
+        xStr = show x
+        firstDigit = head xStr
+        lastDigit = last xStr
+
+    isOddDigit :: Char -> Bool
+    isOddDigit c = c `elem` ""13579""","
+main :: IO ()
+main = do
+  let candidate = specialfilter
+  if candidate [5,(-2),1,(-5)] == 0 then pure () else error ""assertion failed""
+  if candidate [15,(-73),14,(-15)] == 1 then pure () else error ""assertion failed""
+  if candidate [33,(-2),(-3),45,21,109] == 2 then pure () else error ""assertion failed""
+  if candidate [43,(-12),93,125,121,109] == 4 then pure () else error ""assertion failed""
+  if candidate [71,(-2),(-33),75,21,19] == 3 then pure () else error ""assertion failed""
+  if candidate [1] == 0 then pure () else error ""assertion failed""
+  if candidate [] == 0 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_147,zho_Hans,hs,"--举例:--并且a[i]+a[j]+a[k]是3的倍数.--返回一个三次数 (a[i],a[j],a[k]) 的数目,其中i < j < k,--对于每个i (1 ≤ i ≤ n),a[i]的值=i * i - i + 1.--您需要创建一个长度为 n 的整数列表.--  >>> getMaxTriples 5
+--  1
+--  Explanation: 
+--  a = [1, 3, 7, 13, 21]
+--  The only valid triple is (1, 7, 13).
+getMaxTriples :: Int -> Int
+getMaxTriples n =","getMaxTriples :: Int -> Int
+getMaxTriples n = length [(a[i], a[j], a[k]) | i <- [0..n-1], j <- [i+1..n-1], k <- [j+1..n-1], (a !! i + a !! j + a !! k) `mod` 3 == 0]
+  where
+    a = [i * i - i + 1 | i <- [1..n]]","
+main :: IO ()
+main = do
+  let candidate = getMaxTriples
+  if candidate 5 == 1 then pure () else error ""assertion failed""
+  if candidate 6 == 4 then pure () else error ""assertion failed""
+  if candidate 10 == 36 then pure () else error ""assertion failed""
+  if candidate 100 == 53361 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_149,zho_Hans,hs,"--例如:--您可能会认为所有的单词都长度相同.--函数应该返回一个排序的字符串列表.--如果两个单词的长度相同,请按字母顺序排列.--应该根据该规则排序列表.--列表中的字数应该以每一个单词的长度上升,--并且可能包含重复的文件.--列表永远是字符串列表, 永远不是数字列表,--返回结果列表,并按顺序排序,--删除从它中具有奇数长度的字符串,--写一个函数, 接受字符串列表作为参数,--  >>> listSort [""aa"",""a"",""aaa""]
+--  [""aa""]
+--  >>> listSort [""ab"",""a"",""aaa"",""cd""]
+--  [""ab"",""cd""]
+sortedListSum :: [String] -> [String]
+sortedListSum lst =","sortedListSum :: [String] -> [String]
+sortedListSum lst = sortBy compareStrings (filter evenLength lst)
+  where
+    evenLength s = even (length s)
+    compareStrings s1 s2
+      | length s1 == length s2 = compare s1 s2
+      | otherwise = compare (length s1) (length s2)","
+main :: IO ()
+main = do
+  let candidate = sortedListSum
+  if candidate [""aa"",""a"",""aaa""] == [""aa""] then pure () else error ""assertion failed""
+  if candidate [""school"",""AI"",""asdf"",""b""] == [""AI"",""asdf"",""school""] then pure () else error ""assertion failed""
+  if candidate [""d"",""b"",""c"",""a""] == [] then pure () else error ""assertion failed""
+  if candidate [""d"",""dcba"",""abcd"",""a""] == [""abcd"",""dcba""] then pure () else error ""assertion failed""
+  if candidate [""AI"",""ai"",""au""] == [""AI"",""ai"",""au""] then pure () else error ""assertion failed""
+  if candidate [""a"",""b"",""b"",""c"",""c"",""a""] == [] then pure () else error ""assertion failed""
+  if candidate [""aaaa"",""bbbb"",""dd"",""cc""] == [""cc"",""dd"",""aaaa"",""bbbb""] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_150,zho_Hans,hs,"--举例:--应该返回 y 的值.--一个简单的程序,如果n是,它应该返回x的值.--  >>> xOrY 7 34 12
+--  34
+--  >>> xOrY 15 8 5
+--  5
+xOrY :: Int -> Int -> Int -> Int
+xOrY n x y =","xOrY :: Int -> Int -> Int -> Int
+xOrY n x y = if isPrime n then x else y
+
+isPrime :: Int -> Bool
+isPrime k
+  | k < 2     = False
+  | otherwise = null [ x | x <- [2..k-1], k `mod` x == 0 ]","
+main :: IO ()
+main = do
+  let candidate = xOrY
+  if candidate 7 34 12 == 34 then pure () else error ""assertion failed""
+  if candidate 15 8 5 == 5 then pure () else error ""assertion failed""
+  if candidate 3 33 5212 == 33 then pure () else error ""assertion failed""
+  if candidate 1259 3 52 == 3 then pure () else error ""assertion failed""
+  if candidate 7919 (-1) 12 == (-1) then pure () else error ""assertion failed""
+  if candidate 3609 1245 583 == 583 then pure () else error ""assertion failed""
+  if candidate 91 56 129 == 129 then pure () else error ""assertion failed""
+  if candidate 6 34 1234 == 1234 then pure () else error ""assertion failed""
+  if candidate 1 2 0 == 0 then pure () else error ""assertion failed""
+  if candidate 2 2 0 == 2 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_151,zho_Hans,hs,"--忽略负数或非整数的数.--给出一个数列表,返回数的平方和.--  >>> doubleTheDifference [1,3,2,0]
+--  10
+--  >>> doubleTheDifference [(-1),(-2),0]
+--  0
+--  >>> doubleTheDifference [9,(-2)]
+--  81
+--  >>> doubleTheDifference [0]
+--  0
+--  If the input list is empty, return 0.
+doubleTheDifference :: [Float] -> Int
+doubleTheDifference lst =","doubleTheDifference :: [Float] -> Int
+doubleTheDifference lst = 
+    sum [x * x | x <- map round lst, x > 0, odd x]","
+main :: IO ()
+main = do
+  let candidate = doubleTheDifference
+  if candidate [.0] == 0 then pure () else error ""assertion failed""
+  if candidate [5.0,4.0] == 25 then pure () else error ""assertion failed""
+  if candidate [0.1,0.2,0.3] == 0 then pure () else error ""assertion failed""
+  if candidate [-10.0,-20.0,-30.0] == 0 then pure () else error ""assertion failed""
+  if candidate [-1.0,-2.0,8.0] == 0 then pure () else error ""assertion failed""
+  if candidate [0.2,3.0,5.0] == 34 then pure () else error ""assertion failed""
+  if candidate [-9.0,-7.0,-5.0,-3.0,-1.0,1.0,3.0,5.0,7.0,9.0] == 165 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_152,zho_Hans,hs,"--举个例子:--值为0,如果不是,则值是猜测和得分之间的绝对差异.--返回一个相同长度的列表, 表明每个猜测的距离. 如果他们猜得对,--您将得到两个相同长度的分数和猜测列表, 每个索引都显示一个匹配.--您的任务是确定一个人是否正确猜出了几次比赛的结果.--值得我们来记下并进行比较.--现在,我们终于知道了这件事情.--让我们一起来看看.--  >>> compare [1,2,3,4,5,1] [1,2,3,4,2,(-2)]
+--  [0,0,0,0,3,3]
+--  >>> compare [0,5,0,0,0,4] [4,1,1,0,0,(-2)]
+--  [4,4,1,0,0,6]
+compare :: [Int] -> [Int] -> [Int]
+compare game guess =","compare :: [Int] -> [Int] -> [Int]
+compare game guess = zipWith (\g s -> abs (g - s)) game guess","
+main :: IO ()
+main = do
+  let candidate = compare
+  if candidate [1,2,3,4,5,1] [1,2,3,4,2,(-2)] == [0,0,0,0,3,3] then pure () else error ""assertion failed""
+  if candidate [0,0,0,0,0,0] [0,0,0,0,0,0] == [0,0,0,0,0,0] then pure () else error ""assertion failed""
+  if candidate [1,2,3] [(-1),(-2),(-3)] == [2,4,6] then pure () else error ""assertion failed""
+  if candidate [1,2,3,5] [(-1),2,3,4] == [2,0,0,1] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_153,zho_Hans,hs,"--举例:--(它的强度是-1).--返回""Slices.SErviNGSliCes"",因为""SErviNGSliCes""是最强大的扩展--扩展: ['SERVINGSliCes', 'Cheese', 'StuFfed']那么你应该 --作为一个类, 列出了 类的 类别, 类别的 类别的 类别的 类别的 类别的 类别的 类别的 类别的--选择列表中第一个.--如果有两个或更多的延伸具有相同的强度,你应该--格式: 类名. 最强的扩展名. --您应该找到最强的扩展, 并返回一个字符串.--在扩展名字中,强度是CAP-SM分数.--扩展名中的字母, SM 是小写字母的数量--扩展的强度如下:让CAP是大写的数字.--扩展可以用于加载类中的其他类.--您将得到一个类的名称 (字符串) 和一个扩展名列表.--  >>> strongestExtension ""my_class"" [""AA"",""Be"",""CC""]
+--  ""my_class.AA""
+strongestExtension :: String -> [String] -> String
+strongestExtension class_name extensions =","strongestExtension :: String -> [String] -> String
+strongestExtension class_name extensions = class_name ++ ""."" ++ strongestExt
+  where
+    calculateStrength :: String -> Int
+    calculateStrength ext = length (filter (`elem` ['A'..'Z']) ext) - length (filter (`elem` ['a'..'z']) ext)
+    
+    strongestExt = fst $ foldl1 maxStrength $ zip extensions (map calculateStrength extensions)
+    
+    maxStrength :: (String, Int) -> (String, Int) -> (String, Int)
+    maxStrength ext1 ext2
+      | snd ext1 > snd ext2 = ext1
+      | otherwise           = ext2","
+main :: IO ()
+main = do
+  let candidate = strongestExtension
+  if candidate ""Watashi"" [""tEN"",""niNE"",""eIGHt8OKe""] == ""Watashi.eIGHt8OKe"" then pure () else error ""assertion failed""
+  if candidate ""Boku123"" [""nani"",""NazeDa"",""YEs.WeCaNe"",""32145tggg""] == ""Boku123.YEs.WeCaNe"" then pure () else error ""assertion failed""
+  if candidate ""__YESIMHERE"" [""t"",""eMptY"",""nothing"",""zeR00"",""NuLl__"",""123NoooneB321""] == ""__YESIMHERE.NuLl__"" then pure () else error ""assertion failed""
+  if candidate ""K"" [""Ta"",""TAR"",""t234An"",""cosSo""] == ""K.TAR"" then pure () else error ""assertion failed""
+  if candidate ""__HAHA"" [""Tab"",""123"",""781345"",""-_-""] == ""__HAHA.123"" then pure () else error ""assertion failed""
+  if candidate ""YameRore"" [""HhAas"",""okIWILL123"",""WorkOut"",""Fails"",""-_-""] == ""YameRore.okIWILL123"" then pure () else error ""assertion failed""
+  if candidate ""finNNalLLly"" [""Die"",""NowW"",""Wow"",""WoW""] == ""finNNalLLly.WoW"" then pure () else error ""assertion failed""
+  if candidate ""_"" [""Bb"",""91245""] == ""_.Bb"" then pure () else error ""assertion failed""
+  if candidate ""Sp"" [""671235"",""Bb""] == ""Sp.671235"" then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_154,zho_Hans,hs,"--给你两个单词. 如果第二个单词或其任何一个旋转是第一个单词中的子字符串, 你需要返回true.--  >>> cycpatternCheck ""abcd"" ""abd""
+--  False
+--  >>> cycpatternCheck ""hello"" ""ell""
+--  True
+--  >>> cycpatternCheck ""whassup"" ""psus""
+--  False
+--  >>> cycpatternCheck ""abab"" ""baa""
+--  True
+--  >>> cycpatternCheck ""efef"" ""eeff""
+--  False
+--  >>> cycpatternCheck ""himenss"" ""simen""
+--  True
+cycpatternCheck :: String -> String -> Bool
+cycpatternCheck a b =","cycpatternCheck :: String -> String -> Bool
+cycpatternCheck a b = any (`isInfixOf` a) rotations
+  where
+    rotations = take (length b) $ map (take (length b)) $ tails (b ++ b)","
+main :: IO ()
+main = do
+  let candidate = cycpatternCheck
+  if candidate ""xyzw"" ""xyw"" == False then pure () else error ""assertion failed""
+  if candidate ""yello"" ""ell"" == True then pure () else error ""assertion failed""
+  if candidate ""whattup"" ""ptut"" == False then pure () else error ""assertion failed""
+  if candidate ""efef"" ""fee"" == True then pure () else error ""assertion failed""
+  if candidate ""abab"" ""aabb"" == False then pure () else error ""assertion failed""
+  if candidate ""winemtt"" ""tinem"" == True then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_155,zho_Hans,hs,"--举例:--给定一个整数,返回一个,分别有偶数和奇数的数字.--  >>> evenOddCount (-12)
+--  (1, 1)
+--  >>> evenOddCount 123
+--  (1, 2)
+evenOddCount :: Int -> (Int, Int)
+evenOddCount num =","evenOddCount :: Int -> (Int, Int)
+evenOddCount num = (length evens, length odds)
+  where
+    digits = map (read . (:[])) . show . abs $ num
+    evens = filter even digits
+    odds  = filter odd digits","
+main :: IO ()
+main = do
+  let candidate = evenOddCount
+  if candidate 7 == (0, 1) then pure () else error ""assertion failed""
+  if candidate (-78) == (1, 1) then pure () else error ""assertion failed""
+  if candidate 3452 == (2, 2) then pure () else error ""assertion failed""
+  if candidate 346211 == (3, 3) then pure () else error ""assertion failed""
+  if candidate (-345821) == (3, 3) then pure () else error ""assertion failed""
+  if candidate (-2) == (1, 0) then pure () else error ""assertion failed""
+  if candidate (-45347) == (2, 3) then pure () else error ""assertion failed""
+  if candidate 0 == (1, 0) then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_156,zho_Hans,hs,"--举例:--限制: 1 <= num <= 1000 --返回一个小写的字母.--给定一个正整数, 得到它的罗马数字等价值作为一个字符串,--  >>> intToMiniRoman 19
+--  ""xix""
+--  >>> intToMiniRoman 152
+--  ""clii""
+--  >>> intToMiniRoman 426
+--  ""cdxxvi""
+intToMiniRoman :: Int -> String
+intToMiniRoman number =","intToMiniRoman :: Int -> String
+intToMiniRoman number = concatMap (replicateSymbol number) romanNumerals
+  where
+    romanNumerals = [(1000, ""m""), (900, ""cm""), (500, ""d""), (400, ""cd""),
+                     (100, ""c""), (90, ""xc""), (50, ""l""), (40, ""xl""),
+                     (10, ""x""), (9, ""ix""), (5, ""v""), (4, ""iv""), (1, ""i"")]
+    
+    replicateSymbol :: Int -> (Int, String) -> String
+    replicateSymbol n (value, symbol)
+      | n >= value = symbol ++ replicateSymbol (n - value) (value, symbol)
+      | otherwise = """"","
+main :: IO ()
+main = do
+  let candidate = intToMiniRoman
+  if candidate 19 == ""xix"" then pure () else error ""assertion failed""
+  if candidate 152 == ""clii"" then pure () else error ""assertion failed""
+  if candidate 251 == ""ccli"" then pure () else error ""assertion failed""
+  if candidate 426 == ""cdxxvi"" then pure () else error ""assertion failed""
+  if candidate 500 == ""d"" then pure () else error ""assertion failed""
+  if candidate 1 == ""i"" then pure () else error ""assertion failed""
+  if candidate 4 == ""iv"" then pure () else error ""assertion failed""
+  if candidate 43 == ""xliii"" then pure () else error ""assertion failed""
+  if candidate 90 == ""xc"" then pure () else error ""assertion failed""
+  if candidate 94 == ""xciv"" then pure () else error ""assertion failed""
+  if candidate 532 == ""dxxxii"" then pure () else error ""assertion failed""
+  if candidate 900 == ""cm"" then pure () else error ""assertion failed""
+  if candidate 994 == ""cmxciv"" then pure () else error ""assertion failed""
+  if candidate 1000 == ""m"" then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_157,zho_Hans,hs,"--举例:--没有任何问题.--一个直角三角形是一个角是直角的三角形,--其他情况是错误的.--给出三角形的三边长. 如果三边长是--  >>> rightAngleTriangle 3 4 5
+--  True
+--  >>> rightAngleTriangle 1 2 3
+--  False
+rightAngleTriangle :: Int -> Int -> Int -> Bool
+rightAngleTriangle a b c =","rightAngleTriangle :: Int -> Int -> Int -> Bool
+rightAngleTriangle a b c = 
+    let [x, y, z] = sort [a, b, c]
+    in x^2 + y^2 == z^2
+    where sort = Data.List.sort","
+main :: IO ()
+main = do
+  let candidate = rightAngleTriangle
+  if candidate 3 4 5 == True then pure () else error ""assertion failed""
+  if candidate 1 2 3 == False then pure () else error ""assertion failed""
+  if candidate 10 6 8 == True then pure () else error ""assertion failed""
+  if candidate 2 2 2 == False then pure () else error ""assertion failed""
+  if candidate 7 24 25 == True then pure () else error ""assertion failed""
+  if candidate 10 5 7 == False then pure () else error ""assertion failed""
+  if candidate 5 12 13 == True then pure () else error ""assertion failed""
+  if candidate 15 8 17 == True then pure () else error ""assertion failed""
+  if candidate 48 55 73 == True then pure () else error ""assertion failed""
+  if candidate 1 1 1 == False then pure () else error ""assertion failed""
+  if candidate 2 2 10 == False then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_158,zho_Hans,hs,"--字符,返回第一个在词典顺序.--如果多个字符串有最大数量的唯一的字符.--列表包含不同的单词.返回最多数量的单词--写一个函数, 接受一个字符串列表.--  >>> findMax [""name"",""of"",""string""]
+--  ""string""
+--  >>> findMax [""name"",""enam"",""game""]
+--  ""enam""
+--  >>> findMax [""aaaaaaa"",""bb"",""cc""]
+--  ""aaaaaaa""
+findMax :: [String] -> String
+findMax words =","import Data.List (nub, sort)
+
+findMax :: [String] -> String
+findMax words = 
+    head . sort . map snd . filter (\(n, _) -> n == maxUnique) $ wordUniquePairs
+  where
+    wordUniquePairs = [(length . nub $ word, word) | word <- words]
+    maxUnique = maximum $ map fst wordUniquePairs","
+main :: IO ()
+main = do
+  let candidate = findMax
+  if candidate [""name"",""of"",""string""] == ""string"" then pure () else error ""assertion failed""
+  if candidate [""name"",""enam"",""game""] == ""enam"" then pure () else error ""assertion failed""
+  if candidate [""aaaaaaa"",""bb"",""cc""] == ""aaaaaaa"" then pure () else error ""assertion failed""
+  if candidate [""abc"",""cba""] == ""abc"" then pure () else error ""assertion failed""
+  if candidate [""play"",""this"",""game"",""of"",""footbott""] == ""footbott"" then pure () else error ""assertion failed""
+  if candidate [""we"",""are"",""gonna"",""rock""] == ""gonna"" then pure () else error ""assertion failed""
+  if candidate [""we"",""are"",""a"",""mad"",""nation""] == ""nation"" then pure () else error ""assertion failed""
+  if candidate [""this"",""is"",""a"",""prrk""] == ""this"" then pure () else error ""assertion failed""
+  if candidate [""b""] == ""b"" then pure () else error ""assertion failed""
+  if candidate [""play"",""play"",""play""] == ""play"" then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_159,zho_Hans,hs,"--举例:--如果剩下的胡卜不够,你会吃掉剩下的胡卜,但仍然会饿.--吃完饭后剩下的胡卜数量] --您应该返回一张 [在饭后吃的胡卜总数, --现在你需要吃更多的胡卜来完成一天的饭菜.--你是一个饥饿的子, 你已经吃了一定数量的胡卜,--  >>> eat 5 6 10
+--  [11,4]
+--  >>> eat 4 8 9
+--  [12,1]
+--  >>> eat 1 10 10
+--  [11,0]
+--  >>> eat 2 11 5
+--  [7,0]
+--  Variables:
+--  @number : integer
+--  the number of carrots that you have eaten.
+--  @need : integer
+--  the number of carrots that you need to eat.
+--  @remaining : integer
+--  the number of remaining carrots thet exist in stock
+--  Constrain:
+--  * 0 <= number <= 1000
+--  * 0 <= need <= 1000
+--  * 0 <= remaining <= 1000
+--  Have fun :)
+eat :: Int -> Int -> Int -> [Int]
+eat number need remaining =","eat :: Int -> Int -> Int -> [Int]
+eat number need remaining
+  | remaining >= need = [number + need, remaining - need]
+  | otherwise = [number + remaining, 0]","
+main :: IO ()
+main = do
+  let candidate = eat
+  if candidate 5 6 10 == [11,4] then pure () else error ""assertion failed""
+  if candidate 4 8 9 == [12,1] then pure () else error ""assertion failed""
+  if candidate 1 10 10 == [11,0] then pure () else error ""assertion failed""
+  if candidate 2 11 5 == [7,0] then pure () else error ""assertion failed""
+  if candidate 4 5 7 == [9,2] then pure () else error ""assertion failed""
+  if candidate 4 5 1 == [5,0] then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_160,zho_Hans,hs,"--操作符列表至少有一个操作符,操作数列表至少有两个操作数.--操作数是一个非负整数列表.--操作符列表的长度等于操作数列表的长度减去一个.--需要注意的是:--=> 结果=9--结果是2+3*4-5--列表 = [2, 3, 4, 5] --操作员['+', '*', '-'] --举例:--显数 (**) 显数--楼层划分 (--乘法 (*) --减去 ( - ) --增加 (+) --基本的代数运算:--返回该表达式的评估.--两个给定的列表用于构建代数.--给出两个列表操作符和操作数. 第一个列表有基本代数运算,doAlgebra :: [String] -> [Int] -> Int
+doAlgebra operator operand =","doAlgebra :: [String] -> [Int] -> Int
+doAlgebra operator operand = evaluate operand operator
+  where
+    evaluate [x] [] = x
+    evaluate (x:y:ys) (op:ops) = evaluate (result:ys) ops
+      where
+        result = applyOperation op x y
+
+    applyOperation ""+"" a b = a + b
+    applyOperation ""-"" a b = a - b
+    applyOperation ""*"" a b = a * b
+    applyOperation ""//"" a b = a `div` b
+    applyOperation ""**"" a b = a ^ b
+    applyOperation _ _ _ = error ""Unsupported operation""","
+main :: IO ()
+main = do
+  let candidate = doAlgebra
+  if candidate [""**"",""*"",""+""] [2,3,4,5] == 37 then pure () else error ""assertion failed""
+  if candidate [""+"",""*"",""-""] [2,3,4,5] == 9 then pure () else error ""assertion failed""
+  if candidate [""//"",""*""] [7,3,4] == 8 then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_161,zho_Hans,hs,"--举例 --函数应该返回得到的字符串.--如果字符串没有字母, 则反转字符串.--否则就让它保持原样.--如果 s[i] 是一个字母,则将其大小写从下方转向上方或反之,--给你一个字符串 s.--  >>> solve ""1234""
+--  ""4321""
+--  >>> solve ""ab""
+--  ""AB""
+--  >>> solve ""#a@C""
+--  ""#A@c""
+solve :: String -> String
+solve s =","solve :: String -> String
+solve s
+  | any (`elem` ['a'..'z'] ++ ['A'..'Z']) s = map toggleCase s
+  | otherwise = reverse s
+  where
+    toggleCase c
+      | c `elem` ['a'..'z'] = toEnum (fromEnum c - 32) :: Char
+      | c `elem` ['A'..'Z'] = toEnum (fromEnum c + 32) :: Char
+      | otherwise = c","
+main :: IO ()
+main = do
+  let candidate = solve
+  if candidate ""AsDf"" == ""aSdF"" then pure () else error ""assertion failed""
+  if candidate ""1234"" == ""4321"" then pure () else error ""assertion failed""
+  if candidate ""ab"" == ""AB"" then pure () else error ""assertion failed""
+  if candidate ""#a@C"" == ""#A@c"" then pure () else error ""assertion failed""
+  if candidate ""#AsdfW^45"" == ""#aSDFw^45"" then pure () else error ""assertion failed""
+  if candidate ""#6@2"" == ""2@6#"" then pure () else error ""assertion failed""
+  if candidate ""#$a^D"" == ""#$A^d"" then pure () else error ""assertion failed""
+  if candidate ""#ccc"" == ""#CCC"" then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_162,zho_Hans,hs,"--如果'text'是一个空字符串,返回Nothing.--给定一个字符串'text',返回其md5哈希等价字符串.--  >>> stringToMd5 ""Hello world""
+--  Just (""3e25960a79dbc69b674cd4ec67a72c62"")
+stringToMd5 :: String -> Maybe String
+stringToMd5 text =","import qualified Data.ByteString.Char8 as C
+import qualified Data.Digest.Pure.MD5 as MD5
+
+stringToMd5 :: String -> Maybe String
+stringToMd5 text
+  | null text = Nothing
+  | otherwise = Just $ show $ MD5.md5 $ C.pack text","
+main :: IO ()
+main = do
+  let candidate = stringToMd5
+  if candidate ""Hello world"" == Just (""3e25960a79dbc69b674cd4ec67a72c62"") then pure () else error ""assertion failed""
+  if candidate """" == Just (Nothing) then pure () else error ""assertion failed""
+  if candidate ""A B C"" == Just (""0ef78513b0cb8cef12743f5aeb35f888"") then pure () else error ""assertion failed""
+  if candidate ""password"" == Just (""5f4dcc3b5aa765d61d8327deb882cf99"") then pure () else error ""assertion failed""
+  pure ()"
+HumanEval_163,zho_Hans,hs,"--例如:--并且 b, 顺序上升.--给出两个正整数 a 和 b, 返回 a 之间的偶数--  >>> generateIntegers 2 8
+--  [2,4,6,8]
+--  >>> generateIntegers 8 2
+--  [2,4,6,8]
+--  >>> generateIntegers 10 14
+--  []
+generateIntegers :: Int -> Int -> [Int]
+generateIntegers a b =","generateIntegers :: Int -> Int -> [Int]
+generateIntegers a b = filter even [min a b .. max a b]","
+main :: IO ()
+main = do
+  let candidate = generateIntegers
+  if candidate 2 10 == [2,4,6,8] then pure () else error ""assertion failed""
+  if candidate 10 2 == [2,4,6,8] then pure () else error ""assertion failed""
+  if candidate 132 2 == [2,4,6,8] then pure () else error ""assertion failed""
+  if candidate 17 89 == [] then pure () else error ""assertion failed""
+  pure ()"
