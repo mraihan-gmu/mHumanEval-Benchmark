@@ -34,7 +34,7 @@
 
   
 
-The mHumanEval benchmark is curated based on prompts from the original HumanEval 📚 [Chen et al., 2021]. It includes a total of 33,456 prompts, significantly expanding from the original 164. 
+The mHumanEval benchmark is curated based on prompts from the original HumanEval 📚 [Chen et al., 2021]. It includes a total of 33,456 prompts for Python, and 836,400 in total - significantly expanding from the original 164. 
   
 </div>
 
